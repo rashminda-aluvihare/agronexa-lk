@@ -283,16 +283,8 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
         Sign in to AgroNexa
         <svg class="arr" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>
       </button>
-      <div class="div"><div class="dl"></div>or continue with<div class="dl"></div></div>
-      <button class="gbtn" type="button">
-        <svg width="17" height="17" viewBox="0 0 18 18" fill="none">
-          <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
-          <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/>
-          <path d="M3.964 10.706A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.038l3.007-2.332z" fill="#FBBC05"/>
-          <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.962L3.964 7.294C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
-        </svg>
-        Continue with Google
-      </button>
+    
+
       <div class="ff">New to AgroNexa? <button class="sw-link" onclick="sw('register')">Create a free account</button></div>
     </div>
 
@@ -477,6 +469,47 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
   </div>
 </div>
 </div>
+<!-- CONFIRMATION MODAL -->
+<div id="confirm-overlay" style="display:none;position:fixed;inset:0;background:rgba(4,26,13,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:20px;padding:32px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(4,26,13,0.3);border:1px solid rgba(40,160,96,0.15);animation:popIn .25s ease;">
+    
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="width:56px;height:56px;border-radius:16px;background:#EDF5EF;border:1px solid rgba(30,122,71,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1E7A47" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.3rem;color:#050F07;margin-bottom:4px;">Confirm Your Details</div>
+      <div style="font-size:12px;color:#8BA897;">Please review before creating your account</div>
+    </div>
+
+    <!-- DETAILS -->
+    <div id="confirm-body" style="background:#F5F9F3;border-radius:12px;padding:16px;margin-bottom:20px;display:flex;flex-direction:column;gap:10px;"></div>
+
+    <!-- NIC STATUS -->
+    <div id="confirm-nic" style="display:none;background:#EDF5EF;border:1px solid rgba(30,122,71,0.18);border-radius:10px;padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px;">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#1E7A47" stroke-width="1.4"><rect x="1.5" y="3" width="13" height="10" rx="1.5"/><path d="M4 7h3M4 9.5h5"/><circle cx="11.5" cy="8" r="1.5"/></svg>
+      <span id="confirm-nic-msg" style="font-size:12px;color:#155C35;font-weight:500;"></span>
+    </div>
+
+    <!-- BUTTONS -->
+    <div style="display:flex;gap:10px;">
+      <button onclick="closeConfirm()" style="flex:1;height:44px;background:#fff;border:1.5px solid #DDE9E2;border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:#6B9B7A;cursor:pointer;">
+        ✏️ Edit Details
+      </button>
+      <button onclick="submitRegister()" style="flex:1;height:44px;background:linear-gradient(135deg,#155C35,#1E7A47);border:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#fff;cursor:pointer;box-shadow:0 2px 12px rgba(21,92,53,0.25);">
+        ✅ Confirm & Join
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<style>
+@keyframes popIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.cd-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(40,160,96,0.08);}
+.cd-row:last-child{border-bottom:none;}
+.cd-label{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:#8BA897;}
+.cd-value{font-size:13px;color:#155C35;font-weight:500;text-align:right;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+</style>
 
 <script>
 var nicUploaded={front:false,back:false};
@@ -615,6 +648,152 @@ function ddr(e,side){
 }
 
 selRole('farmer');
+</script>
+<script>
+
+// Global formData store
+var pendingFormData = null;
+
+// REGISTER — show confirm modal first
+document.querySelector('#panel-register .btn').addEventListener('click', async () => {
+  const role       = document.querySelector('.rc.sel').id.replace('rc-', '');
+  const firstName  = document.querySelectorAll('#panel-register .inp')[0].value.trim();
+  const lastName   = document.querySelectorAll('#panel-register .inp')[1].value.trim();
+  const email      = document.getElementById('re').value.trim();
+  const phone      = document.getElementById('rp').value.trim();
+  const district   = document.querySelector('.isel').value;
+  const password   = document.getElementById('rpw').value;
+  const extraInputs = document.querySelectorAll('#extra-fields .inp');
+  const address    = extraInputs[0]?.value.trim() || '';
+  const nicNumber  = extraInputs[1]?.value.trim() || '';
+
+  // Basic validation
+  if (!firstName || !lastName) { alert('Please enter your full name.'); return; }
+  if (!email) { alert('Please enter your email.'); return; }
+  if (!district) { alert('Please select your district.'); return; }
+  if (!password || password.length < 8) { alert('Password must be at least 8 characters.'); return; }
+
+  // NIC files
+  const frontFile = document.getElementById('file-front')?.files[0];
+  const backFile  = document.getElementById('file-back')?.files[0];
+
+  // Build formData to send later
+  pendingFormData = new FormData();
+  pendingFormData.append('role',       role);
+  pendingFormData.append('first_name', firstName);
+  pendingFormData.append('last_name',  lastName);
+  pendingFormData.append('email',      email);
+  pendingFormData.append('phone',      phone);
+  pendingFormData.append('district',   district);
+  pendingFormData.append('password',   password);
+  pendingFormData.append('address',    address);
+  pendingFormData.append('nic_number', nicNumber);
+  if (frontFile) pendingFormData.append('nic_front', frontFile);
+  if (backFile)  pendingFormData.append('nic_back',  backFile);
+
+  // Build confirm modal rows
+  var body = document.getElementById('confirm-body');
+  body.innerHTML = '';
+  var rows = [
+    ['Role',     role === 'farmer' ? '🌾 Farmer / Seller' : '🛒 Buyer'],
+    ['Name',     firstName + ' ' + lastName],
+    ['Email',    email],
+    ['Phone',    phone || '—'],
+    ['District', district || '—'],
+    ['Address',  address || '—'],
+  ];
+  if (role === 'farmer') rows.push(['NIC Number', nicNumber || '—']);
+  
+  rows.forEach(function(r) {
+    var div = document.createElement('div');
+    div.className = 'cd-row';
+    div.innerHTML = '<span class="cd-label">' + r[0] + '</span><span class="cd-value">' + r[1] + '</span>';
+    body.appendChild(div);
+  });
+
+  // NIC upload status (farmer only)
+  var nicBox = document.getElementById('confirm-nic');
+  var nicMsg = document.getElementById('confirm-nic-msg');
+  if (role === 'farmer') {
+    nicBox.style.display = 'flex';
+    var bothUploaded = frontFile && backFile;
+    var oneUploaded  = (frontFile || backFile) && !bothUploaded;
+    if (bothUploaded) {
+      nicMsg.textContent = '✅ Both NIC sides uploaded';
+      nicBox.style.background = '#EDF5EF';
+      nicBox.style.borderColor = 'rgba(30,122,71,0.18)';
+    } else if (oneUploaded) {
+      nicMsg.textContent = '⚠️ Only one NIC side uploaded';
+      nicBox.style.background = '#FEF8EE';
+      nicBox.style.borderColor = 'rgba(200,140,0,0.2)';
+    } else {
+      nicMsg.textContent = '⚠️ No NIC uploaded yet';
+      nicBox.style.background = '#FEF8EE';
+      nicBox.style.borderColor = 'rgba(200,140,0,0.2)';
+    }
+  } else {
+    nicBox.style.display = 'none';
+  }
+
+  // Show modal
+  var overlay = document.getElementById('confirm-overlay');
+  overlay.style.display = 'flex';
+});
+
+function closeConfirm() {
+  document.getElementById('confirm-overlay').style.display = 'none';
+}
+
+async function submitRegister() {
+  if (!pendingFormData) return;
+
+  // Change button to loading state
+  event.target.textContent = '⏳ Creating...';
+  event.target.disabled = true;
+
+  try {
+    const res  = await fetch('http://localhost:3000/api/register', {
+      method: 'POST',
+      body: pendingFormData
+    });
+    const data = await res.json();
+
+    closeConfirm();
+
+    if (data.success) {
+      // Show success message
+      showSuccess(data.user.first_name);
+    } else {
+      alert('❌ ' + data.error);
+    }
+  } catch (e) {
+    closeConfirm();
+    alert('❌ Cannot connect to server. Is node server.js running?');
+  }
+}
+
+function showSuccess(name) {
+  var overlay = document.getElementById('confirm-overlay');
+  overlay.style.display = 'flex';
+  overlay.querySelector('div').innerHTML = `
+    <div style="text-align:center;padding:10px 0;">
+      <div style="width:64px;height:64px;border-radius:50%;background:#EDF5EF;border:2px solid rgba(30,122,71,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1E7A47" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.4rem;color:#050F07;margin-bottom:8px;">Welcome, ${name}! 🌱</div>
+      <div style="font-size:13px;color:#7BA090;line-height:1.7;margin-bottom:24px;">Your AgroNexa LK account has been<br/>created successfully!</div>
+      <button onclick="document.getElementById('confirm-overlay').style.display='none'; sw('login');"
+        style="width:100%;height:44px;background:linear-gradient(135deg,#155C35,#1E7A47);border:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#fff;cursor:pointer;">
+        Go to Sign In →
+      </button>
+    </div>
+  `;
+}
+
+// Close modal when clicking outside
+document.getElementById('confirm-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeConfirm();
+});
 </script>
 </body>
 </html>
