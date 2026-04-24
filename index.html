@@ -23,12 +23,12 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
 @keyframes scan{0%,100%{top:15%;opacity:0}10%,90%{opacity:1}50%{top:85%;opacity:.6}}
 .LC{position:relative;z-index:2;display:flex;flex-direction:column;flex:1;padding:42px 44px;}
 .brand{display:flex;align-items:center;gap:13px;margin-bottom:52px;}
-.bmark{width:145px;height:145px;border-radius:100px;background-color:white;linear-gradient(135deg,var(--g4),var(--g6));display:flex;align-items:center;margin-left:210px;center;flex-shrink:0;box-shadow:0 0 0 1px rgba(255, 255, 255, 0.3),0 4px 16px rgba(253, 253, 253, 0.3);}
+.bmark{width:145px;height:145px;border-radius:100px;background-color:white;display:flex;align-items:center;margin-left:210px;flex-shrink:0;box-shadow:0 0 0 1px rgba(255,255,255,0.3),0 4px 16px rgba(253,253,253,0.3);}
 .bname{font-family:'Playfair Display',serif;font-size:1.35rem;color:#fff;letter-spacing:-.2px;}
-.bsub{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255, 255, 255, 0.55);margin-top:2px;}
+.bsub{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-top:2px;}
 .hero-text{margin-bottom:auto;}
-.ht-label{font-size:10px;letter-spacing:2.8px;text-transform:uppercase;color:rgba(240, 240, 240, 0.55);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
-.ht-label::after{content:'';flex:1;height:1px;background:rgba(200, 200, 200, 0.15);}
+.ht-label{font-size:10px;letter-spacing:2.8px;text-transform:uppercase;color:rgba(240,240,240,0.55);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.ht-label::after{content:'';flex:1;height:1px;background:rgba(200,200,200,0.15);}
 .ht-h1{font-family:'Playfair Display',serif;font-size:2.7rem;line-height:1.12;color:#fff;letter-spacing:-.8px;margin-bottom:18px;}
 .ht-h1 em{color:var(--g6);font-style:italic;}
 .ht-p{font-size:13px;color:rgba(180,215,196,0.70);line-height:1.8;max-width:280px;}
@@ -122,7 +122,6 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
 .ttxt{font-size:12px;color:#7BA090;line-height:1.65;}
 .tlink{color:var(--g4);cursor:pointer;font-weight:500;}
 
-/* ── NIC Upload ── */
 .sec-div{display:flex;align-items:center;gap:10px;margin:20px 0 16px;}
 .sec-div-line{flex:1;height:1px;background:#E4EDE7;}
 .sec-div-lbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#B8CEC3;white-space:nowrap;}
@@ -133,42 +132,19 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
 
 .nic-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
 
-.nic-drop{
-  border:1.5px dashed #C8DDD2;border-radius:14px;
-  background:#fff;cursor:pointer;position:relative;overflow:hidden;
-  min-height:136px;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;padding:14px 10px;
-  transition:border-color .2s,background .2s,transform .15s;
-}
+.nic-drop{border:1.5px dashed #C8DDD2;border-radius:14px;background:#fff;cursor:pointer;position:relative;overflow:hidden;min-height:136px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 10px;transition:border-color .2s,background .2s,transform .15s;}
 .nic-drop:hover{border-color:var(--g4);background:#F5FBF7;}
 .nic-drop.has-file{border-color:var(--g6);border-style:solid;background:#F0FAF4;}
 .nic-drop.drag-over{border-color:var(--g5);background:#EAFAF2;transform:scale(1.02);}
-
-.nic-drop input[type=file]{
-  position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;z-index:2;
-}
-.nic-remove{
-  position:absolute;top:7px;right:7px;z-index:5;
-  width:22px;height:22px;border-radius:50%;
-  background:#fff;border:1px solid #DDE9E2;
-  display:none;align-items:center;justify-content:center;
-  cursor:pointer;transition:all .18s;
-}
+.nic-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;z-index:2;}
+.nic-remove{position:absolute;top:7px;right:7px;z-index:5;width:22px;height:22px;border-radius:50%;background:#fff;border:1px solid #DDE9E2;display:none;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;}
 .nic-drop.has-file .nic-remove{display:flex;}
 .nic-remove:hover{background:#FEF0F0;border-color:#D95050;}
-
-.nic-icon-box{
-  width:42px;height:42px;border-radius:11px;
-  background:#EDF5EF;border:1px solid rgba(30,122,71,0.14);
-  display:flex;align-items:center;justify-content:center;margin-bottom:9px;
-  transition:all .2s;
-}
+.nic-icon-box{width:42px;height:42px;border-radius:11px;background:#EDF5EF;border:1px solid rgba(30,122,71,0.14);display:flex;align-items:center;justify-content:center;margin-bottom:9px;transition:all .2s;}
 .nic-drop.has-file .nic-icon-box{display:none;}
-
 .nic-side-name{font-size:12px;font-weight:600;color:#3A6648;margin-bottom:3px;}
 .nic-upload-hint{font-size:10.5px;color:#9AB8A7;text-align:center;line-height:1.55;}
 .nic-drop.has-file .nic-upload-hint{display:none;}
-
 .nic-file-preview{display:none;flex-direction:column;align-items:center;gap:5px;width:100%;}
 .nic-drop.has-file .nic-file-preview{display:flex;}
 .nic-img{width:100%;height:64px;object-fit:cover;border-radius:8px;border:1px solid rgba(30,122,71,0.15);}
@@ -176,28 +152,21 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
 .nic-file-name{font-size:10.5px;color:#3A6648;font-weight:500;text-align:center;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .nic-file-size{font-size:10px;color:#9AB8A7;}
 
-.nic-status-bar{
-  display:flex;align-items:center;gap:10px;
-  padding:9px 13px;border-radius:10px;
-  background:#FEF8EE;border:1px solid rgba(200,140,0,0.20);
-  transition:all .3s;
-}
+.nic-status-bar{display:flex;align-items:center;gap:10px;padding:9px 13px;border-radius:10px;background:#FEF8EE;border:1px solid rgba(200,140,0,0.20);transition:all .3s;}
 .nic-status-bar.done{background:#F0FAF4;border-color:rgba(30,122,71,0.18);}
 .nic-status-dot{width:7px;height:7px;border-radius:50%;background:#C88C00;flex-shrink:0;transition:background .3s;}
 .nic-status-bar.done .nic-status-dot{background:var(--g5);}
 .nic-status-msg{font-size:11.5px;color:#7A5A00;transition:color .3s;}
 .nic-status-bar.done .nic-status-msg{color:#155C35;}
 
-@media(max-width:860px){.L{width:42%;}  .LC{padding:30px 26px;} .ht-h1{font-size:2.1rem;} .features{display:none;}}
-@media(max-width:640px){
-  .app{flex-direction:column;}
-  .L{width:100%;min-height:200px;}
-  .features{display:none;}
-  .LC{padding:24px 20px;}
-  .hero-text{margin-bottom:16px;}
-  .R{padding:26px 18px;}
-  .tc{grid-template-columns:1fr;}
-}
+@keyframes popIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.cd-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(40,160,96,0.08);}
+.cd-row:last-child{border-bottom:none;}
+.cd-label{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:#8BA897;}
+.cd-value{font-size:13px;color:#155C35;font-weight:500;text-align:right;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+@media(max-width:860px){.L{width:42%;}.LC{padding:30px 26px;}.ht-h1{font-size:2.1rem;}.features{display:none;}}
+@media(max-width:640px){.app{flex-direction:column;}.L{width:100%;min-height:200px;}.features{display:none;}.LC{padding:24px 20px;}.hero-text{margin-bottom:16px;}.R{padding:26px 18px;}.tc{grid-template-columns:1fr;}}
 @media(max-width:380px){.nic-grid{grid-template-columns:1fr;}}
 </style>
 </head>
@@ -213,9 +182,8 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
   <div class="LC">
     <div class="brand">
       <div class="bmark">
-        <img src="logo.png" alt="AgroNexa LK" style="width:200px;height:200px;border-radius:12px;object-fit:cover;margin-top: -4.5px;margin-left: -26.5px;"/>
+        <img src="logo.png" alt="AgroNexa LK" style="width:200px;height:200px;border-radius:12px;object-fit:cover;margin-top:-4.5px;margin-left:-26.5px;"/>
       </div>
-      <
     </div>
     <div class="hero-text">
       <div class="ht-label">Sri Lanka's Agri-Platform</div>
@@ -279,12 +247,10 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
         <div class="ck" id="ck-rem"><svg width="9" height="7" viewBox="0 0 9 7" fill="none" stroke="#fff" stroke-width="1.8"><polyline points="1 3.5 3.2 5.8 8 1"/></svg></div>
         <span class="mem-lbl">Remember me for 30 days</span>
       </div>
-      <button class="btn" type="button">
+      <button class="btn" id="btn-login" type="button">
         Sign in to AgroNexa
         <svg class="arr" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>
       </button>
-    
-
       <div class="ff">New to AgroNexa? <button class="sw-link" onclick="sw('register')">Create a free account</button></div>
     </div>
 
@@ -312,14 +278,14 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
           <div class="fl-row"><span class="fl-label">First name</span></div>
           <div class="iw">
             <svg class="ii" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="5.5" r="3"/><path d="M2 14.5c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
-            <input class="inp" type="text" placeholder="Rashminda"/>
+            <input class="inp" id="r-fname" type="text" placeholder="Rashminda"/>
           </div>
         </div>
         <div class="field">
           <div class="fl-row"><span class="fl-label">Last name</span></div>
           <div class="iw">
             <svg class="ii" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="5.5" r="3"/><path d="M2 14.5c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
-            <input class="inp" type="text" placeholder="Aluvihare"/>
+            <input class="inp" id="r-lname" type="text" placeholder="Aluvihare"/>
           </div>
         </div>
       </div>
@@ -346,7 +312,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
         <div class="fl-row"><span class="fl-label">District</span></div>
         <div class="iw" style="position:relative;">
           <svg class="ii" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 1.5C5.5 1.5 3.5 3.5 3.5 6c0 3.5 4.5 8.5 4.5 8.5S12.5 9.5 12.5 6c0-2.5-2-4.5-4.5-4.5z"/><circle cx="8" cy="6" r="1.5"/></svg>
-          <select class="isel">
+          <select class="isel" id="r-district">
             <option value="" disabled selected>Select your district</option>
             <option>Ampara</option><option>Anuradhapura</option><option>Badulla</option><option>Batticaloa</option>
             <option>Colombo</option><option>Galle</option><option>Gampaha</option><option>Hambantota</option>
@@ -368,30 +334,19 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
           <span class="sec-div-lbl">NIC Verification</span>
           <div class="sec-div-line"></div>
         </div>
-
         <div class="nic-header">
           <span class="nic-title-lbl">NIC Upload both sides</span>
           <span class="nic-req">Required</span>
         </div>
-
         <div class="nic-grid">
-
           <!-- FRONT -->
-          <div class="nic-drop" id="drop-front"
-            ondragover="dov(event,'drop-front')"
-            ondragleave="dlv('drop-front')"
-            ondrop="ddr(event,'front')">
+          <div class="nic-drop" id="drop-front" ondragover="dov(event,'drop-front')" ondragleave="dlv('drop-front')" ondrop="ddr(event,'front')">
             <input type="file" id="file-front" accept="image/*,.pdf" onchange="loadFile(this,'front')"/>
             <div class="nic-remove" id="rm-front" onclick="rmFile(event,'front')">
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="#D95050" stroke-width="2"><line x1="2" y1="2" x2="8" y2="8"/><line x1="8" y1="2" x2="2" y2="8"/></svg>
             </div>
             <div class="nic-icon-box" id="ibox-front">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E7A47" stroke-width="1.4">
-                <rect x="2" y="5" width="20" height="15" rx="2.5"/>
-                <circle cx="8" cy="10.5" r="2.2"/>
-                <path d="M2 17l5-4 3.5 3 4.5-5 7 6"/>
-                <path d="M15 5V2M13 2h4"/>
-              </svg>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E7A47" stroke-width="1.4"><rect x="2" y="5" width="20" height="15" rx="2.5"/><circle cx="8" cy="10.5" r="2.2"/><path d="M2 17l5-4 3.5 3 4.5-5 7 6"/><path d="M15 5V2M13 2h4"/></svg>
             </div>
             <div class="nic-side-name">Front side</div>
             <div class="nic-upload-hint">Drag &amp; drop or tap<br/>JPG, PNG or PDF</div>
@@ -404,22 +359,14 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
               <span class="nic-file-size" id="fs-front"></span>
             </div>
           </div>
-
           <!-- BACK -->
-          <div class="nic-drop" id="drop-back"
-            ondragover="dov(event,'drop-back')"
-            ondragleave="dlv('drop-back')"
-            ondrop="ddr(event,'back')">
+          <div class="nic-drop" id="drop-back" ondragover="dov(event,'drop-back')" ondragleave="dlv('drop-back')" ondrop="ddr(event,'back')">
             <input type="file" id="file-back" accept="image/*,.pdf" onchange="loadFile(this,'back')"/>
             <div class="nic-remove" id="rm-back" onclick="rmFile(event,'back')">
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="#D95050" stroke-width="2"><line x1="2" y1="2" x2="8" y2="8"/><line x1="8" y1="2" x2="2" y2="8"/></svg>
             </div>
             <div class="nic-icon-box" id="ibox-back">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E7A47" stroke-width="1.4">
-                <rect x="2" y="5" width="20" height="15" rx="2.5"/>
-                <path d="M5 10h8M5 13.5h6M5 17h4"/>
-                <rect x="15" y="9" width="5" height="6" rx="1.2"/>
-              </svg>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E7A47" stroke-width="1.4"><rect x="2" y="5" width="20" height="15" rx="2.5"/><path d="M5 10h8M5 13.5h6M5 17h4"/><rect x="15" y="9" width="5" height="6" rx="1.2"/></svg>
             </div>
             <div class="nic-side-name">Back side</div>
             <div class="nic-upload-hint">Drag &amp; drop or tap<br/>JPG, PNG or PDF</div>
@@ -432,9 +379,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
               <span class="nic-file-size" id="fs-back"></span>
             </div>
           </div>
-
         </div>
-
         <div class="nic-status-bar" id="nic-status">
           <div class="nic-status-dot"></div>
           <span class="nic-status-msg" id="nic-msg">Upload both sides to verify your identity</span>
@@ -459,7 +404,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
         <div class="ttxt">I agree to AgroNexa LK's <span class="tlink">Terms of Service</span> and <span class="tlink">Privacy Policy</span></div>
       </div>
 
-      <button class="btn" type="button">
+      <button class="btn" id="btn-register" type="button">
         Create my account
         <svg class="arr" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>
       </button>
@@ -469,10 +414,10 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
   </div>
 </div>
 </div>
+
 <!-- CONFIRMATION MODAL -->
 <div id="confirm-overlay" style="display:none;position:fixed;inset:0;background:rgba(4,26,13,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:20px;padding:32px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(4,26,13,0.3);border:1px solid rgba(40,160,96,0.15);animation:popIn .25s ease;">
-    
+  <div id="confirm-box" style="background:#fff;border-radius:20px;padding:32px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(4,26,13,0.3);border:1px solid rgba(40,160,96,0.15);animation:popIn .25s ease;">
     <div style="text-align:center;margin-bottom:20px;">
       <div style="width:56px;height:56px;border-radius:16px;background:#EDF5EF;border:1px solid rgba(30,122,71,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1E7A47" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -480,204 +425,152 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
       <div style="font-family:'Playfair Display',serif;font-size:1.3rem;color:#050F07;margin-bottom:4px;">Confirm Your Details</div>
       <div style="font-size:12px;color:#8BA897;">Please review before creating your account</div>
     </div>
-
-    <!-- DETAILS -->
     <div id="confirm-body" style="background:#F5F9F3;border-radius:12px;padding:16px;margin-bottom:20px;display:flex;flex-direction:column;gap:10px;"></div>
-
-    <!-- NIC STATUS -->
-    <div id="confirm-nic" style="display:none;background:#EDF5EF;border:1px solid rgba(30,122,71,0.18);border-radius:10px;padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px;">
+    <div id="confirm-nic" style="background:#EDF5EF;border:1px solid rgba(30,122,71,0.18);border-radius:10px;padding:10px 14px;margin-bottom:16px;align-items:center;gap:10px;display:none;">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#1E7A47" stroke-width="1.4"><rect x="1.5" y="3" width="13" height="10" rx="1.5"/><path d="M4 7h3M4 9.5h5"/><circle cx="11.5" cy="8" r="1.5"/></svg>
       <span id="confirm-nic-msg" style="font-size:12px;color:#155C35;font-weight:500;"></span>
     </div>
-
-    <!-- BUTTONS -->
     <div style="display:flex;gap:10px;">
-      <button onclick="closeConfirm()" style="flex:1;height:44px;background:#fff;border:1.5px solid #DDE9E2;border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:#6B9B7A;cursor:pointer;">
-        ✏️ Edit Details
-      </button>
-      <button onclick="submitRegister()" style="flex:1;height:44px;background:linear-gradient(135deg,#155C35,#1E7A47);border:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#fff;cursor:pointer;box-shadow:0 2px 12px rgba(21,92,53,0.25);">
-        ✅ Confirm & Join
-      </button>
+      <button onclick="closeConfirm()" style="flex:1;height:44px;background:#fff;border:1.5px solid #DDE9E2;border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:#6B9B7A;cursor:pointer;">✏️ Edit Details</button>
+      <button id="btn-confirm" onclick="submitRegister(event)" style="flex:1;height:44px;background:linear-gradient(135deg,#155C35,#1E7A47);border:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#fff;cursor:pointer;box-shadow:0 2px 12px rgba(21,92,53,0.25);">✅ Confirm & Join</button>
     </div>
-
   </div>
 </div>
 
-<style>
-@keyframes popIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
-.cd-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(40,160,96,0.08);}
-.cd-row:last-child{border-bottom:none;}
-.cd-label{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:#8BA897;}
-.cd-value{font-size:13px;color:#155C35;font-weight:500;text-align:right;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-</style>
-
 <script>
-var nicUploaded={front:false,back:false};
+// ── CONFIG — Replace with your Railway URL after deployment ──
+var API_URL = 'https://agronexa-lk-production.up.railway.app';
 
-function sw(t){
-  var L=t==='login';
-  document.getElementById('panel-login').style.display=L?'block':'none';
-  document.getElementById('panel-register').style.display=L?'none':'block';
-  document.getElementById('tab-login').classList.toggle('on',L);
-  document.getElementById('tab-register').classList.toggle('on',!L);
-  if(!L)selRole('farmer');
-}
-function tp(id,btn){
-  var i=document.getElementById(id);
-  i.type=i.type==='password'?'text':'password';
-  btn.textContent=i.type==='password'?'Show':'Hide';
-}
-function tc2(id){document.getElementById(id).classList.toggle('on');}
-
-function selRole(r){
-  document.getElementById('rc-farmer').classList.toggle('sel',r==='farmer');
-  document.getElementById('rc-buyer').classList.toggle('sel',r==='buyer');
-  var c=document.getElementById('extra-fields');
-  c.innerHTML='';
-  var a=document.createElement('div');a.className='field';
-  a.innerHTML='<div class="fl-row"><span class="fl-label">Address</span></div>'
-    +'<div class="iw"><svg class="ii" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2 6h12"/></svg>'
-    +'<input class="inp" type="text" placeholder="123 Main Road, Village, Sri Lanka"/></div>';
-  var n=document.createElement('div');n.className='field';
-  n.innerHTML='<div class="fl-row"><span class="fl-label">NIC Number</span></div>'
-    +'<div class="iw"><svg class="ii" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="3" width="13" height="10" rx="1.5"/><path d="M4 7h3M4 9.5h5"/><circle cx="11.5" cy="8" r="1.5"/></svg>'
-    +'<input class="inp" type="text" placeholder="198512345678 or 851234567V" maxlength="12"/></div>';
-  c.appendChild(a);c.appendChild(n);
-  document.getElementById('nic-section').style.display=r==='farmer'?'block':'none';
-}
-
-function vEmail(iid,eid){
-  var v=document.getElementById(iid).value.trim();
-  var ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-  document.getElementById(iid).className='inp '+(v.length>0?(ok?'ok':'no'):'');
-  var e=document.getElementById(eid);if(e)e.classList.toggle('show',v.length>0&&!ok);
-}
-function vPhone(iid,eid){
-  var el=document.getElementById(iid);
-  var v=el.value.replace(/\D/g,'').slice(0,10);el.value=v;
-  var ok=v.length===10;
-  el.className='inp '+(v.length>0?(ok?'ok':'no'):'');
-  var e=document.getElementById(eid);if(e)e.classList.toggle('show',v.length>0&&!ok);
-}
-function cks(v){
-  var s=0;
-  if(v.length>=8)s++;if(/[A-Z]/.test(v))s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;
-  var cols=['#E4EDE7','#D95050','#D95050','#C88C00','#28A060'];
-  var lbls=['','Weak — add uppercase & numbers','Fair — add a symbol','Strong','Very strong'];
-  for(var i=1;i<=4;i++)document.getElementById('sb'+i).style.background=i<=s?cols[s]:'#E4EDE7';
-  var el=document.getElementById('slbl');
-  el.textContent=v.length>0?lbls[s]:'';
-  el.style.color=s<=1?'#B02828':s===2?'#7A5A00':'#155C35';
-}
-
-function fmtSz(b){
-  if(b<1024)return b+'B';
-  if(b<1048576)return (b/1024).toFixed(1)+'KB';
-  return (b/1048576).toFixed(1)+'MB';
-}
-
-function loadFile(input,side){
-  var f=input.files[0];if(!f)return;
-  applyFile(f,side);
-}
-function applyFile(f,side){
-  var drop=document.getElementById('drop-'+side);
-  var ibox=document.getElementById('ibox-'+side);
-  var fprev=document.getElementById('fprev-'+side);
-  var imgEl=document.getElementById('img-'+side);
-  var pdfEl=document.getElementById('pdf-icon-'+side);
-  var fnEl=document.getElementById('fn-'+side);
-  var fsEl=document.getElementById('fs-'+side);
-  fnEl.textContent=f.name;
-  fsEl.textContent=fmtSz(f.size);
-  if(f.type.startsWith('image/')){
-    imgEl.style.display='block';
-    pdfEl.style.display='none';
-    var rd=new FileReader();
-    rd.onload=function(e){imgEl.src=e.target.result;};
-    rd.readAsDataURL(f);
-  } else {
-    imgEl.style.display='none';
-    pdfEl.style.display='flex';
-  }
-  drop.classList.add('has-file');
-  ibox.style.display='none';
-  nicUploaded[side]=true;
-  syncStatus();
-}
-function rmFile(e,side){
-  e.preventDefault();e.stopPropagation();
-  var drop=document.getElementById('drop-'+side);
-  var ibox=document.getElementById('ibox-'+side);
-  var imgEl=document.getElementById('img-'+side);
-  var pdfEl=document.getElementById('pdf-icon-'+side);
-  var fnEl=document.getElementById('fn-'+side);
-  var fsEl=document.getElementById('fs-'+side);
-  var inp=document.getElementById('file-'+side);
-  drop.classList.remove('has-file');
-  ibox.style.display='';
-  imgEl.src='';imgEl.style.display='';
-  pdfEl.style.display='none';
-  fnEl.textContent='';fsEl.textContent='';
-  inp.value='';
-  nicUploaded[side]=false;
-  syncStatus();
-}
-function syncStatus(){
-  var bar=document.getElementById('nic-status');
-  var msg=document.getElementById('nic-msg');
-  var both=nicUploaded.front&&nicUploaded.back;
-  var one=(nicUploaded.front||nicUploaded.back)&&!both;
-  if(both){
-    bar.classList.add('done');
-    msg.textContent='Both sides uploaded — identity ready for verification';
-  } else if(one){
-    bar.classList.remove('done');
-    msg.textContent='Upload the '+(nicUploaded.front?'back':'front')+' side to complete';
-  } else {
-    bar.classList.remove('done');
-    msg.textContent='Upload both sides to verify your identity';
-  }
-}
-function dov(e,id){e.preventDefault();document.getElementById(id).classList.add('drag-over');}
-function dlv(id){document.getElementById(id).classList.remove('drag-over');}
-function ddr(e,side){
-  e.preventDefault();
-  document.getElementById('drop-'+side).classList.remove('drag-over');
-  var f=e.dataTransfer.files[0];if(f)applyFile(f,side);
-}
-
-selRole('farmer');
-</script>
-<script>
-
-// Global formData store
+var nicUploaded = { front: false, back: false };
 var pendingFormData = null;
 
-// REGISTER — show confirm modal first
-document.querySelector('#panel-register .btn').addEventListener('click', async () => {
-  const role       = document.querySelector('.rc.sel').id.replace('rc-', '');
-  const firstName  = document.querySelectorAll('#panel-register .inp')[0].value.trim();
-  const lastName   = document.querySelectorAll('#panel-register .inp')[1].value.trim();
-  const email      = document.getElementById('re').value.trim();
-  const phone      = document.getElementById('rp').value.trim();
-  const district   = document.querySelector('.isel').value;
-  const password   = document.getElementById('rpw').value;
-  const extraInputs = document.querySelectorAll('#extra-fields .inp');
-  const address    = extraInputs[0]?.value.trim() || '';
-  const nicNumber  = extraInputs[1]?.value.trim() || '';
+function sw(t) {
+  var L = t === 'login';
+  document.getElementById('panel-login').style.display = L ? 'block' : 'none';
+  document.getElementById('panel-register').style.display = L ? 'none' : 'block';
+  document.getElementById('tab-login').classList.toggle('on', L);
+  document.getElementById('tab-register').classList.toggle('on', !L);
+  if (!L) selRole('farmer');
+}
+function tp(id, btn) {
+  var i = document.getElementById(id);
+  i.type = i.type === 'password' ? 'text' : 'password';
+  btn.textContent = i.type === 'password' ? 'Show' : 'Hide';
+}
+function tc2(id) { document.getElementById(id).classList.toggle('on'); }
 
-  // Basic validation
+function selRole(r) {
+  document.getElementById('rc-farmer').classList.toggle('sel', r === 'farmer');
+  document.getElementById('rc-buyer').classList.toggle('sel', r === 'buyer');
+  var c = document.getElementById('extra-fields');
+  c.innerHTML = '';
+  var a = document.createElement('div'); a.className = 'field';
+  a.innerHTML = '<div class="fl-row"><span class="fl-label">Address</span></div>'
+    + '<div class="iw"><svg class="ii" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2 6h12"/></svg>'
+    + '<input class="inp" id="r-address" type="text" placeholder="123 Main Road, Village, Sri Lanka"/></div>';
+  var n = document.createElement('div'); n.className = 'field';
+  n.innerHTML = '<div class="fl-row"><span class="fl-label">NIC Number</span></div>'
+    + '<div class="iw"><svg class="ii" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="3" width="13" height="10" rx="1.5"/><path d="M4 7h3M4 9.5h5"/><circle cx="11.5" cy="8" r="1.5"/></svg>'
+    + '<input class="inp" id="r-nic" type="text" placeholder="198512345678 or 851234567V" maxlength="12"/></div>';
+  c.appendChild(a); c.appendChild(n);
+  document.getElementById('nic-section').style.display = r === 'farmer' ? 'block' : 'none';
+}
+
+function vEmail(iid, eid) {
+  var v = document.getElementById(iid).value.trim();
+  var ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  document.getElementById(iid).className = 'inp ' + (v.length > 0 ? (ok ? 'ok' : 'no') : '');
+  var e = document.getElementById(eid); if (e) e.classList.toggle('show', v.length > 0 && !ok);
+}
+function vPhone(iid, eid) {
+  var el = document.getElementById(iid);
+  var v = el.value.replace(/\D/g, '').slice(0, 10); el.value = v;
+  var ok = v.length === 10;
+  el.className = 'inp ' + (v.length > 0 ? (ok ? 'ok' : 'no') : '');
+  var e = document.getElementById(eid); if (e) e.classList.toggle('show', v.length > 0 && !ok);
+}
+function cks(v) {
+  var s = 0;
+  if (v.length >= 8) s++; if (/[A-Z]/.test(v)) s++; if (/[0-9]/.test(v)) s++; if (/[^A-Za-z0-9]/.test(v)) s++;
+  var cols = ['#E4EDE7', '#D95050', '#D95050', '#C88C00', '#28A060'];
+  var lbls = ['', 'Weak — add uppercase & numbers', 'Fair — add a symbol', 'Strong', 'Very strong'];
+  for (var i = 1; i <= 4; i++) document.getElementById('sb' + i).style.background = i <= s ? cols[s] : '#E4EDE7';
+  var el = document.getElementById('slbl');
+  el.textContent = v.length > 0 ? lbls[s] : '';
+  el.style.color = s <= 1 ? '#B02828' : s === 2 ? '#7A5A00' : '#155C35';
+}
+
+function fmtSz(b) {
+  if (b < 1024) return b + 'B';
+  if (b < 1048576) return (b / 1024).toFixed(1) + 'KB';
+  return (b / 1048576).toFixed(1) + 'MB';
+}
+function loadFile(input, side) { var f = input.files[0]; if (!f) return; applyFile(f, side); }
+function applyFile(f, side) {
+  var drop = document.getElementById('drop-' + side);
+  var ibox = document.getElementById('ibox-' + side);
+  var imgEl = document.getElementById('img-' + side);
+  var pdfEl = document.getElementById('pdf-icon-' + side);
+  var fnEl = document.getElementById('fn-' + side);
+  var fsEl = document.getElementById('fs-' + side);
+  fnEl.textContent = f.name; fsEl.textContent = fmtSz(f.size);
+  if (f.type.startsWith('image/')) {
+    imgEl.style.display = 'block'; pdfEl.style.display = 'none';
+    var rd = new FileReader(); rd.onload = function (e) { imgEl.src = e.target.result; }; rd.readAsDataURL(f);
+  } else { imgEl.style.display = 'none'; pdfEl.style.display = 'flex'; }
+  drop.classList.add('has-file'); ibox.style.display = 'none';
+  nicUploaded[side] = true; syncStatus();
+}
+function rmFile(e, side) {
+  e.preventDefault(); e.stopPropagation();
+  var drop = document.getElementById('drop-' + side);
+  var ibox = document.getElementById('ibox-' + side);
+  var imgEl = document.getElementById('img-' + side);
+  var pdfEl = document.getElementById('pdf-icon-' + side);
+  var fnEl = document.getElementById('fn-' + side);
+  var fsEl = document.getElementById('fs-' + side);
+  var inp = document.getElementById('file-' + side);
+  drop.classList.remove('has-file'); ibox.style.display = '';
+  imgEl.src = ''; imgEl.style.display = ''; pdfEl.style.display = 'none';
+  fnEl.textContent = ''; fsEl.textContent = ''; inp.value = '';
+  nicUploaded[side] = false; syncStatus();
+}
+function syncStatus() {
+  var bar = document.getElementById('nic-status');
+  var msg = document.getElementById('nic-msg');
+  var both = nicUploaded.front && nicUploaded.back;
+  var one = (nicUploaded.front || nicUploaded.back) && !both;
+  if (both) { bar.classList.add('done'); msg.textContent = 'Both sides uploaded — identity ready for verification'; }
+  else if (one) { bar.classList.remove('done'); msg.textContent = 'Upload the ' + (nicUploaded.front ? 'back' : 'front') + ' side to complete'; }
+  else { bar.classList.remove('done'); msg.textContent = 'Upload both sides to verify your identity'; }
+}
+function dov(e, id) { e.preventDefault(); document.getElementById(id).classList.add('drag-over'); }
+function dlv(id) { document.getElementById(id).classList.remove('drag-over'); }
+function ddr(e, side) {
+  e.preventDefault(); document.getElementById('drop-' + side).classList.remove('drag-over');
+  var f = e.dataTransfer.files[0]; if (f) applyFile(f, side);
+}
+
+// ── REGISTER — show confirm modal ──
+document.getElementById('btn-register').addEventListener('click', function () {
+  var role      = document.querySelector('.rc.sel').id.replace('rc-', '');
+  var firstName = document.getElementById('r-fname').value.trim();
+  var lastName  = document.getElementById('r-lname').value.trim();
+  var email     = document.getElementById('re').value.trim();
+  var phone     = document.getElementById('rp').value.trim();
+  var district  = document.getElementById('r-district').value;
+  var password  = document.getElementById('rpw').value;
+  var address   = document.getElementById('r-address') ? document.getElementById('r-address').value.trim() : '';
+  var nicNumber = document.getElementById('r-nic') ? document.getElementById('r-nic').value.trim() : '';
+
   if (!firstName || !lastName) { alert('Please enter your full name.'); return; }
   if (!email) { alert('Please enter your email.'); return; }
   if (!district) { alert('Please select your district.'); return; }
   if (!password || password.length < 8) { alert('Password must be at least 8 characters.'); return; }
 
-  // NIC files
-  const frontFile = document.getElementById('file-front')?.files[0];
-  const backFile  = document.getElementById('file-back')?.files[0];
+  var frontFile = document.getElementById('file-front') ? document.getElementById('file-front').files[0] : null;
+  var backFile  = document.getElementById('file-back')  ? document.getElementById('file-back').files[0]  : null;
 
-  // Build formData to send later
   pendingFormData = new FormData();
   pendingFormData.append('role',       role);
   pendingFormData.append('first_name', firstName);
@@ -691,7 +584,6 @@ document.querySelector('#panel-register .btn').addEventListener('click', async (
   if (frontFile) pendingFormData.append('nic_front', frontFile);
   if (backFile)  pendingFormData.append('nic_back',  backFile);
 
-  // Build confirm modal rows
   var body = document.getElementById('confirm-body');
   body.innerHTML = '';
   var rows = [
@@ -703,79 +595,58 @@ document.querySelector('#panel-register .btn').addEventListener('click', async (
     ['Address',  address || '—'],
   ];
   if (role === 'farmer') rows.push(['NIC Number', nicNumber || '—']);
-  
-  rows.forEach(function(r) {
-    var div = document.createElement('div');
-    div.className = 'cd-row';
+  rows.forEach(function (r) {
+    var div = document.createElement('div'); div.className = 'cd-row';
     div.innerHTML = '<span class="cd-label">' + r[0] + '</span><span class="cd-value">' + r[1] + '</span>';
     body.appendChild(div);
   });
 
-  // NIC upload status (farmer only)
   var nicBox = document.getElementById('confirm-nic');
   var nicMsg = document.getElementById('confirm-nic-msg');
   if (role === 'farmer') {
     nicBox.style.display = 'flex';
-    var bothUploaded = frontFile && backFile;
-    var oneUploaded  = (frontFile || backFile) && !bothUploaded;
-    if (bothUploaded) {
+    if (frontFile && backFile) {
       nicMsg.textContent = '✅ Both NIC sides uploaded';
-      nicBox.style.background = '#EDF5EF';
-      nicBox.style.borderColor = 'rgba(30,122,71,0.18)';
-    } else if (oneUploaded) {
+      nicBox.style.background = '#EDF5EF'; nicBox.style.borderColor = 'rgba(30,122,71,0.18)';
+    } else if (frontFile || backFile) {
       nicMsg.textContent = '⚠️ Only one NIC side uploaded';
-      nicBox.style.background = '#FEF8EE';
-      nicBox.style.borderColor = 'rgba(200,140,0,0.2)';
+      nicBox.style.background = '#FEF8EE'; nicBox.style.borderColor = 'rgba(200,140,0,0.2)';
     } else {
       nicMsg.textContent = '⚠️ No NIC uploaded yet';
-      nicBox.style.background = '#FEF8EE';
-      nicBox.style.borderColor = 'rgba(200,140,0,0.2)';
+      nicBox.style.background = '#FEF8EE'; nicBox.style.borderColor = 'rgba(200,140,0,0.2)';
     }
   } else {
     nicBox.style.display = 'none';
   }
 
-  // Show modal
-  var overlay = document.getElementById('confirm-overlay');
-  overlay.style.display = 'flex';
+  document.getElementById('confirm-overlay').style.display = 'flex';
 });
 
 function closeConfirm() {
   document.getElementById('confirm-overlay').style.display = 'none';
+  var btn = document.getElementById('btn-confirm');
+  btn.textContent = '✅ Confirm & Join';
+  btn.disabled = false;
 }
 
-async function submitRegister() {
+async function submitRegister(e) {
   if (!pendingFormData) return;
-
-  // Change button to loading state
-  event.target.textContent = '⏳ Creating...';
-  event.target.disabled = true;
-
+  var btn = document.getElementById('btn-confirm');
+  btn.textContent = '⏳ Creating...';
+  btn.disabled = true;
   try {
-    const res  = await fetch('http://localhost:3000/api/register', {
-      method: 'POST',
-      body: pendingFormData
-    });
-    const data = await res.json();
-
+    var res  = await fetch(API_URL + '/api/register', { method: 'POST', body: pendingFormData });
+    var data = await res.json();
+    if (data.success) { showSuccess(data.user.first_name); }
+    else { closeConfirm(); alert('❌ ' + data.error); }
+  } catch (err) {
     closeConfirm();
-
-    if (data.success) {
-      // Show success message
-      showSuccess(data.user.first_name);
-    } else {
-      alert('❌ ' + data.error);
-    }
-  } catch (e) {
-    closeConfirm();
-    alert('❌ Cannot connect to server. Is node server.js running?');
+    alert('❌ Cannot connect to server. Check your Railway URL.');
   }
 }
 
 function showSuccess(name) {
-  var overlay = document.getElementById('confirm-overlay');
-  overlay.style.display = 'flex';
-  overlay.querySelector('div').innerHTML = `
+  document.getElementById('confirm-box').innerHTML = `
     <div style="text-align:center;padding:10px 0;">
       <div style="width:64px;height:64px;border-radius:50%;background:#EDF5EF;border:2px solid rgba(30,122,71,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
         <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1E7A47" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
@@ -786,14 +657,39 @@ function showSuccess(name) {
         style="width:100%;height:44px;background:linear-gradient(135deg,#155C35,#1E7A47);border:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#fff;cursor:pointer;">
         Go to Sign In →
       </button>
-    </div>
-  `;
+    </div>`;
 }
 
-// Close modal when clicking outside
-document.getElementById('confirm-overlay').addEventListener('click', function(e) {
+// ── LOGIN ──
+document.getElementById('btn-login').addEventListener('click', async function () {
+  var email    = document.getElementById('le').value.trim();
+  var password = document.getElementById('lp').value;
+  if (!email || !password) { alert('Please enter email and password.'); return; }
+  var btn = document.getElementById('btn-login');
+  btn.textContent = '⏳ Signing in...';
+  btn.disabled = true;
+  try {
+    var res  = await fetch(API_URL + '/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, password: password })
+    });
+    var data = await res.json();
+    if (data.success) { alert('✅ Welcome back, ' + data.user.name + '!'); }
+    else { alert('❌ ' + data.error); }
+  } catch (err) {
+    alert('❌ Cannot connect to server. Check your Railway URL.');
+  } finally {
+    btn.innerHTML = 'Sign in to AgroNexa <svg class="arr" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>';
+    btn.disabled = false;
+  }
+});
+
+document.getElementById('confirm-overlay').addEventListener('click', function (e) {
   if (e.target === this) closeConfirm();
 });
+
+selRole('farmer');
 </script>
 </body>
 </html>

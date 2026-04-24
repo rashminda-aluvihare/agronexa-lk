@@ -18,6 +18,7 @@ const pool = new Pool({
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
   port: 5432,
+  ssl: process.env.DB_HOST === 'localhost' ? false : { rejectUnauthorized: false }
 });
 
 // Test DB connection
@@ -120,5 +121,5 @@ app.post('/api/login', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 AgroNexa server running at http://localhost:${PORT}`);
+  console.log(`🚀 AgroNexa server running on port ${PORT}`);
 });
