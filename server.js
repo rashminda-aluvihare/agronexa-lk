@@ -6,6 +6,15 @@ const multer = require('multer');
 const cors = require('cors');
 const path = require('path');
 
+
+const fs = require('fs');
+
+// create upload folders if not exist
+const uploadDir = 'uploads/nic/';
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const app = express();
 app.use(cors({
   origin: '*'
@@ -20,9 +29,9 @@ const pool = new Pool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   port: 5432,
-  ssl: process.env.DATABASE_URL === 'localhost' ? false : { rejectUnauthorized: false }
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
 });
-
 // Test DB connection
 pool.connect((err) => {
   if (err) console.error('❌ DB connection failed:', err.message);
