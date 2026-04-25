@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AgroNexa Admin — Verification Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g0:#041A0D;--g1:#062316;--g2:#0B3D22;--g3:#155C35;--g4:#1E7A47;--g5:#28A060;--g6:#3DC98A;
+  --warn:#C88C00;--warn-bg:#FEF8EE;--warn-border:rgba(200,140,0,0.2);
+  --danger:#C0392B;--danger-bg:#FEF0EE;--danger-border:rgba(192,57,43,0.2);
+  --ok:#155C35;--ok-bg:#EDF5EF;--ok-border:rgba(30,122,71,0.2);
+  --ink:#050F07;--paper:#F7FAF8;--card:#fff;
+  --border:#E2EDE7;--muted:#8BA897;
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);}
+
+/* ── AUTH SCREEN ── */
+#auth-screen{
+  display:flex;align-items:center;justify-content:center;min-height:100vh;
+  background:var(--g0);
+  background-image:linear-gradient(rgba(61,201,138,0.03) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(61,201,138,0.03) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+.auth-card{
+  background:#fff;border-radius:20px;padding:40px 36px;width:100%;max-width:380px;
+  box-shadow:0 24px 80px rgba(4,26,13,0.35);border:1px solid rgba(61,201,138,0.12);
+}
+.auth-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
+.auth-logo-mark{
+  width:40px;height:40px;border-radius:10px;
+  background:linear-gradient(135deg,var(--g3),var(--g4));
+  display:flex;align-items:center;justify-content:center;
+}
+.auth-title{font-family:'Playfair Display',serif;font-size:1rem;color:var(--ink);}
+.auth-sub{font-size:11px;color:var(--muted);letter-spacing:.5px;}
+.auth-h{font-family:'Playfair Display',serif;font-size:1.55rem;color:var(--ink);margin-bottom:4px;}
+.auth-p{font-size:13px;color:var(--muted);margin-bottom:24px;}
+.a-field{margin-bottom:14px;}
+.a-label{font-size:10px;font-weight:600;letter-spacing:.9px;text-transform:uppercase;color:#3A6648;margin-bottom:6px;display:block;}
+.a-inp{
+  width:100%;height:46px;padding:0 14px;border:1.5px solid var(--border);
+  border-radius:11px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);
+  outline:none;transition:border-color .18s,box-shadow .18s;background:#fff;
+}
+.a-inp:focus{border-color:var(--g4);box-shadow:0 0 0 3px rgba(30,122,71,0.09);}
+.a-btn{
+  width:100%;height:48px;background:linear-gradient(135deg,var(--g3),var(--g4));
+  border:none;border-radius:11px;font-family:'DM Sans',sans-serif;font-size:13.5px;
+  font-weight:600;color:#fff;cursor:pointer;transition:all .2s;
+  box-shadow:0 2px 12px rgba(21,92,53,0.25);margin-top:4px;
+}
+.a-btn:hover{background:linear-gradient(135deg,var(--g2),var(--g3));}
+.a-err{color:#B02828;font-size:12px;margin-top:8px;display:none;
+  background:#FEF0F0;padding:8px 12px;border-radius:8px;border-left:2px solid #D95050;}
+.a-err.show{display:block;}
+
+/* ── DASHBOARD ── */
+#dashboard{display:none;}
+.topbar{
+  background:var(--g0);border-bottom:1px solid rgba(61,201,138,0.1);
+  padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+}
+.tb-brand{display:flex;align-items:center;gap:10px;}
+.tb-mark{
+  width:32px;height:32px;border-radius:8px;
+  background:linear-gradient(135deg,var(--g3),var(--g4));
+  display:flex;align-items:center;justify-content:center;
+}
+.tb-name{font-family:'Playfair Display',serif;font-size:.9rem;color:#fff;}
+.tb-badge{
+  font-size:9px;letter-spacing:1.5px;text-transform:uppercase;
+  background:rgba(61,201,138,0.1);border:1px solid rgba(61,201,138,0.2);
+  color:rgba(61,201,138,0.8);border-radius:20px;padding:3px 9px;margin-left:6px;
+}
+.tb-right{display:flex;align-items:center;gap:14px;}
+.tb-stat{text-align:right;}
+.tb-stat-n{font-size:1rem;font-weight:600;color:#fff;}
+.tb-stat-l{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(61,201,138,0.5);}
+.tb-sep{width:1px;height:28px;background:rgba(255,255,255,0.08);}
+.tb-logout{
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
+  border-radius:8px;padding:6px 14px;font-family:'DM Sans',sans-serif;
+  font-size:12px;color:rgba(255,255,255,0.6);cursor:pointer;transition:all .18s;
+}
+.tb-logout:hover{background:rgba(255,255,255,0.1);color:#fff;}
+
+/* ── TABS ── */
+.tab-row{
+  display:flex;gap:2px;padding:20px 28px 0;border-bottom:1px solid var(--border);
+  background:#fff;
+}
+.tab-btn{
+  padding:10px 20px;border:none;background:transparent;font-family:'DM Sans',sans-serif;
+  font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;
+  margin-bottom:-1px;transition:all .18s;display:flex;align-items:center;gap:7px;
+}
+.tab-btn.on{color:var(--g3);border-bottom-color:var(--g4);font-weight:600;}
+.tab-count{
+  font-size:10px;background:var(--ok-bg);color:var(--ok);border-radius:20px;
+  padding:2px 8px;font-weight:600;
+}
+.tab-btn.on .tab-count{background:var(--g4);color:#fff;}
+
+/* ── CONTENT ── */
+.content{padding:28px;max-width:1100px;margin:0 auto;}
+.section-title{
+  font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);
+  margin-bottom:16px;display:flex;align-items:center;gap:10px;
+}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── USER CARDS ── */
+.cards{display:flex;flex-direction:column;gap:16px;}
+.ucard{
+  background:var(--card);border:1.5px solid var(--border);border-radius:16px;
+  overflow:hidden;transition:box-shadow .2s;
+}
+.ucard:hover{box-shadow:0 4px 20px rgba(4,26,13,0.07);}
+.ucard-top{
+  padding:18px 20px;display:flex;align-items:flex-start;gap:16px;
+  border-bottom:1px solid var(--border);cursor:pointer;
+}
+.ucard-avatar{
+  width:44px;height:44px;border-radius:12px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--g2),var(--g3));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff;
+}
+.ucard-info{flex:1;min-width:0;}
+.ucard-name{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:2px;}
+.ucard-email{font-size:12px;color:var(--muted);}
+.ucard-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.meta-pill{
+  font-size:10.5px;background:var(--paper);border:1px solid var(--border);
+  color:#4A7060;border-radius:20px;padding:3px 10px;
+}
+.ucard-status{
+  font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
+  border-radius:20px;padding:4px 12px;flex-shrink:0;
+}
+.s-pending{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-border);}
+.s-approved{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-border);}
+.s-rejected{background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-border);}
+
+/* ── EXPAND AREA ── */
+.ucard-body{display:none;padding:20px;}
+.ucard.open .ucard-body{display:block;}
+.nic-viewer{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+.nic-frame{
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden;
+  background:var(--paper);
+}
+.nic-frame-label{
+  padding:8px 14px;font-size:10px;font-weight:600;letter-spacing:1px;
+  text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nic-frame img{width:100%;height:140px;object-fit:cover;display:block;}
+.nic-placeholder{
+  height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;color:#C1D4C9;
+}
+.nic-placeholder span{font-size:11px;}
+
+.actions{display:flex;gap:10px;flex-wrap:wrap;}
+.btn-approve{
+  flex:1;min-width:120px;height:44px;background:linear-gradient(135deg,var(--g3),var(--g4));
+  border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;
+  font-weight:600;color:#fff;cursor:pointer;transition:all .2s;
+  box-shadow:0 2px 10px rgba(21,92,53,0.2);display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-approve:hover{background:linear-gradient(135deg,var(--g2),var(--g3));}
+.btn-reject{
+  flex:1;min-width:120px;height:44px;background:#fff;
+  border:1.5px solid var(--danger-border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;
+  font-weight:600;color:var(--danger);cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-reject:hover{background:var(--danger-bg);}
+
+.reason-box{margin-bottom:12px;display:none;}
+.reason-inp{
+  width:100%;padding:10px 14px;border:1.5px solid var(--danger-border);
+  border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;
+  color:var(--ink);outline:none;background:#fff;resize:vertical;min-height:70px;
+}
+.reason-inp:focus{border-color:var(--danger);}
+.btn-confirm-reject{
+  height:40px;background:var(--danger);border:none;border-radius:9px;
+  font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:600;color:#fff;
+  cursor:pointer;padding:0 18px;
+}
+
+.empty-state{
+  text-align:center;padding:60px 20px;color:var(--muted);
+}
+.empty-state svg{margin-bottom:12px;opacity:.35;}
+.empty-state h3{font-size:1rem;color:#3A6648;margin-bottom:6px;}
+.empty-state p{font-size:13px;}
+
+.loading{text-align:center;padding:40px;color:var(--muted);font-size:13px;}
+
+/* ── TOAST ── */
+#toast{
+  position:fixed;bottom:24px;right:24px;background:var(--g0);color:#fff;
+  border-radius:12px;padding:12px 18px;font-size:13px;font-weight:500;
+  box-shadow:0 8px 30px rgba(4,26,13,0.35);z-index:9999;
+  transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none;
+}
+#toast.show{transform:translateY(0);opacity:1;}
+
+/* ── NIC LIGHTBOX ── */
+#lightbox{
+  display:none;position:fixed;inset:0;background:rgba(4,26,13,0.85);
+  z-index:9999;align-items:center;justify-content:center;
+}
+#lightbox.open{display:flex;}
+#lightbox img{
+  max-width:90vw;max-height:85vh;border-radius:12px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+#lightbox-close{
+  position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.1);
+  border:none;border-radius:50%;width:40px;height:40px;color:#fff;
+  font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+
+@media(max-width:640px){
+  .content{padding:16px;}
+  .tab-row{padding:16px 16px 0;}
+  .topbar{padding:0 16px;}
+  .nic-viewer{grid-template-columns:1fr;}
+  .tb-stat{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-mark">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-width="1.5"><path d="M10 2C7 2 4.5 4.5 4.5 7.5c0 4.5 5.5 10.5 5.5 10.5S15.5 12 15.5 7.5C15.5 4.5 13 2 10 2z"/><circle cx="10" cy="7.5" r="2"/></svg>
+      </div>
+      <div>
+        <div class="auth-title">AgroNexa LK</div>
+        <div class="auth-sub">Admin Portal</div>
+      </div>
+    </div>
+    <div class="auth-h">Admin Sign In</div>
+    <div class="auth-p">Access the verification dashboard</div>
+    <div class="a-field">
+      <label class="a-label">Admin Email</label>
+      <input class="a-inp" id="a-email" type="email" placeholder="admin@agronexa.lk"/>
+    </div>
+    <div class="a-field">
+      <label class="a-label">Password</label>
+      <input class="a-inp" id="a-pass" type="password" placeholder="Admin password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    </div>
+    <div class="a-err" id="a-err"></div>
+    <button class="a-btn" onclick="doLogin()" id="login-btn">Sign In to Dashboard</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <div class="topbar">
+    <div class="tb-brand">
+      <div class="tb-mark">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-width="1.5"><path d="M10 2C7 2 4.5 4.5 4.5 7.5c0 4.5 5.5 10.5 5.5 10.5S15.5 12 15.5 7.5C15.5 4.5 13 2 10 2z"/><circle cx="10" cy="7.5" r="2"/></svg>
+      </div>
+      <span class="tb-name">AgroNexa LK</span>
+      <span class="tb-badge">Admin</span>
+    </div>
+    <div class="tb-right">
+      <div class="tb-stat">
+        <div class="tb-stat-n" id="stat-pending">—</div>
+        <div class="tb-stat-l">Pending</div>
+      </div>
+      <div class="tb-sep"></div>
+      <div class="tb-stat">
+        <div class="tb-stat-n" id="stat-total">—</div>
+        <div class="tb-stat-l">Total Users</div>
+      </div>
+      <div class="tb-sep"></div>
+      <button class="tb-logout" onclick="logout()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="tab-row">
+    <button class="tab-btn on" id="tab-pending-btn" onclick="switchTab('pending')">
+      ⏳ Pending Review <span class="tab-count" id="pending-count">0</span>
+    </button>
+    <button class="tab-btn" id="tab-all-btn" onclick="switchTab('all')">
+      📋 All Registrations <span class="tab-count" id="all-count">0</span>
+    </button>
+  </div>
+
+  <div class="content">
+    <div id="tab-pending">
+      <div class="section-title">Awaiting NIC Verification</div>
+      <div class="cards" id="pending-list"><div class="loading">Loading...</div></div>
+    </div>
+    <div id="tab-all" style="display:none;">
+      <div class="section-title">All Registrations</div>
+      <div class="cards" id="all-list"><div class="loading">Loading...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLightbox()">
+  <button id="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="NIC"/>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+var API_URL = 'https://agronexa-lk-production.up.railway.app';
+var adminEmail = '', adminPass = '';
+var allUsers = [], pendingUsers = [];
+var currentTab = 'pending';
+
+// ── AUTH ──
+async function doLogin() {
+  var email = document.getElementById('a-email').value.trim();
+  var pass  = document.getElementById('a-pass').value;
+  var err   = document.getElementById('a-err');
+  var btn   = document.getElementById('login-btn');
+  if (!email || !pass) { showErr('Please enter email and password.'); return; }
+  btn.textContent = 'Signing in...'; btn.disabled = true;
+  try {
+    var res  = await fetch(API_URL + '/api/login', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email, password: pass })
+    });
+    var data = await res.json();
+    if (data.success) {
+      adminEmail = email; adminPass = pass;
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      loadAll();
+    } else { showErr(data.error || 'Invalid credentials'); }
+  } catch(e) { showErr('Cannot connect to server.'); }
+  btn.textContent = 'Sign In to Dashboard'; btn.disabled = false;
+}
+function showErr(msg) {
+  var el = document.getElementById('a-err');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(function(){ el.classList.remove('show'); }, 4000);
+}
+function logout() {
+  adminEmail = ''; adminPass = '';
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+}
+
+// ── DATA ──
+async function loadAll() {
+  await Promise.all([loadPending(), loadAllUsers()]);
+}
+async function loadPending() {
+  try {
+    var res = await fetch(API_URL + '/api/admin/pending?admin_email=' + encodeURIComponent(adminEmail) + '&admin_password=' + encodeURIComponent(adminPass));
+    var data = await res.json();
+    pendingUsers = data.users || [];
+    document.getElementById('pending-count').textContent = pendingUsers.length;
+    document.getElementById('stat-pending').textContent = pendingUsers.length;
+    renderList('pending-list', pendingUsers, true);
+  } catch(e) { document.getElementById('pending-list').innerHTML = '<div class="loading">Error loading data.</div>'; }
+}
+async function loadAllUsers() {
+  try {
+    var res = await fetch(API_URL + '/api/admin/users?admin_email=' + encodeURIComponent(adminEmail) + '&admin_password=' + encodeURIComponent(adminPass));
+    var data = await res.json();
+    allUsers = data.users || [];
+    document.getElementById('all-count').textContent = allUsers.length;
+    document.getElementById('stat-total').textContent = allUsers.length;
+    renderList('all-list', allUsers, false);
+  } catch(e) {}
+}
+
+// ── RENDER ──
+function renderList(containerId, users, actionsVisible) {
+  var el = document.getElementById(containerId);
+  if (!users.length) {
+    el.innerHTML = '<div class="empty-state">'
+      + '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg>'
+      + '<h3>No records here</h3><p>Nothing to show in this view.</p></div>';
+    return;
+  }
+  el.innerHTML = '';
+  users.forEach(function(u) {
+    var card = document.createElement('div');
+    card.className = 'ucard';
+    card.id = 'card-' + u.id;
+    var initials = (u.first_name[0] + u.last_name[0]).toUpperCase();
+    var statusClass = 's-' + (u.status || 'pending');
+    var statusLabel = (u.status || 'pending').charAt(0).toUpperCase() + (u.status || 'pending').slice(1);
+    var date = u.created_at ? new Date(u.created_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+    var frontUrl = u.nic_front_path ? API_URL + '/' + u.nic_front_path : null;
+    var backUrl  = u.nic_back_path  ? API_URL + '/' + u.nic_back_path  : null;
+
+    card.innerHTML =
+      '<div class="ucard-top" onclick="toggleCard(' + u.id + ')">'
+        + '<div class="ucard-avatar">' + initials + '</div>'
+        + '<div class="ucard-info">'
+          + '<div class="ucard-name">' + esc(u.first_name) + ' ' + esc(u.last_name) + '</div>'
+          + '<div class="ucard-email">' + esc(u.email) + '</div>'
+          + '<div class="ucard-meta">'
+            + '<span class="meta-pill">' + (u.role === 'farmer' ? '🌾 Farmer' : '🛒 Buyer') + '</span>'
+            + '<span class="meta-pill">📍 ' + esc(u.district || '—') + '</span>'
+            + '<span class="meta-pill">📅 ' + date + '</span>'
+            + (u.nic_number ? '<span class="meta-pill">🪪 ' + esc(u.nic_number) + '</span>' : '')
+          + '</div>'
+        + '</div>'
+        + '<span class="ucard-status ' + statusClass + '">' + statusLabel + '</span>'
+      + '</div>'
+      + '<div class="ucard-body" id="body-' + u.id + '">'
+        + '<div class="nic-viewer">'
+          + nicFrame('Front Side', frontUrl, u.id + '-front')
+          + nicFrame('Back Side', backUrl, u.id + '-back')
+        + '</div>'
+        + (u.rejection_reason ? '<div style="background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--danger);"><strong>Rejection reason:</strong> ' + esc(u.rejection_reason) + '</div>' : '')
+        + (actionsVisible && u.status === 'pending' ? renderActions(u.id) : '')
+      + '</div>';
+    el.appendChild(card);
+  });
+}
+
+function nicFrame(label, url, imgId) {
+  var inner = url
+    ? '<img src="' + url + '" alt="NIC" id="nic-img-' + imgId + '" onclick="openLightbox(\'' + url + '\')" style="cursor:zoom-in;" onerror="this.parentNode.innerHTML=\'<div class=nic-placeholder><svg width=32 height=32 viewBox=&quot;0 0 24 24&quot; fill=none stroke=currentColor stroke-width=1.2><rect x=2 y=5 width=20 height=15 rx=2/><path d=&quot;M2 10l5-4 4 4 4-5 7 5&quot;/></svg><span>Image unavailable</span></div>\'"/>'
+    : '<div class="nic-placeholder"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="5" width="20" height="15" rx="2"/></svg><span>Not uploaded</span></div>';
+  return '<div class="nic-frame"><div class="nic-frame-label">' + label + '</div>' + inner + '</div>';
+}
+
+function renderActions(uid) {
+  return '<div id="action-area-' + uid + '">'
+    + '<div class="reason-box" id="reason-box-' + uid + '">'
+      + '<textarea class="reason-inp" id="reason-inp-' + uid + '" placeholder="Reason for rejection (e.g. NIC image blurry, NIC mismatch)..."></textarea>'
+      + '<div style="display:flex;gap:8px;margin-top:8px;">'
+        + '<button class="btn-confirm-reject" onclick="doReject(' + uid + ')">Confirm Reject</button>'
+        + '<button onclick="cancelReject(' + uid + ')" style="height:40px;background:transparent;border:1.5px solid var(--border);border-radius:9px;padding:0 14px;font-size:12.5px;cursor:pointer;color:var(--muted);">Cancel</button>'
+      + '</div>'
+    + '</div>'
+    + '<div class="actions">'
+      + '<button class="btn-approve" onclick="doApprove(' + uid + ')">✅ Approve Account</button>'
+      + '<button class="btn-reject" onclick="startReject(' + uid + ')">❌ Reject</button>'
+    + '</div>'
+  + '</div>';
+}
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── CARD TOGGLE ──
+function toggleCard(id) {
+  var card = document.getElementById('card-' + id);
+  card.classList.toggle('open');
+}
+
+// ── LIGHTBOX ──
+function openLightbox(url) {
+  document.getElementById('lightbox-img').src = url;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+
+// ── REJECT FLOW ──
+function startReject(uid) {
+  document.getElementById('reason-box-' + uid).style.display = 'block';
+  document.getElementById('reason-inp-' + uid).focus();
+}
+function cancelReject(uid) {
+  document.getElementById('reason-box-' + uid).style.display = 'none';
+  document.getElementById('reason-inp-' + uid).value = '';
+}
+
+// ── APPROVE ──
+async function doApprove(uid) {
+  var btn = document.querySelector('#action-area-' + uid + ' .btn-approve');
+  btn.textContent = '⏳ Approving...'; btn.disabled = true;
+  try {
+    var res = await fetch(API_URL + '/api/admin/approve/' + uid, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ admin_email: adminEmail, admin_password: adminPass })
+    });
+    var data = await res.json();
+    if (data.success) {
+      showToast('✅ Account approved successfully!');
+      await loadAll();
+    } else { showToast('❌ ' + (data.error||'Error')); }
+  } catch(e) { showToast('❌ Connection error'); }
+}
+
+// ── REJECT ──
+async function doReject(uid) {
+  var reason = document.getElementById('reason-inp-' + uid).value.trim();
+  if (!reason) { document.getElementById('reason-inp-' + uid).style.borderColor='var(--danger)'; return; }
+  try {
+    var res = await fetch(API_URL + '/api/admin/reject/' + uid, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ admin_email: adminEmail, admin_password: adminPass, reason })
+    });
+    var data = await res.json();
+    if (data.success) {
+      showToast('🚫 Account rejected.');
+      await loadAll();
+    } else { showToast('❌ ' + (data.error||'Error')); }
+  } catch(e) { showToast('❌ Connection error'); }
+}
+
+// ── TABS ──
+function switchTab(t) {
+  currentTab = t;
+  document.getElementById('tab-pending').style.display = t==='pending' ? 'block' : 'none';
+  document.getElementById('tab-all').style.display     = t==='all'     ? 'block' : 'none';
+  document.getElementById('tab-pending-btn').classList.toggle('on', t==='pending');
+  document.getElementById('tab-all-btn').classList.toggle('on', t==='all');
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3000);
+}
+</script>
+</body>
+</html>

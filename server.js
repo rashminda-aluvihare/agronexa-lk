@@ -8,8 +8,8 @@ const path = require('path');
 
 // ── ADMIN CONFIG ──
 // Change these before deploying!
-const ADMIN_EMAIL    = process.env.ADMIN_EMAIL    || 'admin@agronexa.lk';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Admin@AgroNexa2026';
+const ADMIN_EMAIL    = process.env.ADMIN_EMAIL    || 'rashminda@gmail.com';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'FGFGRTYRfhfh254588fgg';
 
 
 const fs = require('fs');
@@ -22,10 +22,17 @@ if (!fs.existsSync(uploadDir)) {
 
 const app = express();
 app.use(cors({
-  origin: '*'
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
+
+// Serve admin panel
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
+});
 
 // PostgreSQL connection
 const pool = new Pool({
@@ -37,30 +44,23 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
-// Test DB connection + auto-migrate
+// Test DB connection + auto-migrate + seed admin
 pool.connect(async (err, client, release) => {
   if (err) { console.error('❌ DB connection failed:', err.message); return; }
   console.log('✅ Connected to PostgreSQL!');
   try {
-    // Add status column if missing
-    await client.query(`
-      ALTER TABLE users ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'pending';
-    `);
-    // Add rejection_reason column if missing
-    await client.query(`
-      ALTER TABLE users ADD COLUMN IF NOT EXISTS rejection_reason TEXT;
-    `);
-    // Set all existing approved-era rows (admin, etc.) to approved
-    await client.query(`
-      UPDATE users SET status = 'approved' WHERE status IS NULL;
-    `);
-    console.log('✅ DB migration done (status column ready)');
+    // Add columns if missing
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'pending';");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS rejection_reason TEXT;");
+    await client.query("UPDATE users SET status = 'approved' WHERE status IS NULL;");
+    console.log('✅ DB migration done');
+
+    // Admin is verified via env credentials only — no DB entry needed
   } catch (e) {
-    console.error('Migration warning:', e.message);
+    console.error('Migration/seed warning:', e.message);
   }
   release();
 });
-
 // Multer file upload setup
 const storage = multer.diskStorage({
   destination: 'uploads/nic/',
@@ -121,6 +121,15 @@ app.post('/api/login', async (req, res) => {
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
+    // ── Check if admin credentials ──
+    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+      console.log('✅ Admin logged in:', email);
+      return res.json({
+        success: true,
+        user: { id: 0, email: ADMIN_EMAIL, role: 'admin', name: 'Admin' }
+      });
+    }
+
     const result = await pool.query(
       'SELECT * FROM users WHERE email = $1', [email]
     );
@@ -167,14 +176,7 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-// ── ADMIN LOGIN ──
-app.post('/api/admin/login', async (req, res) => {
-  const { email, password } = req.body;
-  if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
-    return res.status(401).json({ error: 'Invalid admin credentials' });
-  }
-  res.json({ success: true, role: 'admin' });
-});
+// Admin login is handled via /api/login (role: 'admin' returned)
 
 // ── ADMIN: GET PENDING USERS ──
 app.get('/api/admin/pending', async (req, res) => {
