@@ -6,6 +6,11 @@ const multer = require('multer');
 const cors = require('cors');
 const path = require('path');
 
+// ── ADMIN CONFIG ──
+// Change these before deploying!
+const ADMIN_EMAIL    = process.env.ADMIN_EMAIL    || 'admin@agronexa.lk';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Admin@AgroNexa2026';
+
 
 const fs = require('fs');
 
@@ -32,10 +37,28 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
-// Test DB connection
-pool.connect((err) => {
-  if (err) console.error('❌ DB connection failed:', err.message);
-  else console.log('✅ Connected to PostgreSQL!');
+// Test DB connection + auto-migrate
+pool.connect(async (err, client, release) => {
+  if (err) { console.error('❌ DB connection failed:', err.message); return; }
+  console.log('✅ Connected to PostgreSQL!');
+  try {
+    // Add status column if missing
+    await client.query(`
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'pending';
+    `);
+    // Add rejection_reason column if missing
+    await client.query(`
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS rejection_reason TEXT;
+    `);
+    // Set all existing approved-era rows (admin, etc.) to approved
+    await client.query(`
+      UPDATE users SET status = 'approved' WHERE status IS NULL;
+    `);
+    console.log('✅ DB migration done (status column ready)');
+  } catch (e) {
+    console.error('Migration warning:', e.message);
+  }
+  release();
 });
 
 // Multer file upload setup
@@ -69,11 +92,11 @@ app.post('/api/register',
       const result = await pool.query(
         `INSERT INTO users
           (role, first_name, last_name, email, phone, district,
-           address, nic_number, password_hash, nic_front_path, nic_back_path)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+           address, nic_number, password_hash, nic_front_path, nic_back_path, status)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
          RETURNING id, email, role, first_name`,
         [role, first_name, last_name, email, phone, district,
-         address, nic_number, password_hash, nic_front_path, nic_back_path]
+         address, nic_number, password_hash, nic_front_path, nic_back_path, 'pending']
       );
 
       console.log('✅ New user registered:', result.rows[0].email);
@@ -113,6 +136,20 @@ app.post('/api/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
+    // Check account approval status
+    if (user.status === 'pending') {
+      return res.status(403).json({
+        error: 'Your account is pending admin approval. You will be notified once verified.',
+        status: 'pending'
+      });
+    }
+    if (user.status === 'rejected') {
+      return res.status(403).json({
+        error: 'Your account was rejected. Reason: ' + (user.rejection_reason || 'NIC verification failed.'),
+        status: 'rejected'
+      });
+    }
+
     console.log('✅ User logged in:', user.email);
     res.json({
       success: true,
@@ -127,6 +164,89 @@ app.post('/api/login', async (req, res) => {
   } catch (err) {
     console.error('Login error:', err.message);
     res.status(500).json({ error: 'Login failed. Please try again.' });
+  }
+});
+
+// ── ADMIN LOGIN ──
+app.post('/api/admin/login', async (req, res) => {
+  const { email, password } = req.body;
+  if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Invalid admin credentials' });
+  }
+  res.json({ success: true, role: 'admin' });
+});
+
+// ── ADMIN: GET PENDING USERS ──
+app.get('/api/admin/pending', async (req, res) => {
+  const { admin_email, admin_password } = req.query;
+  if (admin_email !== ADMIN_EMAIL || admin_password !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  try {
+    const result = await pool.query(
+      `SELECT id, role, first_name, last_name, email, phone, district, address,
+              nic_number, nic_front_path, nic_back_path, status, created_at
+       FROM users
+       WHERE status = 'pending'
+       ORDER BY created_at ASC`
+    );
+    res.json({ success: true, users: result.rows });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── ADMIN: GET ALL USERS (for history) ──
+app.get('/api/admin/users', async (req, res) => {
+  const { admin_email, admin_password } = req.query;
+  if (admin_email !== ADMIN_EMAIL || admin_password !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  try {
+    const result = await pool.query(
+      `SELECT id, role, first_name, last_name, email, phone, district,
+              nic_number, nic_front_path, nic_back_path, status, rejection_reason, created_at
+       FROM users ORDER BY created_at DESC`
+    );
+    res.json({ success: true, users: result.rows });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── ADMIN: APPROVE USER ──
+app.post('/api/admin/approve/:id', async (req, res) => {
+  const { admin_email, admin_password } = req.body;
+  if (admin_email !== ADMIN_EMAIL || admin_password !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  try {
+    await pool.query(
+      `UPDATE users SET status = 'approved', rejection_reason = NULL WHERE id = $1`,
+      [req.params.id]
+    );
+    console.log('✅ Admin approved user ID:', req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── ADMIN: REJECT USER ──
+app.post('/api/admin/reject/:id', async (req, res) => {
+  const { admin_email, admin_password, reason } = req.body;
+  if (admin_email !== ADMIN_EMAIL || admin_password !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  try {
+    await pool.query(
+      `UPDATE users SET status = 'rejected', rejection_reason = $1 WHERE id = $2`,
+      [reason || 'NIC verification failed', req.params.id]
+    );
+    console.log('✅ Admin rejected user ID:', req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
