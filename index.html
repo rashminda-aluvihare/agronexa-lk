@@ -648,18 +648,16 @@ async function submitRegister(e) {
 function showSuccess(name) {
   document.getElementById('confirm-box').innerHTML = `
     <div style="text-align:center;padding:10px 0;">
-      <div style="width:64px;height:64px;border-radius:50%;background:#FEF8EE;border:2px solid rgba(200,140,0,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#C88C00" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      <div style="width:64px;height:64px;border-radius:50%;background:#EDF5EF;border:2px solid rgba(30,122,71,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1E7A47" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
-      <div style="font-family:'Playfair Display',serif;font-size:1.4rem;color:#050F07;margin-bottom:8px;">Account Submitted, ${name}! 🌱</div>
-      <div style="font-size:13px;color:#7BA090;line-height:1.7;margin-bottom:8px;">Your registration is <strong style="color:#C88C00;">pending admin approval</strong>.</div>
-      <div style="font-size:12px;color:#9AB8A7;line-height:1.65;margin-bottom:24px;">Our team will verify your NIC and approve your account shortly. You can then sign in.</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.4rem;color:#050F07;margin-bottom:8px;">Welcome, ${name}! 🌱</div>
+      <div style="font-size:13px;color:#7BA090;line-height:1.7;margin-bottom:24px;">Your AgroNexa LK account has been<br/>created successfully!</div>
       <button onclick="document.getElementById('confirm-overlay').style.display='none'; sw('login');"
         style="width:100%;height:44px;background:linear-gradient(135deg,#155C35,#1E7A47);border:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#fff;cursor:pointer;">
-        Back to Sign In →
+        Go to Sign In →
       </button>
     </div>`;
-}
 }
 
 // ── LOGIN ──
@@ -677,18 +675,8 @@ document.getElementById('btn-login').addEventListener('click', async function ()
       body: JSON.stringify({ email: email, password: password })
     });
     var data = await res.json();
-    if (data.success) {
-      if (data.user.role === 'admin') {
-        window.location.href = '/admin';
-      } else {
-        alert('✅ Welcome back, ' + data.user.name + '!');
-      }
-    }
-    else if (data.status === 'pending') {
-      alert('⏳ Your account is pending admin approval.\nYou will be able to login once your NIC is verified.');
-    } else if (data.status === 'rejected') {
-      alert('❌ ' + data.error);
-    } else { alert('❌ ' + data.error); }
+    if (data.success) { alert('✅ Welcome back, ' + data.user.name + '!'); }
+    else { alert('❌ ' + data.error); }
   } catch (err) {
     alert('❌ Cannot connect to server. Check your Railway URL.');
   } finally {
