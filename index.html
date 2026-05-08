@@ -675,7 +675,21 @@ document.getElementById('btn-login').addEventListener('click', async function ()
       body: JSON.stringify({ email: email, password: password })
     });
     var data = await res.json();
-    if (data.success) { alert('✅ Welcome back, ' + data.user.name + '!'); }
+    if (data.success) {
+      // Store user info in sessionStorage for dashboard use
+      sessionStorage.setItem('agro_user', JSON.stringify(data.user));
+      // Redirect based on role
+      var role = data.user.role;
+      if (role === 'admin') {
+        window.location.href = 'admin.html';
+      } else if (role === 'farmer') {
+        window.location.href = 'seller.html';
+      } else if (role === 'buyer') {
+        window.location.href = 'buyer.html';
+      } else {
+        alert('✅ Welcome back, ' + data.user.name + '!');
+      }
+    }
     else { alert('❌ ' + data.error); }
   } catch (err) {
     alert('❌ Cannot connect to server. Check your Railway URL.');
