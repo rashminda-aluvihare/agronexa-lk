@@ -252,6 +252,24 @@ app.post('/api/admin/reject/:id', async (req, res) => {
   }
 });
 
+// ── PROFILE: GET FULL USER DATA ──
+app.get('/api/profile/:id', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, role, first_name, last_name, email, phone, district,
+              address, nic_number, status, created_at
+       FROM users WHERE id = $1`,
+      [req.params.id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json({ success: true, user: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 AgroNexa server running on port ${PORT}`);
