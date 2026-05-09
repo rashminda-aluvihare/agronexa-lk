@@ -168,6 +168,35 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
 @media(max-width:860px){.L{width:42%;}.LC{padding:30px 26px;}.ht-h1{font-size:2.1rem;}.features{display:none;}}
 @media(max-width:640px){.app{flex-direction:column;}.L{width:100%;min-height:200px;}.features{display:none;}.LC{padding:24px 20px;}.hero-text{margin-bottom:16px;}.R{padding:26px 18px;}.tc{grid-template-columns:1fr;}}
 @media(max-width:380px){.nic-grid{grid-template-columns:1fr;}}
+
+/* ── OTP overlay ── */
+.otp-overlay{display:none;position:fixed;inset:0;background:rgba(4,26,13,0.72);backdrop-filter:blur(6px);z-index:2000;align-items:center;justify-content:center;}
+.otp-box{background:#fff;border-radius:22px;padding:36px 32px;max-width:390px;width:92%;box-shadow:0 24px 64px rgba(4,26,13,0.32);border:1px solid rgba(40,160,96,0.15);animation:popIn .25s ease;}
+.otp-icon{width:60px;height:60px;border-radius:18px;background:#EDF5EF;border:1px solid rgba(30,122,71,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
+.otp-title{font-family:'Playfair Display',serif;font-size:1.4rem;color:#050F07;text-align:center;margin-bottom:6px;}
+.otp-sub{font-size:13px;color:#7BA090;text-align:center;line-height:1.65;margin-bottom:24px;}
+.otp-sub strong{color:#155C35;}
+.otp-digits{display:flex;gap:10px;justify-content:center;margin-bottom:20px;}
+.otp-digit{width:46px;height:58px;border:1.5px solid #DDE9E2;border-radius:12px;font-family:'Playfair Display',serif;font-size:1.6rem;text-align:center;color:#050F07;outline:none;background:#FAFCF8;transition:border-color .18s,box-shadow .18s;caret-color:var(--g4);}
+.otp-digit:focus{border-color:var(--g4);box-shadow:0 0 0 3px rgba(30,122,71,0.10);}
+.otp-digit.err-digit{border-color:#D95050;animation:shake .3s ease;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.otp-status{min-height:32px;text-align:center;font-size:12.5px;margin-bottom:16px;border-radius:10px;padding:7px 14px;display:none;}
+.otp-status.show{display:block;}
+.otp-status.ok{background:#EDF5EF;color:#155C35;border:1px solid rgba(30,122,71,0.18);}
+.otp-status.bad{background:#FEF0F0;color:#B02828;border:1px solid rgba(209,80,80,0.2);}
+.otp-timer{text-align:center;font-size:12px;color:#8BA897;margin-bottom:20px;}
+.otp-timer span{color:var(--g4);font-weight:600;}
+.otp-resend-btn{background:none;border:none;font-family:'Inter',sans-serif;font-size:13px;color:var(--g4);font-weight:600;cursor:pointer;display:inline;}
+.otp-resend-btn:disabled{color:#B8CEC3;cursor:default;}
+.otp-actions{display:flex;gap:10px;}
+.otp-back{flex:1;height:46px;background:#fff;border:1.5px solid #DDE9E2;border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:#6B9B7A;cursor:pointer;}
+.otp-verify-btn{flex:2;height:46px;background:linear-gradient(135deg,var(--g3),var(--g4));border:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:600;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 2px 12px rgba(21,92,53,0.22);}
+.otp-verify-btn:disabled{opacity:.6;cursor:default;}
+.otp-progress{display:flex;gap:5px;justify-content:center;margin-bottom:24px;}
+.otp-step{height:3px;border-radius:2px;background:#E4EDE7;width:60px;transition:background .3s;}
+.otp-step.done{background:var(--g5);}
+.otp-step.active{background:var(--g6);}
 </style>
 </head>
 <body>
@@ -415,6 +444,42 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
 </div>
 </div>
 
+<!-- OTP VERIFICATION OVERLAY -->
+<div class="otp-overlay" id="otp-overlay">
+  <div class="otp-box">
+    <div class="otp-progress">
+      <div class="otp-step done" id="os1"></div>
+      <div class="otp-step active" id="os2"></div>
+      <div class="otp-step" id="os3"></div>
+    </div>
+    <div class="otp-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1E7A47" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M4.5 10h15M8 4v3M16 4v3"/><circle cx="8.5" cy="14" r="1"/><circle cx="12" cy="14" r="1"/><circle cx="15.5" cy="14" r="1"/></svg>
+    </div>
+    <div class="otp-title">Verify your number</div>
+    <div class="otp-sub">We sent a 6-digit code to<br/><strong id="otp-phone-display"></strong></div>
+    <div class="otp-digits">
+      <input class="otp-digit" id="od1" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code"/>
+      <input class="otp-digit" id="od2" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]"/>
+      <input class="otp-digit" id="od3" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]"/>
+      <input class="otp-digit" id="od4" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]"/>
+      <input class="otp-digit" id="od5" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]"/>
+      <input class="otp-digit" id="od6" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]"/>
+    </div>
+    <div class="otp-status" id="otp-status"></div>
+    <div class="otp-timer" id="otp-timer-wrap">Code expires in <span id="otp-countdown">5:00</span></div>
+    <div style="text-align:center;font-size:12.5px;color:#8BA897;margin-bottom:20px;">
+      Didn&apos;t receive it? <button class="otp-resend-btn" id="otp-resend" onclick="resendOtp()" disabled>Resend in <span id="otp-resend-sec">60</span>s</button>
+    </div>
+    <div class="otp-actions">
+      <button class="otp-back" onclick="closeOtp()">← Back</button>
+      <button class="otp-verify-btn" id="otp-verify-btn" onclick="verifyOtp()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Verify &amp; Continue
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- CONFIRMATION MODAL -->
 <div id="confirm-overlay" style="display:none;position:fixed;inset:0;background:rgba(4,26,13,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
   <div id="confirm-box" style="background:#fff;border-radius:20px;padding:32px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(4,26,13,0.3);border:1px solid rgba(40,160,96,0.15);animation:popIn .25s ease;">
@@ -551,8 +616,14 @@ function ddr(e, side) {
   var f = e.dataTransfer.files[0]; if (f) applyFile(f, side);
 }
 
-// ── REGISTER — show confirm modal ──
-document.getElementById('btn-register').addEventListener('click', function () {
+// ── OTP STATE ──
+var phoneVerified = false;
+var otpTimerInterval = null;
+var otpCountdownInterval = null;
+var otpResendInterval = null;
+
+// ── REGISTER: Step 1 — Validate form, then trigger OTP ──
+document.getElementById('btn-register').addEventListener('click', async function () {
   var role      = document.querySelector('.rc.sel').id.replace('rc-', '');
   var firstName = document.getElementById('r-fname').value.trim();
   var lastName  = document.getElementById('r-lname').value.trim();
@@ -564,25 +635,247 @@ document.getElementById('btn-register').addEventListener('click', function () {
   var nicNumber = document.getElementById('r-nic') ? document.getElementById('r-nic').value.trim() : '';
 
   if (!firstName || !lastName) { alert('Please enter your full name.'); return; }
-  if (!email) { alert('Please enter your email.'); return; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('Please enter a valid email address.'); return; }
+  if (!phone || phone.length !== 10) { alert('Please enter a valid 10-digit phone number.'); return; }
   if (!district) { alert('Please select your district.'); return; }
   if (!password || password.length < 8) { alert('Password must be at least 8 characters.'); return; }
 
   var frontFile = document.getElementById('file-front') ? document.getElementById('file-front').files[0] : null;
   var backFile  = document.getElementById('file-back')  ? document.getElementById('file-back').files[0]  : null;
 
+  // Stash form data for later
   pendingFormData = new FormData();
-  pendingFormData.append('role',       role);
-  pendingFormData.append('first_name', firstName);
-  pendingFormData.append('last_name',  lastName);
-  pendingFormData.append('email',      email);
-  pendingFormData.append('phone',      phone);
-  pendingFormData.append('district',   district);
-  pendingFormData.append('password',   password);
-  pendingFormData.append('address',    address);
-  pendingFormData.append('nic_number', nicNumber);
+  pendingFormData.append('role',          role);
+  pendingFormData.append('first_name',    firstName);
+  pendingFormData.append('last_name',     lastName);
+  pendingFormData.append('email',         email);
+  pendingFormData.append('phone',         phone);
+  pendingFormData.append('district',      district);
+  pendingFormData.append('password',      password);
+  pendingFormData.append('address',       address);
+  pendingFormData.append('nic_number',    nicNumber);
   if (frontFile) pendingFormData.append('nic_front', frontFile);
   if (backFile)  pendingFormData.append('nic_back',  backFile);
+
+  // Launch OTP flow
+  await openOtpOverlay(phone);
+});
+
+// ── Open OTP overlay & send OTP ──
+async function openOtpOverlay(phone) {
+  var btn = document.getElementById('btn-register');
+  btn.textContent = '⏳ Sending OTP...';
+  btn.disabled = true;
+  try {
+    var res  = await fetch(API_URL + '/api/otp/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: phone })
+    });
+    var data = await res.json();
+    if (!data.success) {
+      alert('❌ ' + data.error);
+      btn.innerHTML = 'Create my account <svg class="arr" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>';
+      btn.disabled = false;
+      return;
+    }
+    // Show overlay
+    document.getElementById('otp-phone-display').textContent = formatPhoneDisplay(phone);
+    document.getElementById('otp-status').className = 'otp-status';
+    document.getElementById('otp-status').textContent = '';
+    clearOtpDigits();
+    document.getElementById('otp-overlay').style.display = 'flex';
+    document.getElementById('od1').focus();
+    startOtpCountdown(300);   // 5 min
+    startResendCountdown(60); // 60 s resend lock
+  } catch (err) {
+    alert('❌ Cannot connect to server. Check your Railway URL.');
+  } finally {
+    btn.innerHTML = 'Create my account <svg class="arr" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>';
+    btn.disabled = false;
+  }
+}
+
+function formatPhoneDisplay(p) {
+  var d = p.replace(/\D/g, '').slice(0, 10);
+  return d.length === 10 ? d.slice(0,4) + ' ' + d.slice(4,7) + ' ' + d.slice(7) : p;
+}
+
+function clearOtpDigits() {
+  for (var i = 1; i <= 6; i++) {
+    var el = document.getElementById('od' + i);
+    el.value = '';
+    el.classList.remove('err-digit');
+  }
+}
+
+// OTP digit keyboard navigation
+(function () {
+  for (var i = 1; i <= 6; i++) {
+    (function (idx) {
+      var el = document.getElementById('od' + idx);
+      el.addEventListener('input', function () {
+        var v = this.value.replace(/\D/g, '');
+        this.value = v ? v[v.length - 1] : '';
+        if (this.value && idx < 6) document.getElementById('od' + (idx + 1)).focus();
+      });
+      el.addEventListener('keydown', function (e) {
+        if (e.key === 'Backspace' && !this.value && idx > 1) {
+          document.getElementById('od' + (idx - 1)).focus();
+        }
+        if (e.key === 'Enter') verifyOtp();
+      });
+      el.addEventListener('paste', function (e) {
+        var txt = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+        if (txt.length >= 6) {
+          for (var j = 0; j < 6; j++) {
+            var d = document.getElementById('od' + (j + 1));
+            if (d) d.value = txt[j] || '';
+          }
+          document.getElementById('od6').focus();
+          e.preventDefault();
+        }
+      });
+    })(i);
+  }
+})();
+
+function getOtpValue() {
+  var v = '';
+  for (var i = 1; i <= 6; i++) v += document.getElementById('od' + i).value;
+  return v;
+}
+
+function setOtpStatus(msg, type) {
+  var el = document.getElementById('otp-status');
+  el.textContent = msg;
+  el.className = 'otp-status show ' + (type === 'ok' ? 'ok' : 'bad');
+}
+
+function startOtpCountdown(seconds) {
+  clearInterval(otpCountdownInterval);
+  var rem = seconds;
+  function tick() {
+    var m = Math.floor(rem / 60);
+    var s = rem % 60;
+    document.getElementById('otp-countdown').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+    if (rem <= 0) {
+      clearInterval(otpCountdownInterval);
+      setOtpStatus('Code expired. Please request a new OTP.', 'bad');
+    }
+    rem--;
+  }
+  tick();
+  otpCountdownInterval = setInterval(tick, 1000);
+}
+
+function startResendCountdown(seconds) {
+  clearInterval(otpResendInterval);
+  var btn = document.getElementById('otp-resend');
+  btn.disabled = true;
+  var rem = seconds;
+  function tick() {
+    document.getElementById('otp-resend-sec').textContent = rem;
+    if (rem <= 0) {
+      clearInterval(otpResendInterval);
+      btn.disabled = false;
+      btn.textContent = 'Resend OTP';
+    }
+    rem--;
+  }
+  tick();
+  otpResendInterval = setInterval(tick, 1000);
+}
+
+async function resendOtp() {
+  var phone = document.getElementById('rp').value.trim();
+  document.getElementById('otp-resend').disabled = true;
+  document.getElementById('otp-resend').textContent = 'Sending...';
+  try {
+    var res  = await fetch(API_URL + '/api/otp/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: phone })
+    });
+    var data = await res.json();
+    if (data.success) {
+      clearOtpDigits();
+      setOtpStatus('New OTP sent to ' + formatPhoneDisplay(phone), 'ok');
+      document.getElementById('od1').focus();
+      startOtpCountdown(300);
+      startResendCountdown(60);
+    } else {
+      setOtpStatus(data.error, 'bad');
+      startResendCountdown(60);
+    }
+  } catch (err) {
+    setOtpStatus('Failed to send. Please try again.', 'bad');
+    startResendCountdown(10);
+  }
+}
+
+async function verifyOtp() {
+  var otp = getOtpValue();
+  if (otp.length < 6) { setOtpStatus('Please enter all 6 digits.', 'bad'); return; }
+  var phone = document.getElementById('rp').value.trim();
+  var btn = document.getElementById('otp-verify-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> Verifying...';
+  try {
+    var res  = await fetch(API_URL + '/api/otp/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: phone, otp: otp })
+    });
+    var data = await res.json();
+    if (data.success) {
+      phoneVerified = true;
+      clearInterval(otpCountdownInterval);
+      clearInterval(otpResendInterval);
+      setOtpStatus('✅ Phone verified!', 'ok');
+      document.getElementById('os2').className = 'otp-step done';
+      document.getElementById('os3').className = 'otp-step active';
+      // Small delay then close overlay and show confirm modal
+      setTimeout(function () {
+        document.getElementById('otp-overlay').style.display = 'none';
+        showConfirmModal();
+      }, 900);
+    } else {
+      setOtpStatus(data.error, 'bad');
+      // Shake incorrect digits
+      for (var i = 1; i <= 6; i++) document.getElementById('od' + i).classList.add('err-digit');
+      setTimeout(function () {
+        for (var i = 1; i <= 6; i++) document.getElementById('od' + i).classList.remove('err-digit');
+      }, 600);
+      if (data.code === 'TOO_MANY' || data.code === 'EXPIRED') clearOtpDigits();
+    }
+  } catch (err) {
+    setOtpStatus('Cannot connect. Check your network.', 'bad');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Verify & Continue';
+  }
+}
+
+function closeOtp() {
+  document.getElementById('otp-overlay').style.display = 'none';
+  clearInterval(otpCountdownInterval);
+  clearInterval(otpResendInterval);
+  phoneVerified = false;
+}
+
+// ── Step 3: Show confirmation modal ──
+function showConfirmModal() {
+  var role      = document.querySelector('.rc.sel').id.replace('rc-', '');
+  var firstName = document.getElementById('r-fname').value.trim();
+  var lastName  = document.getElementById('r-lname').value.trim();
+  var email     = document.getElementById('re').value.trim();
+  var phone     = document.getElementById('rp').value.trim();
+  var district  = document.getElementById('r-district').value;
+  var address   = document.getElementById('r-address') ? document.getElementById('r-address').value.trim() : '';
+  var nicNumber = document.getElementById('r-nic') ? document.getElementById('r-nic').value.trim() : '';
+  var frontFile = document.getElementById('file-front') ? document.getElementById('file-front').files[0] : null;
+  var backFile  = document.getElementById('file-back')  ? document.getElementById('file-back').files[0]  : null;
 
   var body = document.getElementById('confirm-body');
   body.innerHTML = '';
@@ -590,7 +883,7 @@ document.getElementById('btn-register').addEventListener('click', function () {
     ['Role',     role === 'farmer' ? '🌾 Farmer / Seller' : '🛒 Buyer'],
     ['Name',     firstName + ' ' + lastName],
     ['Email',    email],
-    ['Phone',    phone || '—'],
+    ['Phone',    '✅ ' + formatPhoneDisplay(phone) + ' (verified)'],
     ['District', district || '—'],
     ['Address',  address || '—'],
   ];
@@ -620,7 +913,7 @@ document.getElementById('btn-register').addEventListener('click', function () {
   }
 
   document.getElementById('confirm-overlay').style.display = 'flex';
-});
+}
 
 function closeConfirm() {
   document.getElementById('confirm-overlay').style.display = 'none';
@@ -631,10 +924,15 @@ function closeConfirm() {
 
 async function submitRegister(e) {
   if (!pendingFormData) return;
+  if (!phoneVerified) {
+    alert('Please verify your phone number first.');
+    return;
+  }
   var btn = document.getElementById('btn-confirm');
   btn.textContent = '⏳ Creating...';
   btn.disabled = true;
   try {
+    pendingFormData.set('phone_verified', 'true');
     var res  = await fetch(API_URL + '/api/register', { method: 'POST', body: pendingFormData });
     var data = await res.json();
     if (data.success) { showSuccess(data.user.first_name); }
