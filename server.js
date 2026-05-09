@@ -13,26 +13,6 @@ const twilio = require('twilio');
 const app = express();
 
 
-function normPhone(raw) {
-  let p = String(raw).replace(/\D/g, '');
-
-  if (p.startsWith('0')) {
-    return '+94' + p.slice(1);
-  }
-
-  if (p.length === 9) {
-    return '+94' + p;
-  }
-
-  if (!raw.startsWith('+')) {
-    return '+' + p;
-  }
-
-  return raw;
-}
-
-
-
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

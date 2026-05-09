@@ -538,7 +538,7 @@ function selRole(r) {
     + '<div class="iw"><svg class="ii" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="3" width="13" height="10" rx="1.5"/><path d="M4 7h3M4 9.5h5"/><circle cx="11.5" cy="8" r="1.5"/></svg>'
     + '<input class="inp" id="r-nic" type="text" placeholder="198512345678 or 851234567V" maxlength="12"/></div>';
   c.appendChild(a); c.appendChild(n);
-  document.getElementById('nic-section').style.display = r === 'farmer' ? 'block' : 'none';
+  document.getElementById('nic-section').style.display = 'block';
 }
 
 function vEmail(iid, eid) {
@@ -886,8 +886,8 @@ function showConfirmModal() {
     ['Phone',    '✅ ' + formatPhoneDisplay(phone) + ' (verified)'],
     ['District', district || '—'],
     ['Address',  address || '—'],
+    ['NIC Number', nicNumber || '—'],
   ];
-  if (role === 'farmer') rows.push(['NIC Number', nicNumber || '—']);
   rows.forEach(function (r) {
     var div = document.createElement('div'); div.className = 'cd-row';
     div.innerHTML = '<span class="cd-label">' + r[0] + '</span><span class="cd-value">' + r[1] + '</span>';
@@ -896,20 +896,16 @@ function showConfirmModal() {
 
   var nicBox = document.getElementById('confirm-nic');
   var nicMsg = document.getElementById('confirm-nic-msg');
-  if (role === 'farmer') {
-    nicBox.style.display = 'flex';
-    if (frontFile && backFile) {
-      nicMsg.textContent = '✅ Both NIC sides uploaded';
-      nicBox.style.background = '#EDF5EF'; nicBox.style.borderColor = 'rgba(30,122,71,0.18)';
-    } else if (frontFile || backFile) {
-      nicMsg.textContent = '⚠️ Only one NIC side uploaded';
-      nicBox.style.background = '#FEF8EE'; nicBox.style.borderColor = 'rgba(200,140,0,0.2)';
-    } else {
-      nicMsg.textContent = '⚠️ No NIC uploaded yet';
-      nicBox.style.background = '#FEF8EE'; nicBox.style.borderColor = 'rgba(200,140,0,0.2)';
-    }
+  nicBox.style.display = 'flex';
+  if (frontFile && backFile) {
+    nicMsg.textContent = '✅ Both NIC sides uploaded';
+    nicBox.style.background = '#EDF5EF'; nicBox.style.borderColor = 'rgba(30,122,71,0.18)';
+  } else if (frontFile || backFile) {
+    nicMsg.textContent = '⚠️ Only one NIC side uploaded';
+    nicBox.style.background = '#FEF8EE'; nicBox.style.borderColor = 'rgba(200,140,0,0.2)';
   } else {
-    nicBox.style.display = 'none';
+    nicMsg.textContent = '⚠️ No NIC uploaded yet';
+    nicBox.style.background = '#FEF8EE'; nicBox.style.borderColor = 'rgba(200,140,0,0.2)';
   }
 
   document.getElementById('confirm-overlay').style.display = 'flex';
