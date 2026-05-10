@@ -1162,19 +1162,58 @@ function sendBroadcast(){
 }
 
 function sendBroadcast2(){
-  var crop = document.getElementById('bc2-crop').value.trim();
-  var qty  = document.getElementById('bc2-qty').value.trim();
-  var dist = document.getElementById('bc2-district').value;
-  if(!crop||!qty||!dist){ showToast('Please fill all required fields','error'); return; }
+  var crop   = document.getElementById('bc2-crop').value.trim();
+  var qty    = document.getElementById('bc2-qty').value.trim();
+  var dist   = document.getElementById('bc2-district').value;
+  var budget = document.getElementById('bc2-budget').value.trim();
+  var notes  = document.getElementById('bc2-notes').value.trim();
+  if(!crop||!qty||!dist){ showToast('Please fill Crop, Quantity and District','error'); return; }
   var btn = document.getElementById('bc2-btn');
   btn.disabled=true; btn.textContent='Sending…';
   setTimeout(function(){
     btn.disabled=false;
     btn.innerHTML='<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6"/></svg> Send Broadcast to Sellers';
     document.getElementById('bc2-success').style.display='block';
+    setTimeout(function(){ document.getElementById('bc2-success').style.display='none'; },4000);
     showToast('Broadcast sent to '+dist+' sellers!','success');
+
+    // ── LIVE BROADCAST: push to localStorage → seller dashboard reads it ──
+    var buyerName = (_user&&_user.name)?_user.name:'Demo Buyer';
+    var bc = {
+      id:'bc_'+Date.now(),
+      crop:crop, qty:qty, district:dist,
+      budget:budget?'Rs. '+budget+'/kg':null,
+      notes:notes,
+      buyerName:buyerName,
+      timestamp:Date.now()
+    };
+    try{
+      var list=JSON.parse(localStorage.getItem('agro_broadcasts')||'[]');
+      list.unshift(bc);
+      if(list.length>30) list=list.slice(0,30);
+      localStorage.setItem('agro_broadcasts',JSON.stringify(list));
+      localStorage.setItem('agro_broadcast_ping',bc.id);
+    }catch(e){}
+
+    // Add to buyer's own Past Broadcasts list
+    var pbList = document.querySelector('.page#page-broadcast .panel:last-child') ||
+                 document.querySelector('#page-broadcast .panel:nth-child(2)');
+    if(pbList){
+      var emojis={'tomato':'🍅','carrot':'🥕','chili':'🌶','gotukola':'🥬','onion':'🧅','rice':'🌾','tractor':'🚜','pump':'💧'};
+      var emoji='📦';
+      var cl=crop.toLowerCase();
+      for(var k in emojis){ if(cl.indexOf(k)>-1){emoji=emojis[k];break;} }
+      var newPbc=document.createElement('div');
+      newPbc.className='past-bc-item';
+      newPbc.innerHTML='<div class="past-emoji">'+emoji+'</div><div class="past-info"><div class="past-name">'+crop+' — '+qty+'</div><div class="past-meta">'+dist+' District'+(budget?' · Budget: Rs. '+budget+'/kg':'')+'</div></div><span class="past-responses">0 responses</span><span class="past-date">Just now</span>';
+      var firstItem=pbList.querySelector('.past-bc-item');
+      if(firstItem) pbList.insertBefore(newPbc,firstItem);
+      else pbList.appendChild(newPbc);
+    }
+
     ['bc2-crop','bc2-qty','bc2-notes'].forEach(function(id){ document.getElementById(id).value=''; });
     document.getElementById('bc2-district').value='';
+    document.getElementById('bc2-budget').value='';
   },1400);
 }
 

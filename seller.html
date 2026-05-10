@@ -241,6 +241,24 @@ nav.sb-nav{padding:14px 10px;flex:1;overflow-y:auto}
 .inv-header{display:flex;gap:8px;padding:6px 10px;background:var(--g-faint);border-bottom:1px solid var(--border)}
 .inv-header span{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
 
+/* ── LIVE BROADCAST ANIMATION ── */
+@keyframes liveSlideIn{from{opacity:0;transform:translateY(-10px) scale(0.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes livePulse{0%,100%{box-shadow:0 0 0 0 rgba(224,123,63,0.5)}70%{box-shadow:0 0 0 8px rgba(224,123,63,0)}}
+.live-new{animation:liveSlideIn 0.45s ease,livePulse 1.5s 0.4s ease!important}
+.live-banner{
+  display:flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,#e07b3f,#d4a017);
+  color:#fff;border-radius:var(--radius-sm);padding:10px 14px;
+  font-size:12.5px;font-weight:600;margin-bottom:6px;
+  animation:liveSlideIn 0.4s ease;
+}
+.live-dot-pulse{width:10px;height:10px;border-radius:50%;background:#fff;animation:pulse 1s infinite;flex-shrink:0}
+.bn-pip{
+  position:absolute;top:6px;right:calc(50% - 14px);
+  width:8px;height:8px;border-radius:50%;background:var(--amber);
+  border:2px solid var(--surface);display:none;animation:pulse 1s infinite;
+}
+
 /* ── MODAL ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(20,31,20,.55);z-index:300;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:16px}
 .modal-overlay.open{display:flex}
@@ -500,7 +518,7 @@ nav.sb-nav{padding:14px 10px;flex:1;overflow-y:auto}
         <div class="panel">
           <div class="panel-head">
             <div class="panel-title">Incoming Buyer Requests</div>
-            <span class="tag new">3 new</span>
+            <span class="tag new" id="dash-req-live-tag">3 new</span>
           </div>
           <div class="req-item">
             <div class="req-top"><div><div class="req-commodity">Tomatoes – 80 kg</div><div class="req-buyer">Chaminda Perera · Colombo</div></div><span class="tag new">New</span></div>
@@ -877,7 +895,7 @@ nav.sb-nav{padding:14px 10px;flex:1;overflow-y:auto}
     <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 3h18v4H3z"/><path d="M3 10h18v11H3z"/></svg>
     Listings
   </button>
-  <button class="bn-item" id="bn-requests" onclick="showPage('requests',document.querySelectorAll('.nav-item')[2])">
+  <button class="bn-item" id="bn-requests" onclick="showPage('requests',document.querySelectorAll('.nav-item')[2])" style="position:relative">
     <span class="bn-pip" id="bn-req-pip"></span>
     <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
     Requests
@@ -1381,6 +1399,160 @@ function showToast(msg,type){
 function doLogout(){
   if(confirm('Sign out of AgroNexa LK?')){sessionStorage.removeItem('agro_user');window.location.href='index.html';}
 }
+
+// ══════════════════════════════════════════════════════════════════
+// LIVE BROADCAST LISTENER — polls localStorage for buyer broadcasts
+// ══════════════════════════════════════════════════════════════════
+var _seenBroadcasts = {};
+var _liveNewCount = 0;
+
+function timeAgo(ts){
+  var diff = Math.floor((Date.now()-ts)/1000);
+  if(diff<60) return 'Just now';
+  if(diff<3600) return Math.floor(diff/60)+'m ago';
+  if(diff<86400) return Math.floor(diff/3600)+'h ago';
+  return 'Yesterday';
+}
+
+function getBroadcastEmoji(crop){
+  var emojis={tomato:'🍅',carrot:'🥕',chili:'🌶',gotukola:'🥬',onion:'🧅',rice:'🌾',tractor:'🚜',pump:'💧',potato:'🥔',bean:'🫘'};
+  var cl=(crop||'').toLowerCase();
+  for(var k in emojis){ if(cl.indexOf(k)>-1) return emojis[k]; }
+  return '📦';
+}
+
+function injectBroadcastToSeller(bc){
+  // 1) Inject into "Buyer Broadcasts" page (page-broadcasts)
+  var bcList = document.getElementById('page-broadcasts');
+  if(bcList){
+    var bcPanel = bcList.querySelector('.panel');
+    if(bcPanel){
+      var newBcItem = document.createElement('div');
+      newBcItem.className = 'bc-item live-new';
+      newBcItem.setAttribute('data-bc-id', bc.id);
+      newBcItem.style.cssText = 'animation:liveSlideIn 0.45s ease;border-left:3px solid var(--amber);background:var(--amber-pale);border-radius:var(--radius-sm);padding:10px;margin-bottom:4px';
+      var label = bc.crop+' – '+bc.qty+' needed';
+      var meta  = 'Buyer: '+bc.buyerName+' · '+(bc.budget?'Budget: '+bc.budget:'')+' · '+bc.district+' District'+(bc.notes?' · '+bc.notes:'');
+      newBcItem.innerHTML =
+        '<div class="bc-dot" style="background:var(--amber);animation:pulse 1.5s infinite"></div>'+
+        '<div style="flex:1">'+
+          '<div class="bc-commodity" style="color:var(--ink)">🔴 LIVE · '+label+'</div>'+
+          '<div class="bc-meta">'+meta+'</div>'+
+          '<div class="bc-time">'+timeAgo(bc.timestamp)+' · '+bc.district+' District</div>'+
+        '</div>'+
+        '<button class="btn-sm btn-accept" style="margin-top:0;flex-shrink:0" onclick="event.stopPropagation();respondToBroadcast(null,\''+label.replace(/'/g,"\\'")+'\',' +(bc.budget?'\''+bc.budget+'\'':'\'—\'') +')">Respond</button>';
+      // Insert at top (after panel-head)
+      var panelHead = bcPanel.querySelector('.panel-head');
+      if(panelHead && panelHead.nextSibling) bcPanel.insertBefore(newBcItem, panelHead.nextSibling);
+      else bcPanel.appendChild(newBcItem);
+    }
+  }
+
+  // 2) Inject into "Buyer Requests" page (page-requests) + dashboard preview
+  var reqList = document.getElementById('requests-list');
+  if(reqList){
+    var newReq = document.createElement('div');
+    newReq.className = 'req-item live-new';
+    newReq.setAttribute('data-bc-id', bc.id);
+    newReq.style.cssText = 'animation:liveSlideIn 0.45s ease;background:var(--amber-pale);border-radius:var(--radius-sm);padding:10px 12px;border:1.5px solid #f0c070';
+    var label2 = bc.crop+' – '+bc.qty;
+    var price  = bc.budget||'—';
+    newReq.innerHTML =
+      '<div class="req-top">'+
+        '<div>'+
+          '<div class="req-commodity">'+getBroadcastEmoji(bc.crop)+' '+label2+'</div>'+
+          '<div class="req-buyer">Buyer: '+bc.buyerName+' · '+bc.district+' District</div>'+
+        '</div>'+
+        '<span class="tag new" style="background:#e07b3f;color:#fff;animation:pulse 2s infinite">● LIVE</span>'+
+      '</div>'+
+      '<div class="req-details">'+
+        '<span>📅 Just now</span>'+
+        (bc.budget?'<span>💰 Budget: '+bc.budget+'</span>':'')+
+        (bc.notes?'<span>📝 '+bc.notes+'</span>':'')+
+      '</div>'+
+      '<div class="req-actions">'+
+        '<button class="btn-sm btn-accept" onclick="acceptRequest(this,\''+label2.replace(/'/g,"\\'")+'\')" >Accept</button>'+
+        '<button class="btn-sm btn-counter" onclick="counterRequest(this,\''+label2.replace(/'/g,"\\'")+'\',' +(bc.budget?parseInt(bc.budget.replace(/[^0-9]/g,''))||0:0)+')">Counter Offer</button>'+
+        '<button class="btn-sm btn-reject" onclick="rejectRequest(this)">Decline</button>'+
+      '</div>';
+    reqList.insertBefore(newReq, reqList.firstChild);
+  }
+
+  // 3) Update counter badges
+  _liveNewCount++;
+  var totalPending = (parseInt(document.getElementById('req-count').textContent)||3) + _liveNewCount;
+  document.getElementById('req-count').textContent = (_liveNewCount + 3)+' pending';
+  var reqTag = document.getElementById('req-tag');
+  if(reqTag) reqTag.textContent = (_liveNewCount + 3)+' new';
+  var reqsBadge = document.getElementById('requests-badge');
+  if(reqsBadge) reqsBadge.textContent = (_liveNewCount + 3);
+
+  // 4) Dashboard incoming requests preview (first req-item inside dashboard)
+  var dashReqPanel = document.querySelector('#page-dashboard .grid-2 .panel:last-child');
+  if(dashReqPanel){
+    var dashItem = document.createElement('div');
+    dashItem.className = 'req-item';
+    dashItem.style.cssText = 'background:var(--amber-pale);border-radius:8px;padding:8px 10px;border:1.5px solid #f0c070;animation:liveSlideIn 0.45s ease';
+    dashItem.innerHTML =
+      '<div class="req-top"><div>'+
+        '<div class="req-commodity">'+getBroadcastEmoji(bc.crop)+' '+bc.crop+' – '+bc.qty+'</div>'+
+        '<div class="req-buyer">'+bc.buyerName+' · '+bc.district+'</div>'+
+      '</div><span class="tag new" style="background:#e07b3f;color:#fff;font-size:9px">LIVE</span></div>'+
+      '<div class="req-details"><span>📅 Just now</span>'+(bc.budget?'<span>💰 '+bc.budget+'</span>':'')+'</div>';
+    dashReqPanel.appendChild(dashItem);
+  }
+
+  // 5) Show live toast notification
+  showToast('🔴 New buyer broadcast: '+bc.crop+' – '+bc.qty+' ('+bc.district+')','');
+
+  // 6) Flash the notification dot
+  var notifDot = document.querySelector('.notif-dot');
+  if(notifDot){ notifDot.style.display='block'; notifDot.style.animation='pulse 1s infinite'; }
+
+  // 7) Show the bottom nav pip
+  var pip = document.getElementById('bn-req-pip');
+  if(pip) pip.style.display='block';
+}
+
+function pollBroadcasts(){
+  try{
+    var list = JSON.parse(localStorage.getItem('agro_broadcasts')||'[]');
+    list.forEach(function(bc){
+      if(!_seenBroadcasts[bc.id]){
+        _seenBroadcasts[bc.id] = true;
+        // Only show if it's fresh (within last 2 minutes from first page load or new)
+        if(Date.now()-bc.timestamp < 120000 || Object.keys(_seenBroadcasts).length===1){
+          // Filter: we already pre-seeded the page with statics, only show truly new ones
+          // that arrived after page load
+          if(bc.timestamp > _pageLoadTime){
+            injectBroadcastToSeller(bc);
+          }
+        }
+      }
+    });
+  }catch(e){}
+}
+
+var _pageLoadTime = Date.now();
+
+// Load any broadcasts that already exist at page load (show them in UI)
+(function loadExistingBroadcasts(){
+  try{
+    var list = JSON.parse(localStorage.getItem('agro_broadcasts')||'[]');
+    // Mark them all as already seen (don't re-inject existing ones as "live")
+    list.forEach(function(bc){ _seenBroadcasts[bc.id]=true; });
+  }catch(e){}
+})();
+
+// Poll every 1.5 seconds for new broadcasts
+setInterval(pollBroadcasts, 1500);
+
+// Also listen to storage event (cross-tab, real-time)
+window.addEventListener('storage', function(e){
+  if(e.key==='agro_broadcast_ping' || e.key==='agro_broadcasts'){
+    pollBroadcasts();
+  }
+});
 </script>
 </body>
 </html>
