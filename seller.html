@@ -1422,96 +1422,115 @@ function getBroadcastEmoji(crop){
 }
 
 function injectBroadcastToSeller(bc){
-  // 1) Inject into "Buyer Broadcasts" page (page-broadcasts)
+  var label = bc.crop+' – '+bc.qty+(bc.unit&&bc.unit!=='kg'?' '+bc.unit:'');
+
+  // ── Helper to build detail rows ──
+  function det(icon,val){ return val?'<span>'+icon+' '+val+'</span>':''; }
+
+  // ── 1) Buyer Broadcasts page ──
   var bcList = document.getElementById('page-broadcasts');
   if(bcList){
     var bcPanel = bcList.querySelector('.panel');
     if(bcPanel){
+      var urgencyColor = bc.urgency&&bc.urgency.indexOf('Urgent')>-1?'#c0392b':'var(--amber)';
       var newBcItem = document.createElement('div');
-      newBcItem.className = 'bc-item live-new';
-      newBcItem.setAttribute('data-bc-id', bc.id);
-      newBcItem.style.cssText = 'animation:liveSlideIn 0.45s ease;border-left:3px solid var(--amber);background:var(--amber-pale);border-radius:var(--radius-sm);padding:10px;margin-bottom:4px';
-      var label = bc.crop+' – '+bc.qty+' needed';
-      var meta  = 'Buyer: '+bc.buyerName+' · '+(bc.budget?'Budget: '+bc.budget:'')+' · '+bc.district+' District'+(bc.notes?' · '+bc.notes:'');
-      newBcItem.innerHTML =
-        '<div class="bc-dot" style="background:var(--amber);animation:pulse 1.5s infinite"></div>'+
-        '<div style="flex:1">'+
-          '<div class="bc-commodity" style="color:var(--ink)">🔴 LIVE · '+label+'</div>'+
-          '<div class="bc-meta">'+meta+'</div>'+
+      newBcItem.className='bc-item live-new';
+      newBcItem.setAttribute('data-bc-id',bc.id);
+      newBcItem.style.cssText='border:1.5px solid var(--amber);background:var(--amber-pale);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start';
+      newBcItem.innerHTML=
+        '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">'+
+          '<div class="bc-dot" style="background:'+urgencyColor+';width:10px;height:10px;animation:pulse 1s infinite"></div>'+
+          '<span style="font-size:9px;font-weight:700;color:'+urgencyColor+';font-family:\'DM Sans\',sans-serif;letter-spacing:.5px">LIVE</span>'+
+        '</div>'+
+        '<div style="flex:1;min-width:0">'+
+          '<div class="bc-commodity" style="font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:4px">'+label+(bc.category?' <span style="font-size:10px;font-weight:500;color:var(--muted)">('+bc.category+')</span>':'')+'</div>'+
+          '<div style="display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11.5px;color:var(--muted);margin-bottom:6px">'+
+            det('👤',bc.buyerName+(bc.district?' · '+bc.district+' District':''))+
+            (bc.budget?'<span>💰 Rs. '+bc.budget+(bc.priceType?' '+bc.priceType:'')+'</span>':'')+
+            det('⭐',bc.quality)+
+            det('⏰',bc.urgency)+
+            det('🚚',bc.delivery)+
+            det('💳',bc.payment+(bc.terms?' · '+bc.terms:''))+
+            det('📅',bc.date?'Needed by: '+bc.date:'')+
+            det('📍',bc.address)+
+          '</div>'+
+          (bc.phone||bc.whatsapp||bc.email?
+            '<div style="display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11px;color:var(--g);margin-bottom:5px;font-weight:600">'+
+              det('📞',bc.phone)+det('💬 WhatsApp',bc.whatsapp)+det('✉️',bc.email)+
+            '</div>':'')+
+          (bc.notes?'<div style="font-size:11.5px;color:var(--muted);background:rgba(0,0,0,0.04);border-radius:6px;padding:5px 8px;margin-bottom:4px">📝 '+bc.notes+'</div>':'')+
           '<div class="bc-time">'+timeAgo(bc.timestamp)+' · '+bc.district+' District</div>'+
         '</div>'+
-        '<button class="btn-sm btn-accept" style="margin-top:0;flex-shrink:0" onclick="event.stopPropagation();respondToBroadcast(null,\''+label.replace(/'/g,"\\'")+'\',' +(bc.budget?'\''+bc.budget+'\'':'\'—\'') +')">Respond</button>';
-      // Insert at top (after panel-head)
-      var panelHead = bcPanel.querySelector('.panel-head');
-      if(panelHead && panelHead.nextSibling) bcPanel.insertBefore(newBcItem, panelHead.nextSibling);
+        '<button class="btn-sm btn-accept" style="flex-shrink:0;margin-top:0" onclick="event.stopPropagation();respondToBroadcast(null,\''+label.replace(/'/g,"\\'")+'\',' +(bc.budget?'\'Rs. '+bc.budget+'\'':'\'—\'') +')">Respond</button>';
+      var panelHead=bcPanel.querySelector('.panel-head');
+      if(panelHead&&panelHead.nextSibling) bcPanel.insertBefore(newBcItem,panelHead.nextSibling);
       else bcPanel.appendChild(newBcItem);
     }
   }
 
-  // 2) Inject into "Buyer Requests" page (page-requests) + dashboard preview
-  var reqList = document.getElementById('requests-list');
+  // ── 2) Buyer Requests page ──
+  var reqList=document.getElementById('requests-list');
   if(reqList){
-    var newReq = document.createElement('div');
-    newReq.className = 'req-item live-new';
-    newReq.setAttribute('data-bc-id', bc.id);
-    newReq.style.cssText = 'animation:liveSlideIn 0.45s ease;background:var(--amber-pale);border-radius:var(--radius-sm);padding:10px 12px;border:1.5px solid #f0c070';
-    var label2 = bc.crop+' – '+bc.qty;
-    var price  = bc.budget||'—';
-    newReq.innerHTML =
+    var newReq=document.createElement('div');
+    newReq.className='req-item live-new';
+    newReq.setAttribute('data-bc-id',bc.id);
+    newReq.style.cssText='background:var(--amber-pale);border-radius:var(--radius-sm);padding:12px 14px;border:1.5px solid #f0c070;margin-bottom:4px';
+    newReq.innerHTML=
       '<div class="req-top">'+
         '<div>'+
-          '<div class="req-commodity">'+getBroadcastEmoji(bc.crop)+' '+label2+'</div>'+
-          '<div class="req-buyer">Buyer: '+bc.buyerName+' · '+bc.district+' District</div>'+
+          '<div class="req-commodity">'+getBroadcastEmoji(bc.crop)+' '+label+(bc.category?' <span style="font-size:10px;color:var(--muted)">('+bc.category+')</span>':'')+'</div>'+
+          '<div class="req-buyer">Buyer: '+bc.buyerName+' · '+(bc.district||'')+(bc.district?' District':'')+'</div>'+
         '</div>'+
-        '<span class="tag new" style="background:#e07b3f;color:#fff;animation:pulse 2s infinite">● LIVE</span>'+
+        '<span class="tag new" style="background:#e07b3f;color:#fff;animation:pulse 2s infinite;font-size:9px">🔴 LIVE</span>'+
       '</div>'+
-      '<div class="req-details">'+
-        '<span>📅 Just now</span>'+
-        (bc.budget?'<span>💰 Budget: '+bc.budget+'</span>':'')+
-        (bc.notes?'<span>📝 '+bc.notes+'</span>':'')+
+      '<div class="req-details" style="flex-wrap:wrap;gap:6px">'+
+        (bc.date?'<span>📅 Needed by: '+bc.date+'</span>':'<span>📅 Just now</span>')+
+        (bc.budget?'<span>💰 Budget: Rs. '+bc.budget+(bc.priceType?' '+bc.priceType:'')+'</span>':'')+
+        det('⭐',bc.quality)+det('⏰',bc.urgency)+det('🚚',bc.delivery)+
+        det('💳',bc.payment)+det('📍',bc.address)+
+        (bc.phone?'<span>📞 '+bc.phone+'</span>':'')+
+        (bc.whatsapp?'<span>💬 '+bc.whatsapp+'</span>':'')+
+        (bc.email?'<span>✉️ '+bc.email+'</span>':'')+
       '</div>'+
+      (bc.notes?'<div style="font-size:11.5px;color:var(--muted);margin-top:5px;padding:5px 8px;background:rgba(0,0,0,0.04);border-radius:6px">📝 '+bc.notes+'</div>':'')+
       '<div class="req-actions">'+
-        '<button class="btn-sm btn-accept" onclick="acceptRequest(this,\''+label2.replace(/'/g,"\\'")+'\')" >Accept</button>'+
-        '<button class="btn-sm btn-counter" onclick="counterRequest(this,\''+label2.replace(/'/g,"\\'")+'\',' +(bc.budget?parseInt(bc.budget.replace(/[^0-9]/g,''))||0:0)+')">Counter Offer</button>'+
+        '<button class="btn-sm btn-accept" onclick="acceptRequest(this,\''+label.replace(/'/g,"\\'")+'\')" >Accept</button>'+
+        '<button class="btn-sm btn-counter" onclick="counterRequest(this,\''+label.replace(/'/g,"\\'")+'\',' +(bc.budget?parseInt(bc.budget.replace(/[^0-9]/g,''))||0:0)+')">Counter Offer</button>'+
         '<button class="btn-sm btn-reject" onclick="rejectRequest(this)">Decline</button>'+
       '</div>';
-    reqList.insertBefore(newReq, reqList.firstChild);
+    reqList.insertBefore(newReq,reqList.firstChild);
   }
 
-  // 3) Update counter badges
+  // ── 3) Badge counters ──
   _liveNewCount++;
-  var totalPending = (parseInt(document.getElementById('req-count').textContent)||3) + _liveNewCount;
-  document.getElementById('req-count').textContent = (_liveNewCount + 3)+' pending';
-  var reqTag = document.getElementById('req-tag');
-  if(reqTag) reqTag.textContent = (_liveNewCount + 3)+' new';
-  var reqsBadge = document.getElementById('requests-badge');
-  if(reqsBadge) reqsBadge.textContent = (_liveNewCount + 3);
+  var newTotal=3+_liveNewCount;
+  var rc=document.getElementById('req-count'); if(rc) rc.textContent=newTotal+' pending';
+  var rt=document.getElementById('req-tag'); if(rt) rt.textContent=newTotal+' new';
+  var rb=document.getElementById('requests-badge'); if(rb) rb.textContent=newTotal;
 
-  // 4) Dashboard incoming requests preview (first req-item inside dashboard)
-  var dashReqPanel = document.querySelector('#page-dashboard .grid-2 .panel:last-child');
-  if(dashReqPanel){
-    var dashItem = document.createElement('div');
-    dashItem.className = 'req-item';
-    dashItem.style.cssText = 'background:var(--amber-pale);border-radius:8px;padding:8px 10px;border:1.5px solid #f0c070;animation:liveSlideIn 0.45s ease';
-    dashItem.innerHTML =
+  // ── 4) Dashboard preview ──
+  var dashPanel=document.querySelector('#page-dashboard .grid-2 .panel:last-child');
+  if(dashPanel){
+    var di=document.createElement('div');
+    di.className='req-item';
+    di.style.cssText='background:var(--amber-pale);border-radius:8px;padding:8px 10px;border:1.5px solid #f0c070;animation:liveSlideIn 0.45s ease;margin-bottom:4px';
+    di.innerHTML=
       '<div class="req-top"><div>'+
         '<div class="req-commodity">'+getBroadcastEmoji(bc.crop)+' '+bc.crop+' – '+bc.qty+'</div>'+
-        '<div class="req-buyer">'+bc.buyerName+' · '+bc.district+'</div>'+
+        '<div class="req-buyer">'+bc.buyerName+' · '+bc.district+' District</div>'+
       '</div><span class="tag new" style="background:#e07b3f;color:#fff;font-size:9px">LIVE</span></div>'+
-      '<div class="req-details"><span>📅 Just now</span>'+(bc.budget?'<span>💰 '+bc.budget+'</span>':'')+'</div>';
-    dashReqPanel.appendChild(dashItem);
+      '<div class="req-details">'+
+        '<span>📅 Just now</span>'+
+        (bc.budget?'<span>💰 Rs. '+bc.budget+'</span>':'')+
+        (bc.phone?'<span>📞 '+bc.phone+'</span>':'')+
+      '</div>';
+    dashPanel.appendChild(di);
   }
 
-  // 5) Show live toast notification
-  showToast('🔴 New buyer broadcast: '+bc.crop+' – '+bc.qty+' ('+bc.district+')','');
-
-  // 6) Flash the notification dot
-  var notifDot = document.querySelector('.notif-dot');
-  if(notifDot){ notifDot.style.display='block'; notifDot.style.animation='pulse 1s infinite'; }
-
-  // 7) Show the bottom nav pip
-  var pip = document.getElementById('bn-req-pip');
-  if(pip) pip.style.display='block';
+  // ── 5) Toast + notification ──
+  showToast('🔴 New broadcast: '+bc.crop+' – '+bc.qty+' from '+bc.buyerName,'');
+  var nd=document.querySelector('.notif-dot'); if(nd){nd.style.display='block';}
+  var pip=document.getElementById('bn-req-pip'); if(pip) pip.style.display='block';
 }
 
 function pollBroadcasts(){
