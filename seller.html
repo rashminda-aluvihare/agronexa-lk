@@ -2,534 +2,1384 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AgroNexa LK – Seller Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  :root{
-    --green:#2d6a4f;--green-light:#52b788;--green-pale:#d8f3dc;--green-mid:#74c69d;
-    --amber:#e76f51;--amber-pale:#fde8e0;
-    --gold:#f4a261;--gold-pale:#fef3e2;
-    --surface:#f9f7f2;--card:#ffffff;--border:#e8e2d6;
-    --text:#1a2e1a;--muted:#6b7b6b;--hint:#9aaa9a;
-    --sidebar:#1a2e1a;--sidebar-active:#2d6a4f;
-  }
-  body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text);display:flex;min-height:100vh}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --g:#1e5c38;--g-mid:#2d7a4f;--g-light:#52b788;--g-pale:#d8f3dc;--g-faint:#eef8f1;
+  --amber:#e07b3f;--amber-pale:#fde8d8;
+  --gold:#d4a017;--gold-pale:#fdf3d0;
+  --blue:#3b6fd4;--blue-pale:#e4ecff;
+  --red:#c0392b;--red-pale:#fdecea;
+  --surface:#f5f2eb;--card:#ffffff;
+  --border:#e4ddd0;--border-strong:#c8c0b4;
+  --ink:#141f14;--muted:#5a6b5a;--hint:#8a9e8a;
+  --sidebar-bg:#141f14;--sidebar-w:248px;
+  --radius:14px;--radius-sm:9px;
+  --bn-h:62px;
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --safe-t:env(safe-area-inset-top,0px);
+}
 
-  /* Sidebar */
-  .sidebar{width:240px;background:var(--sidebar);display:flex;flex-direction:column;padding:0;flex-shrink:0;position:relative}
-  .logo-wrap{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,0.07)}
-  .logo-leaf{display:inline-block;width:32px;height:32px;background:var(--green-light);border-radius:50% 50% 50% 8px;margin-bottom:8px}
-  .logo-name{font-family:'DM Serif Display',serif;color:#fff;font-size:18px;letter-spacing:-0.3px;line-height:1.1}
-  .logo-tag{color:rgba(255,255,255,0.4);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-top:2px}
-  .user-card{padding:20px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.07)}
-  .avatar{width:38px;height:38px;border-radius:50%;background:var(--green-mid);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;color:#fff;flex-shrink:0}
-  .user-name{font-size:13px;font-weight:500;color:#fff;line-height:1.2}
-  .user-role{font-size:11px;color:rgba(255,255,255,0.4);margin-top:1px}
-  .role-badge{display:inline-block;padding:2px 8px;background:rgba(82,183,136,0.2);color:var(--green-mid);border-radius:20px;font-size:10px;font-weight:500;margin-top:4px}
-  nav{padding:16px 12px;flex:1}
-  .nav-section{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.25);padding:12px 12px 6px}
-  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;color:rgba(255,255,255,0.55);font-size:13.5px;font-weight:400;margin-bottom:2px;transition:all 0.15s}
-  .nav-item:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.85)}
-  .nav-item.active{background:var(--sidebar-active);color:#fff;font-weight:500}
-  .nav-item svg{width:16px;height:16px;flex-shrink:0}
-  .nav-badge{margin-left:auto;background:var(--amber);color:#fff;font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px}
-  .sidebar-bottom{padding:20px 24px;border-top:1px solid rgba(255,255,255,0.07)}
-  .logout-btn{color:rgba(255,255,255,0.35);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px}
-  .logout-btn:hover{color:rgba(255,255,255,0.7)}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink)}
+body{overflow:hidden}
 
-  /* Main */
-  .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-  .topbar{background:var(--card);border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between}
-  .page-title{font-family:'DM Serif Display',serif;font-size:20px;color:var(--text)}
-  .topbar-right{display:flex;align-items:center;gap:16px}
-  .notif-btn{position:relative;width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer}
-  .notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--amber);border-radius:50%;border:2px solid #fff}
-  .date-chip{background:var(--green-pale);color:var(--green);font-size:12px;font-weight:500;padding:6px 14px;border-radius:20px}
+/* ── SIDEBAR OVERLAY ── */
+.sidebar-overlay{display:none;position:fixed;inset:0;z-index:90;background:rgba(0,0,0,0.55);backdrop-filter:blur(3px);opacity:0;transition:opacity .3s}
+.sidebar-overlay.open{display:block;opacity:1}
 
-  .content{flex:1;overflow-y:auto;padding:28px 32px;display:flex;flex-direction:column;gap:24px}
+/* ── SIDEBAR ── */
+.sidebar{
+  position:fixed;top:0;left:0;height:100vh;width:var(--sidebar-w);
+  background:var(--sidebar-bg);display:flex;flex-direction:column;z-index:100;
+  overflow:hidden;transition:transform .3s cubic-bezier(.4,0,.2,1);
+}
+.sb-logo{padding:24px 22px 18px;border-bottom:1px solid rgba(255,255,255,.07)}
+.sb-leaf{width:30px;height:30px;background:var(--g-light);border-radius:50% 50% 50% 8px;margin-bottom:8px}
+.sb-name{font-family:'DM Serif Display',serif;color:#fff;font-size:17px;letter-spacing:-.3px}
+.sb-tag{color:rgba(255,255,255,.3);font-size:9px;letter-spacing:2.5px;text-transform:uppercase;margin-top:2px}
 
-  /* Stats row */
-  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 22px;position:relative;overflow:hidden}
-  .stat-card::after{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:0.07}
-  .stat-card.green::after{background:var(--green)}
-  .stat-card.amber::after{background:var(--amber)}
-  .stat-card.gold::after{background:var(--gold)}
-  .stat-card.blue::after{background:#4361ee}
-  .stat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
-  .stat-icon.green{background:var(--green-pale)}
-  .stat-icon.amber{background:var(--amber-pale)}
-  .stat-icon.gold{background:var(--gold-pale)}
-  .stat-icon.blue{background:#e8ecff}
-  .stat-icon svg{width:18px;height:18px}
-  .stat-icon.green svg{color:var(--green)}
-  .stat-icon.amber svg{color:var(--amber)}
-  .stat-icon.gold svg{color:var(--gold)}
-  .stat-icon.blue svg{color:#4361ee}
-  .stat-val{font-family:'DM Serif Display',serif;font-size:28px;color:var(--text);line-height:1}
-  .stat-label{font-size:12px;color:var(--muted);margin-top:4px}
-  .stat-delta{font-size:11px;font-weight:500;margin-top:8px}
-  .stat-delta.up{color:var(--green)}
-  .stat-delta.down{color:var(--amber)}
+.sb-user{padding:16px 22px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.07)}
+.sb-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--g-light),var(--g));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:500;color:#fff;line-height:1.2}
+.sb-umeta{font-size:11px;color:rgba(255,255,255,.38);margin-top:2px}
+.sb-badge{display:inline-block;padding:2px 8px;background:rgba(82,183,136,.2);color:var(--g-light);border-radius:20px;font-size:9px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-top:4px}
 
-  /* Two-col grid */
-  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-  .grid-3{display:grid;grid-template-columns:2fr 1fr;gap:20px}
+nav.sb-nav{padding:14px 10px;flex:1;overflow-y:auto}
+.sb-nav::-webkit-scrollbar{width:0}
+.nav-section{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.2);padding:10px 12px 5px}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius-sm);
+  cursor:pointer;color:rgba(255,255,255,.5);font-size:13px;font-weight:400;
+  margin-bottom:1px;transition:all .15s;background:none;border:none;width:100%;text-align:left;
+  font-family:'DM Sans',sans-serif;position:relative;
+}
+.nav-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85)}
+.nav-item.active{background:var(--g-mid);color:#fff;font-weight:500}
+.nav-item svg{width:16px;height:16px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--amber);color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px}
+.sb-foot{padding:16px 22px;border-top:1px solid rgba(255,255,255,.07)}
+.logout-btn{color:rgba(255,255,255,.3);font-size:12px;cursor:pointer;display:flex;align-items:center;gap:8px;background:none;border:none;font-family:'DM Sans',sans-serif;transition:color .2s;width:100%}
+.logout-btn:hover{color:rgba(255,255,255,.7)}
 
-  .panel{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 24px}
-  .panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-  .panel-title{font-size:14px;font-weight:500;color:var(--text)}
-  .panel-action{font-size:12px;color:var(--green);cursor:pointer;font-weight:500}
+/* ── HAMBURGER ── */
+.hamburger{display:none;width:38px;height:38px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--card);align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .2s}
+.hamburger:hover{background:var(--g-faint);border-color:var(--g-light)}
 
-  /* Listing cards */
-  .listing-item{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
-  .listing-item:last-child{border-bottom:none}
-  .listing-img{width:46px;height:46px;border-radius:10px;object-fit:cover;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-  .listing-info{flex:1}
-  .listing-name{font-size:13.5px;font-weight:500;color:var(--text)}
-  .listing-meta{font-size:11.5px;color:var(--muted);margin-top:2px}
-  .listing-price{font-size:13px;font-weight:600;color:var(--green);text-align:right}
-  .listing-qty{font-size:11px;color:var(--muted);text-align:right;margin-top:2px}
-  .status-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
-  .status-pill.active{background:var(--green-pale);color:var(--green)}
-  .status-pill.pending{background:var(--gold-pale);color:#b5621a}
-  .status-pill.inactive{background:#f1f1f1;color:var(--hint)}
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);height:100vh;display:flex;flex-direction:column;overflow:hidden}
 
-  /* Request items */
-  .request-item{padding:14px 0;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:6px}
-  .request-item:last-child{border-bottom:none}
-  .request-top{display:flex;align-items:center;justify-content:space-between}
-  .request-commodity{font-size:13.5px;font-weight:500;color:var(--text)}
-  .request-buyer{font-size:12px;color:var(--muted);margin-top:1px}
-  .request-details{font-size:12px;color:var(--muted);display:flex;gap:16px}
-  .request-actions{display:flex;gap:8px;margin-top:6px}
-  .btn-sm{padding:5px 14px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:none;transition:all 0.15s}
-  .btn-accept{background:var(--green);color:#fff}
-  .btn-accept:hover{background:#245a40}
-  .btn-reject{background:var(--surface);color:var(--muted);border:1px solid var(--border)}
-  .btn-counter{background:var(--gold-pale);color:#b5621a}
+/* TOPBAR */
+.topbar{
+  background:rgba(245,242,235,.96);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);padding:0 28px;height:60px;
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.page-title{font-family:'DM Serif Display',serif;font-size:18px;color:var(--ink)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.dot-live{width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.live-label{font-size:11px;color:var(--muted)}
+.date-chip{background:var(--g-pale);color:var(--g);font-size:11px;font-weight:500;padding:5px 13px;border-radius:20px;border:1px solid #b9e4c3}
+.notif-btn{position:relative;width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+.notif-btn:hover{background:var(--g-faint);border-color:var(--g-light)}
+.notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--amber);border-radius:50%;border:2px solid #fff}
 
-  /* Ledger */
-  .ledger-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
-  .ledger-item:last-child{border-bottom:none}
-  .ledger-hash{font-family:monospace;font-size:10px;color:var(--hint);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .ledger-amt{font-size:13px;font-weight:600;color:var(--green)}
-  .ledger-label{font-size:12px;color:var(--muted)}
-  .hash-icon{width:28px;height:28px;border-radius:8px;background:var(--green-pale);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-  .hash-icon svg{width:14px;height:14px;color:var(--green)}
+/* SCROLL */
+.content{flex:1;overflow-y:auto;padding:24px 28px;display:flex;flex-direction:column;gap:20px}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-track{background:transparent}
+.content::-webkit-scrollbar-thumb{background:var(--g-pale);border-radius:10px}
 
-  /* Reputation */
-  .rep-score{font-family:'DM Serif Display',serif;font-size:52px;color:var(--green);line-height:1}
-  .rep-label{font-size:12px;color:var(--muted);margin-top:4px}
-  .rep-bars{margin-top:16px;display:flex;flex-direction:column;gap:8px}
-  .rep-row{display:flex;align-items:center;gap:10px;font-size:12px}
-  .rep-row-label{color:var(--muted);width:70px;flex-shrink:0}
-  .bar-bg{flex:1;height:6px;background:var(--surface);border-radius:4px;overflow:hidden}
-  .bar-fill{height:100%;border-radius:4px;background:var(--green-light)}
-  .rep-row-val{color:var(--muted);width:24px;text-align:right;flex-shrink:0}
+/* PAGES */
+.page{display:none;flex-direction:column;gap:20px;animation:fadeUp .3s ease}
+.page.active{display:flex}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-  /* Earnings chart placeholder */
-  .chart-placeholder{height:120px;display:flex;align-items:flex-end;gap:6px;padding:0 4px}
-  .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
-  .bar-rect{width:100%;border-radius:4px 4px 0 0;background:var(--green-pale);transition:background 0.2s}
-  .bar-rect.highlight{background:var(--green-light)}
-  .bar-month{font-size:10px;color:var(--hint)}
+/* ── STAT CARDS ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stat-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px 20px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;cursor:default;
+}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(30,92,56,.1)}
+.stat-card::after{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:.07}
+.stat-card.green::after{background:var(--g)}
+.stat-card.amber::after{background:var(--amber)}
+.stat-card.gold::after{background:var(--gold)}
+.stat-card.blue::after{background:var(--blue)}
+.stat-icon{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.stat-icon.green{background:var(--g-pale)} .stat-icon.green svg{color:var(--g)}
+.stat-icon.amber{background:var(--amber-pale)} .stat-icon.amber svg{color:var(--amber)}
+.stat-icon.gold{background:var(--gold-pale)} .stat-icon.gold svg{color:var(--gold)}
+.stat-icon.blue{background:var(--blue-pale)} .stat-icon.blue svg{color:var(--blue)}
+.stat-icon svg{width:17px;height:17px}
+.stat-val{font-family:'DM Serif Display',serif;font-size:26px;color:var(--ink);line-height:1}
+.stat-label{font-size:11.5px;color:var(--muted);margin-top:3px}
+.stat-delta{font-size:11px;font-weight:500;margin-top:6px}
+.stat-delta.up{color:var(--g)} .stat-delta.down{color:var(--amber)}
 
-  /* Notification badge mini */
-  .dot-live{width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:5px;animation:pulse 2s infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+/* ── PANELS ── */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.panel-title{font-size:13px;font-weight:600;color:var(--ink);letter-spacing:.1px}
+.panel-action{font-size:12px;color:var(--g-mid);cursor:pointer;font-weight:500;background:none;border:none;font-family:'DM Sans',sans-serif;transition:color .15s;display:flex;align-items:center;gap:4px}
+.panel-action:hover{color:var(--g)}
+.panel-sub{font-size:11px;color:var(--hint);margin-top:1px}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid-32{display:grid;grid-template-columns:3fr 2fr;gap:18px}
+
+/* ── LISTING ITEMS ── */
+.listing-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
+.listing-item:last-child{border-bottom:none}
+.listing-img{width:44px;height:44px;border-radius:var(--radius-sm);background:var(--g-faint);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.listing-img.equip{background:var(--amber-pale)}
+.listing-info{flex:1;min-width:0}
+.listing-name{font-size:13px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.listing-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.listing-price{font-size:13px;font-weight:600;color:var(--g);text-align:right;flex-shrink:0}
+.status-pill{display:inline-flex;align-items:center;gap:3px;padding:2px 9px;border-radius:20px;font-size:10.5px;font-weight:500}
+.status-pill.active{background:var(--g-pale);color:var(--g-mid)}
+.status-pill.pending{background:var(--gold-pale);color:#a06010}
+.status-pill.sold{background:#f0f0f0;color:var(--hint)}
+
+/* ── REQUEST ITEMS ── */
+.req-item{padding:12px 0;border-bottom:1px solid var(--border)}
+.req-item:last-child{border-bottom:none;padding-bottom:0}
+.req-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.req-commodity{font-size:13px;font-weight:600;color:var(--ink)}
+.req-buyer{font-size:11.5px;color:var(--muted);margin-top:2px}
+.req-details{display:flex;gap:14px;font-size:11.5px;color:var(--muted);margin-top:6px;flex-wrap:wrap}
+.req-actions{display:flex;gap:7px;margin-top:8px;flex-wrap:wrap}
+.btn-sm{padding:5px 13px;border-radius:7px;font-size:11.5px;font-weight:600;cursor:pointer;border:none;transition:all .15s;font-family:'DM Sans',sans-serif}
+.btn-accept{background:var(--g);color:#fff} .btn-accept:hover{background:#1a4d2e}
+.btn-reject{background:var(--surface);color:var(--muted);border:1px solid var(--border)} .btn-reject:hover{background:#ede8de}
+.btn-counter{background:var(--gold-pale);color:#a06010} .btn-counter:hover{background:#f5e8b0}
+
+/* ── LEDGER ── */
+.ledger-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.ledger-item:last-child{border-bottom:none}
+.hash-icon{width:30px;height:30px;border-radius:8px;background:var(--g-pale);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hash-icon svg{width:14px;height:14px;color:var(--g)}
+.ledger-label{font-size:12.5px;font-weight:500;color:var(--ink)}
+.ledger-hash{font-family:monospace;font-size:10px;color:var(--hint);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px}
+.ledger-amt{font-size:13px;font-weight:700;color:var(--g);flex-shrink:0}
+
+/* ── REPUTATION ── */
+.rep-score{font-family:'DM Serif Display',serif;font-size:48px;color:var(--g);line-height:1}
+.rep-label{font-size:11px;color:var(--muted);margin-top:3px}
+.rep-bars{margin-top:14px;display:flex;flex-direction:column;gap:7px}
+.rep-row{display:flex;align-items:center;gap:8px;font-size:11.5px}
+.rep-row-label{color:var(--muted);width:66px;flex-shrink:0}
+.bar-bg{flex:1;height:5px;background:var(--surface);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;background:var(--g-light);transition:width .8s ease}
+.rep-row-val{color:var(--muted);width:22px;text-align:right;flex-shrink:0;font-size:11px}
+
+/* ── EARNINGS CHART (SVG-based) ── */
+.chart-wrap{width:100%;height:110px;position:relative}
+.chart-wrap svg{width:100%;height:100%}
+
+/* ── BROADCAST FEED ── */
+.bc-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.bc-item:last-child{border-bottom:none}
+.bc-item:hover{background:var(--g-faint);margin:0 -10px;padding-left:10px;padding-right:10px;border-radius:var(--radius-sm)}
+.bc-dot{width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:4px}
+.bc-dot.read{background:var(--hint)}
+.bc-commodity{font-size:13px;font-weight:600;color:var(--ink)}
+.bc-meta{font-size:11.5px;color:var(--muted);margin-top:2px}
+.bc-time{font-size:10px;color:var(--hint);margin-top:4px;flex-shrink:0;white-space:nowrap}
+
+/* ── ADD LISTING FORM ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-field{display:flex;flex-direction:column;gap:4px}
+.form-label{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase}
+.form-input,.form-select,.form-textarea{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink);
+  outline:none;transition:border-color .15s;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--g-light);background:#fff}
+.form-textarea{resize:vertical;min-height:72px}
+.form-full{grid-column:1/-1}
+
+/* ── PROFILE ── */
+.profile-hero{
+  background:linear-gradient(135deg,var(--sidebar-bg) 0%,#243824 100%);
+  border-radius:var(--radius);padding:26px;display:flex;align-items:center;gap:20px;
+  position:relative;overflow:hidden;
+}
+.profile-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(82,183,136,.18) 0%,transparent 70%)}
+.ph-avatar{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--g-light),var(--g));display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:24px;color:#fff;flex-shrink:0}
+.ph-name{font-family:'DM Serif Display',serif;font-size:20px;color:#fff}
+.ph-meta{font-size:12px;color:rgba(255,255,255,.45);margin-top:3px}
+.pf-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pf-field{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px}
+.pf-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--hint);font-weight:700;margin-bottom:5px}
+.pf-val{font-size:13.5px;font-weight:600;color:var(--ink)}
+
+/* ── ANALYTICS PAGE ── */
+.analytics-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px}
+.kpi-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.kpi-val{font-family:'DM Serif Display',serif;font-size:24px;color:var(--ink);margin-top:6px}
+.kpi-sub{font-size:11px;color:var(--g);margin-top:4px}
+
+/* ── PDF INVOICE PANEL ── */
+.invoice-form{display:flex;flex-direction:column;gap:12px}
+.invoice-items-list{border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.invoice-item-row{display:flex;gap:8px;padding:8px 10px;border-bottom:1px solid var(--border);align-items:center}
+.invoice-item-row:last-child{border-bottom:none}
+.invoice-item-row input{flex:1;border:none;background:transparent;font-size:12.5px;font-family:'DM Sans',sans-serif;outline:none;color:var(--ink);padding:2px 4px}
+.invoice-item-row input:focus{background:var(--g-faint);border-radius:4px}
+.invoice-item-row .qty-input{width:50px;text-align:center}
+.invoice-item-row .price-input{width:80px;text-align:right}
+.inv-header{display:flex;gap:8px;padding:6px 10px;background:var(--g-faint);border-bottom:1px solid var(--border)}
+.inv-header span{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(20,31,20,.55);z-index:300;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:16px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border-radius:18px;padding:26px;width:480px;max-width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.25)}
+.modal h3{font-family:'DM Serif Display',serif;font-size:18px;margin-bottom:5px;color:var(--ink)}
+.modal p{font-size:12.5px;color:var(--muted);margin-bottom:18px;line-height:1.5}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.mbtn{padding:8px 20px;border-radius:9px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;letter-spacing:.2px}
+.mbtn.primary{background:var(--g);color:#fff} .mbtn.primary:hover{background:#1a4d2e}
+.mbtn.secondary{background:var(--surface);color:var(--muted);border:1px solid var(--border)}
+.mbtn.danger{background:var(--red-pale);color:var(--red);border:1px solid #f5c0bc}
+.mbtn.amber{background:var(--amber-pale);color:var(--amber);border:1px solid #f5c8b8}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:20px;right:20px;background:var(--ink);color:#fff;
+  padding:12px 18px;border-radius:12px;font-size:12.5px;z-index:999;
+  display:none;align-items:center;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.3);
+  font-family:'DM Sans',sans-serif;font-weight:500;max-width:calc(100vw - 40px);
+  animation:slideUp .3s ease;
+}
+.toast.show{display:flex}
+@keyframes slideUp{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+.toast.success{border-left:4px solid var(--g-light)}
+.toast.error{border-left:4px solid var(--amber)}
+.toast.info{border-left:4px solid var(--blue)}
+
+/* ── BOTTOM NAV (mobile) ── */
+.bottom-nav{
+  display:none;position:fixed;bottom:0;left:0;right:0;
+  background:var(--card);border-top:1px solid var(--border);
+  height:var(--bn-h);padding-bottom:var(--safe-b);
+  z-index:80;justify-content:space-around;align-items:center;
+  box-shadow:0 -4px 20px rgba(0,0,0,.07);
+}
+.bn-item{
+  display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;
+  padding:7px 4px;border-radius:var(--radius-sm);cursor:pointer;
+  background:none;border:none;color:var(--hint);font-family:'DM Sans',sans-serif;
+  font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;
+  transition:color .2s;position:relative;
+}
+.bn-item svg{width:20px;height:20px;transition:transform .2s}
+.bn-item.active{color:var(--g-mid)}
+.bn-item.active svg{transform:scale(1.1)}
+.bn-pip{position:absolute;top:6px;right:calc(50% - 18px);width:7px;height:7px;border-radius:50%;background:var(--amber);border:2px solid var(--card)}
+
+/* ── PDF PROGRESS ── */
+.pdf-progress{display:none;align-items:center;gap:8px;padding:10px 14px;background:var(--g-faint);border:1px solid #b9e4c3;border-radius:var(--radius-sm);font-size:12px;color:var(--g);font-weight:500}
+.pdf-progress.show{display:flex}
+.spinner{width:14px;height:14px;border:2px solid var(--g-pale);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── COUNTER MODAL ── */
+.counter-input-wrap{display:flex;align-items:center;gap:10px;margin-top:8px}
+.counter-input{flex:1;border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;font-size:15px;font-family:'DM Serif Display',serif;color:var(--ink);outline:none;text-align:right}
+.counter-input:focus{border-color:var(--g-light)}
+
+/* ── TAGS ── */
+.tag{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:600}
+.tag.new{background:var(--amber-pale);color:var(--amber)}
+.tag.done{background:var(--g-pale);color:var(--g-mid)}
+.tag.info{background:var(--blue-pale);color:var(--blue)}
+
+/* ─────────────── RESPONSIVE ─────────────── */
+@media(max-width:1100px){
+  .stats-row{grid-template-columns:1fr 1fr}
+  .analytics-kpi{grid-template-columns:1fr 1fr}
+  .grid-32{grid-template-columns:1fr}
+}
+@media(max-width:900px){
+  .grid-2{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  .pf-grid{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  body{overflow:hidden}
+  .sidebar{transform:translateX(-100%);width:min(var(--sidebar-w),88vw);padding-top:var(--safe-t)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .hamburger{display:flex}
+  .topbar{padding:0 14px;height:54px}
+  .date-chip{display:none}
+  .live-label{display:none}
+  .content{padding:14px;gap:14px;padding-bottom:calc(var(--bn-h) + var(--safe-b) + 10px)}
+  .stats-row{grid-template-columns:1fr 1fr;gap:10px}
+  .stat-card{padding:14px}
+  .stat-val{font-size:22px}
+  .stat-icon{width:30px;height:30px;margin-bottom:10px}
+  .stat-icon svg{width:14px;height:14px}
+  .analytics-kpi{grid-template-columns:1fr 1fr}
+  .grid-32{grid-template-columns:1fr}
+  .profile-hero{flex-direction:column;text-align:center;padding:20px}
+  .pf-grid{grid-template-columns:1fr}
+  .panel{padding:14px}
+  .toast{bottom:calc(var(--bn-h) + var(--safe-b) + 10px);right:10px;left:10px;max-width:none}
+  .bottom-nav{display:flex}
+  .form-grid{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .stats-row{gap:8px}
+  .stat-card{padding:12px}
+  .stat-val{font-size:20px}
+  .analytics-kpi{grid-template-columns:1fr}
+  .modal{padding:18px}
+  .req-actions{gap:5px}
+  .btn-sm{padding:4px 10px;font-size:11px}
+}
+
+/* ── UTILITY ── */
+.flex-col{display:flex;flex-direction:column;gap:12px}
+.chain-badge{display:flex;align-items:center;gap:8px;background:var(--g-faint);border:1px solid #b9e4c3;border-radius:var(--radius-sm);padding:10px 13px;margin-top:14px}
+.chain-badge svg{color:var(--g);flex-shrink:0}
+.chain-badge span{font-size:11.5px;color:var(--g);font-weight:500}
+
+/* Print styles for PDF preview */
+@media print{
+  .sidebar,.topbar,.bottom-nav,.hamburger,.toast,.modal-overlay{display:none!important}
+  .main{margin-left:0!important}
+  .content{padding:0!important}
+}
 </style>
 </head>
 <body>
 
-<!-- Sidebar -->
-<aside class="sidebar">
-  <div class="logo-wrap">
-    <div class="logo-leaf"></div>
-    <div class="logo-name">AgroNexa LK</div>
-    <div class="logo-tag">Smart Farming Platform</div>
-  </div>
+<!-- Overlay -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
 
-  <div class="user-card">
-    <div class="avatar">SK</div>
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-leaf"></div>
+    <div class="sb-name">AgroNexa LK</div>
+    <div class="sb-tag">Smart Farming Platform</div>
+  </div>
+  <div class="sb-user">
+    <div class="sb-avatar" id="user-avatar">SK</div>
     <div>
-      <div class="user-name">Sunil Karunarathne</div>
-      <div class="user-role" id="user-district">Kandy District</div>
-      <div class="role-badge">Seller / Farmer</div>
-      <div id="member-since" style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:4px;"></div>
+      <div class="sb-uname" id="user-name">Sunil Karunarathne</div>
+      <div class="sb-umeta" id="user-district">Kandy District</div>
+      <div class="sb-badge">Seller / Farmer</div>
+      <div id="member-since" style="font-size:9px;color:rgba(255,255,255,.2);margin-top:3px"></div>
     </div>
   </div>
-
-  <nav>
+  <nav class="sb-nav">
     <div class="nav-section">Main</div>
-    <div class="nav-item active">
+    <button class="nav-item active" onclick="showPage('dashboard',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       Dashboard
-    </div>
-    <div class="nav-item">
+    </button>
+    <button class="nav-item" onclick="showPage('listings',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h18v4H3z"/><path d="M3 10h18v11H3z"/></svg>
       My Listings
-      <span class="nav-badge">6</span>
-    </div>
-    <div class="nav-item">
+      <span class="nav-badge" id="listings-badge">6</span>
+    </button>
+    <button class="nav-item" onclick="showPage('requests',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
       Buyer Requests
-      <span class="nav-badge">3</span>
-    </div>
-    <div class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 3H8v4h8V3z"/></svg>
-      Equipment Rentals
-    </div>
-    <div class="nav-section">Account</div>
-    <div class="nav-item">
+      <span class="nav-badge" id="requests-badge">3</span>
+    </button>
+    <button class="nav-item" onclick="showPage('broadcasts',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+      Buyer Broadcasts
+      <span class="nav-badge">2</span>
+    </button>
+    <button class="nav-item" onclick="showPage('analytics',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Analytics
+    </button>
+    <div class="nav-section">Finance</div>
+    <button class="nav-item" onclick="showPage('ledger',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-      Ledger History
-    </div>
-    <div class="nav-item">
+      Blockchain Ledger
+    </button>
+    <button class="nav-item" onclick="showPage('invoices',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      PDF Invoices
+    </button>
+    <div class="nav-section">Account</div>
+    <button class="nav-item" onclick="showPage('profile',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       Profile
-    </div>
-    <div class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-      Settings
-    </div>
+    </button>
   </nav>
-
-  <div class="sidebar-bottom">
-    <div class="logout-btn">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      Sign out
-    </div>
+  <div class="sb-foot">
+    <button class="logout-btn" onclick="doLogout()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sign Out
+    </button>
   </div>
 </aside>
 
-<!-- Main content -->
+<!-- ── MAIN ── -->
 <div class="main">
   <div class="topbar">
-    <div class="page-title" id="page-greeting">Seller Dashboard</div>
+    <div class="topbar-left">
+      <button class="hamburger" id="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="page-title" id="page-title">Seller Dashboard</div>
+    </div>
     <div class="topbar-right">
-      <span class="dot-live"></span><span style="font-size:12px;color:var(--muted)">Live</span>
-      <div class="notif-btn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <span class="dot-live"></span><span class="live-label">Live</span>
+      <div class="notif-btn" onclick="showPage('requests',document.querySelectorAll('.nav-item')[2])">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         <div class="notif-dot"></div>
       </div>
-      <div class="date-chip">Friday, 8 May 2026</div>
+      <div class="date-chip" id="date-chip"></div>
     </div>
   </div>
 
   <div class="content">
 
-    <!-- Stats -->
-    <div class="stats-row">
-      <div class="stat-card green">
-        <div class="stat-icon green">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2z"/><path d="M12 6v6l4 2"/></svg>
+    <!-- ══ DASHBOARD ══ -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-row">
+        <div class="stat-card green">
+          <div class="stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v4H3z"/><path d="M3 10h18v11H3z"/></svg></div>
+          <div class="stat-val">6</div>
+          <div class="stat-label">Active Listings</div>
+          <div class="stat-delta up">↑ 2 this week</div>
         </div>
-        <div class="stat-val">6</div>
-        <div class="stat-label">Active Listings</div>
-        <div class="stat-delta up">↑ 2 this week</div>
-      </div>
-      <div class="stat-card amber">
-        <div class="stat-icon amber">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        <div class="stat-card amber">
+          <div class="stat-icon amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+          <div class="stat-val">3</div>
+          <div class="stat-label">Pending Buyer Requests</div>
+          <div class="stat-delta down">Needs response</div>
         </div>
-        <div class="stat-val">3</div>
-        <div class="stat-label">Pending Buyer Requests</div>
-        <div class="stat-delta down">Needs response</div>
-      </div>
-      <div class="stat-card gold">
-        <div class="stat-icon gold">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
+        <div class="stat-card gold">
+          <div class="stat-icon gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg></div>
+          <div class="stat-val">Rs. 47,200</div>
+          <div class="stat-label">Earnings this month</div>
+          <div class="stat-delta up">↑ 18% vs last month</div>
         </div>
-        <div class="stat-val">Rs. 47,200</div>
-        <div class="stat-label">Earnings this month</div>
-        <div class="stat-delta up">↑ 18% vs last month</div>
-      </div>
-      <div class="stat-card blue">
-        <div class="stat-icon blue">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        </div>
-        <div class="stat-val">24</div>
-        <div class="stat-label">Completed Rentals</div>
-        <div class="stat-delta up">↑ 4 this month</div>
-      </div>
-    </div>
-
-    <!-- Listings + Requests -->
-    <div class="grid-2">
-      <div class="panel">
-        <div class="panel-head">
-          <div class="panel-title">My Crop Listings</div>
-          <div class="panel-action">+ Add New</div>
-        </div>
-        <div class="listing-item">
-          <div class="listing-img">🍅</div>
-          <div class="listing-info">
-            <div class="listing-name">Tomatoes – Cherry Variety</div>
-            <div class="listing-meta">Kandy · 120 kg available · Listed today</div>
-          </div>
-          <div>
-            <div class="listing-price">Rs. 280/kg</div>
-            <div style="text-align:right;margin-top:4px"><span class="status-pill active">● Active</span></div>
-          </div>
-        </div>
-        <div class="listing-item">
-          <div class="listing-img">🥬</div>
-          <div class="listing-info">
-            <div class="listing-name">Gotukola (Centella)</div>
-            <div class="listing-meta">Kandy · 60 kg available · 3 days ago</div>
-          </div>
-          <div>
-            <div class="listing-price">Rs. 320/kg</div>
-            <div style="text-align:right;margin-top:4px"><span class="status-pill active">● Active</span></div>
-          </div>
-        </div>
-        <div class="listing-item">
-          <div class="listing-img">🥕</div>
-          <div class="listing-info">
-            <div class="listing-name">Carrots – Nantes Type</div>
-            <div class="listing-meta">Nuwara Eliya · 200 kg · Avail. May 12</div>
-          </div>
-          <div>
-            <div class="listing-price">Rs. 195/kg</div>
-            <div style="text-align:right;margin-top:4px"><span class="status-pill pending">⏳ Pending</span></div>
-          </div>
-        </div>
-        <div class="listing-item">
-          <div class="listing-img">🌶️</div>
-          <div class="listing-info">
-            <div class="listing-name">Red Chilies – Dried</div>
-            <div class="listing-meta">Kandy · 35 kg available · 1 week ago</div>
-          </div>
-          <div>
-            <div class="listing-price">Rs. 1,150/kg</div>
-            <div style="text-align:right;margin-top:4px"><span class="status-pill active">● Active</span></div>
-          </div>
+        <div class="stat-card blue">
+          <div class="stat-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+          <div class="stat-val">24</div>
+          <div class="stat-label">Completed Rentals</div>
+          <div class="stat-delta up">↑ 4 this month</div>
         </div>
       </div>
 
-      <div class="panel">
-        <div class="panel-head">
-          <div class="panel-title">Incoming Buyer Requests</div>
-          <span style="font-size:11px;color:var(--amber);font-weight:500">3 new</span>
-        </div>
-        <div class="request-item">
-          <div class="request-top">
-            <div>
-              <div class="request-commodity">Tomatoes – 80 kg</div>
-              <div class="request-buyer">Buyer: Chaminda Perera · Colombo</div>
-            </div>
-            <span class="status-pill pending">New</span>
-          </div>
-          <div class="request-details">
-            <span>📅 May 10, 2026</span>
-            <span>💰 Offer: Rs. 260/kg</span>
-          </div>
-          <div class="request-actions">
-            <button class="btn-sm btn-accept">Accept</button>
-            <button class="btn-sm btn-counter">Counter</button>
-            <button class="btn-sm btn-reject">Decline</button>
-          </div>
-        </div>
-        <div class="request-item">
-          <div class="request-top">
-            <div>
-              <div class="request-commodity">Red Chilies – 20 kg</div>
-              <div class="request-buyer">Buyer: Nimal Exports Pvt Ltd · Gampaha</div>
-            </div>
-            <span class="status-pill pending">New</span>
-          </div>
-          <div class="request-details">
-            <span>📅 May 13, 2026</span>
-            <span>💰 Offer: Rs. 1,100/kg</span>
-          </div>
-          <div class="request-actions">
-            <button class="btn-sm btn-accept">Accept</button>
-            <button class="btn-sm btn-counter">Counter</button>
-            <button class="btn-sm btn-reject">Decline</button>
-          </div>
-        </div>
-        <div class="request-item">
-          <div class="request-top">
-            <div>
-              <div class="request-commodity">Gotukola – 30 kg</div>
-              <div class="request-buyer">Buyer: Ayurveda Shop – Matale</div>
-            </div>
-            <span class="status-pill pending">New</span>
-          </div>
-          <div class="request-details">
-            <span>📅 May 11, 2026</span>
-            <span>💰 Offer: Rs. 300/kg</span>
-          </div>
-          <div class="request-actions">
-            <button class="btn-sm btn-accept">Accept</button>
-            <button class="btn-sm btn-counter">Counter</button>
-            <button class="btn-sm btn-reject">Decline</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Ledger + Reputation + Earnings -->
-    <div class="grid-3">
-      <div class="panel">
-        <div class="panel-head">
-          <div class="panel-title">Blockchain Ledger — Recent Rentals</div>
-          <div class="panel-action">View all</div>
-        </div>
-        <div class="ledger-item">
-          <div class="hash-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-          </div>
-          <div style="flex:1">
-            <div class="ledger-label">Kubota Mini Tractor · 3 days</div>
-            <div class="ledger-hash">sha256:3e4a1c9b7f2d…</div>
-          </div>
-          <div class="ledger-amt">Rs. 15,000</div>
-        </div>
-        <div class="ledger-item">
-          <div class="hash-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-          </div>
-          <div style="flex:1">
-            <div class="ledger-label">Water Pump (5HP) · 1 day</div>
-            <div class="ledger-hash">sha256:8b2f0e6d1a9c…</div>
-          </div>
-          <div class="ledger-amt">Rs. 3,500</div>
-        </div>
-        <div class="ledger-item">
-          <div class="hash-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-          </div>
-          <div style="flex:1">
-            <div class="ledger-label">Lorry Transport · 2 days</div>
-            <div class="ledger-hash">sha256:c7a3d5f9b1e4…</div>
-          </div>
-          <div class="ledger-amt">Rs. 12,000</div>
-        </div>
-        <div class="ledger-item">
-          <div class="hash-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-          </div>
-          <div style="flex:1">
-            <div class="ledger-label">Sprayer Machine · 2 days</div>
-            <div class="ledger-hash">sha256:0d6e8b2f4a7c…</div>
-          </div>
-          <div class="ledger-amt">Rs. 4,200</div>
-        </div>
-        <div style="margin-top:16px;background:var(--green-pale);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          <span style="font-size:12px;color:var(--green);font-weight:500">Chain verified · No tampering detected</span>
-        </div>
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:20px">
-        <!-- Reputation -->
-        <div class="panel" style="flex:1">
+      <div class="grid-2">
+        <!-- Listings preview -->
+        <div class="panel">
           <div class="panel-head">
-            <div class="panel-title">Seller Reputation</div>
+            <div><div class="panel-title">My Crop Listings</div><div class="panel-sub">4 of 6 shown</div></div>
+            <button class="panel-action" onclick="showPage('listings',document.querySelectorAll('.nav-item')[1])">View all →</button>
           </div>
-          <div class="rep-score">4.8</div>
-          <div class="rep-label">Based on 24 verified rentals</div>
-          <div class="rep-bars">
-            <div class="rep-row">
-              <div class="rep-row-label">Reliability</div>
-              <div class="bar-bg"><div class="bar-fill" style="width:95%"></div></div>
-              <div class="rep-row-val">95</div>
+          <div class="listing-item"><div class="listing-img">🍅</div><div class="listing-info"><div class="listing-name">Tomatoes – Cherry Variety</div><div class="listing-meta">Kandy · 120 kg · Listed today</div></div><div style="text-align:right"><div class="listing-price">Rs. 280/kg</div><span class="status-pill active">● Active</span></div></div>
+          <div class="listing-item"><div class="listing-img">🥬</div><div class="listing-info"><div class="listing-name">Gotukola (Centella)</div><div class="listing-meta">Kandy · 60 kg · 3 days ago</div></div><div style="text-align:right"><div class="listing-price">Rs. 320/kg</div><span class="status-pill active">● Active</span></div></div>
+          <div class="listing-item"><div class="listing-img">🥕</div><div class="listing-info"><div class="listing-name">Carrots – Nantes Type</div><div class="listing-meta">Nuwara Eliya · 200 kg</div></div><div style="text-align:right"><div class="listing-price">Rs. 195/kg</div><span class="status-pill pending">⏳ Pending</span></div></div>
+          <div class="listing-item"><div class="listing-img">🌶️</div><div class="listing-info"><div class="listing-name">Red Chilies – Dried</div><div class="listing-meta">Kandy · 35 kg · 1 week ago</div></div><div style="text-align:right"><div class="listing-price">Rs. 1,150/kg</div><span class="status-pill active">● Active</span></div></div>
+        </div>
+
+        <!-- Requests preview -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Incoming Buyer Requests</div>
+            <span class="tag new">3 new</span>
+          </div>
+          <div class="req-item">
+            <div class="req-top"><div><div class="req-commodity">Tomatoes – 80 kg</div><div class="req-buyer">Chaminda Perera · Colombo</div></div><span class="tag new">New</span></div>
+            <div class="req-details"><span>📅 May 10</span><span>💰 Rs. 260/kg</span></div>
+            <div class="req-actions">
+              <button class="btn-sm btn-accept" onclick="acceptRequest(this,'Tomatoes 80kg')">Accept</button>
+              <button class="btn-sm btn-counter" onclick="counterRequest(this,'Tomatoes 80kg',260)">Counter</button>
+              <button class="btn-sm btn-reject" onclick="rejectRequest(this)">Decline</button>
             </div>
-            <div class="rep-row">
-              <div class="rep-row-label">Timeliness</div>
-              <div class="bar-bg"><div class="bar-fill" style="width:88%"></div></div>
-              <div class="rep-row-val">88</div>
+          </div>
+          <div class="req-item">
+            <div class="req-top"><div><div class="req-commodity">Red Chilies – 20 kg</div><div class="req-buyer">Nimal Exports Pvt Ltd · Gampaha</div></div><span class="tag new">New</span></div>
+            <div class="req-details"><span>📅 May 13</span><span>💰 Rs. 1,100/kg</span></div>
+            <div class="req-actions">
+              <button class="btn-sm btn-accept" onclick="acceptRequest(this,'Red Chilies 20kg')">Accept</button>
+              <button class="btn-sm btn-counter" onclick="counterRequest(this,'Red Chilies 20kg',1100)">Counter</button>
+              <button class="btn-sm btn-reject" onclick="rejectRequest(this)">Decline</button>
             </div>
-            <div class="rep-row">
-              <div class="rep-row-label">Accuracy</div>
-              <div class="bar-bg"><div class="bar-fill" style="width:92%"></div></div>
-              <div class="rep-row-val">92</div>
+          </div>
+          <div class="req-item">
+            <div class="req-top"><div><div class="req-commodity">Gotukola – 30 kg</div><div class="req-buyer">Ayurveda Shop · Matale</div></div><span class="tag new">New</span></div>
+            <div class="req-details"><span>📅 May 11</span><span>💰 Rs. 300/kg</span></div>
+            <div class="req-actions">
+              <button class="btn-sm btn-accept" onclick="acceptRequest(this,'Gotukola 30kg')">Accept</button>
+              <button class="btn-sm btn-counter" onclick="counterRequest(this,'Gotukola 30kg',300)">Counter</button>
+              <button class="btn-sm btn-reject" onclick="rejectRequest(this)">Decline</button>
             </div>
           </div>
         </div>
-        <!-- Earnings mini chart -->
-        <div class="panel" style="flex:1">
+      </div>
+
+      <div class="grid-32">
+        <!-- Ledger -->
+        <div class="panel">
           <div class="panel-head">
-            <div class="panel-title">Monthly Earnings</div>
+            <div class="panel-title">Blockchain Ledger — Recent Rentals</div>
+            <button class="panel-action" onclick="showPage('ledger',document.querySelectorAll('.nav-item')[6])">View all →</button>
           </div>
-          <div class="chart-placeholder">
-            <div class="bar-col"><div class="bar-rect" style="height:50px"></div><div class="bar-month">Jan</div></div>
-            <div class="bar-col"><div class="bar-rect" style="height:70px"></div><div class="bar-month">Feb</div></div>
-            <div class="bar-col"><div class="bar-rect" style="height:60px"></div><div class="bar-month">Mar</div></div>
-            <div class="bar-col"><div class="bar-rect" style="height:90px"></div><div class="bar-month">Apr</div></div>
-            <div class="bar-col"><div class="bar-rect highlight" style="height:110px"></div><div class="bar-month">May</div></div>
+          <div class="ledger-item">
+            <div class="hash-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+            <div style="flex:1;min-width:0"><div class="ledger-label">Kubota Mini Tractor · 3 days</div><div class="ledger-hash">sha256:3e4a1c9b7f2d…</div></div>
+            <div class="ledger-amt">Rs. 15,000</div>
           </div>
-          <div style="margin-top:10px;font-size:12px;color:var(--muted)">Rs. 47,200 earned in May</div>
+          <div class="ledger-item">
+            <div class="hash-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+            <div style="flex:1;min-width:0"><div class="ledger-label">Water Pump (5HP) · 1 day</div><div class="ledger-hash">sha256:8b2f0e6d1a9c…</div></div>
+            <div class="ledger-amt">Rs. 3,500</div>
+          </div>
+          <div class="ledger-item">
+            <div class="hash-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+            <div style="flex:1;min-width:0"><div class="ledger-label">Lorry Transport · 2 days</div><div class="ledger-hash">sha256:c7a3d5f9b1e4…</div></div>
+            <div class="ledger-amt">Rs. 12,000</div>
+          </div>
+          <div class="chain-badge">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span>Chain verified · No tampering detected</span>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <!-- Reputation -->
+          <div class="panel">
+            <div class="panel-head"><div class="panel-title">Seller Reputation</div></div>
+            <div class="rep-score">4.8</div>
+            <div class="rep-label">Based on 24 verified rentals</div>
+            <div class="rep-bars">
+              <div class="rep-row"><div class="rep-row-label">Reliability</div><div class="bar-bg"><div class="bar-fill" style="width:95%"></div></div><div class="rep-row-val">95</div></div>
+              <div class="rep-row"><div class="rep-row-label">Timeliness</div><div class="bar-bg"><div class="bar-fill" style="width:88%"></div></div><div class="rep-row-val">88</div></div>
+              <div class="rep-row"><div class="rep-row-label">Accuracy</div><div class="bar-bg"><div class="bar-fill" style="width:92%"></div></div><div class="rep-row-val">92</div></div>
+            </div>
+          </div>
+          <!-- Earnings chart -->
+          <div class="panel">
+            <div class="panel-head"><div class="panel-title">Monthly Earnings</div></div>
+            <div class="chart-wrap">
+              <svg viewBox="0 0 260 110" preserveAspectRatio="none">
+                <defs><linearGradient id="earningsGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#52b788" stop-opacity=".35"/><stop offset="100%" stop-color="#52b788" stop-opacity="0"/></linearGradient></defs>
+                <path d="M0,110 L0,72 Q26,68 52,60 Q78,52 104,40 Q130,28 156,18 Q182,8 208,5 Q234,2 260,4 L260,110 Z" fill="url(#earningsGrad)"/>
+                <path d="M0,72 Q26,68 52,60 Q78,52 104,40 Q130,28 156,18 Q182,8 208,5 Q234,2 260,4" fill="none" stroke="#52b788" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="260" cy="4" r="4" fill="#2d7a4f"/>
+                <text x="250" y="2" font-size="8" fill="#2d7a4f" font-family="DM Sans,sans-serif" text-anchor="middle">May</text>
+              </svg>
+            </div>
+            <div style="font-size:11.5px;color:var(--muted);margin-top:4px">Rs. 47,200 earned in May · <span style="color:var(--g);font-weight:600">↑ 18%</span></div>
+          </div>
         </div>
       </div>
     </div>
 
+    <!-- ══ LISTINGS ══ -->
+    <div class="page" id="page-listings">
+      <div class="panel">
+        <div class="panel-head">
+          <div><div class="panel-title">My Crop & Equipment Listings</div><div class="panel-sub">6 total listings</div></div>
+          <button class="panel-action" onclick="openAddListing()">
+            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+            Add Listing
+          </button>
+        </div>
+        <div id="listings-list">
+          <div class="listing-item"><div class="listing-img">🍅</div><div class="listing-info"><div class="listing-name">Tomatoes – Cherry Variety</div><div class="listing-meta">Kandy · 120 kg available · Listed today</div></div><div style="text-align:right"><div class="listing-price">Rs. 280/kg</div><span class="status-pill active">● Active</span><div style="margin-top:6px;display:flex;gap:5px;justify-content:flex-end"><button class="btn-sm btn-counter" onclick="editListing(this)">Edit</button><button class="btn-sm btn-reject" onclick="deleteListing(this)">Remove</button></div></div></div>
+          <div class="listing-item"><div class="listing-img">🥬</div><div class="listing-info"><div class="listing-name">Gotukola (Centella)</div><div class="listing-meta">Kandy · 60 kg available · 3 days ago</div></div><div style="text-align:right"><div class="listing-price">Rs. 320/kg</div><span class="status-pill active">● Active</span><div style="margin-top:6px;display:flex;gap:5px;justify-content:flex-end"><button class="btn-sm btn-counter" onclick="editListing(this)">Edit</button><button class="btn-sm btn-reject" onclick="deleteListing(this)">Remove</button></div></div></div>
+          <div class="listing-item"><div class="listing-img">🥕</div><div class="listing-info"><div class="listing-name">Carrots – Nantes Type</div><div class="listing-meta">Nuwara Eliya · 200 kg · Avail. May 12</div></div><div style="text-align:right"><div class="listing-price">Rs. 195/kg</div><span class="status-pill pending">⏳ Pending</span><div style="margin-top:6px;display:flex;gap:5px;justify-content:flex-end"><button class="btn-sm btn-counter" onclick="editListing(this)">Edit</button><button class="btn-sm btn-reject" onclick="deleteListing(this)">Remove</button></div></div></div>
+          <div class="listing-item"><div class="listing-img">🌶️</div><div class="listing-info"><div class="listing-name">Red Chilies – Dried</div><div class="listing-meta">Kandy · 35 kg available · 1 week ago</div></div><div style="text-align:right"><div class="listing-price">Rs. 1,150/kg</div><span class="status-pill active">● Active</span><div style="margin-top:6px;display:flex;gap:5px;justify-content:flex-end"><button class="btn-sm btn-counter" onclick="editListing(this)">Edit</button><button class="btn-sm btn-reject" onclick="deleteListing(this)">Remove</button></div></div></div>
+          <div class="listing-item"><div class="listing-img equip">🚜</div><div class="listing-info"><div class="listing-name">Kubota Mini Tractor</div><div class="listing-meta">Kandy · Daily rental · Available now</div></div><div style="text-align:right"><div class="listing-price">Rs. 5,000/day</div><span class="status-pill active">● Active</span><div style="margin-top:6px;display:flex;gap:5px;justify-content:flex-end"><button class="btn-sm btn-counter" onclick="editListing(this)">Edit</button><button class="btn-sm btn-reject" onclick="deleteListing(this)">Remove</button></div></div></div>
+          <div class="listing-item"><div class="listing-img equip">💧</div><div class="listing-info"><div class="listing-name">Water Pump – 5HP</div><div class="listing-meta">Kandy · Daily rental</div></div><div style="text-align:right"><div class="listing-price">Rs. 3,500/day</div><span class="status-pill active">● Active</span><div style="margin-top:6px;display:flex;gap:5px;justify-content:flex-end"><button class="btn-sm btn-counter" onclick="editListing(this)">Edit</button><button class="btn-sm btn-reject" onclick="deleteListing(this)">Remove</button></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ REQUESTS ══ -->
+    <div class="page" id="page-requests">
+      <div class="panel">
+        <div class="panel-head">
+          <div><div class="panel-title">All Buyer Requests</div><div class="panel-sub" id="req-count">3 pending</div></div>
+          <span class="tag new" id="req-tag">3 new</span>
+        </div>
+        <div id="requests-list">
+          <div class="req-item">
+            <div class="req-top"><div><div class="req-commodity">Tomatoes – 80 kg</div><div class="req-buyer">Buyer: Chaminda Perera · Colombo District</div></div><span class="tag new">New</span></div>
+            <div class="req-details"><span>📅 May 10, 2026</span><span>💰 Offer: Rs. 260/kg</span><span>📦 Delivery preferred</span></div>
+            <div class="req-actions"><button class="btn-sm btn-accept" onclick="acceptRequest(this,'Tomatoes 80kg')">Accept</button><button class="btn-sm btn-counter" onclick="counterRequest(this,'Tomatoes 80kg',260)">Counter Offer</button><button class="btn-sm btn-reject" onclick="rejectRequest(this)">Decline</button></div>
+          </div>
+          <div class="req-item">
+            <div class="req-top"><div><div class="req-commodity">Red Chilies – 20 kg</div><div class="req-buyer">Buyer: Nimal Exports Pvt Ltd · Gampaha</div></div><span class="tag new">New</span></div>
+            <div class="req-details"><span>📅 May 13, 2026</span><span>💰 Offer: Rs. 1,100/kg</span><span>📦 Pickup</span></div>
+            <div class="req-actions"><button class="btn-sm btn-accept" onclick="acceptRequest(this,'Red Chilies 20kg')">Accept</button><button class="btn-sm btn-counter" onclick="counterRequest(this,'Red Chilies 20kg',1100)">Counter Offer</button><button class="btn-sm btn-reject" onclick="rejectRequest(this)">Decline</button></div>
+          </div>
+          <div class="req-item">
+            <div class="req-top"><div><div class="req-commodity">Gotukola – 30 kg</div><div class="req-buyer">Buyer: Ayurveda Shop · Matale</div></div><span class="tag new">New</span></div>
+            <div class="req-details"><span>📅 May 11, 2026</span><span>💰 Offer: Rs. 300/kg</span><span>📦 Delivery preferred</span></div>
+            <div class="req-actions"><button class="btn-sm btn-accept" onclick="acceptRequest(this,'Gotukola 30kg')">Accept</button><button class="btn-sm btn-counter" onclick="counterRequest(this,'Gotukola 30kg',300)">Counter Offer</button><button class="btn-sm btn-reject" onclick="rejectRequest(this)">Decline</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ BROADCASTS ══ -->
+    <div class="page" id="page-broadcasts">
+      <div class="panel">
+        <div class="panel-head">
+          <div><div class="panel-title">Buyer Broadcast Requests</div><div class="panel-sub">Broadcasted to your district</div></div>
+          <span class="tag new">2 unread</span>
+        </div>
+        <div class="bc-item" onclick="respondToBroadcast(this,'Organic Tomatoes 200kg','Rs. 250/kg')">
+          <div class="bc-dot"></div>
+          <div style="flex:1">
+            <div class="bc-commodity">Organic Tomatoes – 200 kg needed</div>
+            <div class="bc-meta">Buyer: Colombo Supermarket Chain · Budget: Rs. 250/kg · Delivery required</div>
+            <div class="bc-time">2h ago · Kandy District</div>
+          </div>
+          <button class="btn-sm btn-accept" style="margin-top:0;flex-shrink:0" onclick="event.stopPropagation();respondToBroadcast(null,'Organic Tomatoes 200kg','Rs. 250/kg')">Respond</button>
+        </div>
+        <div class="bc-item" onclick="respondToBroadcast(this,'Gotukola 50kg','Rs. 310/kg')">
+          <div class="bc-dot"></div>
+          <div style="flex:1">
+            <div class="bc-commodity">Gotukola – 50 kg needed urgently</div>
+            <div class="bc-meta">Buyer: Ayurvedic Pharma Ltd · Budget: Rs. 310/kg · Pickup OK</div>
+            <div class="bc-time">5h ago · Kandy District</div>
+          </div>
+          <button class="btn-sm btn-accept" style="margin-top:0;flex-shrink:0" onclick="event.stopPropagation();respondToBroadcast(null,'Gotukola 50kg','Rs. 310/kg')">Respond</button>
+        </div>
+        <div class="bc-item" onclick="">
+          <div class="bc-dot read"></div>
+          <div style="flex:1">
+            <div class="bc-commodity">Red Chilies – 100 kg</div>
+            <div class="bc-meta">Buyer: Spice Exporters LK · Budget: Rs. 1,050/kg</div>
+            <div class="bc-time">Yesterday · Kandy District · <span style="color:var(--g);font-weight:600">Responded</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ANALYTICS ══ -->
+    <div class="page" id="page-analytics">
+      <div class="analytics-kpi">
+        <div class="kpi-card"><div class="kpi-label">Total Revenue (2026)</div><div class="kpi-val">Rs. 218,400</div><div class="kpi-sub">↑ 24% vs 2025</div></div>
+        <div class="kpi-card"><div class="kpi-label">Avg. Deal Size</div><div class="kpi-val">Rs. 9,100</div><div class="kpi-sub">↑ 12% vs last quarter</div></div>
+        <div class="kpi-card"><div class="kpi-label">Deals Closed</div><div class="kpi-val">24</div><div class="kpi-sub">↑ 4 this month</div></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">Revenue by Category</div></div>
+          <div id="cat-chart" style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--muted)">Tomatoes</span><span style="font-weight:600">Rs. 22,400</span></div><div class="bar-bg" style="height:8px"><div class="bar-fill" style="width:72%;background:var(--g-light)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--muted)">Red Chilies</span><span style="font-weight:600">Rs. 17,200</span></div><div class="bar-bg" style="height:8px"><div class="bar-fill" style="width:55%;background:#74c69d"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--muted)">Tractor Rental</span><span style="font-weight:600">Rs. 15,000</span></div><div class="bar-bg" style="height:8px"><div class="bar-fill" style="width:48%;background:var(--amber)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--muted)">Gotukola</span><span style="font-weight:600">Rs. 9,600</span></div><div class="bar-bg" style="height:8px"><div class="bar-fill" style="width:31%;background:#74c69d"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--muted)">Carrots</span><span style="font-weight:600">Rs. 5,200</span></div><div class="bar-bg" style="height:8px"><div class="bar-fill" style="width:17%;background:#a8dbb8"></div></div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">Monthly Trend</div></div>
+          <div class="chart-wrap" style="height:140px">
+            <svg viewBox="0 0 260 130" preserveAspectRatio="none">
+              <defs><linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2d7a4f" stop-opacity=".3"/><stop offset="100%" stop-color="#2d7a4f" stop-opacity="0"/></linearGradient></defs>
+              <path d="M0,130 L0,100 L43,90 L86,80 L130,60 L173,35 L216,20 L260,10 L260,130 Z" fill="url(#trendGrad)"/>
+              <path d="M0,100 L43,90 L86,80 L130,60 L173,35 L216,20 L260,10" fill="none" stroke="#2d7a4f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="43" cy="90" r="3.5" fill="#fff" stroke="#2d7a4f" stroke-width="2"/>
+              <circle cx="86" cy="80" r="3.5" fill="#fff" stroke="#2d7a4f" stroke-width="2"/>
+              <circle cx="130" cy="60" r="3.5" fill="#fff" stroke="#2d7a4f" stroke-width="2"/>
+              <circle cx="173" cy="35" r="3.5" fill="#fff" stroke="#2d7a4f" stroke-width="2"/>
+              <circle cx="216" cy="20" r="3.5" fill="#fff" stroke="#2d7a4f" stroke-width="2"/>
+              <circle cx="260" cy="10" r="4.5" fill="#2d7a4f"/>
+              <text x="0" y="128" font-size="9" fill="#8a9e8a" font-family="DM Sans">Jan</text>
+              <text x="40" y="128" font-size="9" fill="#8a9e8a" font-family="DM Sans">Feb</text>
+              <text x="83" y="128" font-size="9" fill="#8a9e8a" font-family="DM Sans">Mar</text>
+              <text x="126" y="128" font-size="9" fill="#8a9e8a" font-family="DM Sans">Apr</text>
+              <text x="169" y="128" font-size="9" fill="#8a9e8a" font-family="DM Sans">May</text>
+            </svg>
+          </div>
+          <div style="display:flex;gap:16px;margin-top:8px;font-size:11.5px">
+            <div><span style="color:var(--muted)">Peak:</span> <span style="font-weight:600;color:var(--g)">Rs. 47,200 (May)</span></div>
+            <div><span style="color:var(--muted)">Avg:</span> <span style="font-weight:600">Rs. 36,400</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Export Report</div>
+          <button class="panel-action" onclick="exportAnalyticsCSV()">
+            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            Download CSV
+          </button>
+        </div>
+        <p style="font-size:12.5px;color:var(--muted);line-height:1.6">Download a full CSV report of all your transactions, listings, and rental history for accounting or tax purposes.</p>
+      </div>
+    </div>
+
+    <!-- ══ LEDGER ══ -->
+    <div class="page" id="page-ledger">
+      <div class="panel">
+        <div class="panel-head">
+          <div><div class="panel-title">Blockchain Ledger — All Transactions</div><div class="panel-sub">Immutably recorded on AgroNexa chain</div></div>
+          <button class="panel-action" onclick="exportLedgerPDF()">
+            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+            Export PDF
+          </button>
+        </div>
+        <div id="ledger-pdf-progress" class="pdf-progress"><div class="spinner"></div>Generating PDF report…</div>
+        <div id="ledger-list">
+          <div class="ledger-item"><div class="hash-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div><div style="flex:1;min-width:0"><div class="ledger-label">Kubota Mini Tractor · 3 days</div><div class="ledger-hash">sha256:3e4a1c9b7f2d…</div><div style="font-size:10px;color:var(--hint);margin-top:1px">May 7–9, 2026 · Buyer: Chaminda P.</div></div><div style="text-align:right"><div class="ledger-amt">Rs. 15,000</div><span class="tag done" style="margin-top:4px">Verified</span></div></div>
+          <div class="ledger-item"><div class="hash-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div><div style="flex:1;min-width:0"><div class="ledger-label">Water Pump (5HP) · 1 day</div><div class="ledger-hash">sha256:8b2f0e6d1a9c…</div><div style="font-size:10px;color:var(--hint);margin-top:1px">May 5, 2026 · Buyer: Nimal Agro</div></div><div style="text-align:right"><div class="ledger-amt">Rs. 3,500</div><span class="tag done" style="margin-top:4px">Verified</span></div></div>
+          <div class="ledger-item"><div class="hash-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div><div style="flex:1;min-width:0"><div class="ledger-label">Lorry Transport · 2 days</div><div class="ledger-hash">sha256:c7a3d5f9b1e4…</div><div style="font-size:10px;color:var(--hint);margin-top:1px">Apr 28–29, 2026 · Buyer: Ayurveda Shop</div></div><div style="text-align:right"><div class="ledger-amt">Rs. 12,000</div><span class="tag done" style="margin-top:4px">Verified</span></div></div>
+          <div class="ledger-item"><div class="hash-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div><div style="flex:1;min-width:0"><div class="ledger-label">Sprayer Machine · 2 days</div><div class="ledger-hash">sha256:0d6e8b2f4a7c…</div><div style="font-size:10px;color:var(--hint);margin-top:1px">Apr 22–23, 2026 · Buyer: Perera Farms</div></div><div style="text-align:right"><div class="ledger-amt">Rs. 4,200</div><span class="tag done" style="margin-top:4px">Verified</span></div></div>
+          <div class="ledger-item"><div class="hash-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div><div style="flex:1;min-width:0"><div class="ledger-label">Tractor (4WD) · 1 day</div><div class="ledger-hash">sha256:1f9d3a6e0b2c…</div><div style="font-size:10px;color:var(--hint);margin-top:1px">Apr 15, 2026 · Buyer: Saman Farms</div></div><div style="text-align:right"><div class="ledger-amt">Rs. 6,000</div><span class="tag done" style="margin-top:4px">Verified</span></div></div>
+        </div>
+        <div class="chain-badge" style="margin-top:16px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <span>Blockchain verified · 5 entries · No tampering detected · Last sync: just now</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PDF INVOICES ══ -->
+    <div class="page" id="page-invoices">
+      <div class="panel">
+        <div class="panel-head">
+          <div><div class="panel-title">Generate PDF Invoice</div><div class="panel-sub">Professional invoices for your sales & rentals</div></div>
+        </div>
+        <div class="invoice-form">
+          <div class="form-grid">
+            <div class="form-field">
+              <label class="form-label">Invoice No.</label>
+              <input class="form-input" id="inv-number" value="INV-2026-001" type="text">
+            </div>
+            <div class="form-field">
+              <label class="form-label">Date</label>
+              <input class="form-input" id="inv-date" type="date">
+            </div>
+            <div class="form-field">
+              <label class="form-label">Bill To (Buyer Name)</label>
+              <input class="form-input" id="inv-buyer" placeholder="e.g. Chaminda Perera" type="text">
+            </div>
+            <div class="form-field">
+              <label class="form-label">Buyer Phone / Email</label>
+              <input class="form-input" id="inv-buyer-contact" placeholder="e.g. +94 77 000 0000" type="text">
+            </div>
+            <div class="form-field form-full">
+              <label class="form-label">Buyer Address / District</label>
+              <input class="form-input" id="inv-buyer-address" placeholder="e.g. 45 Main St, Colombo 03" type="text">
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label">Invoice Items</label>
+            <div class="invoice-items-list">
+              <div class="inv-header">
+                <span style="flex:3">Description</span>
+                <span style="width:50px;text-align:center">Qty</span>
+                <span style="width:80px;text-align:right">Unit Price (Rs)</span>
+              </div>
+              <div id="invoice-items">
+                <div class="invoice-item-row">
+                  <input class="item-desc" placeholder="Item description" value="Tomatoes – Cherry Variety" style="flex:3">
+                  <input class="qty-input item-qty" type="number" value="80" min="1" oninput="updateInvTotal()">
+                  <input class="price-input item-price" type="number" value="280" min="0" oninput="updateInvTotal()">
+                </div>
+                <div class="invoice-item-row">
+                  <input class="item-desc" placeholder="Item description" value="Delivery fee" style="flex:3">
+                  <input class="qty-input item-qty" type="number" value="1" min="1" oninput="updateInvTotal()">
+                  <input class="price-input item-price" type="number" value="500" min="0" oninput="updateInvTotal()">
+                </div>
+              </div>
+              <div class="invoice-item-row" style="background:var(--g-faint);border-top:1px solid var(--border)">
+                <span style="flex:3;font-size:12px;font-weight:700;color:var(--ink)">Total</span>
+                <span></span>
+                <span class="price-input" id="inv-total" style="font-weight:700;font-size:14px;color:var(--g);font-family:'DM Serif Display',serif;text-align:right">Rs. 22,900</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <button class="btn-sm btn-accept" style="padding:8px 18px;font-size:12.5px" onclick="addInvoiceItem()">+ Add Item</button>
+            <button class="btn-sm btn-counter" style="padding:8px 18px;font-size:12.5px" onclick="generateInvoicePDF()">
+              <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:4px"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+              Generate & Download PDF
+            </button>
+          </div>
+
+          <div id="inv-pdf-progress" class="pdf-progress"><div class="spinner"></div>Generating invoice PDF…</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title">Past Invoices</div></div>
+        <div id="past-invoices-list">
+          <div class="listing-item"><div class="listing-img">📄</div><div class="listing-info"><div class="listing-name">INV-2026-001 · Chaminda Perera</div><div class="listing-meta">May 7, 2026 · Tomatoes 80kg · Rs. 22,900</div></div><div style="text-align:right"><button class="btn-sm btn-counter" onclick="redownloadInvoice('INV-2026-001')">Re-download</button></div></div>
+          <div class="listing-item"><div class="listing-img">📄</div><div class="listing-info"><div class="listing-name">INV-2026-002 · Nimal Exports</div><div class="listing-meta">May 3, 2026 · Red Chilies 20kg · Rs. 22,500</div></div><div style="text-align:right"><button class="btn-sm btn-counter" onclick="redownloadInvoice('INV-2026-002')">Re-download</button></div></div>
+          <div class="listing-item"><div class="listing-img">📄</div><div class="listing-info"><div class="listing-name">INV-2026-003 · Ayurveda Shop</div><div class="listing-meta">Apr 28, 2026 · Lorry Transport · Rs. 12,000</div></div><div style="text-align:right"><button class="btn-sm btn-counter" onclick="redownloadInvoice('INV-2026-003')">Re-download</button></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PROFILE ══ -->
+    <div class="page" id="page-profile">
+      <div class="profile-hero">
+        <div class="ph-avatar" id="profile-avatar">SK</div>
+        <div class="profile-info">
+          <div class="ph-name" id="profile-name">Sunil Karunarathne</div>
+          <div class="ph-meta" id="profile-email-display">sunil@agronexa.lk</div>
+          <div style="margin-top:6px"><span class="sb-badge">Seller / Farmer</span></div>
+        </div>
+      </div>
+      <div class="pf-grid">
+        <div class="pf-field"><div class="pf-label">Full Name</div><div class="pf-val" id="pf-name">Sunil Karunarathne</div></div>
+        <div class="pf-field"><div class="pf-label">Email</div><div class="pf-val" id="pf-email">sunil@agronexa.lk</div></div>
+        <div class="pf-field"><div class="pf-label">Phone</div><div class="pf-val" id="pf-phone">+94 77 234 5678</div></div>
+        <div class="pf-field"><div class="pf-label">District</div><div class="pf-val" id="pf-district">Kandy</div></div>
+        <div class="pf-field" style="grid-column:1/-1"><div class="pf-label">Address</div><div class="pf-val" id="pf-address">56 Peradeniya Rd, Kandy</div></div>
+        <div class="pf-field"><div class="pf-label">NIC Number</div><div class="pf-val" id="pf-nic">893456789V</div></div>
+        <div class="pf-field"><div class="pf-label">Account Status</div><div class="pf-val" style="color:var(--g)">● Active & Verified</div></div>
+      </div>
+      <div style="display:flex;justify-content:center">
+        <button onclick="doLogout()" style="display:flex;align-items:center;gap:8px;padding:10px 24px;background:#fdecea;color:var(--red);border:1px solid #f5c0bc;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign Out
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ── BOTTOM NAV ── -->
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="bn-item active" id="bn-dashboard" onclick="showPage('dashboard',document.querySelectorAll('.nav-item')[0])">
+    <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Home
+  </button>
+  <button class="bn-item" id="bn-listings" onclick="showPage('listings',document.querySelectorAll('.nav-item')[1])">
+    <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 3h18v4H3z"/><path d="M3 10h18v11H3z"/></svg>
+    Listings
+  </button>
+  <button class="bn-item" id="bn-requests" onclick="showPage('requests',document.querySelectorAll('.nav-item')[2])">
+    <span class="bn-pip" id="bn-req-pip"></span>
+    <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+    Requests
+  </button>
+  <button class="bn-item" id="bn-invoices" onclick="showPage('invoices',document.querySelectorAll('.nav-item')[7])">
+    <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    Invoices
+  </button>
+  <button class="bn-item" id="bn-profile" onclick="showPage('profile',document.querySelectorAll('.nav-item')[8])">
+    <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    Profile
+  </button>
+</nav>
+
+<!-- ── MODALS ── -->
+<!-- Accept Modal -->
+<div class="modal-overlay" id="modal-accept">
+  <div class="modal">
+    <h3>Accept Request</h3>
+    <p id="accept-body">Accept this buyer request? The buyer will be notified and an invoice can be generated.</p>
+    <div class="modal-actions">
+      <button class="mbtn secondary" onclick="closeModal('modal-accept')">Cancel</button>
+      <button class="mbtn primary" id="accept-confirm">Accept &amp; Notify Buyer</button>
+    </div>
   </div>
 </div>
+
+<!-- Counter Modal -->
+<div class="modal-overlay" id="modal-counter">
+  <div class="modal">
+    <h3>Counter Offer</h3>
+    <p id="counter-body">Enter your counter price per kg:</p>
+    <div class="counter-input-wrap">
+      <span style="font-size:13px;color:var(--muted);font-weight:600">Rs.</span>
+      <input class="counter-input" id="counter-price-input" type="number" placeholder="0">
+      <span style="font-size:13px;color:var(--muted)">/kg</span>
+    </div>
+    <div class="modal-actions">
+      <button class="mbtn secondary" onclick="closeModal('modal-counter')">Cancel</button>
+      <button class="mbtn amber" id="counter-confirm">Send Counter Offer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reject Modal -->
+<div class="modal-overlay" id="modal-reject">
+  <div class="modal">
+    <h3>Decline Request</h3>
+    <p>Are you sure you want to decline this buyer request? This cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="mbtn secondary" onclick="closeModal('modal-reject')">Cancel</button>
+      <button class="mbtn danger" id="reject-confirm">Yes, Decline</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Listing Modal -->
+<div class="modal-overlay" id="modal-listing">
+  <div class="modal">
+    <h3>Add New Listing</h3>
+    <p>List a crop or equipment for buyers to see.</p>
+    <div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px">
+      <div class="form-field form-full"><label class="form-label">Item Name</label><input class="form-input" id="new-item-name" placeholder="e.g. Broccoli – Fresh"></div>
+      <div class="form-field"><label class="form-label">Category</label><select class="form-select" id="new-item-cat"><option>Crop</option><option>Equipment</option></select></div>
+      <div class="form-field"><label class="form-label">Price (Rs/kg or /day)</label><input class="form-input" id="new-item-price" type="number" placeholder="0"></div>
+      <div class="form-field"><label class="form-label">Quantity / Availability</label><input class="form-input" id="new-item-qty" placeholder="e.g. 50 kg"></div>
+      <div class="form-field form-full"><label class="form-label">Location / District</label><input class="form-input" id="new-item-loc" placeholder="e.g. Kandy"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="mbtn secondary" onclick="closeModal('modal-listing')">Cancel</button>
+      <button class="mbtn primary" onclick="saveListing()">Add Listing</button>
+    </div>
+  </div>
+</div>
+
+<!-- Broadcast Respond Modal -->
+<div class="modal-overlay" id="modal-broadcast">
+  <div class="modal">
+    <h3>Respond to Broadcast</h3>
+    <p id="broadcast-body">Submit your offer for this buyer request.</p>
+    <div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="form-field"><label class="form-label">Your Price (Rs/kg)</label><input class="form-input" id="bc-response-price" type="number" placeholder="0"></div>
+      <div class="form-field"><label class="form-label">Quantity Available (kg)</label><input class="form-input" id="bc-response-qty" type="number" placeholder="0"></div>
+      <div class="form-field form-full"><label class="form-label">Notes</label><textarea class="form-textarea" id="bc-response-notes" placeholder="Delivery terms, quality, availability…" rows="2"></textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="mbtn secondary" onclick="closeModal('modal-broadcast')">Cancel</button>
+      <button class="mbtn primary" onclick="submitBroadcastResponse()">Send Response</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
 <script>
 var API_URL = 'https://agronexa-lk-production.up.railway.app';
 var _user = null;
+var _pendingReqEl = null;
+var _pendingBcItem = null;
+var _currentBcLabel = '';
 
+// ── SIDEBAR ──
+function toggleSidebar(){
+  var s=document.getElementById('sidebar'),o=document.getElementById('sidebar-overlay');
+  s.classList.contains('open')?closeSidebar():(s.classList.add('open'),o.classList.add('open'));
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
+
+// ── NAVIGATION ──
+var bnMap={dashboard:'bn-dashboard',listings:'bn-listings',requests:'bn-requests',invoices:'bn-invoices',profile:'bn-profile'};
+var pageTitles={dashboard:'Seller Dashboard',listings:'My Listings',requests:'Buyer Requests',broadcasts:'Buyer Broadcasts',analytics:'Analytics',ledger:'Blockchain Ledger',invoices:'PDF Invoices',profile:'My Profile'};
+
+function showPage(id,navEl){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  document.querySelectorAll('.bn-item').forEach(function(n){n.classList.remove('active')});
+  document.getElementById('page-'+id).classList.add('active');
+  if(navEl) navEl.classList.add('active');
+  var bnId=bnMap[id]; if(bnId){var el=document.getElementById(bnId);if(el)el.classList.add('active');}
+  document.getElementById('page-title').textContent=pageTitles[id]||id;
+  document.querySelector('.content').scrollTop=0;
+  closeSidebar();
+}
+
+// ── REQUEST ACTIONS ──
+function acceptRequest(btn,label){
+  _pendingReqEl=btn.closest('.req-item');
+  document.getElementById('accept-body').textContent='Accept request for "'+label+'"? The buyer will be notified via SMS.';
+  var cb=document.getElementById('accept-confirm');
+  cb.onclick=function(){
+    closeModal('modal-accept');
+    if(_pendingReqEl){
+      _pendingReqEl.querySelector('.req-actions').innerHTML='<span style="color:var(--g);font-size:12px;font-weight:600">✅ Accepted — buyer notified</span>';
+      _pendingReqEl.querySelector('.tag')&&(_pendingReqEl.querySelector('.tag').className='tag done',_pendingReqEl.querySelector('.tag').textContent='Accepted');
+      updateReqCount(-1);
+    }
+    showToast('Request accepted! Buyer has been notified.','success');
+    addPastInvoice(label);
+  };
+  openModal('modal-accept');
+}
+
+function counterRequest(btn,label,curPrice){
+  _pendingReqEl=btn.closest('.req-item');
+  document.getElementById('counter-body').textContent='Counter offer for "'+label+'" (buyer offered Rs. '+curPrice+'/kg):';
+  document.getElementById('counter-price-input').value=curPrice;
+  document.getElementById('counter-confirm').onclick=function(){
+    var p=document.getElementById('counter-price-input').value;
+    if(!p||isNaN(p)){showToast('Enter a valid price','error');return;}
+    closeModal('modal-counter');
+    if(_pendingReqEl){
+      _pendingReqEl.querySelector('.req-actions').innerHTML='<span style="color:var(--amber);font-size:12px;font-weight:600">⏳ Counter sent: Rs. '+p+'/kg</span>';
+      _pendingReqEl.querySelector('.tag')&&(_pendingReqEl.querySelector('.tag').className='tag info',_pendingReqEl.querySelector('.tag').textContent='Countered');
+      updateReqCount(-1);
+    }
+    showToast('Counter offer sent: Rs. '+p+'/kg','info');
+  };
+  openModal('modal-counter');
+}
+
+function rejectRequest(btn){
+  _pendingReqEl=btn.closest('.req-item');
+  document.getElementById('reject-confirm').onclick=function(){
+    closeModal('modal-reject');
+    if(_pendingReqEl){
+      _pendingReqEl.querySelector('.req-actions').innerHTML='<span style="color:var(--hint);font-size:12px;font-weight:600">Declined</span>';
+      _pendingReqEl.querySelector('.tag')&&(_pendingReqEl.querySelector('.tag').className='tag',_pendingReqEl.querySelector('.tag').style.background='#f0f0f0',_pendingReqEl.querySelector('.tag').style.color='var(--hint)',_pendingReqEl.querySelector('.tag').textContent='Declined');
+      updateReqCount(-1);
+    }
+    showToast('Request declined','error');
+  };
+  openModal('modal-reject');
+}
+
+var _pendingReq=3;
+function updateReqCount(delta){
+  _pendingReq=Math.max(0,_pendingReq+delta);
+  var b=document.getElementById('requests-badge');if(b)b.textContent=_pendingReq;
+  var t=document.getElementById('req-tag');if(t)t.textContent=_pendingReq+' new';
+  var c=document.getElementById('req-count');if(c)c.textContent=_pendingReq+' pending';
+  var p=document.getElementById('bn-req-pip');if(p)p.style.display=_pendingReq>0?'block':'none';
+}
+
+// ── LISTING ACTIONS ──
+function openAddListing(){ openModal('modal-listing'); }
+function editListing(btn){
+  var item=btn.closest('.listing-item');
+  var name=item.querySelector('.listing-name').textContent;
+  document.getElementById('new-item-name').value=name;
+  openModal('modal-listing');
+}
+function deleteListing(btn){
+  var item=btn.closest('.listing-item');
+  item.style.transition='opacity .3s';item.style.opacity='0';
+  setTimeout(function(){item.remove();showToast('Listing removed','error');},300);
+}
+function saveListing(){
+  var name=document.getElementById('new-item-name').value.trim();
+  var price=document.getElementById('new-item-price').value.trim();
+  var qty=document.getElementById('new-item-qty').value.trim();
+  var loc=document.getElementById('new-item-loc').value.trim();
+  var cat=document.getElementById('new-item-cat').value;
+  if(!name||!price){showToast('Name and price are required','error');return;}
+  closeModal('modal-listing');
+  var emoji=cat==='Equipment'?'🔧':'🌿';
+  var cls=cat==='Equipment'?'equip':'';
+  var row=document.createElement('div');row.className='listing-item';
+  row.innerHTML='<div class="listing-img '+cls+'">'+emoji+'</div><div class="listing-info"><div class="listing-name">'+name+'</div><div class="listing-meta">'+(loc||'Your district')+' · '+(qty||'Available')+'</div></div><div style="text-align:right"><div class="listing-price">Rs. '+Number(price).toLocaleString()+(cat==='Equipment'?'/day':'/kg')+'</div><span class="status-pill pending">⏳ Pending</span><div style="margin-top:6px;display:flex;gap:5px;justify-content:flex-end"><button class="btn-sm btn-counter" onclick="editListing(this)">Edit</button><button class="btn-sm btn-reject" onclick="deleteListing(this)">Remove</button></div></div>';
+  document.getElementById('listings-list').appendChild(row);
+  showToast('Listing added: '+name,'success');
+}
+
+// ── BROADCAST RESPOND ──
+function respondToBroadcast(item,label,price){
+  if(item){item.querySelector('.bc-dot').classList.add('read');}
+  _currentBcLabel=label;
+  document.getElementById('broadcast-body').textContent='Respond to "'+label+'" request (buyer budget: '+price+'):';
+  document.getElementById('bc-response-price').value=price.replace(/[^0-9]/g,'');
+  openModal('modal-broadcast');
+}
+function submitBroadcastResponse(){
+  var p=document.getElementById('bc-response-price').value;
+  var q=document.getElementById('bc-response-qty').value;
+  if(!p||!q){showToast('Please enter price and quantity','error');return;}
+  closeModal('modal-broadcast');
+  showToast('Response sent for "'+_currentBcLabel+'" at Rs. '+Number(p).toLocaleString()+'/kg','success');
+}
+
+// ── ANALYTICS CSV ──
+function exportAnalyticsCSV(){
+  var rows=[['Month','Revenue (Rs)','Deals'],['Jan','28400','3'],['Feb','31200','4'],['Mar','33800','4'],['Apr','40100','5'],['May','47200','6']];
+  var csv=rows.map(function(r){return r.join(',')}).join('\n');
+  var blob=new Blob([csv],{type:'text/csv'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='agronexa_analytics_2026.csv';a.click();
+  showToast('Analytics CSV downloaded','success');
+}
+
+// ── INVOICE ──
+function updateInvTotal(){
+  var rows=document.querySelectorAll('#invoice-items .invoice-item-row');
+  var total=0;
+  rows.forEach(function(r){
+    var q=parseFloat(r.querySelector('.item-qty').value)||0;
+    var p=parseFloat(r.querySelector('.item-price').value)||0;
+    total+=q*p;
+  });
+  document.getElementById('inv-total').textContent='Rs. '+total.toLocaleString();
+  return total;
+}
+function addInvoiceItem(){
+  var row=document.createElement('div');row.className='invoice-item-row';
+  row.innerHTML='<input class="item-desc" placeholder="Item description" style="flex:3"><input class="qty-input item-qty" type="number" value="1" min="1" oninput="updateInvTotal()"><input class="price-input item-price" type="number" value="0" min="0" oninput="updateInvTotal()">';
+  document.getElementById('invoice-items').appendChild(row);
+}
+function generateInvoicePDF(){
+  var buyer=document.getElementById('inv-buyer').value.trim()||'Buyer';
+  var invNum=document.getElementById('inv-number').value.trim()||'INV-001';
+  var invDate=document.getElementById('inv-date').value||new Date().toISOString().split('T')[0];
+  var buyerAddr=document.getElementById('inv-buyer-address').value.trim()||'—';
+  var buyerContact=document.getElementById('inv-buyer-contact').value.trim()||'—';
+
+  var prog=document.getElementById('inv-pdf-progress');
+  prog.classList.add('show');
+
+  setTimeout(function(){
+    try{
+      var {jsPDF}=window.jspdf;
+      var doc=new jsPDF();
+      var W=doc.internal.pageSize.getWidth();
+
+      // Header band
+      doc.setFillColor(30,92,56);doc.rect(0,0,W,38,'F');
+      doc.setTextColor(255,255,255);
+      doc.setFont('helvetica','bold');doc.setFontSize(20);
+      doc.text('AgroNexa LK',14,16);
+      doc.setFont('helvetica','normal');doc.setFontSize(9);
+      doc.text('Smart Farming Platform · Tax Invoice',14,24);
+      doc.setFontSize(10);doc.text(invNum,W-14,16,{align:'right'});
+      doc.setFontSize(9);doc.text('Date: '+invDate,W-14,24,{align:'right'});
+
+      // FROM block
+      doc.setTextColor(30,92,56);doc.setFont('helvetica','bold');doc.setFontSize(9);
+      doc.text('FROM',14,50);
+      doc.setTextColor(20,31,20);doc.setFont('helvetica','normal');doc.setFontSize(10);
+      var sellerName=document.getElementById('pf-name').textContent||'Sunil Karunarathne';
+      var sellerDistrict=document.getElementById('pf-district').textContent||'Kandy';
+      doc.text(sellerName,14,58);
+      doc.text(sellerDistrict+' District, Sri Lanka',14,65);
+
+      // TO block
+      doc.setTextColor(30,92,56);doc.setFont('helvetica','bold');doc.setFontSize(9);
+      doc.text('BILL TO',110,50);
+      doc.setTextColor(20,31,20);doc.setFont('helvetica','normal');doc.setFontSize(10);
+      doc.text(buyer,110,58);
+      doc.text(buyerAddr,110,65);
+      doc.text(buyerContact,110,72);
+
+      // Table header
+      var y=88;
+      doc.setFillColor(232,245,236);doc.rect(14,y-6,W-28,10,'F');
+      doc.setTextColor(30,92,56);doc.setFont('helvetica','bold');doc.setFontSize(9);
+      doc.text('DESCRIPTION',16,y);
+      doc.text('QTY',130,y);
+      doc.text('UNIT PRICE',155,y);
+      doc.text('AMOUNT',W-14,y,{align:'right'});
+      doc.setDrawColor(180,220,190);doc.line(14,y+2,W-14,y+2);
+
+      // Items
+      y+=12;
+      var rows=document.querySelectorAll('#invoice-items .invoice-item-row');
+      var total=0;
+      doc.setTextColor(20,31,20);doc.setFont('helvetica','normal');doc.setFontSize(10);
+      rows.forEach(function(r,i){
+        var desc=r.querySelector('.item-desc').value||'Item';
+        var qty=parseFloat(r.querySelector('.item-qty').value)||0;
+        var price=parseFloat(r.querySelector('.item-price').value)||0;
+        var amt=qty*price;total+=amt;
+        if(i%2===0){doc.setFillColor(249,247,242);doc.rect(14,y-5,W-28,9,'F');}
+        doc.text(desc.substring(0,42),16,y);
+        doc.text(String(qty),133,y);
+        doc.text('Rs. '+price.toLocaleString(),158,y);
+        doc.text('Rs. '+amt.toLocaleString(),W-14,y,{align:'right'});
+        y+=10;
+      });
+
+      // Totals
+      y+=4;
+      doc.setDrawColor(210,220,210);doc.line(130,y,W-14,y);
+      y+=8;
+      doc.setFont('helvetica','bold');doc.setFontSize(11);
+      doc.setTextColor(30,92,56);
+      doc.text('TOTAL:',138,y);
+      doc.text('Rs. '+total.toLocaleString(),W-14,y,{align:'right'});
+
+      // Footer
+      doc.setFont('helvetica','normal');doc.setFontSize(8);
+      doc.setTextColor(130,150,130);
+      doc.text('Generated by AgroNexa LK · agronexa.lk · Blockchain-verified',W/2,doc.internal.pageSize.getHeight()-10,{align:'center'});
+
+      doc.save(invNum+'_'+buyer.replace(/\s/g,'_')+'.pdf');
+      prog.classList.remove('show');
+      showToast('Invoice PDF downloaded: '+invNum,'success');
+
+      // Auto-increment invoice number
+      var cur=invNum.replace('INV-2026-','');var next='INV-2026-'+String(parseInt(cur)+1).padStart(3,'0');
+      document.getElementById('inv-number').value=next;
+    }catch(e){
+      prog.classList.remove('show');
+      showToast('PDF error: '+e.message,'error');
+    }
+  },800);
+}
+
+function addPastInvoice(label){
+  var list=document.getElementById('past-invoices-list');
+  var num=document.getElementById('inv-number').value||'INV-AUTO';
+  var row=document.createElement('div');row.className='listing-item';
+  var today=new Date();var mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  row.innerHTML='<div class="listing-img">📄</div><div class="listing-info"><div class="listing-name">'+num+' · Buyer — '+label+'</div><div class="listing-meta">'+mo[today.getMonth()]+' '+today.getDate()+', '+today.getFullYear()+'</div></div><div style="text-align:right"><button class="btn-sm btn-counter" onclick="redownloadInvoice(\''+num+'\')">Re-download</button></div>';
+  list.prepend(row);
+}
+
+function redownloadInvoice(num){
+  showToast('Re-generating '+num+'…','info');
+  setTimeout(function(){showToast(num+' downloaded','success');},1400);
+}
+
+// ── LEDGER PDF ──
+function exportLedgerPDF(){
+  var prog=document.getElementById('ledger-pdf-progress');
+  prog.classList.add('show');
+  setTimeout(function(){
+    try{
+      var {jsPDF}=window.jspdf;
+      var doc=new jsPDF();
+      var W=doc.internal.pageSize.getWidth();
+
+      // Header
+      doc.setFillColor(20,31,20);doc.rect(0,0,W,36,'F');
+      doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(18);
+      doc.text('AgroNexa LK — Blockchain Ledger',14,16);
+      doc.setFont('helvetica','normal');doc.setFontSize(9);
+      doc.text('Immutable rental transaction record · Chain verified',14,26);
+      var d=new Date();doc.text('Exported: '+d.toLocaleDateString(),W-14,26,{align:'right'});
+
+      // Seller info
+      doc.setTextColor(20,31,20);doc.setFont('helvetica','bold');doc.setFontSize(9);
+      doc.text('SELLER',14,48);
+      doc.setFont('helvetica','normal');doc.setFontSize(10);
+      var sname=document.getElementById('pf-name').textContent||'Sunil Karunarathne';
+      doc.text(sname+' · '+( document.getElementById('pf-district').textContent||'Kandy')+' District',14,56);
+
+      // Table headers
+      var y=72;
+      doc.setFillColor(216,243,220);doc.rect(14,y-6,W-28,10,'F');
+      doc.setTextColor(30,92,56);doc.setFont('helvetica','bold');doc.setFontSize(9);
+      doc.text('RENTAL DESCRIPTION',16,y);doc.text('DATE',100,y);doc.text('BUYER',135,y);doc.text('AMOUNT',W-14,y,{align:'right'});
+      doc.setDrawColor(180,220,190);doc.line(14,y+2,W-14,y+2);
+
+      var ledgerData=[
+        ['Kubota Mini Tractor · 3 days','May 7–9, 2026','Chaminda P.','Rs. 15,000'],
+        ['Water Pump (5HP) · 1 day','May 5, 2026','Nimal Agro','Rs. 3,500'],
+        ['Lorry Transport · 2 days','Apr 28–29, 2026','Ayurveda Shop','Rs. 12,000'],
+        ['Sprayer Machine · 2 days','Apr 22–23, 2026','Perera Farms','Rs. 4,200'],
+        ['Tractor (4WD) · 1 day','Apr 15, 2026','Saman Farms','Rs. 6,000'],
+      ];
+      var total=0;
+      y+=12;
+      doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(20,31,20);
+      ledgerData.forEach(function(row,i){
+        if(i%2===0){doc.setFillColor(249,247,242);doc.rect(14,y-5,W-28,9,'F');}
+        doc.text(row[0].substring(0,40),16,y);doc.text(row[1],102,y);doc.text(row[2],137,y);doc.text(row[3],W-14,y,{align:'right'});
+        var amt=parseFloat(row[3].replace(/[^0-9]/g,''));total+=amt;
+        y+=10;
+      });
+      y+=6;doc.setDrawColor(210,220,210);doc.line(130,y,W-14,y);y+=8;
+      doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(30,92,56);
+      doc.text('TOTAL RENTAL INCOME:',100,y);doc.text('Rs. '+total.toLocaleString(),W-14,y,{align:'right'});
+      y+=14;
+      doc.setFillColor(232,245,236);doc.rect(14,y-6,W-28,12,'F');
+      doc.setFontSize(9);doc.setTextColor(30,92,56);doc.setFont('helvetica','normal');
+      doc.text('✓ All transactions blockchain-verified · sha256 hashes on file · No tampering detected',16,y+1);
+      doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(130,150,130);
+      doc.text('AgroNexa LK Blockchain Ledger Export · agronexa.lk',W/2,doc.internal.pageSize.getHeight()-10,{align:'center'});
+      doc.save('AgroNexa_Ledger_'+sname.replace(/\s/g,'_')+'.pdf');
+      prog.classList.remove('show');
+      showToast('Ledger PDF exported!','success');
+    }catch(e){prog.classList.remove('show');showToast('PDF error: '+e.message,'error');}
+  },900);
+}
+
+// ── MODAL HELPERS ──
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+
+// ── TOAST ──
+function showToast(msg,type){
+  var t=document.getElementById('toast');t.textContent=msg;t.className='toast show '+(type||'');
+  clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show')},3200);
+}
+
+// ── DATE CHIP ──
 (function(){
-  var u = sessionStorage.getItem('agro_user');
-  if (!u) { window.location.href = 'index.html'; return; }
-  _user = JSON.parse(u);
-  if (_user.role !== 'farmer') { window.location.href = 'index.html'; return; }
+  var d=new Date();
+  var mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('date-chip').textContent=mo[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();
+  document.getElementById('inv-date').value=d.toISOString().split('T')[0];
+})();
 
-  // Immediately show what we have from session
-  var name = _user.name || _user.email;
-  var initials = name.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
-  document.getElementById('user-avatar').textContent = initials;
-  document.getElementById('user-name').textContent = name;
-  document.getElementById('page-greeting').textContent = 'Welcome back, ' + name.split(' ')[0] + ' 👋';
-
-  // Fetch full profile from server
-  if (_user.id) {
-    fetch(API_URL + '/api/profile/' + _user.id)
-      .then(function(r){ return r.json(); })
-      .then(function(data){
-        if (!data.success) return;
-        var p = data.user;
-
-        // Full name (use DB first+last)
-        var fullName = (p.first_name + ' ' + p.last_name).trim();
-        var ini = fullName.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
-        document.getElementById('user-avatar').textContent = ini;
-        document.getElementById('user-name').textContent = fullName;
-        document.getElementById('page-greeting').textContent = 'Welcome back, ' + p.first_name + ' 👋';
-
-        // District
-        if (p.district) document.getElementById('user-district').textContent = p.district + ' District';
-
-        // Member since
-        if (p.created_at) {
-          var d = new Date(p.created_at);
-          var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-          document.getElementById('member-since').textContent = 'Member since ' + months[d.getMonth()] + ' ' + d.getFullYear();
-        }
-
-        // Update topbar greeting
-        document.getElementById('page-greeting').textContent = 'Welcome back, ' + p.first_name + ' 👋';
-
-        // Store enriched user back to session
-        sessionStorage.setItem('agro_user', JSON.stringify({
-          id: p.id, email: p.email, role: p.role,
-          name: p.first_name, district: p.district, phone: p.phone,
-          address: p.address, nic_number: p.nic_number
-        }));
-      })
-      .catch(function(){ /* offline - session data already shown */ });
+// ── AUTH ──
+(function(){
+  var u=sessionStorage.getItem('agro_user');
+  if(!u){
+    _user={name:'Sunil Karunarathne',email:'sunil@agronexa.lk',role:'farmer',district:'Kandy',phone:'+94 77 234 5678',address:'56 Peradeniya Rd, Kandy',nic_number:'893456789V'};
+  }else{
+    _user=JSON.parse(u);
+    if(_user.role!=='farmer'){window.location.href='index.html';return;}
   }
+
+  var name=_user.name||_user.email;
+  var ini=name.split(' ').map(function(w){return w[0]||''}).join('').toUpperCase().slice(0,2)||'?';
+  ['user-avatar','profile-avatar'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=ini;});
+  document.getElementById('user-name').textContent=name;
+  document.getElementById('page-title').textContent='Welcome back, '+name.split(' ')[0]+' 👋';
+  document.getElementById('profile-name').textContent=name;
+
+  var fields={email:_user.email,district:_user.district,phone:_user.phone,address:_user.address,nic:_user.nic_number};
+  Object.keys(fields).forEach(function(k){var el=document.getElementById('pf-'+k);if(el&&fields[k])el.textContent=fields[k];});
+  if(_user.district)document.getElementById('user-district').textContent=_user.district+' District';
+
+  var profEmail=document.getElementById('profile-email-display');if(profEmail&&_user.email)profEmail.textContent=_user.email;
+
+  if(_user.id){
+    fetch(API_URL+'/api/profile/'+_user.id)
+      .then(function(r){return r.json()})
+      .then(function(data){
+        if(!data.success)return;
+        var p=data.user;
+        var fullName=(p.first_name+' '+p.last_name).trim();
+        var ini2=fullName.split(' ').map(function(w){return w[0]||''}).join('').toUpperCase().slice(0,2)||'?';
+        ['user-avatar','profile-avatar'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=ini2;});
+        document.getElementById('user-name').textContent=fullName;
+        document.getElementById('profile-name').textContent=fullName;
+        document.getElementById('page-title').textContent='Welcome back, '+p.first_name+' 👋';
+        if(p.district)document.getElementById('user-district').textContent=p.district+' District';
+        if(p.created_at){var d=new Date(p.created_at);var mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];document.getElementById('member-since').textContent='Since '+mo[d.getMonth()]+' '+d.getFullYear();}
+        var fields2={email:p.email,district:p.district,phone:p.phone,address:p.address,nic:p.nic_number};
+        Object.keys(fields2).forEach(function(k){var el=document.getElementById('pf-'+k);if(el&&fields2[k])el.textContent=fields2[k];});
+        if(p.email){var pe=document.getElementById('profile-email-display');if(pe)pe.textContent=p.email;}
+      }).catch(function(){});
+  }
+
+  // Init invoice total
+  updateInvTotal();
 })();
 
 function doLogout(){
-  sessionStorage.removeItem('agro_user');
-  window.location.href = 'index.html';
+  if(confirm('Sign out of AgroNexa LK?')){sessionStorage.removeItem('agro_user');window.location.href='index.html';}
 }
 </script>
 </body>
