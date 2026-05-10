@@ -6,501 +6,857 @@
 <title>AgroNexa LK – Buyer Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  :root{
-    --teal:#1b6ca8;--teal-light:#4db6e4;--teal-pale:#dff0fa;--teal-mid:#64b5d6;
-    --amber:#e76f51;--amber-pale:#fde8e0;
-    --green:#2d6a4f;--green-pale:#d8f3dc;--green-light:#52b788;
-    --surface:#f5f8fb;--card:#ffffff;--border:#e2e9f0;
-    --text:#141d2b;--muted:#617080;--hint:#99aab5;
-    --sidebar:#141d2b;--sidebar-active:#1b6ca8;
-  }
-  body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text);display:flex;min-height:100vh}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --teal:#1b6ca8;--teal-light:#4db6e4;--teal-pale:#dff0fa;--teal-mid:#64b5d6;
+  --amber:#e76f51;--amber-pale:#fde8e0;
+  --green:#2d6a4f;--green-pale:#d8f3dc;--green-light:#52b788;
+  --surface:#f5f8fb;--card:#ffffff;--border:#e2e9f0;
+  --text:#141d2b;--muted:#617080;--hint:#99aab5;
+  --sidebar:#141d2b;--sidebar-active:#1b6ca8;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text);display:flex;min-height:100vh}
 
-  .sidebar{width:240px;background:var(--sidebar);display:flex;flex-direction:column;flex-shrink:0}
-  .logo-wrap{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,0.07)}
-  .logo-drop{display:inline-block;width:32px;height:32px;background:var(--teal-light);border-radius:50% 50% 8px 50%;margin-bottom:8px}
-  .logo-name{font-family:'DM Serif Display',serif;color:#fff;font-size:18px;letter-spacing:-0.3px;line-height:1.1}
-  .logo-tag{color:rgba(255,255,255,0.35);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-top:2px}
-  .user-card{padding:20px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.07)}
-  .avatar{width:38px;height:38px;border-radius:50%;background:var(--teal-mid);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;color:#fff;flex-shrink:0}
-  .user-name{font-size:13px;font-weight:500;color:#fff;line-height:1.2}
-  .user-role{font-size:11px;color:rgba(255,255,255,0.4);margin-top:1px}
-  .role-badge{display:inline-block;padding:2px 8px;background:rgba(77,182,228,0.2);color:var(--teal-light);border-radius:20px;font-size:10px;font-weight:500;margin-top:4px}
-  nav{padding:16px 12px;flex:1}
-  .nav-section{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.25);padding:12px 12px 6px}
-  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;color:rgba(255,255,255,0.55);font-size:13.5px;font-weight:400;margin-bottom:2px;transition:all 0.15s}
-  .nav-item:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.85)}
-  .nav-item.active{background:var(--sidebar-active);color:#fff;font-weight:500}
-  .nav-item svg{width:16px;height:16px;flex-shrink:0}
-  .nav-badge{margin-left:auto;background:var(--amber);color:#fff;font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px}
-  .sidebar-bottom{padding:20px 24px;border-top:1px solid rgba(255,255,255,0.07)}
-  .logout-btn{color:rgba(255,255,255,0.35);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px}
+/* SIDEBAR */
+.sidebar{width:240px;background:var(--sidebar);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto}
+.logo-wrap{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.logo-drop{display:inline-block;width:32px;height:32px;background:var(--teal-light);border-radius:50% 50% 8px 50%;margin-bottom:8px}
+.logo-name{font-family:'DM Serif Display',serif;color:#fff;font-size:18px;letter-spacing:-0.3px;line-height:1.1}
+.logo-tag{color:rgba(255,255,255,0.35);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+.user-card{padding:20px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--teal-mid);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;color:#fff;flex-shrink:0}
+.user-name{font-size:13px;font-weight:500;color:#fff;line-height:1.2}
+.user-role{font-size:11px;color:rgba(255,255,255,0.4);margin-top:1px}
+.user-district{font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px}
+.role-badge{display:inline-block;padding:2px 8px;background:rgba(77,182,228,0.2);color:var(--teal-light);border-radius:20px;font-size:10px;font-weight:500;margin-top:4px}
+nav{padding:16px 12px;flex:1}
+.nav-section{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.25);padding:12px 12px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;color:rgba(255,255,255,0.55);font-size:13.5px;font-weight:400;margin-bottom:2px;transition:all 0.15s;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.85)}
+.nav-item.active{background:var(--sidebar-active);color:#fff;font-weight:500}
+.nav-item svg{width:16px;height:16px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--amber);color:#fff;font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px}
+.sidebar-bottom{padding:20px 24px;border-top:1px solid rgba(255,255,255,0.07)}
+.logout-btn{color:rgba(255,255,255,0.35);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;background:none;border:none;width:100%;font-family:'DM Sans',sans-serif;transition:color 0.15s}
+.logout-btn:hover{color:rgba(255,255,255,0.7)}
 
-  .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-  .topbar{background:var(--card);border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between}
-  .page-title{font-family:'DM Serif Display',serif;font-size:20px;color:var(--text)}
-  .topbar-right{display:flex;align-items:center;gap:16px}
-  .notif-btn{position:relative;width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer}
-  .notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--amber);border-radius:50%;border:2px solid #fff}
-  .date-chip{background:var(--teal-pale);color:var(--teal);font-size:12px;font-weight:500;padding:6px 14px;border-radius:20px}
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;margin-left:240px}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.page-title{font-family:'DM Serif Display',serif;font-size:20px;color:var(--text)}
+.topbar-right{display:flex;align-items:center;gap:16px}
+.notif-btn{position:relative;width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--amber);border-radius:50%;border:2px solid #fff}
+.date-chip{background:var(--teal-pale);color:var(--teal);font-size:12px;font-weight:500;padding:6px 14px;border-radius:20px}
 
-  .content{flex:1;overflow-y:auto;padding:28px 32px;display:flex;flex-direction:column;gap:24px}
+/* PAGES */
+.page{display:none;flex:1;overflow-y:auto;padding:28px 32px;flex-direction:column;gap:24px}
+.page.active{display:flex}
 
-  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 22px;position:relative;overflow:hidden}
-  .stat-card::after{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:0.07}
-  .stat-card.teal::after{background:var(--teal)}
-  .stat-card.amber::after{background:var(--amber)}
-  .stat-card.green::after{background:var(--green)}
-  .stat-card.purple::after{background:#7b5ea7}
-  .stat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
-  .stat-icon.teal{background:var(--teal-pale)}
-  .stat-icon.amber{background:var(--amber-pale)}
-  .stat-icon.green{background:var(--green-pale)}
-  .stat-icon.purple{background:#f0eaf9}
-  .stat-icon svg{width:18px;height:18px}
-  .stat-icon.teal svg{color:var(--teal)}
-  .stat-icon.amber svg{color:var(--amber)}
-  .stat-icon.green svg{color:var(--green)}
-  .stat-icon.purple svg{color:#7b5ea7}
-  .stat-val{font-family:'DM Serif Display',serif;font-size:28px;color:var(--text);line-height:1}
-  .stat-label{font-size:12px;color:var(--muted);margin-top:4px}
-  .stat-delta{font-size:11px;font-weight:500;margin-top:8px}
-  .stat-delta.up{color:var(--green)}
-  .stat-delta.neutral{color:var(--muted)}
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 22px;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:0.07}
+.stat-card.teal::after{background:var(--teal)}
+.stat-card.amber::after{background:var(--amber)}
+.stat-card.green::after{background:var(--green)}
+.stat-card.purple::after{background:#7b5ea7}
+.stat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.stat-icon.teal{background:var(--teal-pale)}
+.stat-icon.amber{background:var(--amber-pale)}
+.stat-icon.green{background:var(--green-pale)}
+.stat-icon.purple{background:#f0eaf9}
+.stat-icon svg{width:18px;height:18px}
+.stat-icon.teal svg{color:var(--teal)}
+.stat-icon.amber svg{color:var(--amber)}
+.stat-icon.green svg{color:var(--green)}
+.stat-icon.purple svg{color:#7b5ea7}
+.stat-val{font-family:'DM Serif Display',serif;font-size:28px;color:var(--text);line-height:1}
+.stat-label{font-size:12px;color:var(--muted);margin-top:4px}
+.stat-delta{font-size:11px;font-weight:500;margin-top:8px}
+.stat-delta.up{color:var(--green)}
+.stat-delta.neutral{color:var(--muted)}
 
-  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-  .grid-3{display:grid;grid-template-columns:1.4fr 1fr;gap:20px}
-  .panel{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 24px}
-  .panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-  .panel-title{font-size:14px;font-weight:500;color:var(--text)}
-  .panel-action{font-size:12px;color:var(--teal);cursor:pointer;font-weight:500}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:1.4fr 1fr;gap:20px}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 24px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.panel-title{font-size:14px;font-weight:500;color:var(--text)}
+.panel-action{font-size:12px;color:var(--teal);cursor:pointer;font-weight:500;background:none;border:none;font-family:'DM Sans',sans-serif}
+.panel-action:hover{text-decoration:underline}
 
-  /* Broadcast request form-like */
-  .broadcast-panel{background:linear-gradient(135deg,#dff0fa 0%,#f5f8fb 100%);border:1px solid var(--border);border-radius:14px;padding:22px 24px}
-  .broadcast-title{font-size:14px;font-weight:500;color:var(--teal);margin-bottom:4px}
-  .broadcast-sub{font-size:12px;color:var(--muted);margin-bottom:16px}
-  .form-row{display:flex;gap:12px;margin-bottom:12px}
-  .form-field{flex:1;display:flex;flex-direction:column;gap:5px}
-  .form-label{font-size:11px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:0.5px}
-  .form-input{background:#fff;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none}
-  .form-input:focus{border-color:var(--teal-light)}
-  .broadcast-btn{background:var(--teal);color:#fff;border:none;border-radius:10px;padding:10px 22px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:8px;transition:background 0.15s}
-  .broadcast-btn:hover{background:#155d94}
-  .broadcast-note{font-size:11px;color:var(--muted);margin-top:10px}
+/* BROADCAST */
+.broadcast-panel{background:linear-gradient(135deg,#dff0fa 0%,#f5f8fb 100%);border:1px solid var(--border);border-radius:14px;padding:22px 24px}
+.broadcast-title{font-size:14px;font-weight:500;color:var(--teal);margin-bottom:4px}
+.broadcast-sub{font-size:12px;color:var(--muted);margin-bottom:16px}
+.form-row{display:flex;gap:12px;margin-bottom:12px}
+.form-field{flex:1;display:flex;flex-direction:column;gap:5px}
+.form-label{font-size:11px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:0.5px}
+.form-input{background:#fff;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;transition:border-color 0.15s}
+.form-input:focus{border-color:var(--teal-light)}
+select.form-input{cursor:pointer}
+.broadcast-btn{background:var(--teal);color:#fff;border:none;border-radius:10px;padding:10px 22px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:8px;transition:background 0.15s}
+.broadcast-btn:hover{background:#155d94}
+.broadcast-btn:disabled{background:#999;cursor:not-allowed}
+.broadcast-note{font-size:11px;color:var(--muted);margin-top:10px}
+.broadcast-success{display:none;background:var(--green-pale);color:var(--green);border-radius:8px;padding:10px 14px;font-size:13px;margin-top:12px;font-weight:500}
 
-  /* Marketplace listings */
-  .market-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .market-card{border:1px solid var(--border);border-radius:12px;padding:14px;background:var(--surface)}
-  .market-card-img{width:100%;height:80px;border-radius:8px;background:var(--teal-pale);display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:10px}
-  .market-card-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px}
-  .market-card-meta{font-size:11.5px;color:var(--muted);margin-bottom:8px}
-  .market-card-price{font-size:14px;font-weight:600;color:var(--teal)}
-  .interest-btn{margin-top:8px;width:100%;background:var(--teal-pale);color:var(--teal);border:none;border-radius:8px;padding:7px 0;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.15s}
-  .interest-btn:hover{background:#b8dff5}
+/* MARKETPLACE */
+.market-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.market-card{border:1px solid var(--border);border-radius:12px;padding:14px;background:var(--surface);transition:box-shadow 0.15s}
+.market-card:hover{box-shadow:0 4px 16px rgba(27,108,168,0.1)}
+.market-card-img{width:100%;height:80px;border-radius:8px;background:var(--teal-pale);display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:10px}
+.market-card-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px}
+.market-card-meta{font-size:11.5px;color:var(--muted);margin-bottom:8px}
+.market-card-price{font-size:14px;font-weight:600;color:var(--teal)}
+.interest-btn{margin-top:8px;width:100%;background:var(--teal-pale);color:var(--teal);border:none;border-radius:8px;padding:7px 0;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s}
+.interest-btn:hover{background:#b8dff5}
+.interest-btn.sent{background:var(--green-pale);color:var(--green);cursor:default}
 
-  /* Bookings */
-  .booking-item{display:flex;align-items:flex-start;gap:12px;padding:13px 0;border-bottom:1px solid var(--border)}
-  .booking-item:last-child{border-bottom:none}
-  .booking-icon{width:40px;height:40px;border-radius:10px;background:var(--teal-pale);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-  .booking-info{flex:1}
-  .booking-name{font-size:13.5px;font-weight:500;color:var(--text)}
-  .booking-owner{font-size:12px;color:var(--muted);margin-top:2px}
-  .booking-dates{font-size:11.5px;color:var(--muted);margin-top:4px;display:flex;gap:14px}
-  .booking-status{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;flex-shrink:0;margin-top:4px;align-self:flex-start}
-  .booking-status.confirmed{background:var(--green-pale);color:var(--green)}
-  .booking-status.pending{background:#fff8e6;color:#b5621a}
-  .booking-status.rejected{background:#fdeaea;color:#c53030}
+/* BOOKINGS */
+.booking-item{display:flex;align-items:flex-start;gap:12px;padding:13px 0;border-bottom:1px solid var(--border)}
+.booking-item:last-child{border-bottom:none}
+.booking-icon{width:40px;height:40px;border-radius:10px;background:var(--teal-pale);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.booking-info{flex:1}
+.booking-name{font-size:13.5px;font-weight:500;color:var(--text)}
+.booking-owner{font-size:12px;color:var(--muted);margin-top:2px}
+.booking-dates{font-size:11.5px;color:var(--muted);margin-top:4px;display:flex;gap:14px}
+.booking-status{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;flex-shrink:0;margin-top:4px;align-self:flex-start}
+.booking-status.confirmed{background:var(--green-pale);color:var(--green)}
+.booking-status.pending{background:#fff8e6;color:#b5621a}
+.booking-status.rejected{background:#fdeaea;color:#c53030}
 
-  /* Response messages */
-  .msg-item{padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid var(--border);background:var(--surface)}
-  .msg-item.highlight{background:var(--teal-pale);border-color:#b8dff5}
-  .msg-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-  .msg-from{font-size:12.5px;font-weight:500;color:var(--text)}
-  .msg-time{font-size:11px;color:var(--hint)}
-  .msg-text{font-size:12.5px;color:var(--muted);line-height:1.5}
-  .msg-actions{display:flex;gap:6px;margin-top:8px}
-  .btn-sm{padding:5px 14px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:none;transition:all 0.15s;font-family:'DM Sans',sans-serif}
-  .btn-confirm{background:var(--teal);color:#fff}
-  .btn-confirm:hover{background:#155d94}
-  .btn-decline{background:var(--surface);color:var(--muted);border:1px solid var(--border)}
+/* MESSAGES */
+.msg-item{padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid var(--border);background:var(--surface);transition:box-shadow 0.15s}
+.msg-item:hover{box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.msg-item.highlight{background:var(--teal-pale);border-color:#b8dff5}
+.msg-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.msg-from{font-size:12.5px;font-weight:500;color:var(--text)}
+.msg-time{font-size:11px;color:var(--hint)}
+.msg-text{font-size:12.5px;color:var(--muted);line-height:1.5}
+.msg-actions{display:flex;gap:6px;margin-top:8px}
+.btn-sm{padding:5px 14px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:none;transition:all 0.15s;font-family:'DM Sans',sans-serif}
+.btn-confirm{background:var(--teal);color:#fff}
+.btn-confirm:hover{background:#155d94}
+.btn-decline{background:var(--surface);color:var(--muted);border:1px solid var(--border)}
+.btn-decline:hover{background:#eee}
 
-  .dot-live{width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:5px;animation:pulse 2s infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.dot-live{width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:5px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 
-  /* Search bar */
-  .search-bar{display:flex;gap:10px;margin-bottom:16px}
-  .search-input{flex:1;background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none}
-  .search-input:focus{border-color:var(--teal-light)}
-  .filter-btn{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:13px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif}
+/* SEARCH */
+.search-bar{display:flex;gap:10px;margin-bottom:16px}
+.search-input{flex:1;background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;transition:border-color 0.15s}
+.search-input:focus{border-color:var(--teal-light)}
+.filter-btn{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:13px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s}
+.filter-btn:hover{background:#e8edf2}
+
+/* PROFILE PAGE */
+.profile-header{background:linear-gradient(135deg,var(--sidebar) 0%,#1b3a5c 100%);border-radius:16px;padding:32px;display:flex;align-items:center;gap:24px;color:#fff}
+.profile-avatar-lg{width:72px;height:72px;border-radius:50%;background:var(--teal-mid);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:600;color:#fff;flex-shrink:0;border:3px solid rgba(255,255,255,0.2)}
+.profile-info h2{font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:4px}
+.profile-info p{font-size:13px;color:rgba(255,255,255,0.6)}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.profile-field{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.profile-field-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;font-weight:500}
+.profile-field-val{font-size:14px;color:var(--text);font-weight:500}
+.verified-badge{display:inline-flex;align-items:center;gap:5px;background:var(--green-pale);color:var(--green);font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;margin-top:4px}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty-state svg{width:48px;height:48px;margin:0 auto 12px;opacity:0.3;display:block}
+.empty-state p{font-size:13px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--sidebar);color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;z-index:999;display:none;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,0.2);animation:slideUp 0.3s ease}
+.toast.show{display:flex}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.toast.success{border-left:3px solid var(--green-light)}
+.toast.error{border-left:3px solid var(--amber)}
+
+/* LOADING */
+.skeleton{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px;height:16px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:16px;padding:28px;width:460px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+.modal h3{font-family:'DM Serif Display',serif;font-size:18px;margin-bottom:6px}
+.modal p{font-size:13px;color:var(--muted);margin-bottom:20px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end}
+.modal-btn{padding:9px 20px;border-radius:9px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;border:none}
+.modal-btn.primary{background:var(--teal);color:#fff}
+.modal-btn.secondary{background:var(--surface);color:var(--muted);border:1px solid var(--border)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .stats-row{grid-template-columns:1fr 1fr}
+  .grid-3,.grid-2{grid-template-columns:1fr}
+  .market-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 
-<!-- Sidebar -->
+<!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="logo-wrap">
     <div class="logo-drop"></div>
     <div class="logo-name">AgroNexa LK</div>
-    <div class="logo-tag">Smart Farming Platform</div>
+    <div class="logo-tag">Buyer Portal</div>
   </div>
-
   <div class="user-card">
-    <div class="avatar" id="user-avatar">CP</div>
+    <div class="avatar" id="user-avatar">?</div>
     <div>
-      <div class="user-name" id="user-name">Chaminda Perera</div>
-      <div class="user-role" id="user-district">Colombo District</div>
+      <div class="user-name" id="user-name">Loading...</div>
+      <div class="user-district" id="user-district"></div>
       <div class="role-badge">Buyer</div>
-      <div id="member-since" style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:4px;"></div>
     </div>
   </div>
-
   <nav>
     <div class="nav-section">Main</div>
-    <div class="nav-item active">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      Dashboard
-    </div>
-    <div class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h18l-2 13H5L3 3z"/><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
+    <button class="nav-item active" onclick="showPage('dashboard',this)">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      Overview
+    </button>
+    <button class="nav-item" onclick="showPage('marketplace',this)">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
       Marketplace
-    </div>
-    <div class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-      My Requests
-      <span class="nav-badge">2</span>
-    </div>
-    <div class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    </button>
+    <button class="nav-item" onclick="showPage('broadcast',this)">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+      Broadcast Request
+    </button>
+    <button class="nav-item" onclick="showPage('bookings',this)">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
       My Bookings
-      <span class="nav-badge">3</span>
-    </div>
-    <div class="nav-section">Account</div>
-    <div class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      <span class="nav-badge" id="booking-badge">2</span>
+    </button>
+    <button class="nav-item" onclick="showPage('messages',this)">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
       Messages
-      <span class="nav-badge">5</span>
-    </div>
-    <div class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-      Profile
-    </div>
-    <div class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-      Settings
-    </div>
+      <span class="nav-badge" id="msg-badge">3</span>
+    </button>
+    <div class="nav-section">Account</div>
+    <button class="nav-item" onclick="showPage('profile',this)">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+      My Profile
+    </button>
   </nav>
-
   <div class="sidebar-bottom">
-    <div class="logout-btn">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      Sign out
-    </div>
+    <button class="logout-btn" onclick="doLogout()">
+      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+      Sign Out
+    </button>
   </div>
 </aside>
 
-<!-- Main -->
+<!-- MAIN -->
 <div class="main">
   <div class="topbar">
-    <div class="page-title" id="page-greeting">Buyer Dashboard</div>
+    <div class="page-title" id="topbar-title">Overview</div>
     <div class="topbar-right">
-      <span class="dot-live"></span><span style="font-size:12px;color:var(--muted)">Live</span>
-      <div class="notif-btn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <div class="date-chip" id="date-chip"></div>
+      <div class="notif-btn" onclick="showPage('messages',document.querySelector('.nav-item:nth-child(5)'))">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
         <div class="notif-dot"></div>
       </div>
-      <div class="date-chip">Friday, 8 May 2026</div>
     </div>
   </div>
 
-  <div class="content">
-
-    <!-- Stats -->
+  <!-- DASHBOARD PAGE -->
+  <div class="page active" id="page-dashboard">
     <div class="stats-row">
       <div class="stat-card teal">
         <div class="stat-icon teal">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
         </div>
-        <div class="stat-val">2</div>
-        <div class="stat-label">Active Requests</div>
-        <div class="stat-delta neutral">Awaiting seller response</div>
+        <div class="stat-val">3</div>
+        <div class="stat-label">Active Broadcasts</div>
+        <div class="stat-delta up">↑ 1 new response</div>
       </div>
       <div class="stat-card amber">
         <div class="stat-icon amber">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
         </div>
-        <div class="stat-val">5</div>
-        <div class="stat-label">New Responses</div>
-        <div class="stat-delta neutral">From sellers</div>
+        <div class="stat-val">2</div>
+        <div class="stat-label">Active Bookings</div>
+        <div class="stat-delta neutral">1 confirmed · 1 pending</div>
       </div>
       <div class="stat-card green">
         <div class="stat-icon green">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
-        <div class="stat-val">3</div>
-        <div class="stat-label">Confirmed Bookings</div>
-        <div class="stat-delta up">↑ 1 this week</div>
+        <div class="stat-val">7</div>
+        <div class="stat-label">Interests Sent</div>
+        <div class="stat-delta up">↑ 2 this week</div>
       </div>
       <div class="stat-card purple">
         <div class="stat-icon purple">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18l-2 13H5L3 3z"/><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
         </div>
-        <div class="stat-val">18</div>
-        <div class="stat-label">Past Purchases</div>
-        <div class="stat-delta up">Lifetime</div>
+        <div class="stat-val" id="unread-count">3</div>
+        <div class="stat-label">Unread Messages</div>
+        <div class="stat-delta neutral">From sellers</div>
       </div>
     </div>
 
-    <!-- Broadcast + Marketplace -->
     <div class="grid-3">
-      <!-- Broadcast request -->
-      <div class="broadcast-panel">
-        <div class="broadcast-title">📡 Broadcast a Buyer Request</div>
-        <div class="broadcast-sub">Your request will be SMS-broadcasted to all matching sellers instantly</div>
-        <div class="form-row">
-          <div class="form-field">
-            <div class="form-label">Commodity</div>
-            <input class="form-input" type="text" placeholder="e.g. Tomatoes, Carrots...">
+      <div>
+        <div class="broadcast-panel">
+          <div class="broadcast-title">📢 Post a Broadcast Request</div>
+          <div class="broadcast-sub">Let sellers know exactly what you need — district-wide SMS alert.</div>
+          <div class="form-row">
+            <div class="form-field">
+              <div class="form-label">Crop / Item</div>
+              <input class="form-input" type="text" id="bc-crop" placeholder="e.g. Tomatoes, Rice...">
+            </div>
+            <div class="form-field">
+              <div class="form-label">Quantity (kg)</div>
+              <input class="form-input" type="number" id="bc-qty" placeholder="e.g. 100">
+            </div>
           </div>
-          <div class="form-field" style="max-width:120px">
-            <div class="form-label">Quantity (kg)</div>
-            <input class="form-input" type="number" placeholder="e.g. 50">
+          <div class="form-row">
+            <div class="form-field">
+              <div class="form-label">District</div>
+              <input class="form-input" type="text" id="bc-district" placeholder="District">
+            </div>
+            <div class="form-field">
+              <div class="form-label">Budget (Rs/kg)</div>
+              <input class="form-input" type="number" id="bc-budget" placeholder="e.g. 250">
+            </div>
+          </div>
+          <button class="broadcast-btn" onclick="sendBroadcast()" id="bc-btn">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6"/></svg>
+            Send Broadcast
+          </button>
+          <div class="broadcast-success" id="bc-success">✅ Broadcast sent! Sellers in your district will be notified via SMS.</div>
+          <div class="broadcast-note">📱 SMS notifications will be sent to verified sellers in your selected district.</div>
+        </div>
+
+        <div class="panel" style="margin-top:20px">
+          <div class="panel-head">
+            <div class="panel-title">Recent Bookings</div>
+            <button class="panel-action" onclick="showPage('bookings',null)">View all</button>
+          </div>
+          <div class="booking-item">
+            <div class="booking-icon">🚜</div>
+            <div class="booking-info">
+              <div class="booking-name">Tractor (4WD)</div>
+              <div class="booking-owner">Owner: Saman Perera · Kandy</div>
+              <div class="booking-dates"><span>📅 May 10 – 11</span><span>Rs. 12,000</span></div>
+            </div>
+            <span class="booking-status confirmed">Confirmed</span>
+          </div>
+          <div class="booking-item">
+            <div class="booking-icon">🌿</div>
+            <div class="booking-info">
+              <div class="booking-name">Sprayer Machine</div>
+              <div class="booking-owner">Owner: Agro Tools LK · Gampaha</div>
+              <div class="booking-dates"><span>📅 May 8</span><span>Rs. 4,200</span></div>
+            </div>
+            <span class="booking-status rejected">Rejected</span>
           </div>
         </div>
-        <div class="form-row">
-          <div class="form-field">
-            <div class="form-label">Required By</div>
-            <input class="form-input" type="date" value="2026-05-10">
-          </div>
-          <div class="form-field">
-            <div class="form-label">Your Location</div>
-            <input class="form-input" type="text" placeholder="District" value="Colombo">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-field">
-            <div class="form-label">Price Offer (Rs./kg) — optional</div>
-            <input class="form-input" type="number" placeholder="Leave blank for open offer">
-          </div>
-        </div>
-        <button class="broadcast-btn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>
-          Broadcast to Sellers
-        </button>
-        <div class="broadcast-note">⚠️ Requests expire after 72 hours if no response is accepted</div>
       </div>
 
-      <!-- Seller responses -->
       <div class="panel">
         <div class="panel-head">
-          <div class="panel-title">Seller Responses</div>
-          <span style="font-size:11px;color:var(--amber);font-weight:500">5 new</span>
+          <div class="panel-title"><span class="dot-live"></span>Recent Seller Responses</div>
         </div>
         <div class="msg-item highlight">
           <div class="msg-top">
-            <div class="msg-from">Sunil K. — Kandy</div>
+            <div class="msg-from">🌾 Kumara Farms, Kandy</div>
             <div class="msg-time">2h ago</div>
           </div>
-          <div class="msg-text">Can supply 80 kg Tomatoes @ Rs. 270/kg. Delivery available May 10.</div>
+          <div class="msg-text">I have 80kg of fresh tomatoes ready. Price: Rs. 260/kg. Can deliver tomorrow.</div>
           <div class="msg-actions">
-            <button class="btn-sm btn-confirm">Confirm</button>
-            <button class="btn-sm btn-decline">Decline</button>
+            <button class="btn-sm btn-confirm" onclick="acceptOffer(this)">Accept Offer</button>
+            <button class="btn-sm btn-decline" onclick="declineOffer(this)">Decline</button>
           </div>
         </div>
         <div class="msg-item">
           <div class="msg-top">
-            <div class="msg-from">Priya Farms — Matale</div>
+            <div class="msg-from">🥬 Green Valley, Nuwara Eliya</div>
             <div class="msg-time">5h ago</div>
           </div>
-          <div class="msg-text">Counter offer: 60 kg @ Rs. 290/kg. Best quality organic. Ready May 9.</div>
+          <div class="msg-text">We have carrots available — 150kg at Rs. 180/kg. Quality A-grade certified.</div>
           <div class="msg-actions">
-            <button class="btn-sm btn-confirm">Accept Counter</button>
-            <button class="btn-sm btn-decline">Decline</button>
+            <button class="btn-sm btn-confirm" onclick="acceptOffer(this)">Accept Offer</button>
+            <button class="btn-sm btn-decline" onclick="declineOffer(this)">Decline</button>
           </div>
         </div>
         <div class="msg-item">
           <div class="msg-top">
-            <div class="msg-from">Green Valley Exports — Gampaha</div>
-            <div class="msg-time">8h ago</div>
+            <div class="msg-from">🌶 Spice Lanka, Matale</div>
+            <div class="msg-time">Yesterday</div>
           </div>
-          <div class="msg-text">We have 100 kg Tomatoes ready @ Rs. 265/kg. Can arrange transport.</div>
+          <div class="msg-text">Red chilies available 40kg @ Rs. 1,100/kg. Contact me to confirm.</div>
           <div class="msg-actions">
-            <button class="btn-sm btn-confirm">Confirm</button>
-            <button class="btn-sm btn-decline">Decline</button>
+            <button class="btn-sm btn-confirm" onclick="acceptOffer(this)">Accept Offer</button>
+            <button class="btn-sm btn-decline" onclick="declineOffer(this)">Decline</button>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Bookings + Marketplace browse -->
-    <div class="grid-2">
-      <div class="panel">
-        <div class="panel-head">
-          <div class="panel-title">My Equipment Bookings</div>
-          <div class="panel-action">View all</div>
+  <!-- MARKETPLACE PAGE -->
+  <div class="page" id="page-marketplace">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Browse Marketplace</div>
+        <div style="font-size:12px;color:var(--muted)">Showing 8 listings near you</div>
+      </div>
+      <div class="search-bar">
+        <input class="search-input" type="text" id="market-search" placeholder="Search crops, equipment, location..." oninput="filterMarket()">
+        <select class="filter-btn form-input" id="market-filter" onchange="filterMarket()" style="width:auto;flex-shrink:0">
+          <option value="">All Categories</option>
+          <option value="crop">Crops</option>
+          <option value="equipment">Equipment</option>
+        </select>
+      </div>
+      <div class="market-grid" id="market-grid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- BROADCAST PAGE -->
+  <div class="page" id="page-broadcast">
+    <div class="broadcast-panel" style="max-width:600px">
+      <div class="broadcast-title">📢 Send a Broadcast Request</div>
+      <div class="broadcast-sub">Notify all verified sellers in a district about what you need. They'll receive an SMS alert instantly.</div>
+      <div class="form-row">
+        <div class="form-field">
+          <div class="form-label">Crop / Item Needed</div>
+          <input class="form-input" type="text" id="bc2-crop" placeholder="e.g. Tomatoes, Tractor...">
         </div>
-        <div class="booking-item">
-          <div class="booking-icon">🚜</div>
-          <div class="booking-info">
-            <div class="booking-name">Kubota Mini Tractor</div>
-            <div class="booking-owner">Owner: Nimal Jayasuriya · Kurunegala</div>
-            <div class="booking-dates">
-              <span>📅 May 12 – 14</span>
-              <span>Rs. 15,000</span>
-            </div>
-          </div>
-          <span class="booking-status confirmed">Confirmed</span>
-        </div>
-        <div class="booking-item">
-          <div class="booking-icon">💧</div>
-          <div class="booking-info">
-            <div class="booking-name">Water Pump (5HP)</div>
-            <div class="booking-owner">Owner: Ruwan Silva · Polonnaruwa</div>
-            <div class="booking-dates">
-              <span>📅 May 15</span>
-              <span>Rs. 3,500</span>
-            </div>
-          </div>
-          <span class="booking-status pending">Pending</span>
-        </div>
-        <div class="booking-item">
-          <div class="booking-icon">🚛</div>
-          <div class="booking-info">
-            <div class="booking-name">Lorry Transport (3T)</div>
-            <div class="booking-owner">Owner: Lanka Transport Co. · Colombo</div>
-            <div class="booking-dates">
-              <span>📅 May 10 – 11</span>
-              <span>Rs. 12,000</span>
-            </div>
-          </div>
-          <span class="booking-status confirmed">Confirmed</span>
-        </div>
-        <div class="booking-item">
-          <div class="booking-icon">🌿</div>
-          <div class="booking-info">
-            <div class="booking-name">Sprayer Machine</div>
-            <div class="booking-owner">Owner: Agro Tools LK · Gampaha</div>
-            <div class="booking-dates">
-              <span>📅 May 8</span>
-              <span>Rs. 4,200</span>
-            </div>
-          </div>
-          <span class="booking-status rejected">Rejected</span>
+        <div class="form-field">
+          <div class="form-label">Quantity</div>
+          <input class="form-input" type="text" id="bc2-qty" placeholder="e.g. 200kg">
         </div>
       </div>
+      <div class="form-row">
+        <div class="form-field">
+          <div class="form-label">District</div>
+          <select class="form-input" id="bc2-district">
+            <option value="">Select District</option>
+            <option>Colombo</option><option>Kandy</option><option>Gampaha</option><option>Kalutara</option>
+            <option>Matale</option><option>Nuwara Eliya</option><option>Galle</option><option>Matara</option>
+            <option>Hambantota</option><option>Jaffna</option><option>Kilinochchi</option><option>Mannar</option>
+            <option>Vavuniya</option><option>Mullaitivu</option><option>Batticaloa</option><option>Ampara</option>
+            <option>Trincomalee</option><option>Kurunegala</option><option>Puttalam</option><option>Anuradhapura</option>
+            <option>Polonnaruwa</option><option>Badulla</option><option>Moneragala</option><option>Ratnapura</option><option>Kegalle</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <div class="form-label">Your Budget (Rs/kg)</div>
+          <input class="form-input" type="number" id="bc2-budget" placeholder="Optional">
+        </div>
+      </div>
+      <div class="form-field" style="margin-bottom:12px">
+        <div class="form-label">Additional Notes</div>
+        <textarea class="form-input" id="bc2-notes" rows="3" placeholder="Any specific requirements, delivery preferences, quality standards..."></textarea>
+      </div>
+      <button class="broadcast-btn" onclick="sendBroadcast2()" id="bc2-btn">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6"/></svg>
+        Send Broadcast to Sellers
+      </button>
+      <div class="broadcast-success" id="bc2-success">✅ Broadcast sent! Sellers in your selected district will receive an SMS notification shortly.</div>
+      <div class="broadcast-note" style="margin-top:12px">⚠️ Please use broadcasts responsibly. Limit to genuine purchase requests only.</div>
+    </div>
 
-      <div class="panel">
-        <div class="panel-head">
-          <div class="panel-title">Browse Marketplace</div>
-          <div class="panel-action">View all listings</div>
+    <div class="panel" style="max-width:600px">
+      <div class="panel-head">
+        <div class="panel-title">My Past Broadcasts</div>
+      </div>
+      <div class="msg-item">
+        <div class="msg-top"><div class="msg-from">🥬 Gotukola — 50kg</div><div class="msg-time">May 7</div></div>
+        <div class="msg-text">Kandy District · Budget: Rs. 300/kg · 4 seller responses received</div>
+      </div>
+      <div class="msg-item">
+        <div class="msg-top"><div class="msg-from">🌶 Red Chilies — 30kg</div><div class="msg-time">May 3</div></div>
+        <div class="msg-text">Matale District · Budget: Rs. 1,000/kg · 2 seller responses received</div>
+      </div>
+      <div class="msg-item">
+        <div class="msg-top"><div class="msg-from">🚜 Tractor Rental</div><div class="msg-time">Apr 28</div></div>
+        <div class="msg-text">Kandy District · 1 day · 3 seller responses received</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOOKINGS PAGE -->
+  <div class="page" id="page-bookings">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">My Equipment Bookings</div>
+        <div style="font-size:12px;color:var(--muted)">3 bookings total</div>
+      </div>
+      <div class="booking-item">
+        <div class="booking-icon">🚜</div>
+        <div class="booking-info">
+          <div class="booking-name">Tractor (4WD)</div>
+          <div class="booking-owner">Owner: Saman Perera · Kandy</div>
+          <div class="booking-dates"><span>📅 May 10 – 11, 2026</span><span>Rs. 12,000</span></div>
         </div>
-        <div class="search-bar">
-          <input class="search-input" type="text" placeholder="Search crops, equipment, location...">
-          <button class="filter-btn">⚙ Filter</button>
+        <span class="booking-status confirmed">Confirmed</span>
+      </div>
+      <div class="booking-item">
+        <div class="booking-icon">💧</div>
+        <div class="booking-info">
+          <div class="booking-name">Irrigation Pump</div>
+          <div class="booking-owner">Owner: Nimal Agro · Kurunegala</div>
+          <div class="booking-dates"><span>📅 May 15, 2026</span><span>Rs. 3,500</span></div>
         </div>
-        <div class="market-grid">
-          <div class="market-card">
-            <div class="market-card-img">🥬</div>
-            <div class="market-card-name">Gotukola</div>
-            <div class="market-card-meta">Kandy · 60 kg · In stock</div>
-            <div class="market-card-price">Rs. 320/kg</div>
-            <button class="interest-btn">Express Interest</button>
+        <span class="booking-status pending">Pending</span>
+      </div>
+      <div class="booking-item">
+        <div class="booking-icon">🌿</div>
+        <div class="booking-info">
+          <div class="booking-name">Sprayer Machine</div>
+          <div class="booking-owner">Owner: Agro Tools LK · Gampaha</div>
+          <div class="booking-dates"><span>📅 May 8, 2026</span><span>Rs. 4,200</span></div>
+        </div>
+        <span class="booking-status rejected">Rejected</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MESSAGES PAGE -->
+  <div class="page" id="page-messages">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Seller Responses & Messages</div>
+        <div style="font-size:12px;color:var(--muted)" id="msg-count">3 unread</div>
+      </div>
+      <div id="messages-list">
+        <div class="msg-item highlight" data-read="false">
+          <div class="msg-top">
+            <div class="msg-from">🌾 Kumara Farms, Kandy</div>
+            <div class="msg-time">2h ago</div>
           </div>
-          <div class="market-card">
-            <div class="market-card-img">🌶️</div>
-            <div class="market-card-name">Red Chilies</div>
-            <div class="market-card-meta">Kandy · 35 kg · In stock</div>
-            <div class="market-card-price">Rs. 1,150/kg</div>
-            <button class="interest-btn">Express Interest</button>
+          <div class="msg-text">I have 80kg of fresh tomatoes ready. Price: Rs. 260/kg. Can deliver to you tomorrow morning. Please confirm.</div>
+          <div class="msg-actions">
+            <button class="btn-sm btn-confirm" onclick="acceptOffer(this)">Accept Offer</button>
+            <button class="btn-sm btn-decline" onclick="declineOffer(this)">Decline</button>
           </div>
-          <div class="market-card">
-            <div class="market-card-img">🥕</div>
-            <div class="market-card-name">Carrots</div>
-            <div class="market-card-meta">Nuwara Eliya · 200 kg</div>
-            <div class="market-card-price">Rs. 195/kg</div>
-            <button class="interest-btn">Express Interest</button>
+        </div>
+        <div class="msg-item highlight" data-read="false">
+          <div class="msg-top">
+            <div class="msg-from">🥬 Green Valley, Nuwara Eliya</div>
+            <div class="msg-time">5h ago</div>
           </div>
-          <div class="market-card">
-            <div class="market-card-img">🍅</div>
-            <div class="market-card-name">Tomatoes</div>
-            <div class="market-card-meta">Kandy · 120 kg · In stock</div>
-            <div class="market-card-price">Rs. 280/kg</div>
-            <button class="interest-btn">Express Interest</button>
+          <div class="msg-text">We have carrots available — 150kg at Rs. 180/kg. Quality A-grade certified. Available for pickup or delivery.</div>
+          <div class="msg-actions">
+            <button class="btn-sm btn-confirm" onclick="acceptOffer(this)">Accept Offer</button>
+            <button class="btn-sm btn-decline" onclick="declineOffer(this)">Decline</button>
+          </div>
+        </div>
+        <div class="msg-item highlight" data-read="false">
+          <div class="msg-top">
+            <div class="msg-from">🌶 Spice Lanka, Matale</div>
+            <div class="msg-time">Yesterday</div>
+          </div>
+          <div class="msg-text">Red chilies available 40kg @ Rs. 1,100/kg. Contact me on 077-XXXXXXX to confirm the order.</div>
+          <div class="msg-actions">
+            <button class="btn-sm btn-confirm" onclick="acceptOffer(this)">Accept Offer</button>
+            <button class="btn-sm btn-decline" onclick="declineOffer(this)">Decline</button>
+          </div>
+        </div>
+        <div class="msg-item" data-read="true">
+          <div class="msg-top">
+            <div class="msg-from">🧅 Onion King, Dambulla</div>
+            <div class="msg-time">May 8</div>
+          </div>
+          <div class="msg-text">Big onions available 200kg @ Rs. 190/kg. Wholesale price for bulk orders.</div>
+          <div class="msg-actions">
+            <button class="btn-sm btn-confirm" onclick="acceptOffer(this)">Accept Offer</button>
+            <button class="btn-sm btn-decline" onclick="declineOffer(this)">Decline</button>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
+  <!-- PROFILE PAGE -->
+  <div class="page" id="page-profile">
+    <div class="profile-header">
+      <div class="profile-avatar-lg" id="profile-avatar-lg">?</div>
+      <div class="profile-info">
+        <h2 id="profile-fullname">Loading...</h2>
+        <p id="profile-email">—</p>
+        <p id="member-since" style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px"></p>
+      </div>
+    </div>
+    <div class="profile-grid">
+      <div class="profile-field">
+        <div class="profile-field-label">Full Name</div>
+        <div class="profile-field-val" id="pf-name">—</div>
+      </div>
+      <div class="profile-field">
+        <div class="profile-field-label">Email Address</div>
+        <div class="profile-field-val" id="pf-email">—</div>
+      </div>
+      <div class="profile-field">
+        <div class="profile-field-label">Phone Number</div>
+        <div class="profile-field-val" id="pf-phone">—</div>
+        <div class="verified-badge">✅ Verified</div>
+      </div>
+      <div class="profile-field">
+        <div class="profile-field-label">District</div>
+        <div class="profile-field-val" id="pf-district">—</div>
+      </div>
+      <div class="profile-field" style="grid-column:1/-1">
+        <div class="profile-field-label">Address</div>
+        <div class="profile-field-val" id="pf-address">—</div>
+      </div>
+      <div class="profile-field">
+        <div class="profile-field-label">Account Role</div>
+        <div class="profile-field-val">Buyer <span class="role-badge" style="vertical-align:middle">Verified</span></div>
+      </div>
+      <div class="profile-field">
+        <div class="profile-field-label">Account Status</div>
+        <div class="profile-field-val"><span style="color:var(--green);font-weight:600">● Active</span></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h3 id="modal-title">Confirm Action</h3>
+    <p id="modal-body">Are you sure?</p>
+    <div class="modal-actions">
+      <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn primary" id="modal-confirm-btn">Confirm</button>
+    </div>
   </div>
 </div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
 <script>
 var API_URL = 'https://agronexa-lk-production.up.railway.app';
 var _user = null;
 
+// Market data
+var marketItems = [
+  {emoji:'🥬',name:'Gotukola',meta:'Kandy · 60 kg · In stock',price:'Rs. 320/kg',cat:'crop'},
+  {emoji:'🌶️',name:'Red Chilies',meta:'Kandy · 35 kg · In stock',price:'Rs. 1,150/kg',cat:'crop'},
+  {emoji:'🥕',name:'Carrots',meta:'Nuwara Eliya · 200 kg',price:'Rs. 195/kg',cat:'crop'},
+  {emoji:'🍅',name:'Tomatoes',meta:'Kandy · 120 kg · In stock',price:'Rs. 280/kg',cat:'crop'},
+  {emoji:'🧅',name:'Big Onions',meta:'Dambulla · 300 kg',price:'Rs. 190/kg',cat:'crop'},
+  {emoji:'🥦',name:'Broccoli',meta:'Nuwara Eliya · 40 kg',price:'Rs. 420/kg',cat:'crop'},
+  {emoji:'🚜',name:'Tractor (4WD)',meta:'Kandy · Daily rental',price:'Rs. 6,000/day',cat:'equipment'},
+  {emoji:'💧',name:'Irrigation Pump',meta:'Kurunegala · Rental',price:'Rs. 1,500/day',cat:'equipment'},
+];
+var sentInterests = new Set();
+
+function renderMarket(items){
+  var grid = document.getElementById('market-grid');
+  if(!items.length){
+    grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><p>No listings found</p></div>';
+    return;
+  }
+  grid.innerHTML = items.map(function(item,i){
+    var sent = sentInterests.has(item.name);
+    return '<div class="market-card">'+
+      '<div class="market-card-img">'+item.emoji+'</div>'+
+      '<div class="market-card-name">'+item.name+'</div>'+
+      '<div class="market-card-meta">'+item.meta+'</div>'+
+      '<div class="market-card-price">'+item.price+'</div>'+
+      '<button class="interest-btn'+(sent?' sent':'')+'" onclick="expressInterest(this,\''+item.name+'\')">'+(sent?'✅ Interest Sent':'Express Interest')+'</button>'+
+    '</div>';
+  }).join('');
+}
+
+function filterMarket(){
+  var q = document.getElementById('market-search').value.toLowerCase();
+  var cat = document.getElementById('market-filter').value;
+  var filtered = marketItems.filter(function(item){
+    var matchQ = !q || item.name.toLowerCase().includes(q) || item.meta.toLowerCase().includes(q);
+    var matchCat = !cat || item.cat===cat;
+    return matchQ && matchCat;
+  });
+  renderMarket(filtered);
+}
+
+function expressInterest(btn, name){
+  if(sentInterests.has(name)) return;
+  sentInterests.add(name);
+  btn.textContent = '✅ Interest Sent';
+  btn.classList.add('sent');
+  showToast('Interest sent for '+name+'!','success');
+}
+
+// Broadcast
+function sendBroadcast(){
+  var crop = document.getElementById('bc-crop').value.trim();
+  var qty = document.getElementById('bc-qty').value.trim();
+  var district = document.getElementById('bc-district').value.trim();
+  if(!crop||!qty||!district){ showToast('Please fill Crop, Quantity, and District','error'); return; }
+  var btn = document.getElementById('bc-btn');
+  btn.disabled=true; btn.textContent='Sending...';
+  setTimeout(function(){
+    btn.disabled=false; btn.innerHTML='<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6"/></svg> Send Broadcast';
+    document.getElementById('bc-success').style.display='block';
+    showToast('Broadcast sent to '+district+' district!','success');
+  },1200);
+}
+
+function sendBroadcast2(){
+  var crop = document.getElementById('bc2-crop').value.trim();
+  var qty = document.getElementById('bc2-qty').value.trim();
+  var district = document.getElementById('bc2-district').value;
+  if(!crop||!qty||!district){ showToast('Please fill all required fields','error'); return; }
+  var btn = document.getElementById('bc2-btn');
+  btn.disabled=true; btn.textContent='Sending...';
+  setTimeout(function(){
+    btn.disabled=false; btn.innerHTML='<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6"/></svg> Send Broadcast to Sellers';
+    document.getElementById('bc2-success').style.display='block';
+    showToast('Broadcast sent to '+district+' sellers!','success');
+    document.getElementById('bc2-crop').value='';
+    document.getElementById('bc2-qty').value='';
+    document.getElementById('bc2-notes').value='';
+  },1400);
+}
+
+// Messages / Offers
+function acceptOffer(btn){
+  var item = btn.closest('.msg-item');
+  var seller = item.querySelector('.msg-from').textContent;
+  showModal('Accept Offer', 'Accept offer from '+seller+'? This will notify them to proceed.', function(){
+    var actions = item.querySelector('.msg-actions');
+    actions.innerHTML='<span style="color:var(--green);font-size:12px;font-weight:500">✅ Offer Accepted</span>';
+    item.classList.remove('highlight');
+    item.dataset.read='true';
+    updateUnread();
+    showToast('Offer accepted!','success');
+  });
+}
+
+function declineOffer(btn){
+  var item = btn.closest('.msg-item');
+  var actions = item.querySelector('.msg-actions');
+  actions.innerHTML='<span style="color:var(--hint);font-size:12px">Declined</span>';
+  item.classList.remove('highlight');
+  item.dataset.read='true';
+  updateUnread();
+  showToast('Offer declined','error');
+}
+
+function updateUnread(){
+  var unread = document.querySelectorAll('#messages-list .msg-item[data-read="false"]').length;
+  document.getElementById('unread-count').textContent = unread;
+  document.getElementById('msg-badge').textContent = unread;
+  document.getElementById('msg-count').textContent = unread+' unread';
+  if(unread===0) document.getElementById('notif-dot') && (document.querySelector('.notif-dot').style.display='none');
+}
+
+// Navigation
+function showPage(pageId, navEl){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  document.getElementById('page-'+pageId).classList.add('active');
+  if(navEl) navEl.classList.add('active');
+  var titles = {dashboard:'Overview',marketplace:'Browse Marketplace',broadcast:'Broadcast Request',bookings:'My Bookings',messages:'Messages',profile:'My Profile'};
+  document.getElementById('topbar-title').textContent = titles[pageId]||pageId;
+  if(pageId==='marketplace') renderMarket(marketItems);
+}
+
+// Modal
+var _modalCallback = null;
+function showModal(title,body,cb){
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-body').textContent=body;
+  _modalCallback=cb;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-confirm-btn').onclick=function(){closeModal();if(_modalCallback)_modalCallback();};
+}
+function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); }
+
+// Toast
+function showToast(msg,type){
+  var t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show '+(type||'');
+  clearTimeout(t._timer);
+  t._timer=setTimeout(function(){t.classList.remove('show')},3000);
+}
+
+// Date chip
+(function(){
+  var d=new Date();
+  var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('date-chip').textContent=months[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();
+})();
+
+// Auth & profile load
 (function(){
   var u = sessionStorage.getItem('agro_user');
-  if (!u) { window.location.href = 'index.html'; return; }
+  if(!u){ window.location.href='index.html'; return; }
   _user = JSON.parse(u);
-  if (_user.role !== 'buyer') { window.location.href = 'index.html'; return; }
+  if(_user.role!=='buyer'){ window.location.href='index.html'; return; }
 
-  // Immediately show session data
   var name = _user.name || _user.email;
-  var initials = name.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
+  var initials = name.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2)||'?';
   document.getElementById('user-avatar').textContent = initials;
   document.getElementById('user-name').textContent = name;
-  document.getElementById('page-greeting').textContent = 'Welcome back, ' + name.split(' ')[0] + ' 👋';
-
-  // Pre-fill broadcast district from session if available
-  if (_user.district) {
-    var locInput = document.querySelector('.broadcast-panel input[type="text"][placeholder="District"]');
-    if (locInput) locInput.value = _user.district;
+  document.getElementById('profile-avatar-lg').textContent = initials;
+  document.getElementById('profile-fullname').textContent = name;
+  document.getElementById('profile-email').textContent = _user.email||'';
+  document.getElementById('pf-name').textContent = name;
+  document.getElementById('pf-email').textContent = _user.email||'—';
+  document.getElementById('pf-phone').textContent = _user.phone||'—';
+  document.getElementById('pf-district').textContent = _user.district||'—';
+  document.getElementById('pf-address').textContent = _user.address||'—';
+  if(_user.district){
+    document.getElementById('user-district').textContent = _user.district+' District';
+    document.getElementById('bc-district').value = _user.district;
   }
 
-  // Fetch full profile
-  if (_user.id) {
-    fetch(API_URL + '/api/profile/' + _user.id)
-      .then(function(r){ return r.json(); })
+  if(_user.id){
+    fetch(API_URL+'/api/profile/'+_user.id)
+      .then(function(r){return r.json();})
       .then(function(data){
-        if (!data.success) return;
+        if(!data.success) return;
         var p = data.user;
-
-        var fullName = (p.first_name + ' ' + p.last_name).trim();
-        var ini = fullName.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
+        var fullName = (p.first_name+' '+p.last_name).trim();
+        var ini = fullName.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2)||'?';
         document.getElementById('user-avatar').textContent = ini;
         document.getElementById('user-name').textContent = fullName;
-        document.getElementById('page-greeting').textContent = 'Welcome back, ' + p.first_name + ' 👋';
-
-        // District in sidebar
-        if (p.district) {
-          document.getElementById('user-district').textContent = p.district + ' District';
-          // Also fill broadcast form district
-          var locInput = document.querySelector('.broadcast-panel input[type="text"][placeholder="District"]');
-          if (locInput) locInput.value = p.district;
+        document.getElementById('profile-avatar-lg').textContent = ini;
+        document.getElementById('profile-fullname').textContent = fullName;
+        document.getElementById('profile-email').textContent = p.email||'';
+        document.getElementById('pf-name').textContent = fullName;
+        document.getElementById('pf-email').textContent = p.email||'—';
+        document.getElementById('pf-phone').textContent = p.phone||'—';
+        document.getElementById('pf-district').textContent = p.district||'—';
+        document.getElementById('pf-address').textContent = p.address||'—';
+        if(p.district){
+          document.getElementById('user-district').textContent = p.district+' District';
+          document.getElementById('bc-district').value = p.district;
         }
-
-        // Member since
-        if (p.created_at) {
-          var d = new Date(p.created_at);
-          var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-          document.getElementById('member-since').textContent = 'Member since ' + months[d.getMonth()] + ' ' + d.getFullYear();
+        if(p.created_at){
+          var d=new Date(p.created_at);
+          var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          document.getElementById('member-since').textContent='Member since '+months[d.getMonth()]+' '+d.getFullYear();
         }
-
-        // Store enriched data back
-        sessionStorage.setItem('agro_user', JSON.stringify({
-          id: p.id, email: p.email, role: p.role,
-          name: p.first_name, district: p.district, phone: p.phone,
-          address: p.address
-        }));
+        sessionStorage.setItem('agro_user',JSON.stringify({id:p.id,email:p.email,role:p.role,name:p.first_name,district:p.district,phone:p.phone,address:p.address}));
       })
-      .catch(function(){ /* offline - session data already shown */ });
+      .catch(function(){});
   }
 })();
 
 function doLogout(){
-  sessionStorage.removeItem('agro_user');
-  window.location.href = 'index.html';
+  showModal('Sign Out','Are you sure you want to sign out?',function(){
+    sessionStorage.removeItem('agro_user');
+    window.location.href='index.html';
+  });
 }
 </script>
 </body>
