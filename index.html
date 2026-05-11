@@ -168,6 +168,18 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
 @media(max-width:860px){.L{width:42%;}.LC{padding:30px 26px;}.ht-h1{font-size:2.1rem;}.features{display:none;}}
 @media(max-width:640px){.app{flex-direction:column;}.L{width:100%;min-height:200px;}.features{display:none;}.LC{padding:24px 20px;}.hero-text{margin-bottom:16px;}.R{padding:26px 18px;}.tc{grid-template-columns:1fr;}}
 @media(max-width:380px){.nic-grid{grid-template-columns:1fr;}}
+/* ── OTP DIGIT INPUTS ── */
+.otp-digit{
+  width:44px;height:52px;border:1.5px solid #DDE9E2;border-radius:12px;
+  font-family:'Inter',sans-serif;font-size:22px;font-weight:600;color:var(--ink);
+  text-align:center;background:#fff;outline:none;transition:border-color .18s,box-shadow .18s;
+  -moz-appearance:textfield;
+}
+.otp-digit::-webkit-outer-spin-button,.otp-digit::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.otp-digit:focus{border-color:var(--g4);box-shadow:0 0 0 3px rgba(30,122,71,0.09);}
+.otp-digit.filled{border-color:var(--g6);}
+.otp-digit.wrong{border-color:#D95050;box-shadow:0 0 0 3px rgba(217,80,80,0.09);}
+
 </style>
 </head>
 <body>
@@ -299,13 +311,46 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
         <div class="err" id="ree">Please enter a valid email address.</div>
       </div>
 
+      <!-- ── PHONE + OTP ── -->
       <div class="field">
-        <div class="fl-row"><span class="fl-label">Phone (SMS alerts)</span></div>
-        <div class="iw">
+        <div class="fl-row">
+          <span class="fl-label">Phone (SMS alerts)</span>
+          <span id="otp-verified-badge" style="display:none;font-size:10px;letter-spacing:1px;text-transform:uppercase;background:rgba(30,122,71,0.10);border:1px solid rgba(30,122,71,0.22);color:#1E7A47;border-radius:20px;padding:2px 9px;font-weight:600;">&#10003; Verified</span>
+        </div>
+        <div class="iw" style="gap:8px;">
           <svg class="ii" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4.5" y="1" width="7" height="14" rx="2"/><circle cx="8" cy="12" r=".8" fill="currentColor"/></svg>
-          <input class="inp" id="rp" type="tel" placeholder="07X XXX XXXX" oninput="vPhone('rp','rpe')" maxlength="10"/>
+          <input class="inp" id="rp" type="tel" placeholder="07X XXX XXXX" oninput="vPhone('rp','rpe')" maxlength="10" style="padding-right:90px;"/>
+          <button id="btn-send-otp" type="button" onclick="sendOtp()"
+            style="position:absolute;right:8px;height:32px;padding:0 12px;background:linear-gradient(135deg,var(--g3),var(--g4));border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:600;color:#fff;cursor:pointer;white-space:nowrap;transition:all .2s;box-shadow:0 1px 6px rgba(21,92,53,0.2);">
+            Send OTP
+          </button>
         </div>
         <div class="err" id="rpe">Enter a valid 10-digit Sri Lankan number.</div>
+      </div>
+
+      <!-- OTP entry — hidden until SMS is sent -->
+      <div id="otp-field" style="display:none;" class="field">
+        <div class="fl-row">
+          <span class="fl-label">Enter OTP</span>
+          <button type="button" id="btn-resend" onclick="sendOtp(true)"
+            style="font-size:11.5px;color:var(--g4);font-weight:500;cursor:pointer;border:none;background:none;font-family:'Inter',sans-serif;">
+            Resend
+          </button>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:center;margin-bottom:6px;">
+          <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]" id="od0" oninput="otpKey(this,0)" onkeydown="otpBack(this,0)"/>
+          <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]" id="od1" oninput="otpKey(this,1)" onkeydown="otpBack(this,1)"/>
+          <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]" id="od2" oninput="otpKey(this,2)" onkeydown="otpBack(this,2)"/>
+          <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]" id="od3" oninput="otpKey(this,3)" onkeydown="otpBack(this,3)"/>
+          <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]" id="od4" oninput="otpKey(this,4)" onkeydown="otpBack(this,4)"/>
+          <input class="otp-digit" type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]" id="od5" oninput="otpKey(this,5)" onkeydown="otpBack(this,5)"/>
+        </div>
+        <div id="otp-countdown" style="font-size:11px;color:#8BA897;text-align:center;margin-bottom:4px;"></div>
+        <div class="err" id="otp-err" style="text-align:center;"></div>
+        <button id="btn-verify-otp" type="button" onclick="verifyOtp()"
+          style="width:100%;height:40px;margin-top:6px;background:var(--ivory);border:1.5px solid var(--g4);border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--g3);cursor:pointer;transition:all .2s;">
+          Verify OTP &rarr;
+        </button>
       </div>
 
       <div class="field">
@@ -444,6 +489,149 @@ var API_URL = 'https://agronexa-lk-production.up.railway.app';
 var nicUploaded = { front: false, back: false };
 var pendingFormData = null;
 
+// ── OTP STATE ──────────────────────────────────────────────────────────────
+var otpState = {
+  verified: false,     // phone has been verified via OTP
+  sent: false,         // OTP has been sent
+  countdown: null,     // interval handle
+  secondsLeft: 0
+};
+
+// Convert local SL number (07XXXXXXXX) → E.164 (+94XXXXXXXXX)
+function toE164(local) {
+  var d = local.replace(/\D/g, '');
+  if (d.startsWith('0') && d.length === 10) return '+94' + d.slice(1);
+  return null;
+}
+
+// Send OTP
+async function sendOtp(isResend) {
+  var raw   = document.getElementById('rp').value.trim();
+  var phone = toE164(raw);
+  if (!phone) { alert('Please enter a valid 10-digit Sri Lankan number first.'); return; }
+
+  var btn = document.getElementById('btn-send-otp');
+  btn.textContent = '⏳ Sending...';
+  btn.disabled = true;
+
+  try {
+    var res  = await fetch(API_URL + '/api/auth/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: phone })
+    });
+    var data = await res.json();
+    if (data.success) {
+      otpState.sent = true;
+      document.getElementById('otp-field').style.display = 'block';
+      document.getElementById('otp-err').classList.remove('show');
+      // clear old digits
+      for (var i = 0; i < 6; i++) {
+        var d = document.getElementById('od' + i);
+        d.value = '';
+        d.classList.remove('filled','wrong');
+      }
+      document.getElementById('od0').focus();
+      startCountdown(60);
+      btn.textContent = 'Resend OTP';
+    } else {
+      alert('\u274C ' + (data.error || 'Failed to send OTP'));
+      btn.textContent = raw ? 'Send OTP' : 'Send OTP';
+    }
+  } catch(err) {
+    alert('\u274C Cannot reach server. Check your Railway URL.');
+  }
+  btn.disabled = false;
+}
+
+// OTP digit navigation
+function otpKey(el, idx) {
+  el.value = el.value.replace(/[^0-9]/g, '').slice(-1);
+  el.classList.toggle('filled', el.value.length === 1);
+  if (el.value && idx < 5) document.getElementById('od' + (idx + 1)).focus();
+  // auto-verify when all 6 filled
+  if (idx === 5 && el.value) verifyOtp();
+}
+function otpBack(el, idx) {
+  if (event.key === 'Backspace' && !el.value && idx > 0) {
+    document.getElementById('od' + (idx - 1)).focus();
+  }
+}
+
+// Verify OTP
+async function verifyOtp() {
+  var code = '';
+  for (var i = 0; i < 6; i++) code += document.getElementById('od' + i).value;
+  if (code.length < 6) {
+    document.getElementById('otp-err').textContent = 'Enter all 6 digits.';
+    document.getElementById('otp-err').classList.add('show');
+    return;
+  }
+
+  var raw   = document.getElementById('rp').value.trim();
+  var phone = toE164(raw);
+
+  var btn = document.getElementById('btn-verify-otp');
+  btn.textContent = '⏳ Verifying...';
+  btn.disabled = true;
+
+  try {
+    var res  = await fetch(API_URL + '/api/auth/verify-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: phone, code: code })
+    });
+    var data = await res.json();
+    if (data.success) {
+      otpState.verified = true;
+      // Mark digits green
+      for (var i = 0; i < 6; i++) {
+        var d = document.getElementById('od' + i);
+        d.classList.remove('wrong'); d.classList.add('filled');
+        d.disabled = true;
+      }
+      document.getElementById('otp-verified-badge').style.display = 'inline-flex';
+      document.getElementById('otp-field').style.display = 'none';
+      document.getElementById('btn-send-otp').style.display = 'none';
+      document.getElementById('rp').disabled = true;
+      stopCountdown();
+      document.getElementById('otp-err').classList.remove('show');
+    } else {
+      for (var i = 0; i < 6; i++) document.getElementById('od' + i).classList.add('wrong');
+      document.getElementById('otp-err').textContent = data.error || 'Invalid OTP. Please try again.';
+      document.getElementById('otp-err').classList.add('show');
+    }
+  } catch(err) {
+    alert('\u274C Cannot reach server.');
+  }
+  btn.textContent = 'Verify OTP \u2192';
+  btn.disabled = false;
+}
+
+// Countdown timer for resend
+function startCountdown(secs) {
+  stopCountdown();
+  otpState.secondsLeft = secs;
+  var el = document.getElementById('otp-countdown');
+  var resend = document.getElementById('btn-resend');
+  resend.disabled = true; resend.style.opacity = '0.4';
+  function tick() {
+    if (otpState.secondsLeft <= 0) {
+      el.textContent = '';
+      resend.disabled = false; resend.style.opacity = '1';
+      stopCountdown(); return;
+    }
+    el.textContent = 'Resend available in ' + otpState.secondsLeft + 's';
+    otpState.secondsLeft--;
+  }
+  tick();
+  otpState.countdown = setInterval(tick, 1000);
+}
+function stopCountdown() {
+  if (otpState.countdown) { clearInterval(otpState.countdown); otpState.countdown = null; }
+}
+
+
 function sw(t) {
   var L = t === 'login';
   document.getElementById('panel-login').style.display = L ? 'block' : 'none';
@@ -462,6 +650,16 @@ function tc2(id) { document.getElementById(id).classList.toggle('on'); }
 function selRole(r) {
   document.getElementById('rc-farmer').classList.toggle('sel', r === 'farmer');
   document.getElementById('rc-buyer').classList.toggle('sel', r === 'buyer');
+  // Reset OTP state on role switch
+  otpState.verified = false; otpState.sent = false; stopCountdown();
+  var badge = document.getElementById('otp-verified-badge');
+  if (badge) badge.style.display = 'none';
+  var otpF = document.getElementById('otp-field');
+  if (otpF) otpF.style.display = 'none';
+  var sendBtn = document.getElementById('btn-send-otp');
+  if (sendBtn) { sendBtn.textContent = 'Send OTP'; sendBtn.style.display = ''; }
+  var rpEl = document.getElementById('rp');
+  if (rpEl) { rpEl.disabled = false; rpEl.value = ''; }
   var c = document.getElementById('extra-fields');
   c.innerHTML = '';
   var a = document.createElement('div'); a.className = 'field';
@@ -567,6 +765,8 @@ document.getElementById('btn-register').addEventListener('click', function () {
   if (!email) { alert('Please enter your email.'); return; }
   if (!district) { alert('Please select your district.'); return; }
   if (!password || password.length < 8) { alert('Password must be at least 8 characters.'); return; }
+  // ── Phone OTP gate ──
+  if (phone && !otpState.verified) { alert('\u26A0\uFE0F Please verify your phone number with an OTP before registering.'); return; }
 
   var frontFile = document.getElementById('file-front') ? document.getElementById('file-front').files[0] : null;
   var backFile  = document.getElementById('file-back')  ? document.getElementById('file-back').files[0]  : null;

@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const multer = require('multer');
 const cors = require('cors');
 const path = require('path');
+const authRoutes = require('./authRoutes');
 
 // ── ADMIN CONFIG ──
 // Change these before deploying!
@@ -28,6 +29,9 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
+
+// ── TWILIO OTP ROUTES ──
+app.use('/api/auth', authRoutes);
 
 // Serve admin panel
 app.get('/admin', (req, res) => {
