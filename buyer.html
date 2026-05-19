@@ -1087,49 +1087,8 @@ nav{padding:18px 14px;flex:1;overflow-y:auto}
           <div class="panel-sub" id="msg-count">3 unread</div>
         </div>
         <div id="messages-list">
-          <div class="msg-item unread" data-read="false">
-            <div class="msg-top">
-              <div class="msg-from">🌾 Kumara Farms, Kandy</div>
-              <div class="msg-time">2h ago</div>
-            </div>
-            <div class="msg-text">I have 80kg of fresh tomatoes ready. Price: Rs. 260/kg. Can deliver to you tomorrow morning. Please confirm.</div>
-            <div class="msg-actions">
-              <button class="btn-accept" onclick="acceptOffer(this)">Accept Offer</button>
-              <button class="btn-decline" onclick="declineOffer(this)">Decline</button>
-            </div>
-          </div>
-          <div class="msg-item unread" data-read="false">
-            <div class="msg-top">
-              <div class="msg-from">🥬 Green Valley, Nuwara Eliya</div>
-              <div class="msg-time">5h ago</div>
-            </div>
-            <div class="msg-text">We have carrots available — 150kg at Rs. 180/kg. Quality A-grade certified. Available for pickup or delivery.</div>
-            <div class="msg-actions">
-              <button class="btn-accept" onclick="acceptOffer(this)">Accept Offer</button>
-              <button class="btn-decline" onclick="declineOffer(this)">Decline</button>
-            </div>
-          </div>
-          <div class="msg-item unread" data-read="false">
-            <div class="msg-top">
-              <div class="msg-from">🌶 Spice Lanka, Matale</div>
-              <div class="msg-time">Yesterday</div>
-            </div>
-            <div class="msg-text">Red chilies available 40kg @ Rs. 1,100/kg. Contact me to confirm order and delivery details.</div>
-            <div class="msg-actions">
-              <button class="btn-accept" onclick="acceptOffer(this)">Accept Offer</button>
-              <button class="btn-decline" onclick="declineOffer(this)">Decline</button>
-            </div>
-          </div>
-          <div class="msg-item" data-read="true">
-            <div class="msg-top">
-              <div class="msg-from">🧅 Dambulla Onion Co.</div>
-              <div class="msg-time">2 days ago</div>
-            </div>
-            <div class="msg-text">Big onions available 200kg @ Rs. 190/kg. Wholesale price for bulk orders.</div>
-            <div class="msg-actions">
-              <button class="btn-accept" onclick="acceptOffer(this)">Accept Offer</button>
-              <button class="btn-decline" onclick="declineOffer(this)">Decline</button>
-            </div>
+          <div class="empty" id="notif-loading" style="padding:32px 0">
+            <p style="color:var(--hint);font-size:13px">Loading notifications…</p>
           </div>
         </div>
       </div>
@@ -1366,17 +1325,39 @@ function sendBroadcast2(){
   btn.disabled=true;
   btn.innerHTML='<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7"/></svg> Sending…';
 
-  setTimeout(function(){
+  // ── POST to real API if logged in ──
+  var apiPayload = {
+    buyer_id: _user && _user.id ? _user.id : null,
+    crop: crop, quantity: qty, unit: unit, category: category,
+    quality: quality, urgency: urgency,
+    budget: budget, price_type: priceType,
+    payment_method: payment, payment_terms: terms,
+    delivery_type: delivery, district: dist, address: address,
+    needed_by: date || null,
+    phone: phone, whatsapp: whatsapp, email: email,
+    notes: notes, buyer_name: buyerName
+  };
+
+  var apiPromise = (_user && _user.id)
+    ? fetch(API_URL+'/api/buyer/broadcasts', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(apiPayload)
+      }).then(function(r){ return r.json(); }).catch(function(){ return null; })
+    : Promise.resolve(null);
+
+  apiPromise.then(function(apiResult){
     btn.disabled=false;
     btn.innerHTML='<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg> Send Broadcast to All Sellers';
     document.getElementById('bc2-success').style.display='block';
     document.getElementById('bc2-preview').style.display='none';
     setTimeout(function(){ document.getElementById('bc2-success').style.display='none'; },5000);
-    showToast('📢 Broadcast sent to all '+dist+' sellers!','success');
+    var sellerCount = (apiResult && apiResult.notified_sellers) ? apiResult.notified_sellers : dist;
+    showToast('📢 Broadcast sent to all '+sellerCount+' sellers!','success');
 
     // ── Build full broadcast object ──
     var bc={
-      id:'bc_'+Date.now(),
+      id: (apiResult && apiResult.broadcast && apiResult.broadcast.id) ? apiResult.broadcast.id : 'bc_'+Date.now(),
       crop:crop, qty:qty, unit:unit, category:category,
       quality:quality, urgency:urgency,
       budget:budget, priceType:priceType,
@@ -1387,7 +1368,7 @@ function sendBroadcast2(){
       notes:notes, timestamp:Date.now()
     };
 
-    // ── Push to localStorage for seller ──
+    // ── Push to localStorage for seller (fallback) ──
     try{
       var list=JSON.parse(localStorage.getItem('agro_broadcasts')||'[]');
       list.unshift(bc);
@@ -1458,6 +1439,92 @@ function updateUnread(){
   }
 }
 
+// ── FETCH REAL NOTIFICATIONS FROM API ─────────────────────────────────────────
+function timeAgo(dateStr){
+  var diff = (Date.now() - new Date(dateStr).getTime()) / 1000;
+  if(diff < 60)   return 'Just now';
+  if(diff < 3600) return Math.floor(diff/60)+'m ago';
+  if(diff < 86400)return Math.floor(diff/3600)+'h ago';
+  if(diff < 172800) return 'Yesterday';
+  return Math.floor(diff/86400)+'d ago';
+}
+
+function renderNotifications(notifications){
+  var list = document.getElementById('messages-list');
+  var loading = document.getElementById('notif-loading');
+  if(loading) loading.style.display='none';
+
+  if(!notifications || !notifications.length){
+    list.innerHTML='<div class="empty" style="padding:40px 0"><p>No notifications yet.<br>When sellers respond to your requests, they will appear here.</p></div>';
+    updateUnread();
+    return;
+  }
+
+  var typeIcon = {
+    'response':'📩', 'booking':'📋', 'request':'📢', 'system':'ℹ️'
+  };
+
+  list.innerHTML = notifications.map(function(n){
+    var icon = typeIcon[n.type] || '🔔';
+    var isUnread = !n.is_read;
+    var isAccept = n.title && n.title.toLowerCase().indexOf('accept') > -1;
+    var isDecline = n.title && (n.title.toLowerCase().indexOf('decline') > -1 || n.title.toLowerCase().indexOf('reject') > -1);
+    return '<div class="msg-item'+(isUnread?' unread':'')+'" data-read="'+(isUnread?'false':'true')+'" data-notif-id="'+n.id+'">'+
+      '<div class="msg-top">'+
+        '<div class="msg-from">'+icon+' '+n.title+'</div>'+
+        '<div class="msg-time">'+timeAgo(n.created_at)+'</div>'+
+      '</div>'+
+      '<div class="msg-text">'+n.body+'</div>'+
+      (isUnread && !isAccept && !isDecline ?
+        '<div class="msg-actions"><button class="btn-decline" style="background:var(--leaf-pale);color:var(--leaf-mid);border-color:var(--leaf-glow)" onclick="markRead(this,'+n.id+')">Mark Read</button></div>' : '')+
+    '</div>';
+  }).join('');
+
+  updateUnread();
+}
+
+function markRead(btn, notifId){
+  var item = btn.closest('.msg-item');
+  item.classList.remove('unread');
+  item.dataset.read='true';
+  btn.parentElement.remove();
+  updateUnread();
+  // Mark all read on server (simplest approach)
+  if(_user && _user.id){
+    fetch(API_URL+'/api/buyer/notifications/read-all',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({user_id:_user.id})
+    }).catch(function(){});
+  }
+}
+
+function fetchNotifications(){
+  if(!_user || !_user.id){
+    // Demo mode — show placeholder
+    document.getElementById('notif-loading').style.display='none';
+    return;
+  }
+  fetch(API_URL+'/api/buyer/notifications?user_id='+_user.id)
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(data.success){
+        renderNotifications(data.notifications);
+        // Update badge in topbar notif button
+        var dot = document.getElementById('notif-dot');
+        if(dot) dot.style.display = data.unread_count > 0 ? 'block' : 'none';
+        // Update dashboard unread stat
+        var uc = document.getElementById('unread-count');
+        if(uc) uc.textContent = data.unread_count;
+        var mb = document.getElementById('msg-badge');
+        if(mb) mb.textContent = data.unread_count;
+        var bn = document.getElementById('bn-msg-badge');
+        if(bn){ bn.textContent = data.unread_count; bn.style.display = data.unread_count>0?'':'none'; }
+        var mc = document.getElementById('msg-count');
+        if(mc) mc.textContent = data.unread_count+' unread';
+      }
+    }).catch(function(){ document.getElementById('notif-loading').style.display='none'; });
+}
+
 // ── NAVIGATION ──
 var bottomNavMap = {
   dashboard:'bn-dashboard', marketplace:'bn-marketplace',
@@ -1488,6 +1555,7 @@ function showPage(pageId, navEl){
   document.getElementById('topbar-title').textContent = titles[pageId]||pageId;
   if(pageId==='marketplace') renderMarket(marketItems);
   if(pageId==='broadcast') prefillBroadcastContact();
+  if(pageId==='messages') fetchNotifications();
   document.querySelector('.scroll').scrollTop = 0;
 
   // Close sidebar on mobile after nav
@@ -1593,8 +1661,20 @@ function showToast(msg,type){
           district:p.district,phone:p.phone,address:p.address
         }));
       }).catch(function(){});
+
+    // Fetch notifications once profile loads
+    fetchNotifications();
+  } else {
+    // No user id (demo mode) — clear loading state
+    var nl = document.getElementById('notif-loading');
+    if(nl) nl.style.display='none';
   }
 })();
+
+// Poll notifications every 60 seconds to pick up new seller responses
+setInterval(function(){
+  if(_user && _user.id) fetchNotifications();
+}, 60000);
 
 function doLogout(){
   showModal('Sign Out','Are you sure you want to sign out of AgroNexa LK?',function(){
