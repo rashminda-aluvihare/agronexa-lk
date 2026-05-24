@@ -255,6 +255,35 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
     </div>
 
     <!-- REGISTER -->
+
+    <!-- Register panel එක ඇතුළත phone field එකට පස්සේ මේක add කරන්න (extra-fields එකට පෙර) -->
+<div class="field" id="otp-section" style="display:none;">
+  <div class="fl-row">
+    <span class="fl-label">Phone Verification</span>
+  </div>
+  <div class="iw">
+    <input class="inp" id="r-phone" type="tel" placeholder="0712345678" maxlength="10" oninput="vPhone('r-phone','phone-err')"/>
+  </div>
+  <div class="err" id="phone-err"></div>
+  
+  <button id="send-otp-btn" onclick="sendOTP()" style="margin-top:8px;width:100%;height:42px;background:#155C35;color:white;border:none;border-radius:10px;font-size:13px;cursor:pointer;">
+    📱 Send OTP
+  </button>
+  
+  <div id="otp-input-group" style="display:none;margin-top:12px;">
+    <div class="fl-row">
+      <span class="fl-label">Enter OTP</span>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <input class="inp" id="otp-code" type="text" maxlength="6" placeholder="123456" style="flex:1;"/>
+      <button onclick="verifyOTP()" style="width:110px;background:#28A060;color:white;border:none;border-radius:10px;font-size:13px;cursor:pointer;">
+        Verify
+      </button>
+    </div>
+    <div id="otp-status" style="font-size:12px;margin-top:6px;"></div>
+  </div>
+</div>
+
     <div id="panel-register" style="display:none">
       <div class="fh">
         <div class="fh-super">Free to Join</div>
@@ -386,6 +415,8 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
         </div>
       </div>
 
+  
+
       <div class="field" style="margin-top:18px;">
         <div class="fl-row"><span class="fl-label">Password</span></div>
         <div class="iw">
@@ -438,6 +469,88 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
 </div>
 
 <script>
+
+  let verifiedPhone = null;
+
+async function sendOTP() {
+  const phoneInput = document.getElementById('r-phone');
+  let phone = phoneInput.value.trim();
+  
+  if (phone.length !== 10 || !/^\d{10}$/.test(phone)) {
+    alert("කරුණාකර නිවැරදි phone number එකක් ඇතුලත් කරන්න (0712345678)");
+    return;
+  }
+  
+  // Sri Lanka format
+  const fullPhone = "+94" + phone;
+  
+  const btn = document.getElementById('send-otp-btn');
+  btn.textContent = "Sending...";
+  btn.disabled = true;
+  
+  try {
+    const res = await fetch(API_URL + '/api/auth/send-otp', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ phone: fullPhone })
+    });
+    const data = await res.json();
+    
+    if (data.success) {
+      document.getElementById('otp-input-group').style.display = 'block';
+      document.getElementById('otp-status').innerHTML = '✅ OTP sent to +94' + phone;
+      verifiedPhone = fullPhone;
+    } else {
+      alert("❌ " + data.error);
+    }
+  } catch(e) {
+    alert("Cannot send OTP. Check server.");
+  }
+  
+  btn.textContent = "📱 Send OTP";
+  btn.disabled = false;
+}
+
+async function verifyOTP() {
+  const code = document.getElementById('otp-code').value.trim();
+  if (!code || code.length !== 6) {
+    alert("කරුණාකර 6 අංක OTP එක ඇතුලත් කරන්න");
+    return;
+  }
+  
+  const statusEl = document.getElementById('otp-status');
+  statusEl.innerHTML = "Verifying...";
+  
+  try {
+    const res = await fetch(API_URL + '/api/auth/verify-otp', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ phone: verifiedPhone, code })
+    });
+    const data = await res.json();
+    
+    if (data.success) {
+      statusEl.innerHTML = "✅ Phone Verified Successfully!";
+      statusEl.style.color = "#28A060";
+      // Enable register button
+      document.getElementById('btn-register').disabled = false;
+    } else {
+      statusEl.innerHTML = "❌ " + (data.error || "Invalid OTP");
+      statusEl.style.color = "#B02828";
+    }
+  } catch(e) {
+    statusEl.innerHTML = "❌ Connection error";
+  }
+}
+
+
+// OTP verify කරලා තියෙනවද කියලා check කරන්න
+if (!verifiedPhone) {
+  alert("කරුණාකර phone number එකට OTP එක verify කරන්න");
+  return;
+}
+
+
 // ── CONFIG — Replace with your Railway URL after deployment ──
 var API_URL = 'https://agronexa-lk-production.up.railway.app';
 
