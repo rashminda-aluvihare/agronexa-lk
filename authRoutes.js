@@ -60,4 +60,73 @@ router.post("/verify-otp", async (req, res) => {
   }
 });
 
+// ── POST /api/auth/register-with-otp ──
+// Creates user only after phone OTP is approved.
+// Body is the same as /api/register PLUS: { phone, otpCode }
+router.post('/register-with-otp', async (req, res) => {
+  const {
+    role, first_name, last_name, email,
+    phone, district, address, nic_number, password,
+    otpCode
+  } = req.body;
+
+  if (!role || !first_name || !last_name || !email || !password || !phone || !district || !otpCode) {
+    return res.status(400).json({ success: false, error: 'Missing required fields' });
+  }
+
+  // verify OTP
+  try {
+    const client = getTwilio();
+    const check = await client.verify.v2
+      .services(process.env.TWILIO_VERIFY_SID)
+      .verificationChecks.create({
+        to: phone,
+        code: otpCode
+      });
+
+    if (check.status !== 'approved') {
+      return res.status(403).json({ success: false, error: 'Invalid or expired OTP.' });
+    }
+  } catch (err) {
+    console.error('register-with-otp verify error:', err.message);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+
+  // Create account after OTP success
+  try {
+    const pool = req.app.get('db');
+    // In this project, root server.js creates its own pool. If app.get('db') isn't set,
+    // fall back by requiring the server pool is not possible, so we store nothing.
+    // Therefore: expect server.js to expose the pool on req.app.set('db', pool).
+    if (!pool) {
+      return res.status(500).json({ success: false, error: 'DB pool not available. Update server.js to set app.set("db", pool).' });
+    }
+
+    const bcrypt = require('bcrypt');
+
+    const password_hash = await bcrypt.hash(password, 12);
+
+    const result = await pool.query(
+      `INSERT INTO users
+        (role, first_name, last_name, email, phone, district,
+         address, nic_number, password_hash, nic_front_path, nic_back_path, status)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+       RETURNING id, email, role, first_name`,
+      [
+        role, first_name, last_name, email, phone, district,
+        address || null, nic_number || null, password_hash,
+        null, null, 'pending'
+      ]
+    );
+
+    return res.status(201).json({ success: true, user: result.rows[0] });
+  } catch (err) {
+    if (err.code === '23505') {
+      return res.status(409).json({ success: false, error: 'This email is already registered' });
+    }
+    console.error('register-with-otp create error:', err.message);
+    return res.status(500).json({ success: false, error: 'Registration failed. Please try again.' });
+  }
+});
+
 module.exports = router;

@@ -44,6 +44,9 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
+
+// Expose pool for route modules that need DB access (e.g., authRoutes)
+app.set('db', pool);
 // Test DB connection + auto-migrate + seed admin
 pool.connect(async (err, client, release) => {
   if (err) { console.error('❌ DB connection failed:', err.message); return; }

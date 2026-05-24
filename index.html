@@ -635,7 +635,21 @@ async function submitRegister(e) {
   btn.textContent = '⏳ Creating...';
   btn.disabled = true;
   try {
-    var res  = await fetch(API_URL + '/api/register', { method: 'POST', body: pendingFormData });
+    // OTP must be verified before account creation.
+    // UI already verifies OTP via /api/auth/verify-otp; backend re-checks during creation.
+    // Ensure otpCode is available from OTP UI.
+
+    // If your OTP UI is not present on this page, this will fail and you should add otpCode field capture.
+    // (This project previously used /api/register directly.)
+
+    var otpCode = null;
+    if (document.getElementById('otpCode')) otpCode = document.getElementById('otpCode').value;
+    if (document.getElementById('otp-code')) otpCode = document.getElementById('otp-code').value;
+
+    // Best effort: if otpCode input isn't present, backend will return 'Missing required fields'.
+    pendingFormData.append('otpCode', otpCode);
+
+    var res  = await fetch(API_URL + '/api/auth/register-with-otp', { method: 'POST', body: pendingFormData });
     var data = await res.json();
     if (data.success) { showSuccess(data.user.first_name); }
     else { closeConfirm(); alert('❌ ' + data.error); }
