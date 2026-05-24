@@ -254,6 +254,51 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
       <div class="ff">New to AgroNexa? <button class="sw-link" onclick="sw('register')">Create a free account</button></div>
     </div>
 
+
+    <!-- PHONE + OTP VERIFICATION -->
+<div class="field">
+  <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">
+    PHONE NUMBER (SMS ALERTS)
+  </label>
+  <div style="display:flex;gap:10px;">
+    <input 
+      type="tel" 
+      id="r-phone" 
+      placeholder="0712345678" 
+      maxlength="10"
+      style="flex:1;padding:12px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:15px;"
+    >
+    <button 
+      onclick="sendOTP()" 
+      id="send-otp-btn"
+      style="padding:0 20px;background:#10b981;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;white-space:nowrap;">
+      Send OTP
+    </button>
+  </div>
+</div>
+
+<!-- OTP Input -->
+<div id="otp-input-group" style="display:none;margin-top:12px;padding:16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;">
+  <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:8px;">
+    Enter OTP Code
+  </label>
+  <div style="display:flex;gap:10px;">
+    <input 
+      type="text" 
+      id="otp-code" 
+      maxlength="6" 
+      placeholder="123456"
+      style="flex:1;padding:12px;border:1px solid #d1d5db;border-radius:8px;font-size:16px;text-align:center;letter-spacing:6px;"
+    >
+    <button 
+      onclick="verifyOTP()" 
+      style="padding:0 28px;background:#15803d;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;">
+      Verify
+    </button>
+  </div>
+  <div id="otp-status" style="margin-top:10px;font-size:13.5px;min-height:20px;"></div>
+</div>
+
     <!-- REGISTER -->
 
     <!-- Register panel එක ඇතුළත phone field එකට පස්සේ මේක add කරන්න (extra-fields එකට පෙර) -->
@@ -469,88 +514,6 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
 </div>
 
 <script>
-
-  let verifiedPhone = null;
-
-async function sendOTP() {
-  const phoneInput = document.getElementById('r-phone');
-  let phone = phoneInput.value.trim();
-  
-  if (phone.length !== 10 || !/^\d{10}$/.test(phone)) {
-    alert("කරුණාකර නිවැරදි phone number එකක් ඇතුලත් කරන්න (0712345678)");
-    return;
-  }
-  
-  // Sri Lanka format
-  const fullPhone = "+94" + phone;
-  
-  const btn = document.getElementById('send-otp-btn');
-  btn.textContent = "Sending...";
-  btn.disabled = true;
-  
-  try {
-    const res = await fetch(API_URL + '/api/auth/send-otp', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ phone: fullPhone })
-    });
-    const data = await res.json();
-    
-    if (data.success) {
-      document.getElementById('otp-input-group').style.display = 'block';
-      document.getElementById('otp-status').innerHTML = '✅ OTP sent to +94' + phone;
-      verifiedPhone = fullPhone;
-    } else {
-      alert("❌ " + data.error);
-    }
-  } catch(e) {
-    alert("Cannot send OTP. Check server.");
-  }
-  
-  btn.textContent = "📱 Send OTP";
-  btn.disabled = false;
-}
-
-async function verifyOTP() {
-  const code = document.getElementById('otp-code').value.trim();
-  if (!code || code.length !== 6) {
-    alert("කරුණාකර 6 අංක OTP එක ඇතුලත් කරන්න");
-    return;
-  }
-  
-  const statusEl = document.getElementById('otp-status');
-  statusEl.innerHTML = "Verifying...";
-  
-  try {
-    const res = await fetch(API_URL + '/api/auth/verify-otp', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ phone: verifiedPhone, code })
-    });
-    const data = await res.json();
-    
-    if (data.success) {
-      statusEl.innerHTML = "✅ Phone Verified Successfully!";
-      statusEl.style.color = "#28A060";
-      // Enable register button
-      document.getElementById('btn-register').disabled = false;
-    } else {
-      statusEl.innerHTML = "❌ " + (data.error || "Invalid OTP");
-      statusEl.style.color = "#B02828";
-    }
-  } catch(e) {
-    statusEl.innerHTML = "❌ Connection error";
-  }
-}
-
-
-// OTP verify කරලා තියෙනවද කියලා check කරන්න
-if (!verifiedPhone) {
-  alert("කරුණාකර phone number එකට OTP එක verify කරන්න");
-  return;
-}
-
-
 // ── CONFIG — Replace with your Railway URL after deployment ──
 var API_URL = 'https://agronexa-lk-production.up.railway.app';
 
@@ -831,6 +794,79 @@ document.getElementById('confirm-overlay').addEventListener('click', function (e
 });
 
 selRole('farmer');
+
+let verifiedPhone = null;
+
+// Send OTP
+async function sendOTP() {
+  const phoneInput = document.getElementById('r-phone');
+  let phone = phoneInput.value.trim().replace(/\D/g, '');
+  
+  if (phone.length !== 10) {
+    alert("කරුණාකර නිවැරදි 10 අංක phone number එකක් ඇතුලත් කරන්න");
+    return;
+  }
+
+  const fullPhone = "+94" + phone;
+  const btn = document.getElementById('send-otp-btn');
+  
+  btn.innerHTML = "Sending...";
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(API_URL + '/api/auth/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: fullPhone })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      verifiedPhone = fullPhone;
+      document.getElementById('otp-input-group').style.display = 'block';
+      document.getElementById('otp-status').innerHTML = 
+        `<span style="color:#10b981;">✅ OTP sent to +94${phone}</span>`;
+    } else {
+      alert("❌ " + (data.error || "Failed to send OTP"));
+    }
+  } catch (e) {
+    alert("Cannot connect to server");
+  }
+
+  btn.innerHTML = "Send OTP";
+  btn.disabled = false;
+}
+
+// Verify OTP
+async function verifyOTP() {
+  const code = document.getElementById('otp-code').value.trim();
+  const statusEl = document.getElementById('otp-status');
+
+  if (code.length !== 6) {
+    statusEl.innerHTML = `<span style="color:#ef4444;">Enter 6 digit OTP</span>`;
+    return;
+  }
+
+  statusEl.innerHTML = "Verifying...";
+
+  try {
+    const res = await fetch(API_URL + '/api/auth/verify-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: verifiedPhone, code })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      statusEl.innerHTML = `<span style="color:#10b981;">✅ Phone Verified Successfully!</span>`;
+      // Enable register button if needed
+    } else {
+      statusEl.innerHTML = `<span style="color:#ef4444;">❌ Invalid or Expired OTP</span>`;
+    }
+  } catch (e) {
+    statusEl.innerHTML = `<span style="color:#ef4444;">Connection Error</span>`;
+  }
+}
 </script>
 </body>
 </html>
