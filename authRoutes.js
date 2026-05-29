@@ -1,5 +1,18 @@
 const express = require("express");
 const router  = express.Router();
+const multer  = require("multer");
+const path    = require("path");
+
+// Multer file upload setup for NIC images
+const storage = multer.diskStorage({
+  destination: "uploads/nic/",
+  filename: (req, file, cb) => {
+    const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, unique + path.extname(file.originalname));
+  },
+});
+const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
+
 
 // Twilio client — initialised lazily so the server still boots
 // even if TWILIO_* env vars are not yet set (will error at call-time).
@@ -63,7 +76,9 @@ router.post("/verify-otp", async (req, res) => {
 // ── POST /api/auth/register-with-otp ──
 // Creates user only after phone OTP is approved.
 // Body is the same as /api/register PLUS: { phone, otpCode }
-router.post('/register-with-otp', async (req, res) => {
+router.post('/register-with-otp',
+  upload.fields([{ name: 'nic_front' }, { name: 'nic_back' }]),
+  async (req, res) => {
   const {
     role, first_name, last_name, email,
     phone, district, address, nic_number, password,
@@ -95,9 +110,6 @@ router.post('/register-with-otp', async (req, res) => {
   // Create account after OTP success
   try {
     const pool = req.app.get('db');
-    // In this project, root server.js creates its own pool. If app.get('db') isn't set,
-    // fall back by requiring the server pool is not possible, so we store nothing.
-    // Therefore: expect server.js to expose the pool on req.app.set('db', pool).
     if (!pool) {
       return res.status(500).json({ success: false, error: 'DB pool not available. Update server.js to set app.set("db", pool).' });
     }
@@ -105,6 +117,8 @@ router.post('/register-with-otp', async (req, res) => {
     const bcrypt = require('bcrypt');
 
     const password_hash = await bcrypt.hash(password, 12);
+    const nic_front_path = req.files?.nic_front?.[0]?.path || null;
+    const nic_back_path  = req.files?.nic_back?.[0]?.path  || null;
 
     const result = await pool.query(
       `INSERT INTO users
@@ -115,7 +129,7 @@ router.post('/register-with-otp', async (req, res) => {
       [
         role, first_name, last_name, email, phone, district,
         address || null, nic_number || null, password_hash,
-        null, null, 'pending'
+        nic_front_path, nic_back_path, 'pending'
       ]
     );
 

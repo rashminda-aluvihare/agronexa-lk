@@ -457,8 +457,10 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
 </div>
 
 <script>
-// ── CONFIG — Replace with your Railway URL after deployment ──
-var API_URL = 'https://agronexa-lk-production.up.railway.app';
+var API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:3000'
+  : 'https://agronexa-lk-production.up.railway.app';
+
 
 var nicUploaded = { front: false, back: false };
 var pendingFormData = null;
@@ -584,8 +586,12 @@ document.getElementById('btn-register').addEventListener('click', function () {
 
   if (!firstName || !lastName) { alert('Please enter your full name.'); return; }
   if (!email) { alert('Please enter your email.'); return; }
+  if (!phone || phone.replace(/\D/g, '').length !== 10) { alert('Please enter a valid 10-digit phone number.'); return; }
+  var otpCode = document.getElementById('otp-code').value.trim();
+  if (!otpCode || otpCode.length !== 6) { alert('Please enter the 6-digit OTP code sent to your phone.'); return; }
   if (!district) { alert('Please select your district.'); return; }
   if (!password || password.length < 8) { alert('Password must be at least 8 characters.'); return; }
+
 
   var frontFile = document.getElementById('file-front') ? document.getElementById('file-front').files[0] : null;
   var backFile  = document.getElementById('file-back')  ? document.getElementById('file-back').files[0]  : null;
@@ -666,6 +672,7 @@ async function submitRegister(e) {
     if (document.getElementById('otp-code')) otpCode = document.getElementById('otp-code').value;
 
     // Best effort: if otpCode input isn't present, backend will return 'Missing required fields'.
+    pendingFormData.delete('otpCode');
     pendingFormData.append('otpCode', otpCode);
 
     var res  = await fetch(API_URL + '/api/auth/register-with-otp', { method: 'POST', body: pendingFormData });
