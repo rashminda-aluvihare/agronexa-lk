@@ -114,7 +114,7 @@ router.post('/register-with-otp',
       return res.status(500).json({ success: false, error: 'DB pool not available. Update server.js to set app.set("db", pool).' });
     }
 
-    const bcrypt = require('bcryptjs');
+    const bcrypt = require('bcrypt');
 
     const password_hash = await bcrypt.hash(password, 12);
     const nic_front_path = req.files?.nic_front?.[0]?.path || null;
