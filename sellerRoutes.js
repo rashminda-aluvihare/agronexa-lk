@@ -201,8 +201,10 @@ async function pushNotification(userId, type, title, body) {
 //  CROP LISTINGS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-// GET /api/seller/crops?seller_id=&status=active
-router.get('/crops', async (req, res) => {
+const { authRequired, requireRole } = require('./authMiddleware');
+
+// GET /api/seller/crops
+router.get('/crops', authRequired, requireRole(['seller','farmer']), async (req, res) => {
   const { seller_id, status } = req.query;
   if (!seller_id) return res.status(400).json({ error: 'seller_id is required' });
   try {
