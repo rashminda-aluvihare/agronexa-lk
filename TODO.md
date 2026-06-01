@@ -16,8 +16,8 @@
 - [ ] Enforce RBAC server-side on role-specific endpoints (FR3).
 
 ## SRS-Critical: Real-time In-app Notifications
-- [ ] Wire Socket.io (or equivalent) so events are emitted for new requests/responses/bookings (FR6/FR12).
-- [ ] Ensure notification bell unread count stays consistent.
+- [x] Wire Socket.io (or equivalent) so events are emitted for new requests/responses/bookings (FR6/FR12).
+- [x] Ensure notification bell unread count stays consistent.
 
 ## SRS-Critical: Ledger Integrity
 - [ ] Enforce read-only behavior for `rental_ledger` at DB level (no updates/deletes) to match FR7.
@@ -32,4 +32,3 @@
 ## Final Deliverables
 - [ ] Update any UI or API contracts that mismatch the SRS.
 - [ ] Run full manual scenario walkthrough and document results (optional).
-

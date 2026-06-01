@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="/socket.io/socket.io.js"></script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AgroNexa LK – Seller Dashboard</title>
@@ -227,7 +229,7 @@
         <div class="stat-icon green">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2z"/><path d="M12 6v6l4 2"/></svg>
         </div>
-        <div class="stat-val">6</div>
+        <div class="stat-val" id="stat-active-listings">—</div>
         <div class="stat-label">Active Listings</div>
         <div class="stat-delta up">↑ 2 this week</div>
       </div>
@@ -235,7 +237,7 @@
         <div class="stat-icon amber">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
         </div>
-        <div class="stat-val">3</div>
+        <div class="stat-val" id="stat-pending-requests">—</div>
         <div class="stat-label">Pending Buyer Requests</div>
         <div class="stat-delta down">Needs response</div>
       </div>
@@ -243,7 +245,7 @@
         <div class="stat-icon gold">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
         </div>
-        <div class="stat-val">Rs. 47,200</div>
+        <div class="stat-val" id="stat-revenue">—</div>
         <div class="stat-label">Earnings this month</div>
         <div class="stat-delta up">↑ 18% vs last month</div>
       </div>
@@ -251,7 +253,7 @@
         <div class="stat-icon blue">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
         </div>
-        <div class="stat-val">24</div>
+        <div class="stat-val" id="stat-completed-rentals">—</div>
         <div class="stat-label">Completed Rentals</div>
         <div class="stat-delta up">↑ 4 this month</div>
       </div>
@@ -474,12 +476,15 @@
 <script>
 var API_URL = 'https://agronexa-lk-production.up.railway.app';
 var _user = null;
+var socket = null;
 
 (function(){
   var u = sessionStorage.getItem('agro_user');
   if (!u) { window.location.href = 'index.html'; return; }
   _user = JSON.parse(u);
   if (_user.role !== 'farmer') { window.location.href = 'index.html'; return; }
+
+  initSocket();
 
   // Immediately show what we have from session
   var name = _user.name || _user.email;

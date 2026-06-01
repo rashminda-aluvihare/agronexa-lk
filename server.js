@@ -1,5 +1,7 @@
 require('dotenv').config();
 const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
@@ -37,6 +39,26 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
+
+// ── SOCKET.IO SETUP ──
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+});
+
+app.set('io', io); // Share io with routes
+
+io.on('connection', (socket) => {
+  console.log('📡 Socket connected:', socket.id);
+  
+  socket.on('join', (userId) => {
+    socket.join(`user_${userId}`);
+    console.log(`👤 User ${userId} joined their real-time room.`);
+  });
+});
 
 // Serve admin panel
 app.get('/admin', (req, res) => {
@@ -97,6 +119,11 @@ app.post('/api/register',
 
 const authRoutes = require('./backend/authRoutes');
 app.use('/api/auth', authRoutes);
+
+const buyerRoutes = require('./buyerRoutes');
+const sellerRoutes = require('./sellerRoutes');
+app.use('/api/buyer', buyerRoutes);
+app.use('/api/seller', sellerRoutes);
 
 // ── LOGIN ──
 
@@ -266,7 +293,6 @@ app.get('/api/profile/:id', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`🚀 AgroNexa server running on port ${PORT}`);
 });
-

@@ -12,18 +12,26 @@ const router  = express.Router();
 
 // ── DB pool injected from server.js ───────────────────────────────────────────
 let pool;
+let io;
 router.use((req, _res, next) => {
   if (!pool) pool = req.app.get('db');
+  if (!io)   io   = req.app.get('io');
   next();
 });
 
 // ── Helper: push in-app notification ──────────────────────────────────────────
 async function pushNotification(userId, type, title, body) {
   try {
-    await pool.query(
-      `INSERT INTO notifications (user_id, type, title, body) VALUES ($1,$2,$3,$4)`,
+    const result = await pool.query(
+      `INSERT INTO notifications (user_id, type, title, body) VALUES ($1,$2,$3,$4) RETURNING *`,
       [userId, type, title, body]
     );
+
+    // Real-time emit to user's room
+    if (io) {
+      io.to(`user_${userId}`).emit('new_notification', result.rows[0]);
+      io.to(`user_${userId}`).emit('dashboard_update', { type });
+    }
   } catch (e) {
     console.warn('Notification insert error:', e.message);
   }
