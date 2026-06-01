@@ -522,15 +522,56 @@ var socket = null;
         document.getElementById('page-greeting').textContent = 'Welcome back, ' + p.first_name + ' 👋';
 
         // Store enriched user back to session
-        sessionStorage.setItem('agro_user', JSON.stringify({
-          id: p.id, email: p.email, role: p.role,
-          name: p.first_name, district: p.district, phone: p.phone,
-          address: p.address, nic_number: p.nic_number
-        }));
+        loadDashboardData();
       })
       .catch(function(){ /* offline - session data already shown */ });
   }
 })();
+
+function initSocket() {
+  // Connect to the same server as API_URL
+  socket = io(API_URL);
+  
+  if (_user && _user.id) {
+    socket.emit('join', _user.id);
+    console.log('📡 Joined room: user_' + _user.id);
+  }
+  
+  socket.on('dashboard_update', function(data) {
+    console.log('🔄 Real-time update signal:', data);
+    loadDashboardData();
+  });
+
+  socket.on('new_notification', function(notif) {
+    console.log('🔔 New notification:', notif);
+    // Refresh stats to update counts
+    loadDashboardData();
+  });
+}
+
+function loadDashboardData() {
+  if (!_user || !_user.id) return;
+  
+  // Fetch Analytics (Revenue, Active Listings, Completed Rentals)
+  fetch(API_URL + '/api/seller/analytics?seller_id=' + _user.id)
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success) return;
+      const a = data.analytics;
+      document.getElementById('stat-active-listings').textContent = a.crop_listings.active;
+      document.getElementById('stat-completed-rentals').textContent = a.bookings.confirmed;
+      document.getElementById('stat-revenue').textContent = 'Rs. ' + a.ledger.total_revenue.toLocaleString();
+    });
+
+  // Fetch Pending Requests (based on district)
+  fetch(API_URL + '/api/seller/requests?district=' + (_user.district || ''))
+    .then(r => r.json())
+    .then(data => {
+       if (data.success) {
+         document.getElementById('stat-pending-requests').textContent = data.requests.length;
+       }
+    });
+}
 
 function doLogout(){
   sessionStorage.removeItem('agro_user');
