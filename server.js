@@ -1,23 +1,13 @@
 require('dotenv').config();
 const express = require('express');
-const http = require('http');
-const { Server } = require('socket.io');
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
 const cors = require('cors');
 const path = require('path');
-const jwt = require('jsonwebtoken');
-const { authRequired, requireRole } = require('./authMiddleware');
-
-// ── JWT AUTH HELPERS ──
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-me';
-
-// authRequired + requireRole live in ./authMiddleware.js
-
+const authRoutes = require('./authRoutes');
 
 // ── ADMIN CONFIG ──
-
 // Change these before deploying!
 const ADMIN_EMAIL    = process.env.ADMIN_EMAIL    || 'rashminda@gmail.com';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'FGFGRTYRfhfh254588fgg';
@@ -40,25 +30,8 @@ app.use(cors({
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 
-// ── SOCKET.IO SETUP ──
-const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST']
-  }
-});
-
-app.set('io', io); // Share io with routes
-
-io.on('connection', (socket) => {
-  console.log('📡 Socket connected:', socket.id);
-  
-  socket.on('join', (userId) => {
-    socket.join(`user_${userId}`);
-    console.log(`👤 User ${userId} joined their real-time room.`);
-  });
-});
+// ── TWILIO OTP ROUTES ──
+app.use('/api/auth', authRoutes);
 
 // Serve admin panel
 app.get('/admin', (req, res) => {
@@ -75,9 +48,6 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
-
-// Expose pool for route modules that need DB access (e.g., authRoutes)
-app.set('db', pool);
 // Test DB connection + auto-migrate + seed admin
 pool.connect(async (err, client, release) => {
   if (err) { console.error('❌ DB connection failed:', err.message); return; }
@@ -105,28 +75,48 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
-// ── REGISTER (deprecated: OTP-gated flow only)
-// Account creation must go through POST /api/auth/register-with-otp
+// ── REGISTER ──
 app.post('/api/register',
   upload.fields([{ name: 'nic_front' }, { name: 'nic_back' }]),
   async (req, res) => {
-    return res.status(403).json({
-      success: false,
-      error: 'OTP-gated registration required. Use POST /api/auth/register-with-otp after verifying phone OTP.'
-    });
+    try {
+      const {
+        role, first_name, last_name, email,
+        phone, district, address, nic_number, password
+      } = req.body;
+
+      if (!email || !password || !role || !first_name || !last_name) {
+        return res.status(400).json({ error: 'Please fill all required fields' });
+      }
+
+      const password_hash = await bcrypt.hash(password, 12);
+      const nic_front_path = req.files?.nic_front?.[0]?.path || null;
+      const nic_back_path  = req.files?.nic_back?.[0]?.path  || null;
+
+      const result = await pool.query(
+        `INSERT INTO users
+          (role, first_name, last_name, email, phone, district,
+           address, nic_number, password_hash, nic_front_path, nic_back_path, status)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+         RETURNING id, email, role, first_name`,
+        [role, first_name, last_name, email, phone, district,
+         address, nic_number, password_hash, nic_front_path, nic_back_path, 'pending']
+      );
+
+      console.log('✅ New user registered:', result.rows[0].email);
+      res.status(201).json({ success: true, user: result.rows[0] });
+
+    } catch (err) {
+      if (err.code === '23505') {
+        return res.status(409).json({ error: 'This email is already registered' });
+      }
+      console.error('Registration error:', err.message);
+      res.status(500).json({ error: 'Registration failed. Please try again.' });
+    }
   }
 );
 
-const authRoutes = require('./backend/authRoutes');
-app.use('/api/auth', authRoutes);
-
-const buyerRoutes = require('./buyerRoutes');
-const sellerRoutes = require('./sellerRoutes');
-app.use('/api/buyer', buyerRoutes);
-app.use('/api/seller', sellerRoutes);
-
 // ── LOGIN ──
-
 app.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -138,18 +128,11 @@ app.post('/api/login', async (req, res) => {
     // ── Check if admin credentials ──
     if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
       console.log('✅ Admin logged in:', email);
-      const token = jwt.sign(
-        { id: 0, role: 'admin', email: ADMIN_EMAIL },
-        JWT_SECRET,
-        { expiresIn: '24h' }
-      );
       return res.json({
         success: true,
-        token,
         user: { id: 0, email: ADMIN_EMAIL, role: 'admin', name: 'Admin' }
       });
     }
-
 
     const result = await pool.query(
       'SELECT * FROM users WHERE email = $1', [email]
@@ -292,7 +275,6 @@ app.get('/api/profile/:id', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-
-server.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`🚀 AgroNexa server running on port ${PORT}`);
 });

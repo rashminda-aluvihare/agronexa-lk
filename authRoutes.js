@@ -1,7 +1,8 @@
 const express = require("express");
-const router  = express.Router();
-const multer  = require("multer");
-const path    = require("path");
+const router = express.Router();
+const bcrypt = require("bcrypt");
+const multer = require("multer");
+const path = require("path");
 
 // Multer file upload setup for NIC images
 const storage = multer.diskStorage({
@@ -14,19 +15,59 @@ const storage = multer.diskStorage({
 const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
 
-// Twilio client — initialised lazily so the server still boots
-// even if TWILIO_* env vars are not yet set (will error at call-time).
+// Lazily initialize the Twilio client so the server can boot without Twilio env vars.
 function getTwilio() {
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
-  const authToken  = process.env.TWILIO_AUTH_TOKEN;
-  if (!accountSid || !authToken) {
-    throw new Error("Twilio credentials not configured (TWILIO_ACCOUNT_SID / TWILIO_AUTH_TOKEN missing).");
-  }
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
+
+  if (!accountSid || !authToken) return null;
+
   return require("twilio")(accountSid, authToken);
 }
 
-// ── POST /api/auth/send-otp ──────────────────────────────────────────────────
-// Body: { phone: "+94771234567" }   ← E.164 format
+// Ensure db pool exists on req.app.get('db')
+router.use((req, res, next) => {
+  const pool = req.app.get("db");
+  if (!pool) {
+    return res.status(500).json({ success: false, error: "Database not initialized" });
+  }
+  next();
+});
+
+function normalizePhoneToE164(phone) {
+  if (!phone || typeof phone !== "string") return null;
+
+  // Keep + prefix if provided
+  if (phone.startsWith("+")) return phone;
+
+  const d = phone.replace(/\D/g, "");
+  if (d.length === 10 && d.startsWith("0")) return "+94" + d.slice(1);
+  if (d.length === 9 && d.startsWith("7")) return "+94" + d; // e.g. 7XXXXXXXX
+  if (d.length === 12 && d.startsWith("94")) return "+" + d;
+  return null;
+}
+
+function requireTwilioForOtp(res) {
+  const client = getTwilio();
+  if (!client) {
+    return res.status(500).json({
+      success: false,
+      error:
+        "Twilio not configured (set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_VERIFY_SID).",
+    });
+  }
+
+  if (!process.env.TWILIO_VERIFY_SID) {
+    return res.status(500).json({ success: false, error: "TWILIO_VERIFY_SID not configured." });
+  }
+
+  return client;
+}
+
+/**
+ * POST /api/auth/send-otp
+ * Body: { phone: "+94771234567" }
+ */
 router.post("/send-otp", async (req, res) => {
   const { phone } = req.body;
 
@@ -34,21 +75,30 @@ router.post("/send-otp", async (req, res) => {
     return res.status(400).json({ success: false, error: "Phone number is required." });
   }
 
+  const e164 = normalizePhoneToE164(phone);
+  if (!e164) {
+    return res.status(400).json({ success: false, error: "Invalid phone format." });
+  }
+
   try {
-    const client = getTwilio();
+    const client = requireTwilioForOtp(res);
+    if (!client) return;
+
     await client.verify.v2
       .services(process.env.TWILIO_VERIFY_SID)
-      .verifications.create({ to: phone, channel: "sms" });
+      .verifications.create({ to: e164, channel: "sms" });
 
-    res.json({ success: true, message: "OTP sent successfully." });
+    return res.json({ success: true, message: "OTP sent successfully." });
   } catch (err) {
     console.error("send-otp error:", err.message);
-    res.status(500).json({ success: false, error: err.message });
+    return res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// ── POST /api/auth/verify-otp ────────────────────────────────────────────────
-// Body: { phone: "+94771234567", code: "123456" }
+/**
+ * POST /api/auth/verify-otp
+ * Body: { phone: "+94771234567", code: "123456" }
+ */
 router.post("/verify-otp", async (req, res) => {
   const { phone, code } = req.body;
 
@@ -56,65 +106,83 @@ router.post("/verify-otp", async (req, res) => {
     return res.status(400).json({ success: false, error: "Phone and code are required." });
   }
 
+  const e164 = normalizePhoneToE164(phone);
+  if (!e164) {
+    return res.status(400).json({ success: false, error: "Invalid phone format." });
+  }
+
   try {
-    const client = getTwilio();
-    const check  = await client.verify.v2
+    const client = requireTwilioForOtp(res);
+    if (!client) return;
+
+    const check = await client.verify.v2
       .services(process.env.TWILIO_VERIFY_SID)
-      .verificationChecks.create({ to: phone, code });
+      .verificationChecks.create({ to: e164, code });
 
     if (check.status === "approved") {
-      res.json({ success: true,  message: "Phone verified." });
-    } else {
-      res.json({ success: false, error: "Invalid or expired OTP." });
+      return res.json({ success: true, message: "Phone verified." });
     }
+
+    return res.json({ success: false, error: "Invalid or expired OTP." });
   } catch (err) {
     console.error("verify-otp error:", err.message);
-    res.status(500).json({ success: false, error: err.message });
+    return res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// ── POST /api/auth/register-with-otp ──
-// Creates user only after phone OTP is approved.
-// Body is the same as /api/register PLUS: { phone, otpCode }
-router.post('/register-with-otp',
-  upload.fields([{ name: 'nic_front' }, { name: 'nic_back' }]),
+/**
+ * POST /api/auth/register-with-otp
+ * Creates user only after phone OTP is approved.
+ * Body: register fields + { phone, otpCode }
+ */
+router.post("/register-with-otp",
+  upload.fields([{ name: "nic_front" }, { name: "nic_back" }]),
   async (req, res) => {
   const {
-    role, first_name, last_name, email,
-    phone, district, address, nic_number, password,
-    otpCode
+    role,
+    first_name,
+    last_name,
+    email,
+    phone,
+    district,
+    address,
+    nic_number,
+    password,
+    otpCode,
   } = req.body;
 
   if (!role || !first_name || !last_name || !email || !password || !phone || !district || !otpCode) {
-    return res.status(400).json({ success: false, error: 'Missing required fields' });
+    return res.status(400).json({ success: false, error: "Missing required fields" });
   }
 
-  // verify OTP
+  const e164 = normalizePhoneToE164(phone);
+  if (!e164) {
+    return res.status(400).json({ success: false, error: "Invalid phone format." });
+  }
+
+  // verify OTP first
   try {
-    const client = getTwilio();
+    const client = requireTwilioForOtp(res);
+    if (!client) return;
+
     const check = await client.verify.v2
       .services(process.env.TWILIO_VERIFY_SID)
-      .verificationChecks.create({
-        to: phone,
-        code: otpCode
-      });
+      .verificationChecks.create({ to: e164, code: otpCode });
 
-    if (check.status !== 'approved') {
-      return res.status(403).json({ success: false, error: 'Invalid or expired OTP.' });
+    if (check.status !== "approved") {
+      return res.status(403).json({ success: false, error: "Invalid or expired OTP." });
     }
   } catch (err) {
-    console.error('register-with-otp verify error:', err.message);
+    console.error("register-with-otp verify error:", err.message);
     return res.status(500).json({ success: false, error: err.message });
   }
 
-  // Create account after OTP success
+  // create account after OTP success
   try {
-    const pool = req.app.get('db');
+    const pool = req.app.get("db");
     if (!pool) {
-      return res.status(500).json({ success: false, error: 'DB pool not available. Update server.js to set app.set("db", pool).' });
+      return res.status(500).json({ success: false, error: "DB pool not available." });
     }
-
-    const bcrypt = require('bcrypt');
 
     const password_hash = await bcrypt.hash(password, 12);
     const nic_front_path = req.files?.nic_front?.[0]?.path || null;
@@ -127,20 +195,30 @@ router.post('/register-with-otp',
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
        RETURNING id, email, role, first_name`,
       [
-        role, first_name, last_name, email, phone, district,
-        address || null, nic_number || null, password_hash,
-        nic_front_path, nic_back_path, 'pending'
+        role,
+        first_name,
+        last_name,
+        email,
+        e164,
+        district,
+        address || null,
+        nic_number || null,
+        password_hash,
+        nic_front_path,
+        nic_back_path,
+        "pending",
       ]
     );
 
     return res.status(201).json({ success: true, user: result.rows[0] });
   } catch (err) {
-    if (err.code === '23505') {
-      return res.status(409).json({ success: false, error: 'This email is already registered' });
+    if (err.code === "23505") {
+      return res.status(409).json({ success: false, error: "This email is already registered" });
     }
-    console.error('register-with-otp create error:', err.message);
-    return res.status(500).json({ success: false, error: 'Registration failed. Please try again.' });
+    console.error("register-with-otp create error:", err.message);
+    return res.status(500).json({ success: false, error: "Registration failed. Please try again." });
   }
 });
 
 module.exports = router;
+
