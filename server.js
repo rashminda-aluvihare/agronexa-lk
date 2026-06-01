@@ -95,7 +95,11 @@ app.post('/api/register',
   }
 );
 
+const authRoutes = require('./backend/authRoutes');
+app.use('/api/auth', authRoutes);
+
 // ── LOGIN ──
+
 app.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -261,8 +265,8 @@ app.get('/api/profile/:id', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-module.exports = { authRequired, requireRole };
 
 app.listen(PORT, () => {
   console.log(`🚀 AgroNexa server running on port ${PORT}`);
 });
+
