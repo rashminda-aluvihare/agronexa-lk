@@ -1,5 +1,7 @@
 require('dotenv').config();
 const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
@@ -22,6 +24,20 @@ if (!fs.existsSync(uploadDir)) {
 }
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: { origin: '*', methods: ['GET', 'POST'] }
+});
+
+app.set('io', io); // Share io with other routes
+
+io.on('connection', (socket) => {
+  socket.on('join', (userId) => {
+    socket.join(`user_${userId}`);
+    console.log(`📡 User ${userId} connected via socket`);
+  });
+});
+
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -275,6 +291,6 @@ app.get('/api/profile/:id', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`🚀 AgroNexa server running on port ${PORT}`);
 });
