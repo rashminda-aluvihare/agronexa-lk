@@ -91,46 +91,16 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
-// ── REGISTER ──
-app.post('/api/register',
-  upload.fields([{ name: 'nic_front' }, { name: 'nic_back' }]),
-  async (req, res) => {
-    try {
-      const {
-        role, first_name, last_name, email,
-        phone, district, address, nic_number, password
-      } = req.body;
+// ── REGISTER (DISABLED) ──
+// OTP-gated registration is mandatory. Use:
+//   POST /api/auth/register-with-otp
+app.post('/api/register', (req, res) => {
+  return res.status(410).json({
+    success: false,
+    error: 'Registration endpoint requires OTP. Use POST /api/auth/register-with-otp instead.'
+  });
+});
 
-      if (!email || !password || !role || !first_name || !last_name) {
-        return res.status(400).json({ error: 'Please fill all required fields' });
-      }
-
-      const password_hash = await bcrypt.hash(password, 12);
-      const nic_front_path = req.files?.nic_front?.[0]?.path || null;
-      const nic_back_path  = req.files?.nic_back?.[0]?.path  || null;
-
-      const result = await pool.query(
-        `INSERT INTO users
-          (role, first_name, last_name, email, phone, district,
-           address, nic_number, password_hash, nic_front_path, nic_back_path, status)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
-         RETURNING id, email, role, first_name`,
-        [role, first_name, last_name, email, phone, district,
-         address, nic_number, password_hash, nic_front_path, nic_back_path, 'pending']
-      );
-
-      console.log('✅ New user registered:', result.rows[0].email);
-      res.status(201).json({ success: true, user: result.rows[0] });
-
-    } catch (err) {
-      if (err.code === '23505') {
-        return res.status(409).json({ error: 'This email is already registered' });
-      }
-      console.error('Registration error:', err.message);
-      res.status(500).json({ error: 'Registration failed. Please try again.' });
-    }
-  }
-);
 
 // ── LOGIN ──
 app.post('/api/login', async (req, res) => {

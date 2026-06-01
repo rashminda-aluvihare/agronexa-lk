@@ -5,6 +5,7 @@
 - [x] Update existing OTP verification flow to gate account creation.
 - [x] Update frontend to call the OTP-gated backend flow instead of calling `/api/register` directly.
 - [x] Ensure login blocks `status=pending` and `status=rejected`.
+- [x] Disable/break bypass endpoint `POST /api/register` so OTP is mandatory.
 - [ ] Test end-to-end:
   - [ ] invalid OTP => no user created
   - [ ] valid OTP => user created with `status=pending`
@@ -32,3 +33,4 @@
 ## Final Deliverables
 - [ ] Update any UI or API contracts that mismatch the SRS.
 - [ ] Run full manual scenario walkthrough and document results (optional).
+
