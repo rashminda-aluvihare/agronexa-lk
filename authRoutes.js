@@ -50,15 +50,17 @@ function normalizePhoneToE164(phone) {
 function requireTwilioForOtp(res) {
   const client = getTwilio();
   if (!client) {
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       error:
         "Twilio not configured (set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_VERIFY_SID).",
     });
+    return null;
   }
 
   if (!process.env.TWILIO_VERIFY_SID) {
-    return res.status(500).json({ success: false, error: "TWILIO_VERIFY_SID not configured." });
+    res.status(500).json({ success: false, error: "TWILIO_VERIFY_SID not configured." });
+    return null;
   }
 
   return client;
