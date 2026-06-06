@@ -270,7 +270,9 @@ router.post('/bookings', async (req, res) => {
   try {
     // Check listing exists and is available
     const listing = await pool.query(
-      `SELECT * FROM equipment_listings WHERE id=$1 AND status='available'`, [listing_id]
+      `SELECT el.*, u.phone AS owner_phone FROM equipment_listings el
+       JOIN users u ON u.id = el.owner_id
+       WHERE el.id=$1 AND el.status='available'`, [listing_id]
     );
     if (!listing.rows.length) {
       return res.status(409).json({ error: 'Equipment is not available for booking' });
@@ -306,6 +308,14 @@ router.post('/bookings', async (req, res) => {
       `New booking request for "${el.name}"`,
       `${buyer.rows[0]?.first_name || 'A buyer'} has requested to rent "${el.name}" from ${start_date} to ${end_date}. Total: Rs. ${total.toLocaleString()}.`
     );
+
+    const sendSMS = req.app.get('sendSMS');
+    if (sendSMS && el.owner_phone) {
+      await sendSMS(
+        el.owner_phone,
+        `AgroNexa LK: Your equipment ${el.name} has a new booking request from ${buyer.rows[0]?.first_name || 'a buyer'}! Log in to confirm.`
+      );
+    }
 
     res.status(201).json({ success: true, booking: result.rows[0] });
   } catch (err) {
@@ -409,8 +419,9 @@ router.post('/broadcasts', async (req, res) => {
     const broadcast = result.rows[0];
 
     // Notify all approved sellers in the same district who list this crop
+    const sendSMS = req.app.get('sendSMS');
     const sellers = await pool.query(
-      `SELECT DISTINCT u.id FROM users u
+      `SELECT DISTINCT u.id, u.phone FROM users u
        JOIN crop_listings cl ON cl.seller_id = u.id AND cl.status='active'
        WHERE u.status='approved' AND u.role IN ('seller','farmer')
          AND (u.district ILIKE $1 OR cl.district ILIKE $1)
@@ -418,13 +429,20 @@ router.post('/broadcasts', async (req, res) => {
       [district, `%${crop}%`]
     );
 
-    const notifyAll = sellers.rows.map(s =>
-      pushNotification(
+    const notifyAll = [];
+    sellers.rows.forEach(s => {
+      notifyAll.push(pushNotification(
         s.id, 'request',
         `📢 New Buyer Request: ${crop}`,
         `${resolvedName} from ${district} needs ${quantity} of ${crop}.${budget ? ' Budget: Rs. ' + budget : ''} Respond now!`
-      )
-    );
+      ));
+      if (sendSMS && s.phone) {
+        notifyAll.push(sendSMS(
+          s.phone,
+          `AgroNexa LK: New request for ${crop} (${quantity} kg) in ${district}! Log in to respond.`
+        ));
+      }
+    });
     await Promise.allSettled(notifyAll);
 
     if (io) {

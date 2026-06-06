@@ -483,6 +483,31 @@ router.post('/bookings/:id/confirm', async (req, res) => {
       `Your equipment booking has been confirmed. TX: ${txId.slice(0,12)}…`
     );
 
+    // Send SMS Notification to renter
+    try {
+      const details = await pool.query(
+        `SELECT 
+           r.phone AS renter_phone, r.first_name AS renter_first_name,
+           o.first_name AS owner_first_name,
+           el.name AS equipment_name
+         FROM users r
+         JOIN users o ON o.id = $1
+         JOIN equipment_listings el ON el.id = $2
+         WHERE r.id = $3`,
+        [b.owner_id, b.listing_id, b.renter_id]
+      );
+      const detailRow = details.rows[0];
+      if (detailRow) {
+        const sendSMS = req.app.get('sendSMS');
+        if (sendSMS && detailRow.renter_phone) {
+          const msg = `AgroNexa LK: Your booking request for "${detailRow.equipment_name}" has been CONFIRMED by ${detailRow.owner_first_name}!`;
+          await sendSMS(detailRow.renter_phone, msg);
+        }
+      }
+    } catch (smsErr) {
+      console.warn('SMS dispatch failed on booking confirm:', smsErr.message);
+    }
+
     res.json({ success: true, booking: b, ledger_tx: txId });
   } catch (err) {
     res.status(500).json({ error: err.message });

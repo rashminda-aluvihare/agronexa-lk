@@ -22,6 +22,33 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'ChangeThisToASecurePasswor
 
 const fs = require('fs');
 
+// ── TWILIO SMS NOTIFICATION HELPER ──
+function getTwilio() {
+  const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
+  if (!accountSid || !authToken) return null;
+  return require('twilio')(accountSid, authToken);
+}
+
+function sendSMS(to, body) {
+  const client = getTwilio();
+  if (!client) {
+    console.log(`ℹ️ [SMS Dev Mock] To: ${to} | Body: ${body}`);
+    return Promise.resolve({ success: true, mocked: true });
+  }
+  return client.messages.create({
+    body: body,
+    from: process.env.TWILIO_PHONE_NUMBER || '+1234567890',
+    to: to
+  }).then(msg => {
+    console.log(`✅ SMS sent to ${to}: ${msg.sid}`);
+    return { success: true, sid: msg.sid };
+  }).catch(err => {
+    console.error(`❌ SMS failed to ${to}:`, err.message);
+    return { success: false, error: err.message };
+  });
+}
+
 // create upload folders if not exist
 const uploadDir = 'uploads/nic/';
 if (!fs.existsSync(uploadDir)) {
@@ -90,6 +117,7 @@ const pool = new Pool({
   ssl: sslConfig
 });
 app.set('db', pool);
+app.set('sendSMS', sendSMS);
 // Test DB connection + auto-migrate + seed admin
 async function ensureTables(client) {
   await client.query(`
@@ -229,6 +257,20 @@ async function ensureTables(client) {
       action        VARCHAR(100) NOT NULL,
       ip_address    VARCHAR(45),
       details       TEXT,
+      created_at    TIMESTAMPTZ DEFAULT NOW()
+    );
+  `);
+
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS transport_providers (
+      id            SERIAL PRIMARY KEY,
+      owner_name    VARCHAR(120) NOT NULL,
+      vehicle_type  VARCHAR(60) NOT NULL,
+      vehicle_no    VARCHAR(30) UNIQUE NOT NULL,
+      capacity_kg   NUMERIC(10,2),
+      district      VARCHAR(60) NOT NULL,
+      phone         VARCHAR(30) NOT NULL,
+      status        VARCHAR(20) DEFAULT 'available',
       created_at    TIMESTAMPTZ DEFAULT NOW()
     );
   `);
@@ -598,6 +640,81 @@ app.put('/api/profile/:id', async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
     res.json({ success: true, user: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── CROP PRICE INDEX API ──
+app.get('/api/market-prices', (req, res) => {
+  const cropPrices = [
+    { name: 'Tomatoes (තක්කාලි)', category: 'Vegetables', avgPrice: 180, change: -2.4 },
+    { name: 'Carrots (කැරට්)', category: 'Vegetables', avgPrice: 240, change: 4.8 },
+    { name: 'Potatoes (අල)', category: 'Grains/Tubers', avgPrice: 155, change: 1.2 },
+    { name: 'Green Chilies (අමු මිරිස්)', category: 'Spices', avgPrice: 320, change: -1.5 },
+    { name: 'Leeks (ලීක්ස්)', category: 'Vegetables', avgPrice: 140, change: 0.5 },
+    { name: 'Red Onion (රතු ළූණු)', category: 'Spices', avgPrice: 280, change: 2.1 },
+    { name: 'Beans (බෝංචි)', category: 'Vegetables', avgPrice: 210, change: -0.8 }
+  ];
+  res.json({ success: true, prices: cropPrices });
+});
+
+// ── TRANSPORT / LOGISTICS API ──
+app.get('/api/transport', async (req, res) => {
+  const { district } = req.query;
+  try {
+    let result;
+    if (district) {
+      result = await pool.query(
+        'SELECT * FROM transport_providers WHERE district = $1 AND status = \'available\' ORDER BY created_at DESC',
+        [district]
+      );
+    } else {
+      result = await pool.query(
+        'SELECT * FROM transport_providers WHERE status = \'available\' ORDER BY created_at DESC'
+      );
+    }
+    res.json({ success: true, providers: result.rows });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/transport', async (req, res) => {
+  const { owner_name, vehicle_type, vehicle_no, capacity_kg, district, phone } = req.body;
+  if (!owner_name || !vehicle_type || !vehicle_no || !district || !phone) {
+    return res.status(400).json({ error: 'Missing required transport listing fields' });
+  }
+  try {
+    const result = await pool.query(
+      `INSERT INTO transport_providers (owner_name, vehicle_type, vehicle_no, capacity_kg, district, phone)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       ON CONFLICT (vehicle_no) DO UPDATE SET
+         owner_name = EXCLUDED.owner_name,
+         vehicle_type = EXCLUDED.vehicle_type,
+         capacity_kg = EXCLUDED.capacity_kg,
+         district = EXCLUDED.district,
+         phone = EXCLUDED.phone,
+         status = 'available'
+       RETURNING *`,
+      [owner_name, vehicle_type, vehicle_no, capacity_kg || null, district, phone]
+    );
+    res.status(201).json({ success: true, provider: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/transport/:id', async (req, res) => {
+  try {
+    const result = await pool.query(
+      'UPDATE transport_providers SET status = \'deactivated\' WHERE id = $1 RETURNING *',
+      [req.params.id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Transport listing not found' });
+    }
+    res.json({ success: true, message: 'Transport listing deactivated' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

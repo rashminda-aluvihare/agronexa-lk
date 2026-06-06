@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AgroNexa LK – Seller Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<script src="translations.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   
@@ -315,40 +316,44 @@
     <div class="nav-section">Main</div>
     <div class="nav-item active" onclick="switchTab('dashboard')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      Dashboard
+      <span data-i18n="nav-dashboard">Dashboard</span>
     </div>
     <div class="nav-item" onclick="switchTab('listings')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h18v4H3z"/><path d="M3 10h18v11H3z"/></svg>
-      My Listings
+      <span data-i18n="nav-marketplace">My Listings</span>
       <span class="nav-badge" id="sidebar-listings-count">0</span>
     </div>
     <div class="nav-item" onclick="switchTab('requests')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-      Buyer Requests
+      <span data-i18n="nav-requests">Buyer Requests</span>
       <span class="nav-badge" id="sidebar-requests-count">0</span>
     </div>
     <div class="nav-item" onclick="switchTab('equipment')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 3H8v4h8V3z"/></svg>
-      Equipment Rentals
+      <span data-i18n="nav-bookings">Equipment Rentals</span>
       <span class="nav-badge" id="sidebar-equipment-count" style="display:none;background:var(--amber);">0</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('transport')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="3" width="15" height="13" rx="2" ry="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      <span data-i18n="nav-transport">Transport Logistics</span>
     </div>
     <div class="nav-section">Account</div>
     <div class="nav-item" onclick="switchTab('ledger')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-      Ledger History
+      <span data-i18n="nav-ledger">Ledger History</span>
     </div>
     <div class="nav-item" onclick="switchTab('messages')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-      Messages
+      <span data-i18n="nav-messages">Messages</span>
       <span class="nav-badge" id="sidebar-messages-count" style="display:none;background:var(--amber);">0</span>
     </div>
     <div class="nav-item" onclick="switchTab('profile')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-      Profile
+      <span data-i18n="nav-profile">Profile</span>
     </div>
     <div class="nav-item" onclick="switchTab('settings')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-      Settings
+      <span data-i18n="nav-settings">Settings</span>
     </div>
   </nav>
 
@@ -409,6 +414,49 @@
         <div class="stat-val" id="stat-completed-rentals">—</div>
         <div class="stat-label">Completed Rentals</div>
         <div class="stat-delta up">↑ 4 this month</div>
+      </div>
+    </div>
+
+    <!-- Weather & Market Prices Analytics Section -->
+    <div class="grid-2 content-section" id="section-analytics" style="margin-top: 20px; margin-bottom: 20px;">
+      <!-- Weather Card -->
+      <div class="panel" id="panel-weather">
+        <div class="panel-head">
+          <div class="panel-title" data-i18n="weather-title">🌦️ Weather Alert & Farming Advisory</div>
+          <div id="weather-district-display" style="font-size:12px; font-weight:600; color:var(--primary);">Loading district...</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div id="weather-widget-content" style="display:flex; justify-content:space-between; align-items:center; background:var(--primary-pale); border-radius:12px; padding:16px;">
+            <div style="font-size:12.5px; color:var(--text-muted);" data-i18n="weather-loading">Loading local weather...</div>
+          </div>
+          <div id="weather-advisory-content" style="border-left:3px solid var(--primary); background:#fcfefb; padding:12px; border-radius:4px; font-size:12.5px; line-height:1.6; color:var(--text-main);">
+            <span data-i18n="weather-desc">Weather advice for your district.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Price Index Card -->
+      <div class="panel" id="panel-price-index">
+        <div class="panel-head">
+          <div class="panel-title" data-i18n="price-index-title">📊 Daily Crop Market Price Index (Sri Lanka)</div>
+        </div>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom: 12px;" data-i18n="price-index-sub">Average market rates per kg from dedicated economic centres.</p>
+        <div style="max-height: 155px; overflow-y: auto;">
+          <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:left;">
+            <thead>
+              <tr style="border-bottom:2px solid var(--border-color); color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:0.5px;">
+                <th style="padding:6px 4px;" data-i18n="price-crop">Crop</th>
+                <th style="padding:6px 4px; text-align:right;" data-i18n="price-avg">Avg Price</th>
+                <th style="padding:6px 4px; text-align:right;" data-i18n="price-change">Change</th>
+              </tr>
+            </thead>
+            <tbody id="price-index-table-body">
+              <tr>
+                <td colspan="3" style="text-align:center; padding:20px; color:var(--text-muted);">Loading prices...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -531,6 +579,77 @@
         <div id="equipment-bookings-list" style="max-height: 400px; overflow-y: auto;">
           <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">Loading booking requests...</div>
         </div>
+      </div>
+    </div>
+
+    <!-- Transport Matching Section -->
+    <div class="panel content-section" id="section-transport" style="display:none;">
+      <div class="panel-head">
+        <div class="panel-title" data-i18n="logistics-title">🚛 Transport & Logistics Registry</div>
+      </div>
+      <p style="font-size:12px; color:var(--text-muted); margin-bottom: 20px;" data-i18n="logistics-sub">
+        Find and book local lorry owners and transport providers in your district.
+      </p>
+      
+      <div style="display:flex; background:#EDF5EF; border-radius:10px; padding:4px; gap:4px; margin-bottom:20px;">
+        <button id="transport-tab-browse-btn" onclick="toggleTransportTab('browse')" style="flex:1; height:36px; border:none; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; background:#fff; color:#155C35;" data-i18n="logistics-tab-browse">Browse Local Drivers</button>
+        <button id="transport-tab-register-btn" onclick="toggleTransportTab('register')" style="flex:1; height:36px; border:none; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; background:transparent; color:#6B9B7A;" data-i18n="logistics-tab-register">Register Vehicle</button>
+      </div>
+
+      <!-- Browse Drivers Panel -->
+      <div id="transport-browse-panel">
+        <div id="transport-drivers-list" style="display:flex; flex-direction:column; gap:12px;">
+          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">Loading transport providers...</div>
+        </div>
+      </div>
+
+      <!-- Register Driver Form Panel -->
+      <div id="transport-register-panel" style="display:none;">
+        <form id="transport-register-form" onsubmit="submitTransportRegistration(event)">
+          <div class="form-row">
+            <div class="form-field">
+              <div class="form-label" data-i18n="logistics-label-owner">Owner Name</div>
+              <input class="form-input" id="trans-owner" required type="text" placeholder="Sunil Perera">
+            </div>
+            <div class="form-field">
+              <div class="form-label" data-i18n="logistics-label-type">Vehicle Type</div>
+              <select class="form-input" id="trans-type" required style="background:#fff; color:#000;">
+                <option value="Lorry (Light)">Lorry (Light)</option>
+                <option value="Lorry (Heavy)">Lorry (Heavy)</option>
+                <option value="Tractor / Trailer">Tractor / Trailer</option>
+                <option value="Refrigerated Truck">Refrigerated Truck</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <div class="form-label" data-i18n="logistics-label-no">Plate Number</div>
+              <input class="form-input" id="trans-number" required type="text" placeholder="WP LY-1234">
+            </div>
+            <div class="form-field">
+              <div class="form-label" data-i18n="logistics-label-capacity">Capacity (kg)</div>
+              <input class="form-input" id="trans-capacity" required type="number" placeholder="1500">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <div class="form-label" data-i18n="logistics-label-phone">Contact Phone</div>
+              <input class="form-input" id="trans-phone" required type="tel" placeholder="07X XXX XXXX" maxlength="10">
+            </div>
+            <div class="form-field">
+              <div class="form-label" data-i18n="logistics-label-district">Operating District</div>
+              <select class="form-input" id="trans-district" required style="background:#fff; color:#000;">
+                <option>Ampara</option><option>Anuradhapura</option><option>Badulla</option><option>Batticaloa</option>
+                <option>Colombo</option><option>Galle</option><option>Gampaha</option><option>Hambantota</option>
+                <option>Jaffna</option><option>Kalutara</option><option>Kandy</option><option>Kegalle</option>
+                <option>Kurunegala</option><option>Matale</option><option>Matara</option><option>Negombo</option>
+                <option>Nuwara Eliya</option><option>Polonnaruwa</option><option>Puttalam</option>
+                <option>Ratnapura</option><option>Trincomalee</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn-sm btn-accept" style="margin-top:10px;" data-i18n="logistics-btn-register">Publish Transport Listing</button>
+        </form>
       </div>
     </div>
 
@@ -1061,11 +1180,8 @@ function switchTab(tab) {
   const navItems = document.querySelectorAll('nav .nav-item');
   navItems.forEach(item => {
     item.classList.remove('active');
-    if (item.textContent.toLowerCase().includes(tab.toLowerCase()) || 
-       (tab === 'listings' && item.textContent.toLowerCase().includes('listings')) ||
-       (tab === 'requests' && item.textContent.toLowerCase().includes('requests')) ||
-       (tab === 'ledger' && item.textContent.toLowerCase().includes('ledger')) ||
-       (tab === 'equipment' && item.textContent.toLowerCase().includes('equipment'))) {
+    const onClickAttr = item.getAttribute('onclick');
+    if (onClickAttr && onClickAttr.includes("'" + tab + "'")) {
       item.classList.add('active');
     }
   });
@@ -1077,6 +1193,8 @@ function switchTab(tab) {
   const sectionProfile = document.getElementById('section-profile');
   const sectionSettings = document.getElementById('section-settings');
   const sectionMessages = document.getElementById('section-messages');
+  const sectionAnalytics = document.getElementById('section-analytics');
+  const sectionTransport = document.getElementById('section-transport');
 
   const panelCrops = document.getElementById('panel-crop-listings');
   const panelRequests = document.getElementById('panel-buyer-requests');
@@ -1089,9 +1207,12 @@ function switchTab(tab) {
   sectionProfile.style.display = 'none';
   sectionSettings.style.display = 'none';
   sectionMessages.style.display = 'none';
+  if (sectionAnalytics) sectionAnalytics.style.display = 'none';
+  if (sectionTransport) sectionTransport.style.display = 'none';
 
   if (tab === 'dashboard') {
     sectionStats.style.display = 'grid';
+    if (sectionAnalytics) sectionAnalytics.style.display = 'grid';
     sectionListingsRequests.style.display = 'grid';
     panelCrops.style.display = 'block';
     panelRequests.style.display = 'block';
@@ -1123,6 +1244,11 @@ function switchTab(tab) {
     sectionMessages.style.display = 'block';
     loadNotificationsInbox();
     loadChatsList();
+  } else if (tab === 'transport') {
+    if (sectionTransport) {
+      sectionTransport.style.display = 'block';
+      loadTransportDrivers();
+    }
   }
 }
 
@@ -1533,6 +1659,17 @@ function loadDashboardData() {
         badge.style.display = activeListings.length > 0 ? 'inline-block' : 'none';
       }
     });
+
+  // 4. Load Weather & Price Index
+  if (_user && _user.district) {
+    loadWeather(_user.district);
+  } else {
+    const displayDistrict = document.getElementById('weather-district-display');
+    if (displayDistrict) displayDistrict.textContent = 'District not set';
+    const contentEl = document.getElementById('weather-widget-content');
+    if (contentEl) contentEl.innerHTML = `<div style="font-size:12px; color:var(--text-muted);">Set district in Profile to load weather advisory.</div>`;
+  }
+  loadMarketPrices();
 }
 
 // ── CROP LISTINGS FUNCTIONS ──
@@ -2085,6 +2222,239 @@ function doLogout(){
   sessionStorage.removeItem('agro_user');
   sessionStorage.removeItem('agro_token');
   window.location.href = 'index.html';
+}
+
+// ── WEATHER & MARKET PRICE WIDGETS ──
+const DISTRICT_COORDS = {
+  "Ampara": { lat: 7.2912, lon: 81.6724 },
+  "Anuradhapura": { lat: 8.3122, lon: 80.4131 },
+  "Badulla": { lat: 6.9934, lon: 81.0550 },
+  "Batticaloa": { lat: 7.7102, lon: 81.6924 },
+  "Colombo": { lat: 6.9271, lon: 79.8612 },
+  "Galle": { lat: 6.0535, lon: 80.2117 },
+  "Gampaha": { lat: 7.0873, lon: 80.0144 },
+  "Hambantota": { lat: 6.1248, lon: 81.1185 },
+  "Jaffna": { lat: 9.6615, lon: 80.0255 },
+  "Kalutara": { lat: 6.5854, lon: 79.9607 },
+  "Kandy": { lat: 7.2906, lon: 80.6337 },
+  "Kegalle": { lat: 7.2513, lon: 80.3464 },
+  "Kurunegala": { lat: 7.4863, lon: 80.3647 },
+  "Matale": { lat: 7.4675, lon: 80.6234 },
+  "Matara": { lat: 5.9549, lon: 80.5550 },
+  "Negombo": { lat: 7.2089, lon: 79.8356 },
+  "Nuwara Eliya": { lat: 6.9497, lon: 80.7891 },
+  "Polonnaruwa": { lat: 7.9403, lon: 81.0188 },
+  "Puttalam": { lat: 8.0362, lon: 79.8283 },
+  "Ratnapura": { lat: 6.6828, lon: 80.3992 },
+  "Trincomalee": { lat: 8.5873, lon: 81.2152 }
+};
+
+function loadWeather(district) {
+  const displayDistrict = document.getElementById('weather-district-display');
+  if (displayDistrict) displayDistrict.textContent = district || 'Unknown';
+  
+  const contentEl = document.getElementById('weather-widget-content');
+  const advisoryEl = document.getElementById('weather-advisory-content');
+  
+  if (!district || !DISTRICT_COORDS[district]) {
+    if (contentEl) contentEl.innerHTML = `<div style="font-size:12px; color:var(--text-muted);">Select/save your district in Profile to load weather.</div>`;
+    return;
+  }
+  
+  const coords = DISTRICT_COORDS[district];
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current=temperature_2m,relative_humidity_2m,weather_code`;
+  
+  fetch(url)
+    .then(r => r.json())
+    .then(data => {
+      const temp = data.current.temperature_2m;
+      const humidity = data.current.relative_humidity_2m;
+      const code = data.current.weather_code;
+      
+      let statusText = 'Normal';
+      let icon = '☀️';
+      let advice = 'Good weather conditions for farming activities.';
+      
+      if (code === 0) {
+        statusText = 'Clear Sky';
+        icon = '☀️';
+        advice = 'Optimal weather for harvesting and drying crops. Good time to broadcast requests.';
+      } else if (code >= 1 && code <= 3) {
+        statusText = 'Partly Cloudy';
+        icon = '⛅';
+        advice = 'Favorable conditions for transport and outdoor storage.';
+      } else if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) {
+        statusText = 'Rainy / Showers';
+        icon = '🌧️';
+        advice = 'Rain forecast. Ensure stored crops are well-covered. Avoid wet-field harvest.';
+      } else if (code >= 95) {
+        statusText = 'Thunderstorm';
+        icon = '⛈️';
+        advice = '⚠️ Thunderstorms detected. Keep transport vehicles sheltered and secure outdoor produce immediately.';
+      } else {
+        statusText = 'Cloudy';
+        icon = '☁️';
+        advice = 'Favorable agricultural conditions. Keep crops protected from damp air.';
+      }
+      
+      if (contentEl) {
+        contentEl.innerHTML = `
+          <div style="display:flex; align-items:center; gap:12px;">
+            <span style="font-size:32px;">${icon}</span>
+            <div>
+              <div style="font-size:16px; font-weight:600; color:var(--text-main);">${statusText}</div>
+              <div style="font-size:12px; color:var(--text-muted);">${temp}°C | Humidity: ${humidity}%</div>
+            </div>
+          </div>
+        `;
+      }
+      if (advisoryEl) advisoryEl.textContent = advice;
+    })
+    .catch(err => {
+      if (contentEl) contentEl.innerHTML = `<div style="font-size:12px; color:var(--accent);">Unable to load weather data: ${err.message}</div>`;
+    });
+}
+
+function loadMarketPrices() {
+  const tbody = document.getElementById('price-index-table-body');
+  if (!tbody) return;
+  fetch(API_URL + '/api/market-prices', {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success) return;
+      tbody.innerHTML = '';
+      data.prices.forEach(crop => {
+        const sign = crop.change >= 0 ? '+' : '';
+        const color = crop.change >= 0 ? 'var(--primary-light)' : '#D95050';
+        const row = document.createElement('tr');
+        row.style.borderBottom = '1px solid var(--border-color)';
+        row.innerHTML = `
+          <td style="padding:10px 4px; font-weight:500;">${crop.name}</td>
+          <td style="padding:10px 4px; text-align:right; font-weight:600;">Rs. ${crop.avgPrice}</td>
+          <td style="padding:10px 4px; text-align:right; color:${color}; font-weight:600;">${sign}${crop.change}%</td>
+        `;
+        tbody.appendChild(row);
+      });
+    })
+    .catch(err => {
+      tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:20px; color:var(--accent);">Failed to load crop prices: ${err.message}</td></tr>`;
+    });
+}
+
+// ── TRANSPORT / LOGISTICS MATCHING FUNCTIONS ──
+let currentTransportTab = 'browse';
+
+function toggleTransportTab(subtab) {
+  currentTransportTab = subtab;
+  const browseBtn = document.getElementById('transport-tab-browse-btn');
+  const regBtn = document.getElementById('transport-tab-register-btn');
+  const browsePanel = document.getElementById('transport-browse-panel');
+  const regPanel = document.getElementById('transport-register-panel');
+  
+  if (subtab === 'browse') {
+    if (browseBtn) { browseBtn.style.background = '#fff'; browseBtn.style.color = '#155C35'; }
+    if (regBtn) { regBtn.style.background = 'transparent'; regBtn.style.color = '#6B9B7A'; }
+    if (browsePanel) browsePanel.style.display = 'block';
+    if (regPanel) regPanel.style.display = 'none';
+    loadTransportDrivers();
+  } else {
+    if (browseBtn) { browseBtn.style.background = 'transparent'; browseBtn.style.color = '#6B9B7A'; }
+    if (regBtn) { regBtn.style.background = '#fff'; regBtn.style.color = '#155C35'; }
+    if (browsePanel) browsePanel.style.display = 'none';
+    if (regPanel) regPanel.style.display = 'block';
+    
+    // Prefill details
+    if (_user) {
+      document.getElementById('trans-owner').value = _user.name || '';
+      document.getElementById('trans-phone').value = _user.phone || '';
+      document.getElementById('trans-district').value = _user.district || 'Colombo';
+    }
+  }
+}
+
+function loadTransportDrivers() {
+  const listEl = document.getElementById('transport-drivers-list');
+  if (!listEl) return;
+  
+  const district = _user && _user.district ? _user.district : '';
+  const url = API_URL + '/api/transport' + (district ? '?district=' + encodeURIComponent(district) : '');
+  
+  fetch(url, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success) return;
+      listEl.innerHTML = '';
+      if (data.providers.length === 0) {
+        listEl.innerHTML = `<div style="font-size:12.5px;color:var(--text-muted);text-align:center;padding:30px 0;" data-i18n="logistics-no-drivers">No transport providers registered in your district yet.</div>`;
+        return;
+      }
+      
+      data.providers.forEach(p => {
+        const item = document.createElement('div');
+        item.className = 'msg-item';
+        item.style.padding = '16px';
+        item.style.marginBottom = '12px';
+        item.style.borderRadius = '12px';
+        item.style.background = 'var(--bg-card)';
+        item.style.border = '1px solid var(--border-color)';
+        item.style.display = 'flex';
+        item.style.justifyContent = 'space-between';
+        item.style.alignItems = 'center';
+        
+        item.innerHTML = `
+          <div>
+            <div style="font-weight:600; font-size:14.5px; color:var(--text-main);">${p.vehicle_type} — ${p.vehicle_no}</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Owner: ${p.owner_name} | Capacity: ${p.capacity_kg} kg</div>
+            <div style="font-size:11px; background:var(--primary-pale); color:var(--primary); display:inline-block; padding:2px 8px; border-radius:4px; margin-top:6px;">📍 ${p.district}</div>
+          </div>
+          <a href="tel:${p.phone}" class="btn-sm btn-accept" style="text-decoration:none; padding:8px 14px; font-size:12px; height:auto; margin:0; display:inline-flex; align-items:center;" data-i18n="logistics-driver-call">📞 Call Driver</a>
+        `;
+        listEl.appendChild(item);
+      });
+    })
+    .catch(err => {
+      listEl.innerHTML = `<div style="font-size:12px;color:var(--accent);text-align:center;padding:20px 0;">Error loading drivers: ${err.message}</div>`;
+    });
+}
+
+function submitTransportRegistration(e) {
+  e.preventDefault();
+  const owner = document.getElementById('trans-owner').value.trim();
+  const type = document.getElementById('trans-type').value;
+  const number = document.getElementById('trans-number').value.trim();
+  const capacity = document.getElementById('trans-capacity').value.trim();
+  const phone = document.getElementById('trans-phone').value.trim();
+  const district = document.getElementById('trans-district').value;
+  
+  fetch(API_URL + '/api/transport', {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      owner_name: owner,
+      vehicle_type: type,
+      vehicle_no: number,
+      capacity_kg: parseInt(capacity),
+      district: district,
+      phone: phone
+    })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        showToast('Success', 'Transport listing published successfully! 🚛', 'success');
+        document.getElementById('transport-register-form').reset();
+        toggleTransportTab('browse');
+      } else {
+        showToast('Error', data.error || 'Failed to register vehicle', 'error');
+      }
+    })
+    .catch(err => {
+      showToast('Error', err.message, 'error');
+    });
 }
 </script>
 </body>
