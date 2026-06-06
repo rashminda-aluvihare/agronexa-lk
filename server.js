@@ -16,8 +16,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-me';
 
 // ── ADMIN CONFIG ──
 // Change these before deploying!
-const ADMIN_EMAIL    = process.env.ADMIN_EMAIL    || 'rashminda@gmail.com';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'FGFGRTYRfhfh254588fgg';
+const ADMIN_EMAIL    = process.env.ADMIN_EMAIL    || 'admin@agronexa.lk';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'ChangeThisToASecurePassword123!';
 
 
 const fs = require('fs');

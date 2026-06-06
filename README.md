@@ -73,8 +73,8 @@ PORT=3000
 DATABASE_URL=postgresql://postgres@127.0.0.1:5432/agronexa
 
 # Admin Setup
-ADMIN_EMAIL=rashminda@gmail.com
-ADMIN_PASSWORD=FGFGRTYRfhfh254588fgg
+ADMIN_EMAIL=admin@agronexa.lk
+ADMIN_PASSWORD=ChangeThisToASecurePassword123!
 
 # JWT Encryption
 JWT_SECRET=super-secure-jwt-key-change-this-in-prod

@@ -2,8 +2,8 @@ const db = require('../config/db');
 const auditService = require('../services/audit.service');
 
 // ── ADMIN CREDENTIALS FOR COMPATIBILITY ──
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'rashminda@gmail.com';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'FGFGRTYRfhfh254588fgg';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@agronexa.lk';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'ChangeThisToASecurePassword123!';
 
 /**
  * Middleware compatibility check for admin operations.
