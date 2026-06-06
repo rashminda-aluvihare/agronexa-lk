@@ -217,6 +217,10 @@
       My Bookings
       <span class="nav-badge" id="sidebar-bookings-count">0</span>
     </div>
+    <div class="nav-item" onclick="switchTab('ledger')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      Ledger History
+    </div>
     <div class="nav-section">Account</div>
     <div class="nav-item" onclick="switchTab('messages')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
@@ -411,6 +415,26 @@
           </div>
           <button type="submit" class="btn-sm btn-confirm" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;">Confirm Booking Request</button>
         </form>
+      </div>
+    </div>
+
+    <!-- Blockchain Ledger Section -->
+    <div class="panel" id="section-ledger" style="display:none;">
+      <div class="panel-head">
+        <div class="panel-title">🛡️ AgroNexa Blockchain Ledger — My Chained Agreements</div>
+        <div class="panel-action" onclick="verifyLedger()" style="cursor:pointer; background: var(--teal-pale); color: var(--teal); padding: 6px 12px; border-radius: 8px;">🔗 Verify Chain Integrity</div>
+      </div>
+      <p style="font-size:12px; color:var(--muted); margin-bottom: 20px; line-height: 1.5;">
+        All confirmed transactions between you and sellers are cryptographically hashed and chained to form an immutable ledger. 
+        This prevents unauthorized modifications to price, duration, or identity after confirmation.
+      </p>
+      <div id="ledger-list" style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Loading ledger records...</div>
+      </div>
+      
+      <div id="ledger-verification-status" style="margin-top:20px; background:#F5F9F3; border-radius:12px; padding:16px; display:flex; align-items:center; gap:12px; border:1px solid rgba(40,160,96,0.15);">
+        <div style="width:10px; height:10px; border-radius:50%; background:#7BA090;" id="ledger-status-dot"></div>
+        <span style="font-size:12.5px; color:#155C35; font-weight:600;" id="ledger-status-text">Cryptographic Integrity Status: Unknown</span>
       </div>
     </div>
 
@@ -700,6 +724,7 @@ function switchTab(tab) {
   const sectionProfile = document.getElementById('section-profile');
   const sectionSettings = document.getElementById('section-settings');
   const sectionMessages = document.getElementById('section-messages');
+  const sectionLedger = document.getElementById('section-ledger');
 
   const panelBroadcastForm = document.getElementById('panel-broadcast-form');
   const panelResponses = document.getElementById('panel-responses');
@@ -713,6 +738,7 @@ function switchTab(tab) {
   sectionProfile.style.display = 'none';
   sectionSettings.style.display = 'none';
   sectionMessages.style.display = 'none';
+  sectionLedger.style.display = 'none';
 
   if (tab === 'dashboard') {
     sectionStats.style.display = 'grid';
@@ -734,6 +760,9 @@ function switchTab(tab) {
     sectionBookingsMarket.style.display = 'grid';
     panelBookings.style.display = 'block';
     panelMarketplace.style.display = 'none';
+  } else if (tab === 'ledger') {
+    sectionLedger.style.display = 'block';
+    loadLedger();
   } else if (tab === 'profile') {
     sectionProfile.style.display = 'block';
     loadProfileDetails();
@@ -1399,6 +1428,72 @@ function submitEquipmentBooking(e) {
       } else {
         alert('❌ Error: ' + data.error);
       }
+    });
+}
+
+// ── BLOCKCHAIN LEDGER FUNCTIONS ──
+function loadLedger() {
+  if (!_user || !_user.id) return;
+  fetch(API_URL + '/api/seller/ledger?renter_id=' + _user.id, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      const container = document.getElementById('ledger-list');
+      if (!data.success || !data.ledger.length) {
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No secured agreements found yet. Confirm a booking to write to the ledger.</div>';
+        return;
+      }
+
+      let html = '';
+      data.ledger.forEach(item => {
+        const dateStr = new Date(item.created_at).toLocaleDateString();
+        const shortHash = item.block_hash ? `${item.block_hash.slice(0, 16)}...` : 'N/A';
+        const typeLabel = item.listing_type === 'equipment' ? '🚜 Equipment Rental' : '🥬 Crop Purchase';
+
+        html += `
+          <div class="booking-item" style="display:block; padding:16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; margin-bottom: 2px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-weight:600; font-size:13.5px; color:var(--text);">${item.listing_name || 'Agro Deal'}</span>
+              <span style="font-weight:600; font-size:14px; color:var(--teal);">Rs. ${parseFloat(item.amount).toLocaleString()}</span>
+            </div>
+            <div style="font-size:12px; color:var(--muted); display:flex; flex-direction:column; gap:4px;">
+              <span><strong>Type:</strong> ${typeLabel} (${item.duration_days || 1} days)</span>
+              <span><strong>Partner (Seller):</strong> ${item.owner_name}</span>
+              <span><strong>Transaction Hashed Block:</strong> <span style="font-family:monospace; background:rgba(0,0,0,0.04); padding:2px 6px; border-radius:4px; font-size:11px;">${shortHash}</span></span>
+              <span><strong>Timestamp:</strong> ${dateStr}</span>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+      verifyLedger(); // auto verify chain on load
+    });
+}
+
+function verifyLedger() {
+  const statusText = document.getElementById('ledger-status-text');
+  const statusDot = document.getElementById('ledger-status-dot');
+  
+  statusText.textContent = '🔒 Recalculating SHA-256 block hashes...';
+  statusDot.style.background = '#7BA090';
+
+  fetch(API_URL + '/api/seller/ledger/verify', {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success && data.valid) {
+        statusText.textContent = `✅ Cryptographic Integrity Verified: Chained SHA-256 ledger is completely secure (${data.total_records} block deals checked).`;
+        statusDot.style.background = '#28A060';
+      } else {
+        statusText.textContent = `⚠️ Chain integrity compromised at block: ${data.broken_at || 'unknown'}. Please notify system administrator.`;
+        statusDot.style.background = '#d95050';
+      }
+    })
+    .catch(() => {
+      statusText.textContent = '❌ Failed to verify ledger integrity.';
+      statusDot.style.background = '#d95050';
     });
 }
 
