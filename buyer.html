@@ -304,16 +304,98 @@
   .socket-status { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; padding: 3px 8px; border-radius: 20px; background: rgba(45,106,79,0.1); color: var(--green-light); }
   .socket-status.disconnected { background: rgba(231,111,81,0.1); color: var(--amber); }
   .socket-status .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    body {
+      flex-direction: column !important;
+    }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -245px;
+      height: 100vh;
+      z-index: 10000;
+      transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 4px 0 16px rgba(0,0,0,0.15);
+      flex-shrink: 0;
+    }
+    .sidebar.active {
+      left: 0;
+    }
+    .burger-menu-btn {
+      display: inline-flex !important;
+    }
+    .sidebar-close-btn {
+      display: block !important;
+    }
+    .stats-row {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 12px !important;
+    }
+    .grid-3 {
+      grid-template-columns: 1fr !important;
+      gap: 16px !important;
+    }
+    .grid-2 {
+      grid-template-columns: 1fr !important;
+      gap: 16px !important;
+    }
+    .market-grid {
+      grid-template-columns: 1fr !important;
+      gap: 12px !important;
+    }
+    .form-row {
+      flex-direction: column !important;
+      gap: 12px !important;
+    }
+    .topbar {
+      padding: 0 20px !important;
+    }
+    .content {
+      padding: 20px !important;
+    }
+    .chat-layout {
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    .chat-sidebar {
+      width: 100% !important;
+      border-right: none !important;
+      border-bottom: 1px solid var(--border) !important;
+      max-height: 200px !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .stats-row {
+      grid-template-columns: 1fr !important;
+    }
+    .topbar {
+      height: auto !important;
+      padding: 16px 20px !important;
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 10px !important;
+    }
+    .topbar-right {
+      width: 100% !important;
+      justify-content: space-between !important;
+    }
+  }
 </style>
 </head>
 <body>
 
 <!-- Sidebar -->
 <aside class="sidebar">
-  <div class="logo-wrap">
-    <div class="logo-drop"></div>
-    <div class="logo-name">AgroNexa LK</div>
-    <div class="logo-tag">Smart Farming Platform</div>
+  <div class="logo-wrap" style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <div class="logo-drop"></div>
+      <div class="logo-name">AgroNexa LK</div>
+      <div class="logo-tag">Smart Farming Platform</div>
+    </div>
+    <button class="sidebar-close-btn" onclick="toggleSidebar()" style="display:none; background:none; border:none; color:#fff; font-size:28px; cursor:pointer; line-height:1;">&times;</button>
   </div>
 
   <div class="user-card">
@@ -381,6 +463,9 @@
 <!-- Main -->
 <div class="main">
   <div class="topbar">
+    <button class="burger-menu-btn" onclick="toggleSidebar()" style="display:none; background:none; border:none; color:var(--text); cursor:pointer; padding:8px 8px 8px 0; margin-right:4px; line-height:1; align-items:center;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
     <div class="page-title" id="page-greeting">Buyer Dashboard</div>
     <div class="topbar-right">
       <span id="socket-status" class="socket-status"><span class="dot"></span>Connecting...</span>
@@ -1343,6 +1428,12 @@ function switchTab(tab) {
       sectionTransport.style.display = 'block';
       loadTransportDrivers();
     }
+  }
+
+  // Close sidebar on mobile
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar && window.innerWidth <= 768) {
+    sidebar.classList.remove('active');
   }
 }
 
@@ -2504,6 +2595,13 @@ function submitTransportRegistration(e) {
     .catch(err => {
       showToast('Error', err.message, 'error');
     });
+}
+
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar) {
+    sidebar.classList.toggle('active');
+  }
 }
 </script>
 </body>
