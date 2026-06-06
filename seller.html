@@ -30,6 +30,7 @@
   .user-name{font-size:13px;font-weight:500;color:#fff;line-height:1.2}
   .user-role{font-size:11px;color:rgba(255,255,255,0.4);margin-top:1px}
   .role-badge{display:inline-block;padding:2px 8px;background:rgba(82,183,136,0.2);color:var(--green-mid);border-radius:20px;font-size:10px;font-weight:500;margin-top:4px}
+  .verified-badge{display:inline-flex;align-items:center;gap:3px;background:var(--green-pale);color:var(--green);border:1px solid var(--green-light);font-size:9.5px;padding:1px 6px;border-radius:4px;font-weight:600;margin-left:6px}
   nav{padding:16px 12px;flex:1}
   .nav-section{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.25);padding:12px 12px 6px}
   .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;color:rgba(255,255,255,0.55);font-size:13.5px;font-weight:400;margin-bottom:2px;transition:all 0.15s}
@@ -195,6 +196,7 @@
       <div class="user-name">Sunil Karunarathne</div>
       <div class="user-role" id="user-district">Kandy District</div>
       <div class="role-badge">Seller / Farmer</div>
+      <div id="user-status-badge" style="margin-top: 4px;"></div>
       <div id="member-since" style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:4px;"></div>
     </div>
   </div>
@@ -265,7 +267,7 @@
   <div class="content">
 
     <!-- Stats -->
-    <div class="stats-row">
+    <div class="stats-row" id="section-stats">
       <div class="stat-card green">
         <div class="stat-icon green">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2z"/><path d="M12 6v6l4 2"/></svg>
@@ -362,6 +364,9 @@
               <div class="bar-bg"><div class="bar-fill" id="rep-bar-accuracy" style="width:0%"></div></div>
               <div class="rep-row-val" id="rep-val-accuracy">0</div>
             </div>
+          </div>
+          <div style="margin-top: 16px; font-size:11px; color:var(--muted); background:var(--green-pale); border-radius:8px; padding:8px 12px; border:1px solid rgba(82,183,136,0.2); line-height:1.4;">
+            🛡️ <strong>Trust Score:</strong> Your reputation is automatically computed from completed rentals on the AgroNexa blockchain ledger. Verified reviews maintain buyer confidence!
           </div>
         </div>
         <!-- Earnings mini chart -->
@@ -680,6 +685,30 @@ var socket = null;
           document.getElementById('member-since').textContent = 'Member since ' + months[d.getMonth()] + ' ' + d.getFullYear();
         }
 
+        // Render verification badge on sidebar
+        const statusBadgeEl = document.getElementById('user-status-badge');
+        if (statusBadgeEl) {
+          if (p.status === 'approved') {
+            statusBadgeEl.innerHTML = `
+              <span class="status-pill active" style="font-size:9.5px; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 3px; background: var(--green-pale); color: var(--green); border: 1px solid var(--green-light); font-weight:600;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="width:10px;height:10px;color:var(--green);"><polyline points="20 6 9 17 4 12"/></svg> Verified Seller
+              </span>
+            `;
+          } else if (p.status === 'pending') {
+            statusBadgeEl.innerHTML = `
+              <span class="status-pill pending" style="font-size:9.5px; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 3px; background: var(--gold-pale); color: #b5621a; border: 1px solid var(--gold); font-weight:600;">
+                ⏳ Verification Pending
+              </span>
+            `;
+          } else {
+            statusBadgeEl.innerHTML = `
+              <span class="status-pill rejected" style="font-size:9.5px; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 3px; background: var(--amber-pale); color: var(--amber); border: 1px solid var(--amber); font-weight:600;">
+                ❌ Verification Rejected
+              </span>
+            `;
+          }
+        }
+
         // Update topbar greeting
         document.getElementById('page-greeting').textContent = 'Welcome back, ' + p.first_name + ' 👋';
 
@@ -877,7 +906,7 @@ function loadNotificationsInbox() {
     .then(r => r.json())
     .then(data => {
       const container = document.getElementById('notifications-inbox-list');
-      if (!data.success || !data.notifications.length) {
+      if (!data.success || !data.notifications || !data.notifications.length) {
         container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No messages or notifications.</div>';
         return;
       }
@@ -928,7 +957,7 @@ function loadEquipmentData() {
     .then(data => {
       const container = document.getElementById('equipment-listings-list');
       const badge = document.getElementById('sidebar-equipment-count');
-      if (!data.success || !data.listings.length) {
+      if (!data.success || !data.listings || !data.listings.length) {
         container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No equipment listed. Click "+ Add New" to list.</div>';
         if (badge) badge.style.display = 'none';
         return;
@@ -980,7 +1009,7 @@ function loadEquipmentData() {
     .then(data => {
       const container = document.getElementById('equipment-bookings-list');
       const countHeader = document.getElementById('equipment-bookings-count');
-      if (!data.success || !data.bookings.length) {
+      if (!data.success || !data.bookings || !data.bookings.length) {
         container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No incoming booking requests.</div>';
         countHeader.textContent = '0 pending';
         return;
@@ -1188,7 +1217,7 @@ function loadDashboardData() {
     .then(r => r.json())
     .then(data => {
       if (!data.success) return;
-      const activeListings = data.listings.filter(e => e.status !== 'deactivated');
+      const activeListings = (data.listings || []).filter(e => e.status !== 'deactivated');
       const badge = document.getElementById('sidebar-equipment-count');
       if (badge) {
         badge.textContent = activeListings.length;
@@ -1205,7 +1234,7 @@ function loadCropListings() {
     .then(r => r.json())
     .then(data => {
       const container = document.getElementById('crop-listings-list');
-      if (!data.success || !data.listings.length) {
+      if (!data.success || !data.listings || !data.listings.length) {
         container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No active listings. Click "+ Add New" to sell.</div>';
         const sbCount = document.getElementById('sidebar-listings-count');
         if(sbCount) sbCount.textContent = '0';
@@ -1335,7 +1364,7 @@ function loadBuyerRequests() {
       const countBadge = document.getElementById('buyer-requests-count');
       const sidebarBadge = document.getElementById('sidebar-requests-count');
 
-      if (!data.success || !data.requests.length) {
+      if (!data.success || !data.requests || !data.requests.length) {
         container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No incoming buyer requests in your area.</div>';
         countBadge.textContent = '0 new';
         if(sidebarBadge) sidebarBadge.textContent = '0';
@@ -1455,7 +1484,7 @@ function loadLedger() {
     .then(r => r.json())
     .then(data => {
       const container = document.getElementById('ledger-list');
-      if (!data.success || !data.ledger.length) {
+      if (!data.success || !data.ledger || !data.ledger.length) {
         container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No ledger records found.</div>';
         return;
       }

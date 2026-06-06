@@ -29,6 +29,7 @@
   .user-name{font-size:13px;font-weight:500;color:#fff;line-height:1.2}
   .user-role{font-size:11px;color:rgba(255,255,255,0.4);margin-top:1px}
   .role-badge{display:inline-block;padding:2px 8px;background:rgba(77,182,228,0.2);color:var(--teal-light);border-radius:20px;font-size:10px;font-weight:500;margin-top:4px}
+  .verified-badge{display:inline-flex;align-items:center;gap:3px;background:var(--green-pale);color:var(--green);border:1px solid var(--green-light);font-size:9.5px;padding:1px 6px;border-radius:4px;font-weight:600;margin-left:6px}
   nav{padding:16px 12px;flex:1}
   .nav-section{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.25);padding:12px 12px 6px}
   .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;color:rgba(255,255,255,0.55);font-size:13.5px;font-weight:400;margin-bottom:2px;transition:all 0.15s}
@@ -862,7 +863,7 @@ function loadNotificationsInbox() {
     .then(r => r.json())
     .then(data => {
       const container = document.getElementById('notifications-inbox-list');
-      if (!data.success || !data.notifications.length) {
+      if (!data.success || !data.notifications || !data.notifications.length) {
         container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No messages or notifications.</div>';
         return;
       }
@@ -946,7 +947,7 @@ function loadBroadcastsAndResponses() {
       const responsesContainer = document.getElementById('seller-responses-list');
       const headerCount = document.getElementById('responses-header-count');
 
-      if (!data.success || !data.broadcasts.length) {
+      if (!data.success || !data.broadcasts || !data.broadcasts.length) {
         responsesContainer.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No active responses. Broadcast a request first!</div>';
         headerCount.textContent = '0 new';
         return;
@@ -986,14 +987,23 @@ function loadBroadcastsAndResponses() {
         const priceLabel = res.price ? `Rs. ${res.price}/kg` : 'requested price';
         const qtyLabel = res.quantity ? `${res.quantity} kg` : 'requested quantity';
         const counterText = res.type === 'counter' ? 'Counter offer:' : 'Offer details:';
+        const repScore = Math.min(5, (parseInt(res.sellerRep || 0) / 10) * 5).toFixed(1);
 
         html += `
           <div class="msg-item highlight">
-            <div class="msg-top">
-              <div class="msg-from">${res.sellerName || 'Farmer'}</div>
-              <div class="msg-time">${timeAgo}</div>
+            <div class="msg-top" style="display:flex; flex-direction:column; gap:4px; align-items:flex-start;">
+              <div style="display:flex; align-items:center; width:100%; justify-content:space-between;">
+                <div class="msg-from" style="display:flex; align-items:center; gap:4px;">
+                  ${res.sellerName || 'Farmer'}
+                  <span class="verified-badge">✓ Verified</span>
+                </div>
+                <div class="msg-time">${timeAgo}</div>
+              </div>
+              <div style="font-size:11px; color:#f4a261; font-weight:600;">
+                ★ ${repScore} (${res.sellerRep || 0} deals)
+              </div>
             </div>
-            <div class="msg-text">
+            <div class="msg-text" style="margin-top:8px;">
               <strong>${res.crop}</strong> - ${counterText} ${qtyLabel} @ ${priceLabel}.
               <div style="font-style:italic;margin-top:4px;">"${res.message || 'Ready to supply'}"</div>
               <div style="margin-top:6px;font-size:11px;color:var(--teal)">📞 Phone: ${res.sellerPhone || 'N/A'}</div>
@@ -1203,7 +1213,7 @@ function loadBookings() {
     .then(r => r.json())
     .then(data => {
       const container = document.getElementById('bookings-list');
-      if (!data.success || !data.bookings.length) {
+      if (!data.success || !data.bookings || !data.bookings.length) {
         container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No equipment bookings. Visit the marketplace to rent tools!</div>';
         return;
       }
@@ -1287,7 +1297,7 @@ function loadMarketplace() {
     })
       .then(r => r.json())
       .then(data => {
-        if (!data.success || !data.listings.length) {
+        if (!data.success || !data.listings || !data.listings.length) {
           container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;grid-column: span 2;">No crops available matching your search.</div>';
           return;
         }
@@ -1302,11 +1312,20 @@ function loadMarketplace() {
           if (item.name.toLowerCase().includes('onion')) symbol = '🧅';
           if (item.name.toLowerCase().includes('banana')) symbol = '🍌';
 
+          const repScore = Math.min(5, (parseInt(item.seller_rep || 0) / 10) * 5).toFixed(1);
+
           html += `
             <div class="market-card">
               <div class="market-card-img">${symbol}</div>
               <div class="market-card-name">${item.name}</div>
-              <div class="market-card-meta">${item.district || 'Kandy'} · ${item.quantity_kg} kg · Seller rep: ${item.seller_rep || 0}</div>
+              <div class="market-card-meta">${item.district || 'Kandy'} · ${item.quantity_kg} kg</div>
+              <div style="font-size:11.5px; color:var(--text); font-weight:500; display:flex; align-items:center; gap:4px; margin-top:4px;">
+                <span>${item.seller_name}</span>
+                <span class="verified-badge">✓ Verified</span>
+              </div>
+              <div style="font-size:11px; color:#f4a261; font-weight:600; display:flex; align-items:center; gap:2px; margin-top:2px; margin-bottom:6px;">
+                ★ ${repScore} (${item.seller_rep || 0} deals)
+              </div>
               <div class="market-card-price">Rs. ${parseFloat(item.price_per_kg).toFixed(0)}/kg</div>
               <button class="interest-btn" onclick="expressInterest(${item.id})">Express Interest</button>
             </div>
@@ -1321,7 +1340,7 @@ function loadMarketplace() {
     })
       .then(r => r.json())
       .then(data => {
-        if (!data.success || !data.listings.length) {
+        if (!data.success || !data.listings || !data.listings.length) {
           container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;grid-column: span 2;">No equipment available matching your search.</div>';
           return;
         }
@@ -1333,11 +1352,20 @@ function loadMarketplace() {
           if (item.name.toLowerCase().includes('transport') || item.name.toLowerCase().includes('lorry')) symbol = '🚛';
           if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) symbol = '🌿';
 
+          const repScore = Math.min(5, (parseInt(item.owner_rep || 0) / 10) * 5).toFixed(1);
+
           html += `
             <div class="market-card">
               <div class="market-card-img">${symbol}</div>
               <div class="market-card-name">${item.name}</div>
               <div class="market-card-meta">${item.district || 'Kurunegala'} · ${item.condition || 'Good'} condition</div>
+              <div style="font-size:11.5px; color:var(--text); font-weight:500; display:flex; align-items:center; gap:4px; margin-top:4px;">
+                <span>${item.owner_name}</span>
+                <span class="verified-badge">✓ Verified</span>
+              </div>
+              <div style="font-size:11px; color:#f4a261; font-weight:600; display:flex; align-items:center; gap:2px; margin-top:2px; margin-bottom:6px;">
+                ★ ${repScore} (${item.owner_rep || 0} deals)
+              </div>
               <div class="market-card-price">Rs. ${parseFloat(item.rental_rate).toLocaleString()} / day</div>
               <button class="interest-btn" onclick="openBookingModal(${item.id}, ${item.rental_rate}, '${item.name}')">Rent Now</button>
             </div>
@@ -1440,7 +1468,7 @@ function loadLedger() {
     .then(r => r.json())
     .then(data => {
       const container = document.getElementById('ledger-list');
-      if (!data.success || !data.ledger.length) {
+      if (!data.success || !data.ledger || !data.ledger.length) {
         container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No secured agreements found yet. Confirm a booking to write to the ledger.</div>';
         return;
       }

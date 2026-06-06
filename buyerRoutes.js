@@ -167,7 +167,8 @@ router.get('/marketplace/equipment', async (req, res) => {
     const result = await pool.query(
       `SELECT el.*,
               u.first_name || ' ' || u.last_name AS owner_name,
-              u.phone AS owner_phone
+              u.phone AS owner_phone,
+              (SELECT COUNT(*) FROM rental_ledger rl WHERE rl.owner_id = el.owner_id) AS owner_rep
        FROM equipment_listings el
        JOIN users u ON u.id = el.owner_id AND u.status = 'approved'
        WHERE ${filters.join(' AND ')}
@@ -455,7 +456,8 @@ router.get('/broadcasts', async (req, res) => {
                    'id', rr.id, 'type', rr.type, 'price', rr.price,
                    'quantity', rr.quantity, 'message', rr.message,
                    'seller_name', u.first_name || ' ' || u.last_name,
-                   'seller_phone', u.phone, 'created_at', rr.created_at
+                   'seller_phone', u.phone, 'created_at', rr.created_at,
+                   'seller_rep', (SELECT COUNT(*) FROM rental_ledger rl WHERE rl.owner_id = rr.seller_id)
                  ) ORDER BY rr.created_at DESC
                )
                FROM request_responses rr
@@ -486,7 +488,8 @@ router.get('/broadcasts/:id', async (req, res) => {
                    'seller_id', rr.seller_id,
                    'seller_name', u.first_name || ' ' || u.last_name,
                    'seller_phone', u.phone, 'seller_district', u.district,
-                   'created_at', rr.created_at
+                   'created_at', rr.created_at,
+                   'seller_rep', (SELECT COUNT(*) FROM rental_ledger rl WHERE rl.owner_id = rr.seller_id)
                  ) ORDER BY rr.created_at ASC
                )
                FROM request_responses rr
