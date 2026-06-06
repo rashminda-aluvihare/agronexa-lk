@@ -1,57 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AgroNexa LK – Buyer Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   :root{
-    --teal:#1b6ca8;--teal-light:#4db6e4;--teal-pale:#dff0fa;--teal-mid:#64b5d6;
+    --teal:#1a4f72;--teal-light:#4db6e4;--teal-pale:#e3f2fd;--teal-mid:#2b7a9e;
     --amber:#e76f51;--amber-pale:#fde8e0;
     --green:#2d6a4f;--green-pale:#d8f3dc;--green-light:#52b788;
-    --surface:#f5f8fb;--card:#ffffff;--border:#e2e9f0;
-    --text:#141d2b;--muted:#617080;--hint:#99aab5;
-    --sidebar:#141d2b;--sidebar-active:#1b6ca8;
+    --surface:#f4f6f8;--card:#ffffff;--border:#dbe2e8;
+    --text:#16222c;--muted:#5e6d7a;--hint:#90a1b0;
+    --sidebar:#16222c;--sidebar-active:#1b6ca8;
   }
-  body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text);display:flex;min-height:100vh}
+  body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text);display:flex;min-height:100vh;transition:background 0.3s, color 0.3s}
 
-  .sidebar{width:240px;background:var(--sidebar);display:flex;flex-direction:column;flex-shrink:0}
+  /* Sidebar */
+  .sidebar{width:240px;background:linear-gradient(180deg, #16222c 0%, #0d141b 100%);display:flex;flex-direction:column;flex-shrink:0}
   .logo-wrap{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,0.07)}
-  .logo-drop{display:inline-block;width:32px;height:32px;background:var(--teal-light);border-radius:50% 50% 8px 50%;margin-bottom:8px}
+  .logo-drop{display:inline-block;width:32px;height:32px;background:var(--teal-light);border-radius:50% 50% 8px 50%;margin-bottom:8px;box-shadow: 0 4px 10px rgba(77,182,228,0.3)}
   .logo-name{font-family:'DM Serif Display',serif;color:#fff;font-size:18px;letter-spacing:-0.3px;line-height:1.1}
   .logo-tag{color:rgba(255,255,255,0.35);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-top:2px}
   .user-card{padding:20px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.07)}
-  .avatar{width:38px;height:38px;border-radius:50%;background:var(--teal-mid);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;color:#fff;flex-shrink:0}
+  .avatar{width:38px;height:38px;border-radius:50%;background:var(--teal-mid);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;color:#fff;flex-shrink:0;box-shadow:0 3px 6px rgba(0,0,0,0.15)}
   .user-name{font-size:13px;font-weight:500;color:#fff;line-height:1.2}
   .user-role{font-size:11px;color:rgba(255,255,255,0.4);margin-top:1px}
-  .role-badge{display:inline-block;padding:2px 8px;background:rgba(77,182,228,0.2);color:var(--teal-light);border-radius:20px;font-size:10px;font-weight:500;margin-top:4px}
+  .role-badge{display:inline-block;padding:2px 8px;background:rgba(77,182,228,0.12);color:var(--teal-light);border:1px solid rgba(77,182,228,0.2);border-radius:20px;font-size:10px;font-weight:500;margin-top:4px}
   .verified-badge{display:inline-flex;align-items:center;gap:3px;background:var(--green-pale);color:var(--green);border:1px solid var(--green-light);font-size:9.5px;padding:1px 6px;border-radius:4px;font-weight:600;margin-left:6px}
   nav{padding:16px 12px;flex:1}
   .nav-section{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.25);padding:12px 12px 6px}
-  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;color:rgba(255,255,255,0.55);font-size:13.5px;font-weight:400;margin-bottom:2px;transition:all 0.15s}
-  .nav-item:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.85)}
-  .nav-item.active{background:var(--sidebar-active);color:#fff;font-weight:500}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;color:rgba(255,255,255,0.55);font-size:13.5px;font-weight:400;margin-bottom:2px;position:relative;transition:all 0.25s cubic-bezier(0.4, 0, 0.2, 1)}
+  .nav-item::before{content:'';position:absolute;left:0;top:20%;height:60%;width:3px;background:var(--teal-light);border-radius:0 4px 4px 0;opacity:0;transition:opacity 0.25s}
+  .nav-item:hover::before, .nav-item.active::before{opacity:1}
+  .nav-item:hover{background:rgba(255,255,255,0.05);color:#fff;padding-left:16px}
+  .nav-item.active{background:var(--sidebar-active);color:#fff;font-weight:500;padding-left:16px;box-shadow: 0 4px 12px rgba(27,108,168,0.25)}
   .nav-item svg{width:16px;height:16px;flex-shrink:0}
   .nav-badge{margin-left:auto;background:var(--amber);color:#fff;font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px}
   .sidebar-bottom{padding:20px 24px;border-top:1px solid rgba(255,255,255,0.07)}
-  .logout-btn{color:rgba(255,255,255,0.35);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px}
+  .logout-btn{color:rgba(255,255,255,0.35);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:color 0.2s}
+  .logout-btn:hover{color:rgba(255,255,255,0.75)}
 
+  /* Main */
   .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-  .topbar{background:var(--card);border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between}
+  .topbar{background:var(--card);border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;transition:background 0.3s, border-color 0.3s}
   .page-title{font-family:'DM Serif Display',serif;font-size:20px;color:var(--text)}
   .topbar-right{display:flex;align-items:center;gap:16px}
-  .notif-btn{position:relative;width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer}
-  .notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--amber);border-radius:50%;border:2px solid #fff}
+  .notif-btn{position:relative;width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s}
+  .notif-btn:hover{background:var(--surface);transform:scale(1.05)}
+  .notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--amber);border-radius:50%;border:2px solid var(--card)}
   .date-chip{background:var(--teal-pale);color:var(--teal);font-size:12px;font-weight:500;padding:6px 14px;border-radius:20px}
 
   .content{flex:1;overflow-y:auto;padding:28px 32px;display:flex;flex-direction:column;gap:24px}
 
+  /* Stats row */
   .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 22px;position:relative;overflow:hidden}
+  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 22px;position:relative;overflow:hidden;box-shadow:0 4px 10px rgba(22,34,44,0.03);transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s}
+  .stat-card:hover{transform:translateY(-4px);box-shadow: 0 16px 32px rgba(22,34,44,0.08);border-color: rgba(77, 182, 228, 0.3)}
   .stat-card::after{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:0.07}
   .stat-card.teal::after{background:var(--teal)}
   .stat-card.amber::after{background:var(--amber)}
@@ -73,60 +83,73 @@
   .stat-delta.up{color:var(--green)}
   .stat-delta.neutral{color:var(--muted)}
 
+  /* Grids */
   .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
   .grid-3{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:20px}
-  .panel{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 24px}
-  .panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-  .panel-title{font-size:14px;font-weight:500;color:var(--text)}
-  .panel-action{font-size:12px;color:var(--teal);cursor:pointer;font-weight:500}
 
-  /* Broadcast request form-like */
-  .broadcast-panel{background:linear-gradient(135deg,#dff0fa 0%,#f5f8fb 100%);border:1px solid var(--border);border-radius:14px;padding:22px 24px}
-  .broadcast-title{font-size:14px;font-weight:500;color:var(--teal);margin-bottom:4px}
+  .panel{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 24px;box-shadow:0 4px 10px rgba(22,34,44,0.03);transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s}
+  .panel:hover{box-shadow: 0 16px 32px rgba(22,34,44,0.06);border-color: rgba(77, 182, 228, 0.15)}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .panel-title{font-size:14px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px}
+  .panel-action{font-size:12px;color:var(--teal-light);cursor:pointer;font-weight:600;transition:color 0.2s}
+  .panel-action:hover{color:var(--teal-mid)}
+
+  /* Broadcast Request Panel */
+  .broadcast-panel{background:linear-gradient(135deg,#e3f2fd 0%,#f5f8fb 100%);border:1px solid var(--border);border-radius:14px;padding:22px 24px;box-shadow:0 4px 10px rgba(22,34,44,0.03);transition:transform 0.3s, box-shadow 0.3s}
+  .broadcast-panel:hover{transform:translateY(-4px);box-shadow: 0 16px 32px rgba(22,34,44,0.08);border-color: rgba(77,182,228,0.3)}
+  .broadcast-title{font-size:14px;font-weight:600;color:var(--teal);margin-bottom:4px}
   .broadcast-sub{font-size:12px;color:var(--muted);margin-bottom:16px}
   .form-row{display:flex;gap:12px;margin-bottom:12px}
   .form-field{flex:1;display:flex;flex-direction:column;gap:5px}
-  .form-label{font-size:11px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:0.5px}
-  .form-input{background:#fff;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none}
-  .form-input:focus{border-color:var(--teal-light)}
-  .broadcast-btn{background:var(--teal);color:#fff;border:none;border-radius:10px;padding:10px 22px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:8px;transition:background 0.15s}
-  .broadcast-btn:hover{background:#155d94}
+  .form-label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+  .form-input{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;transition:all 0.2s}
+  .form-input:focus{border-color:var(--teal-light);box-shadow: 0 0 0 3px rgba(77, 182, 228, 0.15)}
+  .broadcast-btn{background:var(--teal);color:#fff;border:none;border-radius:10px;padding:10px 22px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:8px;transition:all 0.2s}
+  .broadcast-btn:hover{background:var(--teal-mid);transform:translateY(-2px);box-shadow:0 4px 12px rgba(27,108,168,0.2)}
   .broadcast-note{font-size:11px;color:var(--muted);margin-top:10px}
 
-  /* Marketplace listings */
+  /* Items lists & cards */
+  .booking-item, .market-card, .msg-item {
+    padding:16px;margin-bottom:12px;border-radius:12px;background:var(--card);border:1px solid var(--border);transition:all 0.2s ease;
+  }
+  .booking-item:hover, .market-card:hover, .msg-item:hover {
+    border-color:var(--teal-light);box-shadow: 0 4px 12px rgba(22,34,44,0.04);transform: translateX(2px);
+  }
+
+  /* Marketplace Cards */
   .market-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .market-card{border:1px solid var(--border);border-radius:12px;padding:14px;background:var(--surface)}
+  .market-card{margin-bottom:0}
   .market-card-img{width:100%;height:80px;border-radius:8px;background:var(--teal-pale);display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:10px}
-  .market-card-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px}
+  .market-card-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
   .market-card-meta{font-size:11.5px;color:var(--muted);margin-bottom:8px}
   .market-card-price{font-size:14px;font-weight:600;color:var(--teal)}
-  .interest-btn{margin-top:8px;width:100%;background:var(--teal-pale);color:var(--teal);border:none;border-radius:8px;padding:7px 0;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.15s}
-  .interest-btn:hover{background:#b8dff5}
+  .interest-btn{margin-top:8px;width:100%;background:var(--teal-pale);color:var(--teal);border:none;border-radius:8px;padding:8px 0;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s}
+  .interest-btn:hover{background:var(--teal-light);color:#fff;transform:translateY(-1px)}
 
   /* Bookings */
-  .booking-item{display:flex;align-items:flex-start;gap:12px;padding:13px 0;border-bottom:1px solid var(--border)}
-  .booking-item:last-child{border-bottom:none}
+  .booking-item{align-items:center;gap:12px;margin-bottom:12px}
   .booking-icon{width:40px;height:40px;border-radius:10px;background:var(--teal-pale);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
   .booking-info{flex:1}
-  .booking-name{font-size:13.5px;font-weight:500;color:var(--text)}
+  .booking-name{font-size:13.5px;font-weight:600;color:var(--text)}
   .booking-owner{font-size:12px;color:var(--muted);margin-top:2px}
   .booking-dates{font-size:11.5px;color:var(--muted);margin-top:4px;display:flex;gap:14px}
-  .booking-status{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;flex-shrink:0;margin-top:4px;align-self:flex-start}
+  .booking-status{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;flex-shrink:0;align-self:center}
   .booking-status.confirmed{background:var(--green-pale);color:var(--green)}
   .booking-status.pending{background:#fff8e6;color:#b5621a}
   .booking-status.rejected{background:#fdeaea;color:#c53030}
 
-  /* Response messages */
-  .msg-item{padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid var(--border);background:var(--surface)}
+  /* Response Messages */
+  .msg-item{margin-bottom:12px}
   .msg-item.highlight{background:var(--teal-pale);border-color:#b8dff5}
-  .msg-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-  .msg-from{font-size:12.5px;font-weight:500;color:var(--text)}
+  .msg-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;width:100%}
+  .msg-from{font-size:12.5px;font-weight:600;color:var(--text)}
   .msg-time{font-size:11px;color:var(--hint)}
   .msg-text{font-size:12.5px;color:var(--muted);line-height:1.5}
   .msg-actions{display:flex;gap:6px;margin-top:8px}
-  .btn-sm{padding:5px 14px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:none;transition:all 0.15s;font-family:'DM Sans',sans-serif}
+  .btn-sm{padding:6px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;font-family:'DM Sans',sans-serif}
+  .btn-sm:hover{transform:translateY(-1px);box-shadow: 0 4px 10px rgba(0,0,0,0.1)}
   .btn-confirm{background:var(--teal);color:#fff}
-  .btn-confirm:hover{background:#155d94}
+  .btn-confirm:hover{background:var(--teal-mid)}
   .btn-decline{background:var(--surface);color:var(--muted);border:1px solid var(--border)}
 
   .dot-live{width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:5px;animation:pulse 2s infinite}
@@ -134,17 +157,28 @@
 
   /* Search bar */
   .search-bar{display:flex;gap:10px;margin-bottom:16px}
-  .search-input{flex:1;background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none}
-  .search-input:focus{border-color:var(--teal-light)}
+  .search-input{flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;transition:all 0.2s}
+  .search-input:focus{border-color:var(--teal-light);box-shadow:0 0 0 3px rgba(77, 182, 228, 0.15)}
   .filter-btn{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:13px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif}
+
+  /* Scrollbars */
+  ::-webkit-scrollbar {width:6px;height:6px}
+  ::-webkit-scrollbar-track {background:transparent}
+  ::-webkit-scrollbar-thumb {background:var(--border);border-radius:4px}
+  ::-webkit-scrollbar-thumb:hover {background:var(--hint)}
+
+  /* Modals */
+  .modal-overlay{position:fixed;inset:0;background:rgba(22,34,44,0.6);backdrop-filter:blur(4px);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity 0.25s ease}
 
   /* Dark mode overrides */
   body.dark {
-    --surface: #0f172a;
-    --card: #1e293b;
-    --border: #334155;
-    --text: #f8fafc;
-    --muted: #94a3b8;
+    --surface: #0a0d10;
+    --card: #12171c;
+    --border: #232c35;
+    --text: #f0f3f6;
+    --muted: #889bad;
+    --hint: #4d5d6c;
+    --sidebar: #080a0c;
     background: var(--surface);
     color: var(--text);
   }
@@ -157,25 +191,118 @@
     border-color: var(--border);
   }
   body.dark .form-input, body.dark .search-input {
-    background: #0f172a;
+    background: #0a0d10;
     border-color: var(--border);
     color: var(--text);
   }
   body.dark .market-card {
-    background: #0f172a;
+    background: #12171c;
     border-color: var(--border);
   }
   body.dark .booking-item, body.dark .msg-item {
     border-color: var(--border);
-    background: #0f172a;
+    background: #12171c;
   }
   body.dark .msg-item.highlight {
-    background: rgba(27,108,168,0.15);
-    border-color: rgba(77,182,228,0.3);
+    background: rgba(27,108,168,0.08);
+    border-color: rgba(77,182,228,0.25);
   }
   body.dark .page-title {
     color: var(--text);
   }
+  body.dark .btn-decline {
+    background: #12171c;
+    color: var(--muted);
+    border-color: var(--border);
+  }
+  body.dark .modal-overlay {
+    background: rgba(0,0,0,0.8);
+  }
+
+  /* Chat Window Styling */
+  .chat-layout { display: grid; grid-template-columns: 280px 1fr; gap: 0; height: 600px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+  .chat-sidebar { border-right: 1px solid var(--border); display: flex; flex-direction: column; height: 100%; background: var(--surface); }
+  .chat-sidebar-header { padding: 16px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); border-bottom: 1px solid var(--border); background: var(--card); }
+  .chat-list { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .chat-user-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; cursor: pointer; transition: all 0.2s; background: var(--card); border: 1px solid var(--border); }
+  .chat-user-item:hover { border-color: var(--teal-light); transform: translateX(2px); }
+  .chat-user-item.active { background: var(--teal-pale); border-color: var(--teal-light); box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+  body.dark .chat-user-item.active { background: rgba(77, 182, 228, 0.08); border-color: var(--teal-light); }
+  .chat-user-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--teal-mid); color: #fff; font-weight: 600; display: flex; align-items: center; justify-content: center; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex-shrink: 0; }
+  .chat-user-info { flex: 1; min-width: 0; }
+  .chat-user-name { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chat-user-meta { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+  .chat-unread-badge { background: var(--amber); color: #fff; font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 10px; margin-left: auto; }
+  .chat-main { display: flex; flex-direction: column; height: 100%; background: var(--card); }
+  .chat-main-header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .chat-main-title { font-size: 14px; font-weight: 600; color: var(--text); }
+  .chat-messages-container { flex: 1; overflow-y: auto; padding: 24px; background: var(--surface); display: flex; flex-direction: column; gap: 16px; }
+  .chat-bubble { max-width: 65%; padding: 12px 16px; border-radius: 12px; font-size: 13px; line-height: 1.5; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.02); word-break: break-word; }
+  .chat-bubble.sent { background: var(--teal); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .chat-bubble.received { background: var(--card); color: var(--text); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--border); }
+  .chat-bubble-time { font-size: 9px; color: inherit; opacity: 0.65; margin-top: 5px; text-align: right; }
+  .chat-input-area { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; align-items: center; background: var(--card); }
+  .chat-input { flex: 1; border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; outline: none; font-size: 13.5px; background: var(--surface); color: var(--text); transition: all 0.2s; font-family: inherit; }
+  .chat-input:focus { border-color: var(--teal-light); background: var(--card); box-shadow: 0 0 0 3px rgba(77, 182, 228, 0.15); }
+  .chat-send-btn { background: var(--teal); color: #fff; border: none; border-radius: 10px; padding: 12px 20px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+  .chat-send-btn:hover { background: var(--teal-mid); transform: translateY(-1px); }
+
+  /* Leaflet custom styles */
+  .custom-leaflet-marker:hover .map-pin-emoji {
+    transform: scale(1.15);
+  }
+  
+  /* Leaflet dark mode overrides */
+  body.dark .leaflet-tile-container {
+    filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+  }
+  body.dark .leaflet-container {
+    background: #0a0d10 !important;
+    border-color: var(--border) !important;
+  }
+  body.dark .leaflet-bar a {
+    background-color: #12171c !important;
+    color: #f0f3f6 !important;
+    border-bottom: 1px solid #232c35 !important;
+  }
+  body.dark .leaflet-bar a:hover {
+    background-color: #1a232d !important;
+  }
+  body.dark .leaflet-popup-content-wrapper {
+    background: #12171c !important;
+    color: #f0f3f6 !important;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.5) !important;
+  }
+  body.dark .leaflet-popup-tip {
+    background: #12171c !important;
+  }
+  body.dark .leaflet-popup-content h4 {
+    color: #f0f3f6 !important;
+  }
+  body.dark .leaflet-popup-content div {
+    color: #889bad !important;
+  }
+
+  /* Toast Notifications */
+  #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+  .toast { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; min-width: 280px; max-width: 360px; box-shadow: 0 12px 32px rgba(22,34,44,0.12); display: flex; align-items: flex-start; gap: 12px; pointer-events: all; animation: toastIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+  .toast.removing { animation: toastOut 0.3s ease forwards; }
+  .toast-icon { font-size: 18px; line-height: 1; flex-shrink: 0; margin-top: 1px; }
+  .toast-body { flex: 1; }
+  .toast-title { font-weight: 600; font-size: 13px; color: var(--text); margin-bottom: 2px; }
+  .toast-msg { font-size: 12px; color: var(--muted); line-height: 1.4; }
+  .toast-close { background: none; border: none; color: var(--hint); cursor: pointer; font-size: 16px; line-height: 1; padding: 0; flex-shrink: 0; }
+  .toast.success { border-left: 3px solid var(--green-light); }
+  .toast.error { border-left: 3px solid var(--amber); }
+  .toast.info { border-left: 3px solid var(--teal-light); }
+  .toast.warning { border-left: 3px solid #f4a261; }
+  @keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(40px); } }
+
+  /* Socket status */
+  .socket-status { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; padding: 3px 8px; border-radius: 20px; background: rgba(45,106,79,0.1); color: var(--green-light); }
+  .socket-status.disconnected { background: rgba(231,111,81,0.1); color: var(--amber); }
+  .socket-status .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 </style>
 </head>
 <body>
@@ -189,10 +316,10 @@
   </div>
 
   <div class="user-card">
-    <div class="avatar" id="user-avatar">CP</div>
+    <div class="avatar" id="user-avatar">--</div>
     <div>
-      <div class="user-name" id="user-name">Chaminda Perera</div>
-      <div class="user-role" id="user-district">Colombo District</div>
+      <div class="user-name" id="user-name">Loading...</div>
+      <div class="user-role" id="user-district">Loading...</div>
       <div class="role-badge">Buyer</div>
       <div id="member-since" style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:4px;"></div>
     </div>
@@ -251,7 +378,7 @@
   <div class="topbar">
     <div class="page-title" id="page-greeting">Buyer Dashboard</div>
     <div class="topbar-right">
-      <span class="dot-live"></span><span style="font-size:12px;color:var(--muted)">Live</span>
+      <span id="socket-status" class="socket-status"><span class="dot"></span>Connecting...</span>
       <div class="notif-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         <div class="notif-dot"></div>
@@ -383,6 +510,7 @@
           <input class="search-input" id="market-search" type="text" placeholder="Search produce or equipment..." oninput="loadMarketplace()">
           <button class="filter-btn" id="market-toggle-btn" onclick="toggleMarketType()" style="white-space:nowrap;">🚜 View Equipment</button>
         </div>
+        <div id="market-map" style="height: 350px; border-radius: 12px; margin-bottom: 15px; display: none;"></div>
         <div id="marketplace-grid" class="market-grid" style="max-height: 350px; overflow-y: auto; padding-right: 5px;">
           <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Loading marketplace...</div>
         </div>
@@ -390,7 +518,7 @@
     </div>
 
     <!-- EQUIPMENT BOOKING MODAL -->
-    <div id="book-equip-modal" style="display:none;position:fixed;inset:0;background:rgba(20,29,43,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
+    <div id="book-equip-modal" style="display:none;position:fixed;inset:0;background:rgba(20,29,43,0.7);backdrop-filter:blur(4px);z-index:2000;align-items:center;justify-content:center;">
       <div style="background:#fff;border-radius:20px;padding:32px;max-width:400px;width:95%;box-shadow:0 20px 60px rgba(20,29,43,0.3);border:1px solid var(--border);position:relative;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
           <h3 style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--text)" id="book-equip-title">Book Equipment</h3>
@@ -511,26 +639,76 @@
           </div>
           <button class="interest-btn" id="dark-mode-btn" onclick="toggleDarkModeSetting()" style="width:140px; margin-top:0;">Toggle Dark Mode</button>
         </div>
-        <div>
-          <div style="font-size:14px; font-weight:500; color:var(--text); margin-bottom:10px;">Security</div>
-          <div style="font-size:12px; color:var(--muted);">Standard JWT encryption is active for your session.</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px;">
+          <div>
+            <div style="font-size:14px; font-weight:500; color:var(--text);">Websocket Diagnostic</div>
+            <div style="font-size:12px; color:var(--muted);">Check real-time network connection latency</div>
+          </div>
+          <button class="interest-btn" onclick="checkWebsocketPing()" style="width:140px; margin-top:0; height:38px; cursor:pointer; background:var(--teal); color:#fff;">Ping Latency</button>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-size:14px; font-weight:500; color:var(--text); margin-bottom:10px;">Security</div>
+            <div style="font-size:12px; color:var(--muted);">Standard JWT encryption is active for your session.</div>
+          </div>
+          <span style="font-size:11px; color:var(--teal-light); font-weight:600; background:var(--teal-pale); border:1px solid var(--teal-light); padding:4px 8px; border-radius:4px;">ACTIVE (JWT)</span>
         </div>
       </div>
     </div>
 
     <!-- Messages Section -->
-    <div class="panel" id="section-messages" style="display:none;">
-      <div class="panel-head">
-        <div class="panel-title">💬 Messages & Notifications</div>
-        <div class="panel-action" onclick="markAllNotificationsRead()" style="cursor:pointer">Mark all as read</div>
+    <div id="section-messages" style="display:none; display:flex; flex-direction:column; gap:24px; width: 100%;">
+      <div class="panel" style="padding:0; overflow:hidden; border-radius:14px;">
+        <div class="chat-layout">
+          <!-- Chat Sidebar (Active Conversations) -->
+          <div class="chat-sidebar">
+            <div class="chat-sidebar-header">
+              💬 Active Chats
+            </div>
+            <div class="chat-list" id="chat-conversations-list">
+              <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No active chats.</div>
+            </div>
+          </div>
+          <!-- Chat Main Window -->
+          <div class="chat-main" id="chat-window-empty">
+            <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; background:var(--surface); color:var(--muted);">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <div style="font-size:14px; font-weight:500;">Select a contact to start messaging</div>
+            </div>
+          </div>
+          <div class="chat-main" id="chat-window-active" style="display:none;">
+            <div class="chat-main-header">
+              <div>
+                <div class="chat-main-title" id="chat-active-name">Seller Name</div>
+                <div style="font-size:11px; color:var(--muted); margin-top:2px;" id="chat-active-role">Seller</div>
+              </div>
+              <div class="verified-badge">Verified Farmer</div>
+            </div>
+            <div class="chat-messages-container" id="chat-messages-box">
+              <!-- Messages bubbles will populate here -->
+            </div>
+            <form class="chat-input-area" onsubmit="sendChatMessage(event)">
+              <input type="text" class="chat-input" id="chat-message-input" placeholder="Type a message..." required autocomplete="off">
+              <button type="submit" class="chat-send-btn">Send</button>
+            </form>
+          </div>
+        </div>
       </div>
-      <div id="notifications-inbox-list" style="display:flex; flex-direction:column; gap:12px; max-height:400px; overflow-y:auto; padding-right:5px;">
-        <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No messages or notifications.</div>
+      
+      <!-- System Notifications -->
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">🔔 System Notifications & Alerts</div>
+          <div class="panel-action" onclick="markAllNotificationsRead()" style="cursor:pointer">Mark all as read</div>
+        </div>
+        <div id="notifications-inbox-list" style="display:flex; flex-direction:column; gap:12px; max-height:250px; overflow-y:auto; padding-right:5px;">
+          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No messages or notifications.</div>
+        </div>
       </div>
     </div>
 
     <!-- EQUIPMENT BOOKING MODAL -->
-    <div id="book-equip-modal" style="display:none;position:fixed;inset:0;background:rgba(20,29,43,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
+    <div id="book-equip-modal" style="display:none;position:fixed;inset:0;background:rgba(20,29,43,0.7);backdrop-filter:blur(4px);z-index:2000;align-items:center;justify-content:center;">
       <div style="background:#fff;border-radius:20px;padding:32px;max-width:400px;width:95%;box-shadow:0 20px 60px rgba(20,29,43,0.3);border:1px solid var(--border);position:relative;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
           <h3 style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--text)" id="book-equip-title">Book Equipment</h3>
@@ -560,7 +738,7 @@
     </div>
 
     <!-- EDIT REQUEST MODAL -->
-    <div id="edit-request-modal" style="display:none;position:fixed;inset:0;background:rgba(20,29,43,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
+    <div id="edit-request-modal" style="display:none;position:fixed;inset:0;background:rgba(20,29,43,0.7);backdrop-filter:blur(4px);z-index:2000;align-items:center;justify-content:center;">
       <div style="background:#fff;border-radius:20px;padding:32px;max-width:400px;width:95%;box-shadow:0 20px 60px rgba(20,29,43,0.3);border:1px solid var(--border);position:relative;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
           <h3 style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--text)">Edit Request</h3>
@@ -596,13 +774,61 @@
   </div>
 </div>
 
+<div id="toast-container"></div>
 <script>
-var API_URL = window.location.origin.includes('localhost') ? 'http://localhost:3000' : 'https://agronexa-lk-production.up.railway.app';
+var API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:')
+  ? 'http://localhost:3000'
+  : 'https://agronexa-lk-production.up.railway.app';
+
+// ── TOAST NOTIFICATION SYSTEM ──
+function showToast(title, message, type, duration) {
+  type = type || 'info';
+  duration = duration || 4000;
+  const icons = { success: '✅', error: '❌', info: '🔔', warning: '⚠️' };
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  toast.innerHTML = `
+    <div class="toast-icon">${icons[type] || '🔔'}</div>
+    <div class="toast-body">
+      <div class="toast-title">${title}</div>
+      <div class="toast-msg">${message || ''}</div>
+    </div>
+    <button class="toast-close" onclick="this.closest('.toast').remove()">×</button>
+  `;
+  container.appendChild(toast);
+  setTimeout(function() {
+    if (toast.parentNode) {
+      toast.classList.add('removing');
+      setTimeout(function() { if (toast.parentNode) toast.remove(); }, 300);
+    }
+  }, duration);
+}
+
+// ── FORMAT TIME AGO ──
+function formatTimeAgo(date) {
+  if (!date || isNaN(date.getTime())) return '';
+  var now = new Date();
+  var diffMs = now - date;
+  var diffSec = Math.floor(diffMs / 1000);
+  var diffMin = Math.floor(diffSec / 60);
+  var diffHr = Math.floor(diffMin / 60);
+  var diffDay = Math.floor(diffHr / 24);
+  if (diffSec < 60) return 'Just now';
+  if (diffMin < 60) return diffMin + 'm ago';
+  if (diffHr < 24) return diffHr + 'h ago';
+  if (diffDay < 7) return diffDay + 'd ago';
+  return date.toLocaleDateString();
+}
 
 var _user = null;
 var socket = null;
 var marketType = 'crops'; // 'crops' or 'equipment'
 var currentEquipmentRate = 0;
+var activeChatUserId = null;
+var pingStart = 0;
+var marketMap = null;
+var marketMarkers = [];
 
 (function(){
   if (localStorage.getItem('agro_dark_mode') === 'enabled') {
@@ -614,6 +840,12 @@ var currentEquipmentRate = 0;
   if (_user.role !== 'buyer') { window.location.href = 'index.html'; return; }
 
   initSocket();
+
+  // Set current date chip dynamically
+  const dateChip = document.querySelector('.date-chip');
+  if (dateChip) {
+    dateChip.textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  }
 
   // Immediately show session data
   var name = _user.name || _user.email;
@@ -629,7 +861,9 @@ var currentEquipmentRate = 0;
 
   // Fetch full profile
   if (_user.id) {
-    fetch(API_URL + '/api/profile/' + _user.id)
+    fetch(API_URL + '/api/profile/' + _user.id, {
+      headers: getAuthHeaders()
+    })
       .then(function(r){ return r.json(); })
       .then(function(data){
         if (!data.success) return;
@@ -664,9 +898,21 @@ var currentEquipmentRate = 0;
   } else {
     loadDashboardData();
   }
+
+  // Auto-refresh every 30 seconds
+  setInterval(function() {
+    loadDashboardData();
+    console.log('🔄 Auto-refreshed buyer dashboard');
+  }, 30000);
 })();
 
 function initSocket() {
+  if (typeof io === 'undefined') {
+    console.warn('⚠️ Socket.io is not loaded. Real-time updates will be disabled.');
+    var el = document.getElementById('socket-status');
+    if (el) { el.className = 'socket-status disconnected'; el.innerHTML = '<span class="dot"></span>Offline'; }
+    return;
+  }
   socket = io(API_URL);
   
   if (_user && _user.id) {
@@ -681,7 +927,7 @@ function initSocket() {
 
   socket.on('new_notification', function(notif) {
     console.log('🔔 New notification:', notif);
-    alert('🔔 Notification: ' + notif.title + ' - ' + notif.body);
+    showToast(notif.title, notif.body, 'info', 6000);
     loadDashboardData();
   });
 
@@ -689,12 +935,200 @@ function initSocket() {
     console.log('🔄 Real-time requests update received');
     loadDashboardData();
   });
+
+  socket.on('pong_latency', function(data) {
+    const lat = Date.now() - pingStart;
+    showToast('Network Latency', '⚡ ' + lat + 'ms', 'info', 3000);
+  });
+
+  socket.on('connect', function() {
+    var el = document.getElementById('socket-status');
+    if (el) { el.className = 'socket-status'; el.innerHTML = '<span class="dot"></span>Live'; }
+    if (_user && _user.id) socket.emit('join', _user.id);
+    console.log('✅ Buyer socket connected');
+  });
+
+  socket.on('disconnect', function() {
+    var el = document.getElementById('socket-status');
+    if (el) { el.className = 'socket-status disconnected'; el.innerHTML = '<span class="dot"></span>Offline'; }
+    console.log('❌ Buyer socket disconnected');
+  });
+
+  socket.on('connect_error', function() {
+    var el = document.getElementById('socket-status');
+    if (el) { el.className = 'socket-status disconnected'; el.innerHTML = '<span class="dot"></span>Error'; }
+  });
+
+  socket.on('receive_message', function(data) {
+    console.log('💬 New real-time message received:', data);
+    if (activeChatUserId === data.sender_id) {
+      const box = document.getElementById('chat-messages-box');
+      const timeStr = new Date(data.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const bubble = document.createElement('div');
+      bubble.className = 'chat-bubble received';
+      bubble.innerHTML = `
+        <div>${data.message}</div>
+        <div class="chat-bubble-time">${timeStr}</div>
+      `;
+      box.appendChild(bubble);
+      box.scrollTop = box.scrollHeight;
+      
+      // Update read status on backend
+      fetch(API_URL + `/api/buyer/messages?buyer_id=${_user.id}&chat_user_id=${data.sender_id}`, {
+        headers: getAuthHeaders()
+      });
+    } else {
+      loadChatsList();
+    }
+  });
 }
 
 function doLogout(){
   sessionStorage.removeItem('agro_user');
   sessionStorage.removeItem('agro_token');
   window.location.href = 'index.html';
+}
+
+// ── WEBSOCKET LATENCY CHECK ──
+function checkWebsocketPing() {
+  if (!socket) {
+    alert('Websocket not connected');
+    return;
+  }
+  pingStart = Date.now();
+  socket.emit('ping_latency', { time: pingStart });
+}
+
+// ── CHAT UTILS ──
+function startChatWithUser(userId, userName, userRole) {
+  switchTab('messages');
+  openDirectChat(userId, userName, userRole);
+}
+
+// ── LIVE CHAT PANEL FUNCTIONS ──
+function loadChatsList() {
+  if (!_user || !_user.id) return;
+  fetch(API_URL + '/api/buyer/chats?buyer_id=' + _user.id, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      const container = document.getElementById('chat-conversations-list');
+      if (!data.success || !data.chats || !data.chats.length) {
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No active chats.</div>';
+        return;
+      }
+      let html = '';
+      data.chats.forEach(chat => {
+        const activeClass = activeChatUserId === chat.id ? 'active' : '';
+        const unreadBadge = chat.unread_count > 0 ? `<span class="chat-unread-badge">${chat.unread_count}</span>` : '';
+        const initials = chat.name.split(' ').map(w => w[0] || '').join('').toUpperCase().slice(0, 2);
+        const lastMsg = chat.last_message || 'No messages';
+        
+        html += `
+          <div class="chat-user-item ${activeClass}" onclick="openDirectChat(${chat.id}, '${chat.name.replace(/'/g, "\\'")}', '${chat.role}')">
+            <div class="chat-user-avatar">${initials}</div>
+            <div class="chat-user-info">
+              <div class="chat-user-name">${chat.name}</div>
+              <div class="chat-user-meta">${lastMsg}</div>
+            </div>
+            ${unreadBadge}
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    });
+}
+
+function openDirectChat(sellerId, sellerName, sellerRole) {
+  activeChatUserId = sellerId;
+  document.getElementById('chat-window-empty').style.display = 'none';
+  document.getElementById('chat-window-active').style.display = 'flex';
+  document.getElementById('chat-active-name').textContent = sellerName;
+  document.getElementById('chat-active-role').textContent = sellerRole.toUpperCase() + ' · ' + (sellerRole === 'farmer' ? 'Farmer / Seller' : 'Buyer');
+  
+  // Highlight active chat in list
+  const items = document.querySelectorAll('.chat-user-item');
+  items.forEach(item => item.classList.remove('active'));
+  loadChatsList();
+  
+  // Fetch message history
+  fetch(API_URL + `/api/buyer/messages?buyer_id=${_user.id}&chat_user_id=${sellerId}`, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      const box = document.getElementById('chat-messages-box');
+      if (!data.success || !data.messages) {
+        box.innerHTML = '';
+        return;
+      }
+      let html = '';
+      data.messages.forEach(msg => {
+        const isSent = msg.sender_id === _user.id;
+        const bubbleClass = isSent ? 'sent' : 'received';
+        const timeStr = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        html += `
+          <div class="chat-bubble ${bubbleClass}">
+            <div>${msg.message}</div>
+            <div class="chat-bubble-time">${timeStr}</div>
+          </div>
+        `;
+      });
+      box.innerHTML = html;
+      box.scrollTop = box.scrollHeight;
+    });
+}
+
+function sendChatMessage(e) {
+  e.preventDefault();
+  const input = document.getElementById('chat-message-input');
+  const msgText = input.value.trim();
+  if (!msgText || !activeChatUserId) return;
+  
+  // Send via HTTP POST
+  fetch(API_URL + '/api/buyer/messages/send', {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      buyer_id: _user.id,
+      receiver_id: activeChatUserId,
+      message: msgText
+    })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        const msg = data.message;
+        input.value = '';
+        
+        // Append bubble locally
+        const box = document.getElementById('chat-messages-box');
+        const timeStr = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const bubble = document.createElement('div');
+        bubble.className = 'chat-bubble sent';
+        bubble.innerHTML = `
+          <div>${msg.message}</div>
+          <div class="chat-bubble-time">${timeStr}</div>
+        `;
+        box.appendChild(bubble);
+        box.scrollTop = box.scrollHeight;
+        
+        // Emit via socket for real-time delivery
+        if (socket) {
+          socket.emit('send_message', {
+            id: msg.id,
+            sender_id: _user.id,
+            receiver_id: activeChatUserId,
+            message: msgText,
+            created_at: msg.created_at
+          });
+        }
+        
+        // Refresh conversations list to update last message
+        loadChatsList();
+      }
+    });
 }
 
 // ── GET JWT HEADERS ──
@@ -750,10 +1184,16 @@ function switchTab(tab) {
     sectionBookingsMarket.style.display = 'grid';
     panelBookings.style.display = 'block';
     panelMarketplace.style.display = 'block';
+    const mapEl = document.getElementById('market-map');
+    if (mapEl) mapEl.style.display = 'none';
   } else if (tab === 'marketplace') {
     sectionBookingsMarket.style.display = 'block';
     panelBookings.style.display = 'none';
     panelMarketplace.style.display = 'block';
+    const mapEl = document.getElementById('market-map');
+    if (mapEl) mapEl.style.display = 'block';
+    initMarketMap();
+    loadMarketplace();
   } else if (tab === 'requests') {
     sectionBroadcastsResponses.style.display = 'grid';
     panelBroadcastForm.style.display = 'block';
@@ -773,8 +1213,9 @@ function switchTab(tab) {
     sectionSettings.style.display = 'block';
     loadSettingsDetails();
   } else if (tab === 'messages') {
-    sectionMessages.style.display = 'block';
+    sectionMessages.style.display = 'flex';
     loadNotificationsInbox();
+    loadChatsList();
   }
 }
 
@@ -821,7 +1262,7 @@ function saveProfile(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        alert('Profile updated successfully! 💾');
+        showToast('Profile Updated!', 'Your profile has been saved 💾', 'success');
         const p = data.user;
         const fullName = (p.first_name + ' ' + p.last_name).trim();
         const initials = fullName.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
@@ -838,7 +1279,7 @@ function saveProfile(e) {
         sessionStorage.setItem('agro_user', JSON.stringify(_user));
         loadProfileDetails();
       } else {
-        alert('❌ Error updating profile: ' + data.error);
+        showToast('Error', data.error || 'Failed to update profile', 'error');
       }
     });
 }
@@ -968,8 +1409,10 @@ function loadBroadcastsAndResponses() {
               price: r.price,
               quantity: r.quantity,
               message: r.message,
+              sellerId: r.seller_id,
               sellerName: r.seller_name,
               sellerPhone: r.seller_phone,
+              sellerRep: r.seller_rep,
               createdAt: r.created_at
             });
           });
@@ -1012,6 +1455,7 @@ function loadBroadcastsAndResponses() {
             </div>
             <div class="msg-actions">
               <button class="btn-sm btn-confirm" onclick="acceptSellerResponse(${res.broadcastId}, ${res.responseId})">Confirm & Accept</button>
+              <button class="btn-sm btn-confirm" style="background:var(--teal-pale); color:var(--teal);" onclick="startChatWithUser(${res.sellerId}, '${res.sellerName.replace(/'/g, "\\'")}', 'farmer')">💬 Chat</button>
             </div>
           </div>
         `;
@@ -1045,12 +1489,13 @@ function submitBroadcast(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        alert('Buyer request broadcasted to sellers successfully! 📡');
+        showToast('Request Broadcasted!', 'Your request was sent to matching sellers 📡', 'success');
         document.getElementById('broadcast-form').reset();
         if (_user.district) document.getElementById('broadcast-district').value = _user.district;
+        document.getElementById('broadcast-date').value = new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0];
         loadDashboardData();
       } else {
-        alert('❌ Error: ' + data.error);
+        showToast('Error', data.error || 'Failed to broadcast request', 'error');
       }
     });
 }
@@ -1069,10 +1514,10 @@ function acceptSellerResponse(broadcastId, responseId) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        alert('Offer accepted successfully! Contact the seller directly to coordinate delivery.');
+        showToast('Offer Accepted!', 'Contact the seller to coordinate delivery 🤝', 'success');
         loadDashboardData();
       } else {
-        alert('❌ Error: ' + data.error);
+        showToast('Error', data.error || 'Failed to accept offer', 'error');
       }
     });
 }
@@ -1176,11 +1621,11 @@ function submitEditRequest(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        alert('Broadcast request updated successfully! 📡');
+        showToast('Request Updated!', 'Broadcast request updated 📡', 'success');
         closeEditRequestModal();
         loadDashboardData();
       } else {
-        alert('❌ Error: ' + data.error);
+        showToast('Error', data.error || 'Failed to update request', 'error');
       }
     });
 }
@@ -1198,10 +1643,10 @@ function closeRequest(id) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        alert('Broadcast request closed successfully.');
+        showToast('Request Closed', 'Broadcast request has been closed', 'warning');
         loadDashboardData();
       } else {
-        alert('❌ Error: ' + data.error);
+        showToast('Error', data.error || 'Failed to close request', 'error');
       }
     });
 }
@@ -1265,9 +1710,10 @@ function cancelBooking(id) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
+        showToast('Booking Cancelled', 'Equipment booking request cancelled', 'warning');
         loadDashboardData();
       } else {
-        alert('❌ Error: ' + data.error);
+        showToast('Error', data.error || 'Failed to cancel booking', 'error');
       }
     });
 }
@@ -1301,6 +1747,7 @@ function loadMarketplace() {
       .then(data => {
         if (!data.success || !data.listings || !data.listings.length) {
           container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;grid-column: span 2;">No crops available matching your search.</div>';
+          updateMapMarkers([], 'crops');
           return;
         }
 
@@ -1329,11 +1776,15 @@ function loadMarketplace() {
                 ★ ${repScore} (${item.seller_rep || 0} deals)
               </div>
               <div class="market-card-price">Rs. ${parseFloat(item.price_per_kg).toFixed(0)}/kg</div>
-              <button class="interest-btn" onclick="expressInterest(${item.id})">Express Interest</button>
+              <div style="display:flex; gap:6px; margin-top:8px;">
+                <button class="interest-btn" style="margin-top:0;" onclick="expressInterest(${item.id})">Express Interest</button>
+                <button class="interest-btn" style="margin-top:0; background:var(--teal); color:#fff;" onclick="startChatWithUser(${item.seller_id}, '${item.seller_name.replace(/'/g, "\\'")}', 'farmer')">💬 Chat</button>
+              </div>
             </div>
           `;
         });
         container.innerHTML = html;
+        updateMapMarkers(data.listings, 'crops');
       });
   } else {
     // Equipment
@@ -1344,6 +1795,7 @@ function loadMarketplace() {
       .then(data => {
         if (!data.success || !data.listings || !data.listings.length) {
           container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;grid-column: span 2;">No equipment available matching your search.</div>';
+          updateMapMarkers([], 'equipment');
           return;
         }
 
@@ -1369,11 +1821,15 @@ function loadMarketplace() {
                 ★ ${repScore} (${item.owner_rep || 0} deals)
               </div>
               <div class="market-card-price">Rs. ${parseFloat(item.rental_rate).toLocaleString()} / day</div>
-              <button class="interest-btn" onclick="openBookingModal(${item.id}, ${item.rental_rate}, '${item.name}')">Rent Now</button>
+              <div style="display:flex; gap:6px; margin-top:8px;">
+                <button class="interest-btn" style="margin-top:0;" onclick="openBookingModal(${item.id}, ${item.rental_rate}, '${item.name}')">Rent Now</button>
+                <button class="interest-btn" style="margin-top:0; background:var(--teal); color:#fff;" onclick="startChatWithUser(${item.owner_id}, '${item.owner_name.replace(/'/g, "\\'")}', 'farmer')">💬 Chat</button>
+              </div>
             </div>
           `;
         });
         container.innerHTML = html;
+        updateMapMarkers(data.listings, 'equipment');
       });
   }
 }
@@ -1387,10 +1843,10 @@ function expressInterest(cropId) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        alert('Interest registered! The seller has been notified and will contact you. 🥬');
+        showToast('Interest Registered!', 'The seller has been notified and will contact you 🥬', 'success');
         loadDashboardData();
       } else {
-        alert('❌ Error: ' + data.error);
+        showToast('Error', data.error || 'Failed to register interest', 'error');
       }
     });
 }
@@ -1452,11 +1908,11 @@ function submitEquipmentBooking(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        alert('Booking request submitted to owner successfully! 🚜');
+        showToast('Booking Requested!', 'Your equipment rental request was sent to the owner 🚜', 'success');
         closeBookingModal();
         loadDashboardData();
       } else {
-        alert('❌ Error: ' + data.error);
+        showToast('Error', data.error || 'Failed to submit booking', 'error');
       }
     });
 }
@@ -1541,6 +1997,147 @@ function formatTimeAgo(date) {
   interval = Math.floor(seconds / 60);
   if (interval >= 1) return interval + 'm ago';
   return 'just now';
+}
+
+function initMarketMap() {
+  if (marketMap) {
+    setTimeout(() => {
+      marketMap.invalidateSize();
+    }, 50);
+    return;
+  }
+
+  // Centered on Sri Lanka coordinates
+  marketMap = L.map('market-map', { zoomControl: true }).setView([7.8731, 80.7718], 8);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(marketMap);
+}
+
+function updateMapMarkers(listings, type) {
+  if (!marketMap) return;
+
+  // Clear existing markers
+  marketMarkers.forEach(m => marketMap.removeLayer(m));
+  marketMarkers = [];
+
+  if (!listings || !listings.length) return;
+
+  const districtCoords = {
+    'colombo': [6.9271, 79.8612],
+    'gampaha': [7.0873, 80.0144],
+    'kalutara': [6.5854, 79.9607],
+    'kandy': [7.2906, 80.6337],
+    'matale': [7.4675, 80.6234],
+    'nuwara eliya': [6.9497, 80.7891],
+    'galle': [6.0535, 80.2210],
+    'matara': [5.9549, 80.5550],
+    'hambantota': [6.1248, 81.1185],
+    'jaffna': [9.6615, 80.0255],
+    'kilinochchi': [9.3803, 80.3992],
+    'mannar': [8.9810, 79.9044],
+    'vavuniya': [8.7542, 80.4982],
+    'mullaitivu': [9.2671, 80.8142],
+    'batticaloa': [7.7170, 81.7010],
+    'ampara': [7.3018, 81.6747],
+    'trincomalee': [8.5873, 81.2152],
+    'kurunegala': [7.4863, 80.3647],
+    'puttalam': [8.0330, 79.8258],
+    'anuradhapura': [8.3114, 80.4037],
+    'polonnaruwa': [7.9397, 81.0026],
+    'badulla': [6.9934, 81.0550],
+    'moneragala': [6.8744, 81.3524],
+    'ratnapura': [6.6828, 80.3992],
+    'kegalle': [7.2513, 80.3464]
+  };
+
+  const countPerDistrict = {};
+
+  listings.forEach(item => {
+    let districtName = (item.district || '').toLowerCase().trim();
+    let coords = districtCoords[districtName] || [7.8731, 80.7718];
+
+    if (!countPerDistrict[districtName]) {
+      countPerDistrict[districtName] = 0;
+    }
+    countPerDistrict[districtName]++;
+
+    let finalCoords = [...coords];
+    if (countPerDistrict[districtName] > 1) {
+      const index = countPerDistrict[districtName] - 1;
+      const angle = index * 0.785;
+      const radius = 0.015 * Math.ceil(index / 8);
+      finalCoords[0] += Math.sin(angle) * radius;
+      finalCoords[1] += Math.cos(angle) * radius;
+    }
+
+    let color = type === 'crops' ? '#2d6a4f' : '#e76f51';
+    let symbol = '🥬';
+    if (type === 'crops') {
+      if (item.name.toLowerCase().includes('tomato')) symbol = '🍅';
+      if (item.name.toLowerCase().includes('carrot')) symbol = '🥕';
+      if (item.name.toLowerCase().includes('chili')) symbol = '🌶️';
+      if (item.name.toLowerCase().includes('potato')) symbol = '🥔';
+      if (item.name.toLowerCase().includes('onion')) symbol = '🧅';
+      if (item.name.toLowerCase().includes('banana')) symbol = '🍌';
+    } else {
+      symbol = '🚜';
+      if (item.name.toLowerCase().includes('pump') || item.name.toLowerCase().includes('water')) symbol = '💧';
+      if (item.name.toLowerCase().includes('transport') || item.name.toLowerCase().includes('lorry')) symbol = '🚛';
+      if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) symbol = '🌿';
+    }
+
+    const markerIcon = L.divIcon({
+      className: 'custom-leaflet-marker',
+      html: `<div style="background-color: ${color}; width: 28px; height: 28px; border-radius: 50%; border: 2px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 15px; cursor: pointer; transition: transform 0.2s;" class="map-pin-emoji">${symbol}</div>`,
+      iconSize: [28, 28],
+      iconAnchor: [14, 14]
+    });
+
+    const marker = L.marker(finalCoords, { icon: markerIcon }).addTo(marketMap);
+
+    let popupHtml = '';
+    if (type === 'crops') {
+      const repScore = Math.min(5, (parseInt(item.seller_rep || 0) / 10) * 5).toFixed(1);
+      popupHtml = `
+        <div style="font-family:'DM Sans',sans-serif; min-width: 180px; padding: 2px; color: #16222c;">
+          <h4 style="margin: 0 0 4px; font-size: 14px; font-weight: 600; color: #16222c;">${item.name}</h4>
+          <div style="font-size: 11.5px; color: #5e6d7a; margin-bottom: 6px;">📍 ${item.district || 'Unknown'} · ${item.quantity_kg} kg</div>
+          <div style="font-size: 13px; font-weight: 600; color: #1a4f72; margin-bottom: 6px;">Rs. ${parseFloat(item.price_per_kg).toFixed(0)} / kg</div>
+          <div style="border-top: 1px solid #dbe2e8; padding-top: 6px; font-size: 11px; display: flex; align-items: center; justify-content: space-between;">
+            <span>Farmer: <strong>${item.seller_name}</strong></span>
+            <span style="color: #2d6a4f; font-weight: 600;">★ ${repScore}</span>
+          </div>
+          <div style="margin-top: 8px; display: flex; gap: 4px;">
+            <button onclick="expressInterest(${item.id})" style="flex: 1; font-size: 10.5px; padding: 4px 0; background: #e3f2fd; color: #1a4f72; border: none; border-radius: 4px; font-weight: 600; cursor: pointer;">Express Interest</button>
+            <button onclick="startChatWithUser(${item.seller_id}, '${item.seller_name.replace(/'/g, "\\'")}', 'farmer')" style="font-size: 10.5px; padding: 4px 8px; background: #1a4f72; color: white; border: none; border-radius: 4px; cursor: pointer;">💬</button>
+          </div>
+        </div>
+      `;
+    } else {
+      const repScore = Math.min(5, (parseInt(item.owner_rep || 0) / 10) * 5).toFixed(1);
+      popupHtml = `
+        <div style="font-family:'DM Sans',sans-serif; min-width: 180px; padding: 2px; color: #16222c;">
+          <h4 style="margin: 0 0 4px; font-size: 14px; font-weight: 600; color: #16222c;">${item.name}</h4>
+          <div style="font-size: 11.5px; color: #5e6d7a; margin-bottom: 6px;">📍 ${item.district || 'Unknown'} · ${item.condition || 'Good'} Cond.</div>
+          <div style="font-size: 13px; font-weight: 600; color: #1a4f72; margin-bottom: 6px;">Rs. ${parseFloat(item.rental_rate).toLocaleString()} / day</div>
+          <div style="border-top: 1px solid #dbe2e8; padding-top: 6px; font-size: 11px; display: flex; align-items: center; justify-content: space-between;">
+            <span>Owner: <strong>${item.owner_name}</strong></span>
+            <span style="color: #2d6a4f; font-weight: 600;">★ ${repScore}</span>
+          </div>
+          <div style="margin-top: 8px; display: flex; gap: 4px;">
+            <button onclick="openBookingModal(${item.id}, ${item.rental_rate}, '${item.name.replace(/'/g, "\\'")}')" style="flex: 1; font-size: 10.5px; padding: 4px 0; background: #e3f2fd; color: #1a4f72; border: none; border-radius: 4px; font-weight: 600; cursor: pointer;">Rent Now</button>
+            <button onclick="startChatWithUser(${item.owner_id}, '${item.owner_name.replace(/'/g, "\\'")}', 'farmer')" style="font-size: 10.5px; padding: 4px 8px; background: #1a4f72; color: white; border: none; border-radius: 4px; cursor: pointer;">💬</button>
+          </div>
+        </div>
+      `;
+    }
+
+    marker.bindPopup(popupHtml);
+    marketMarkers.push(marker);
+  });
 }
 </script>
 </body>

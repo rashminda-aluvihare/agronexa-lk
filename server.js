@@ -41,6 +41,16 @@ io.on('connection', (socket) => {
     socket.join(`user_${userId}`);
     console.log(`📡 User ${userId} connected via socket`);
   });
+
+  socket.on('send_message', (data) => {
+    // Forward message to the receiver's private room
+    io.to(`user_${data.receiver_id}`).emit('receive_message', data);
+    console.log(`💬 Socket message from ${data.sender_id} to ${data.receiver_id} forwarded`);
+  });
+
+  socket.on('ping_latency', (data) => {
+    socket.emit('pong_latency', data);
+  });
 });
 
 app.use(cors({
@@ -66,6 +76,10 @@ app.get('/admin.html', (req, res) => res.sendFile(path.join(__dirname, 'admin.ht
 app.get('/logo.png', (req, res) => res.sendFile(path.join(__dirname, 'logo.png')));
 
 // PostgreSQL connection
+const sslConfig = process.env.DATABASE_URL && !process.env.DATABASE_URL.includes('localhost') && !process.env.DATABASE_URL.includes('127.0.0.1')
+  ? { rejectUnauthorized: false }
+  : false;
+
 const pool = new Pool({
   host: process.env.DB_HOST,
   database: process.env.DB_NAME,
@@ -73,7 +87,7 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
   port: 5432,
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  ssl: sslConfig
 });
 app.set('db', pool);
 // Test DB connection + auto-migrate + seed admin
@@ -196,16 +210,66 @@ async function ensureTables(client) {
       created_at    TIMESTAMPTZ DEFAULT NOW()
     );
   `);
+
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS direct_messages (
+      id            SERIAL PRIMARY KEY,
+      sender_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      receiver_id   INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      message       TEXT NOT NULL,
+      is_read       BOOLEAN DEFAULT FALSE,
+      created_at    TIMESTAMPTZ DEFAULT NOW()
+    );
+  `);
+
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS audit_logs (
+      id            SERIAL PRIMARY KEY,
+      user_id       INTEGER REFERENCES users(id) ON DELETE SET NULL,
+      action        VARCHAR(100) NOT NULL,
+      ip_address    VARCHAR(45),
+      details       TEXT,
+      created_at    TIMESTAMPTZ DEFAULT NOW()
+    );
+  `);
 }
 
 pool.connect(async (err, client, release) => {
   if (err) { console.error('❌ DB connection failed:', err.message); return; }
   console.log('✅ Connected to PostgreSQL!');
   try {
+    // Create users table if missing
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        role VARCHAR(20) NOT NULL,
+        first_name VARCHAR(60) NOT NULL,
+        last_name VARCHAR(60) NOT NULL,
+        email VARCHAR(120) UNIQUE NOT NULL,
+        phone VARCHAR(30) UNIQUE NOT NULL,
+        district VARCHAR(60) NOT NULL,
+        address TEXT,
+        nic_number VARCHAR(30),
+        password_hash VARCHAR(255) NOT NULL,
+        nic_front_path TEXT,
+        nic_back_path TEXT,
+        status VARCHAR(20) DEFAULT 'pending',
+        rejection_reason TEXT,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+
     // Add columns if missing
     await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'pending';");
     await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS rejection_reason TEXT;");
     await client.query("UPDATE users SET status = 'approved' WHERE status IS NULL;");
+
+    // Add security fields
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS failed_login_attempts INTEGER DEFAULT 0;");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS locked_until TIMESTAMPTZ;");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token VARCHAR(255);");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token_expires TIMESTAMPTZ;");
 
     // Migrate all app tables
     await ensureTables(client);
@@ -236,10 +300,25 @@ app.post('/api/register', (req, res) => {
 });
 
 
+// ── AUDIT LOG HELPER ──
+async function logAuditEvent(userId, action, ipAddress, details = null) {
+  try {
+    const detailsStr = details && typeof details === 'object' ? JSON.stringify(details) : details;
+    const dbUserId = userId === 0 ? null : userId;
+    await pool.query(
+      `INSERT INTO audit_logs (user_id, action, ip_address, details) VALUES ($1, $2, $3, $4)`,
+      [dbUserId, action, ipAddress, detailsStr]
+    );
+  } catch (err) {
+    console.error('❌ Audit logging failed:', err.message);
+  }
+}
+
 // ── LOGIN ──
 app.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+    const ip = req.ip;
 
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' });
@@ -251,8 +330,9 @@ app.post('/api/login', async (req, res) => {
       const token = jwt.sign(
         { id: 0, email: ADMIN_EMAIL, role: 'admin' },
         JWT_SECRET,
-        { expiresIn: '30d' }
+        { expiresIn: '24h' }
       );
+      await logAuditEvent(0, 'ADMIN_LOGIN', ip);
       return res.json({
         success: true,
         token,
@@ -265,24 +345,62 @@ app.post('/api/login', async (req, res) => {
     );
 
     if (result.rows.length === 0) {
+      await logAuditEvent(null, 'FAILED_LOGIN_ATTEMPT', ip, { email, reason: 'user not found' });
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
     const user = result.rows[0];
+
+    // Check lock status
+    if (user.locked_until && new Date(user.locked_until) > new Date()) {
+      const minutesLeft = Math.ceil((new Date(user.locked_until) - new Date()) / 60000);
+      await logAuditEvent(user.id, 'BLOCKED_LOGIN_ATTEMPT', ip, { reason: 'account locked' });
+      return res.status(403).json({
+        error: `Account is temporarily locked due to 5 failed login attempts. Try again in ${minutesLeft} minutes.`,
+        locked: true
+      });
+    }
+
     const match = await bcrypt.compare(password, user.password_hash);
 
     if (!match) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+      const attempts = (user.failed_login_attempts || 0) + 1;
+      if (attempts >= 5) {
+        const lockUntil = new Date(Date.now() + 30 * 60000); // 30 minutes
+        await pool.query(
+          'UPDATE users SET failed_login_attempts = 0, locked_until = $1 WHERE id = $2',
+          [lockUntil, user.id]
+        );
+        await logAuditEvent(user.id, 'ACCOUNT_LOCKED', ip, { attempts });
+        return res.status(403).json({
+          error: 'Too many failed login attempts. Your account has been locked for 30 minutes.'
+        });
+      } else {
+        await pool.query(
+          'UPDATE users SET failed_login_attempts = $1 WHERE id = $2',
+          [attempts, user.id]
+        );
+        await logAuditEvent(user.id, 'FAILED_LOGIN_ATTEMPT', ip, { attempts });
+        return res.status(401).json({ error: 'Invalid email or password' });
+      }
     }
+
+    // Reset failed attempts upon successful login
+    await pool.query(
+      'UPDATE users SET failed_login_attempts = 0, locked_until = NULL WHERE id = $1',
+      [user.id]
+    );
 
     // Check account approval status
     if (user.status === 'pending') {
+      await logAuditEvent(user.id, 'FAILED_LOGIN_PENDING', ip);
       return res.status(403).json({
         error: 'Your account is pending admin approval. You will be notified once verified.',
         status: 'pending'
       });
     }
     if (user.status === 'rejected') {
+      await logAuditEvent(user.id, 'FAILED_LOGIN_REJECTED', ip);
       return res.status(403).json({
         error: 'Your account was rejected. Reason: ' + (user.rejection_reason || 'NIC verification failed.'),
         status: 'rejected'
@@ -293,8 +411,10 @@ app.post('/api/login', async (req, res) => {
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       JWT_SECRET,
-      { expiresIn: '30d' }
+      { expiresIn: '24h' }
     );
+
+    await logAuditEvent(user.id, 'USER_LOGIN', ip);
 
     res.json({
       success: true,
@@ -365,6 +485,7 @@ app.post('/api/admin/approve/:id', async (req, res) => {
       [req.params.id]
     );
     console.log('✅ Admin approved user ID:', req.params.id);
+    await logAuditEvent(0, 'USER_APPROVE', req.ip, { approved_user_id: req.params.id });
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -383,7 +504,57 @@ app.post('/api/admin/reject/:id', async (req, res) => {
       [reason || 'NIC verification failed', req.params.id]
     );
     console.log('✅ Admin rejected user ID:', req.params.id);
+    await logAuditEvent(0, 'USER_REJECT', req.ip, { rejected_user_id: req.params.id, reason });
     res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── ADMIN: CHANGE USER ROLE ──
+app.post('/api/admin/user/:id/role', async (req, res) => {
+  const { admin_email, admin_password, role } = req.body;
+  if (admin_email !== ADMIN_EMAIL || admin_password !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  try {
+    await pool.query('UPDATE users SET role = $1 WHERE id = $2', [role, req.params.id]);
+    await logAuditEvent(0, 'USER_ROLE_CHANGE', req.ip, { target_user_id: req.params.id, new_role: role });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── ADMIN: CHANGE USER STATUS (activate/deactivate) ──
+app.post('/api/admin/user/:id/status', async (req, res) => {
+  const { admin_email, admin_password, status } = req.body;
+  if (admin_email !== ADMIN_EMAIL || admin_password !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  try {
+    await pool.query('UPDATE users SET status = $1 WHERE id = $2', [status, req.params.id]);
+    await logAuditEvent(0, 'USER_STATUS_CHANGE', req.ip, { target_user_id: req.params.id, new_status: status });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── ADMIN: GET AUDIT LOGS ──
+app.get('/api/admin/audit-logs', async (req, res) => {
+  const { admin_email, admin_password } = req.query;
+  if (admin_email !== ADMIN_EMAIL || admin_password !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  try {
+    const result = await pool.query(
+      `SELECT al.*, u.email AS user_email, u.role AS user_role
+       FROM audit_logs al
+       LEFT JOIN users u ON u.id = al.user_id
+       ORDER BY al.created_at DESC LIMIT 200`
+    );
+    res.json({ success: true, logs: result.rows });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

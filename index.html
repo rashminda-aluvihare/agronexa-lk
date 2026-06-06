@@ -235,7 +235,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
       <div class="field">
         <div class="fl-row">
           <span class="fl-label">Password</span>
-          <button class="fl-link" type="button">Forgot password?</button>
+          <button class="fl-link" type="button" onclick="sw('forgot')">Forgot password?</button>
         </div>
         <div class="iw">
           <svg class="ii" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2.5" y="7" width="11" height="7.5" rx="1.5"/><path d="M5 7V5.5a3 3 0 016 0V7"/></svg>
@@ -430,6 +430,60 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
       <div class="ff">Already have an account? <button class="sw-link" onclick="sw('login')">Sign in</button></div>
     </div>
 
+    <!-- FORGOT PASSWORD -->
+    <div id="panel-forgot" style="display:none">
+      <div class="fh">
+        <div class="fh-super">Account Recovery</div>
+        <div class="fh-title">Forgot password</div>
+        <div class="fh-sub">Enter your email and we'll send you a password reset link</div>
+      </div>
+      <div class="field">
+        <div class="fl-row"><span class="fl-label">Email address</span></div>
+        <div class="iw">
+          <svg class="ii" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="3.5" width="13" height="9" rx="1.5"/><path d="M1.5 5.5l6.5 4.5 6.5-4.5"/></svg>
+          <input class="inp" id="fe" type="email" placeholder="you@example.com" oninput="vEmail('fe','fee')"/>
+        </div>
+        <div class="err" id="fee">Please enter a valid email address.</div>
+      </div>
+      <button class="btn" id="btn-forgot" onclick="sendResetLink()" type="button" style="margin-top: 10px;">
+        Send Reset Link
+        <svg class="arr" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>
+      </button>
+      <div class="ff">Remembered your password? <button class="sw-link" onclick="sw('login')">Sign in</button></div>
+    </div>
+
+    <!-- RESET PASSWORD -->
+    <div id="panel-reset" style="display:none">
+      <div class="fh">
+        <div class="fh-super">Account Recovery</div>
+        <div class="fh-title">Reset password</div>
+        <div class="fh-sub">Choose a strong new password for your account</div>
+      </div>
+      <div class="field">
+        <div class="fl-row"><span class="fl-label">New Password</span></div>
+        <div class="iw">
+          <svg class="ii" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2.5" y="7" width="11" height="7.5" rx="1.5"/><path d="M5 7V5.5a3 3 0 016 0V7"/></svg>
+          <input class="inp" id="reset-pw" type="password" placeholder="Minimum 8 characters" oninput="cksReset(this.value)"/>
+          <button class="it" onclick="tp('reset-pw',this)" type="button">Show</button>
+        </div>
+        <div class="sbars"><div class="sb" id="rsb1"></div><div class="sb" id="rsb2"></div><div class="sb" id="rsb3"></div><div class="sb" id="rsb4"></div></div>
+        <div class="slbl" id="rslbl"></div>
+      </div>
+      <div class="field">
+        <div class="fl-row"><span class="fl-label">Confirm New Password</span></div>
+        <div class="iw">
+          <svg class="ii" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2.5" y="7" width="11" height="7.5" rx="1.5"/><path d="M5 7V5.5a3 3 0 016 0V7"/></svg>
+          <input class="inp" id="reset-pw-confirm" type="password" placeholder="Re-enter new password"/>
+          <button class="it" onclick="tp('reset-pw-confirm',this)" type="button">Show</button>
+        </div>
+      </div>
+      <button class="btn" id="btn-reset" onclick="submitResetPassword()" type="button" style="margin-top: 10px;">
+        Reset Password
+        <svg class="arr" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>
+      </button>
+      <div class="ff">Back to <button class="sw-link" onclick="sw('login')">Sign in</button></div>
+    </div>
+
   </div>
 </div>
 </div>
@@ -467,11 +521,17 @@ var pendingFormData = null;
 
 function sw(t) {
   var L = t === 'login';
+  var R = t === 'register';
+  var F = t === 'forgot';
+  var P = t === 'reset';
   document.getElementById('panel-login').style.display = L ? 'block' : 'none';
-  document.getElementById('panel-register').style.display = L ? 'none' : 'block';
-  document.getElementById('tab-login').classList.toggle('on', L);
-  document.getElementById('tab-register').classList.toggle('on', !L);
-  if (!L) selRole('farmer');
+  document.getElementById('panel-register').style.display = R ? 'block' : 'none';
+  document.getElementById('panel-forgot').style.display = F ? 'block' : 'none';
+  document.getElementById('panel-reset').style.display = P ? 'block' : 'none';
+  
+  document.getElementById('tab-login').classList.toggle('on', L || F || P);
+  document.getElementById('tab-register').classList.toggle('on', R);
+  if (R) selRole('farmer');
 }
 function tp(id, btn) {
   var i = document.getElementById(id);
@@ -818,6 +878,111 @@ async function verifyOTP() {
     statusEl.innerHTML = `<span style="color:#ef4444;">Connection Error</span>`;
   }
 }
+
+// ── PASSWORD RESET HELPERS ──
+function cksReset(v) {
+  var s = 0;
+  if (v.length >= 8) s++; if (/[A-Z]/.test(v)) s++; if (/[0-9]/.test(v)) s++; if (/[^A-Za-z0-9]/.test(v)) s++;
+  var cols = ['#E4EDE7', '#D95050', '#D95050', '#C88C00', '#28A060'];
+  var lbls = ['', 'Weak — add uppercase & numbers', 'Fair — add a symbol', 'Strong', 'Very strong'];
+  for (var i = 1; i <= 4; i++) document.getElementById('rsb' + i).style.background = i <= s ? cols[s] : '#E4EDE7';
+  var el = document.getElementById('rslbl');
+  el.textContent = v.length > 0 ? lbls[s] : '';
+  el.style.color = s <= 1 ? '#B02828' : s === 2 ? '#7A5A00' : '#155C35';
+}
+
+async function sendResetLink() {
+  const email = document.getElementById('fe').value.trim();
+  if (!email) { alert("Please enter email"); return; }
+  const btn = document.getElementById('btn-forgot');
+  btn.textContent = "Sending...";
+  btn.disabled = true;
+  try {
+    const res = await fetch(API_URL + '/api/auth/forgot-password-link', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert("✅ Link simulated/sent! Please check your console for the simulated email containing the reset link.");
+      if (data.resetLinkSimulated) {
+        console.log("Simulated Reset Link:", data.resetLinkSimulated);
+        // Show the simulated link directly in a helpful notification area in case they cannot access console
+        let existingHint = document.getElementById('demo-hint');
+        if (existingHint) existingHint.remove();
+        const hintDiv = document.createElement('div');
+        hintDiv.id = 'demo-hint';
+        hintDiv.style.marginTop = '15px';
+        hintDiv.style.padding = '12px';
+        hintDiv.style.background = '#fef3c7';
+        hintDiv.style.border = '1px solid #f59e0b';
+        hintDiv.style.borderRadius = '8px';
+        hintDiv.style.fontSize = '12px';
+        hintDiv.style.color = '#78350f';
+        hintDiv.style.wordBreak = 'break-all';
+        hintDiv.innerHTML = `<strong>Demonstration Reset Link:</strong><br><a href="${data.resetLinkSimulated}">${data.resetLinkSimulated}</a>`;
+        document.getElementById('panel-forgot').appendChild(hintDiv);
+      }
+    } else {
+      alert("❌ " + data.error);
+    }
+  } catch(e) {
+    alert("❌ Connection failed");
+  } finally {
+    btn.textContent = "Send Reset Link";
+    btn.disabled = false;
+  }
+}
+
+async function submitResetPassword() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get('reset_token');
+  if (!token) { alert("Invalid or missing reset token. Please request a new link."); return; }
+
+  const newPassword = document.getElementById('reset-pw').value;
+  const confirmPassword = document.getElementById('reset-pw-confirm').value;
+
+  if (newPassword !== confirmPassword) { alert("Passwords do not match"); return; }
+  if (newPassword.length < 8 || !/[A-Z]/.test(newPassword) || !/[0-9]/.test(newPassword) || !/[^A-Za-z0-9]/.test(newPassword)) {
+    alert("Password must satisfy complexity rules (min 8 chars, 1 uppercase, 1 number, 1 special char)");
+    return;
+  }
+
+  const btn = document.getElementById('btn-reset');
+  btn.textContent = "Resetting...";
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(API_URL + '/api/auth/reset-password-link', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, newPassword })
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert("✅ Password reset successfully! You can now log in with your new password.");
+      window.history.replaceState({}, document.title, window.location.pathname); // clear query parameters
+      sw('login');
+    } else {
+      alert("❌ " + data.error);
+    }
+  } catch(e) {
+    alert("❌ Connection failed");
+  } finally {
+    btn.textContent = "Reset Password";
+    btn.disabled = false;
+  }
+}
+
+// ── ON LOAD CHECK FOR RESET TOKEN ──
+window.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get('reset_token');
+  if (token) {
+    sw('reset');
+  }
+});
 </script>
 </body>
 </html>

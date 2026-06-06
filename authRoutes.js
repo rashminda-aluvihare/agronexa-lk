@@ -180,6 +180,11 @@ router.post("/register-with-otp",
     return res.status(400).json({ success: false, error: "Missing required fields" });
   }
 
+  // Password rules validation
+  if (password.length < 8 || !/[A-Z]/.test(password) || !/[0-9]/.test(password) || !/[^A-Za-z0-9]/.test(password)) {
+    return res.status(400).json({ success: false, error: "Password must be at least 8 characters, and contain at least one uppercase letter, one number, and one special character." });
+  }
+
   const e164 = normalizePhoneToE164(phone);
   if (!e164) {
     return res.status(400).json({ success: false, error: "Invalid phone format." });
@@ -253,6 +258,102 @@ router.post("/register-with-otp",
     }
     console.error("register-with-otp create error:", err.message);
     return res.status(500).json({ success: false, error: "Registration failed. Please try again." });
+  }
+});
+
+/**
+ * POST /api/auth/forgot-password-link
+ * Body: { email }
+ */
+router.post("/forgot-password-link", async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ success: false, error: "Email is required." });
+  }
+
+  try {
+    const pool = req.app.get("db");
+    const result = await pool.query("SELECT id, first_name FROM users WHERE email = $1", [email]);
+    if (result.rows.length === 0) {
+      console.log(`ℹ️ Password reset requested for non-existent email: ${email}`);
+      return res.json({ success: true, message: "If this email is registered, a password reset link has been sent." });
+    }
+
+    const user = result.rows[0];
+    const crypto = require("crypto");
+    const token = crypto.randomBytes(32).toString("hex");
+    const expires = new Date(Date.now() + 15 * 60000); // 15 minutes
+
+    await pool.query(
+      "UPDATE users SET reset_token = $1, reset_token_expires = $2 WHERE id = $3",
+      [token, expires, user.id]
+    );
+
+    // Simulate sending email
+    const resetLink = `${req.protocol}://${req.get("host")}/index.html?reset_token=${token}`;
+    console.log(`\n📧 [SIMULATED EMAIL TO ${email}]`);
+    console.log(`Hello ${user.first_name},`);
+    console.log(`You requested a password reset for your AgroNexa LK account.`);
+    console.log(`Please click the link below to reset your password (valid for 15 minutes):`);
+    console.log(`${resetLink}\n`);
+
+    return res.json({
+      success: true,
+      message: "A password reset link has been sent to your email.",
+      resetLinkSimulated: resetLink
+    });
+  } catch (err) {
+    console.error("forgot-password-link error:", err.message);
+    return res.status(500).json({ success: false, error: "Failed to request password reset." });
+  }
+});
+
+/**
+ * POST /api/auth/reset-password-link
+ * Body: { token, newPassword }
+ */
+router.post("/reset-password-link", async (req, res) => {
+  const { token, newPassword } = req.body;
+  if (!token || !newPassword) {
+    return res.status(400).json({ success: false, error: "Token and new password are required." });
+  }
+
+  if (newPassword.length < 8 || !/[A-Z]/.test(newPassword) || !/[0-9]/.test(newPassword) || !/[^A-Za-z0-9]/.test(newPassword)) {
+    return res.status(400).json({ success: false, error: "Password must be at least 8 characters, and contain at least one uppercase letter, one number, and one special character." });
+  }
+
+  try {
+    const pool = req.app.get("db");
+    const result = await pool.query(
+      "SELECT id FROM users WHERE reset_token = $1 AND reset_token_expires > NOW()",
+      [token]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(400).json({ success: false, error: "Invalid or expired reset token." });
+    }
+
+    const user = result.rows[0];
+    const passwordHash = await bcrypt.hash(newPassword, 12);
+
+    await pool.query(
+      "UPDATE users SET password_hash = $1, reset_token = NULL, reset_token_expires = NULL, failed_login_attempts = 0, locked_until = NULL WHERE id = $2",
+      [passwordHash, user.id]
+    );
+
+    // Write audit log
+    const ip = req.ip;
+    try {
+      await pool.query(
+        `INSERT INTO audit_logs (user_id, action, ip_address, details) VALUES ($1, 'PASSWORD_RESET', $2, NULL)`,
+        [user.id, ip]
+      );
+    } catch(e) { console.error("audit log fail in reset-password:", e.message); }
+
+    return res.json({ success: true, message: "Your password has been reset successfully." });
+  } catch (err) {
+    console.error("reset-password-link error:", err.message);
+    return res.status(500).json({ success: false, error: "Failed to reset password." });
   }
 });
 

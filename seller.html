@@ -1,183 +1,293 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AgroNexa LK – Seller Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  :root{
-    --green:#2d6a4f;--green-light:#52b788;--green-pale:#d8f3dc;--green-mid:#74c69d;
-    --amber:#e76f51;--amber-pale:#fde8e0;
-    --gold:#f4a261;--gold-pale:#fef3e2;
-    --surface:#f9f7f2;--card:#ffffff;--border:#e8e2d6;
-    --text:#1a2e1a;--muted:#6b7b6b;--hint:#9aaa9a;
-    --sidebar:#1a2e1a;--sidebar-active:#2d6a4f;
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  :root {
+    /* Premium 2026 Emerald Forest Color Palette */
+    --primary: hsl(158, 60%, 25%);
+    --primary-light: hsl(158, 64%, 48%);
+    --primary-glow: hsla(158, 64%, 48%, 0.15);
+    --primary-pale: hsl(158, 40%, 96%);
+    --primary-dark: hsl(158, 70%, 15%);
+    
+    --accent: hsl(18, 86%, 58%); /* Coral / Amber */
+    --accent-pale: hsl(18, 80%, 96%);
+    --accent-glow: hsla(18, 86%, 58%, 0.15);
+    
+    --gold: hsl(38, 92%, 56%);
+    --gold-pale: hsl(38, 90%, 96%);
+    
+    --info: hsl(212, 92%, 50%);
+    --info-pale: hsl(212, 90%, 96%);
+    --info-glow: hsla(212, 92%, 50%, 0.15);
+    
+    --bg-app: hsl(140, 20%, 97%);
+    --bg-card: hsl(0, 0%, 100%);
+    --border-color: hsl(140, 15%, 90%);
+    
+    --text-main: hsl(140, 25%, 12%);
+    --text-muted: hsl(140, 12%, 40%);
+    --text-hint: hsl(140, 10%, 60%);
+    
+    --sidebar-bg: linear-gradient(180deg, #122212 0%, #0d1a11 100%);
+    --sidebar-active: hsl(158, 55%, 22%);
+    --sidebar-text: hsla(0, 0%, 100%, 0.65);
+    --sidebar-text-active: #fff;
+    
+    --radius-lg: 16px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+    
+    --shadow-sm: 0 2px 6px rgba(10, 20, 15, 0.02), 0 4px 12px rgba(10, 20, 15, 0.03);
+    --shadow-md: 0 4px 12px rgba(10, 20, 15, 0.03), 0 10px 24px rgba(10, 20, 15, 0.05);
+    --shadow-lg: 0 12px 28px rgba(10, 20, 15, 0.05), 0 24px 48px rgba(10, 20, 15, 0.08);
+    
+    --font-heading: 'DM Serif Display', serif;
+    --font-body: 'DM Sans', sans-serif;
   }
-  body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text);display:flex;min-height:100vh}
+  
+  body {
+    font-family: var(--font-body);
+    background: var(--bg-app);
+    color: var(--text-main);
+    display: flex;
+    min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
+  }
+  
+  /* Dark Mode Overrides */
+  body.dark {
+    --bg-app: #080c09;
+    --bg-card: #0e1411;
+    --border-color: #1a251e;
+    
+    --text-main: #f0f5f1;
+    --text-muted: #9ab0a1;
+    --text-hint: #5e7365;
+    
+    --primary-pale: hsla(158, 64%, 48%, 0.06);
+    --accent-pale: hsla(18, 86%, 58%, 0.06);
+    --gold-pale: hsla(38, 92%, 56%, 0.06);
+    --info-pale: hsla(212, 92%, 50%, 0.06);
+    
+    --sidebar-bg: linear-gradient(180deg, #050806 0%, #020302 100%);
+    --shadow-sm: 0 2px 6px rgba(0,0,0,0.15);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.25);
+    --shadow-lg: 0 12px 36px rgba(0,0,0,0.35);
+  }
 
   /* Sidebar */
-  .sidebar{width:240px;background:var(--sidebar);display:flex;flex-direction:column;padding:0;flex-shrink:0;position:relative}
-  .logo-wrap{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,0.07)}
-  .logo-leaf{display:inline-block;width:32px;height:32px;background:var(--green-light);border-radius:50% 50% 50% 8px;margin-bottom:8px}
-  .logo-name{font-family:'DM Serif Display',serif;color:#fff;font-size:18px;letter-spacing:-0.3px;line-height:1.1}
-  .logo-tag{color:rgba(255,255,255,0.4);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-top:2px}
-  .user-card{padding:20px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.07)}
-  .avatar{width:38px;height:38px;border-radius:50%;background:var(--green-mid);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;color:#fff;flex-shrink:0}
-  .user-name{font-size:13px;font-weight:500;color:#fff;line-height:1.2}
-  .user-role{font-size:11px;color:rgba(255,255,255,0.4);margin-top:1px}
-  .role-badge{display:inline-block;padding:2px 8px;background:rgba(82,183,136,0.2);color:var(--green-mid);border-radius:20px;font-size:10px;font-weight:500;margin-top:4px}
-  .verified-badge{display:inline-flex;align-items:center;gap:3px;background:var(--green-pale);color:var(--green);border:1px solid var(--green-light);font-size:9.5px;padding:1px 6px;border-radius:4px;font-weight:600;margin-left:6px}
-  nav{padding:16px 12px;flex:1}
-  .nav-section{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.25);padding:12px 12px 6px}
-  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;color:rgba(255,255,255,0.55);font-size:13.5px;font-weight:400;margin-bottom:2px;transition:all 0.15s}
-  .nav-item:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.85)}
-  .nav-item.active{background:var(--sidebar-active);color:#fff;font-weight:500}
-  .nav-item svg{width:16px;height:16px;flex-shrink:0}
-  .nav-badge{margin-left:auto;background:var(--amber);color:#fff;font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px}
-  .sidebar-bottom{padding:20px 24px;border-top:1px solid rgba(255,255,255,0.07)}
-  .logout-btn{color:rgba(255,255,255,0.35);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px}
-  .logout-btn:hover{color:rgba(255,255,255,0.7)}
+  .sidebar { width: 260px; background: var(--sidebar-bg); display: flex; flex-direction: column; flex-shrink: 0; border-right: 1px solid var(--border-color); }
+  .logo-wrap { padding: 28px 24px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+  .logo-leaf { display: inline-block; width: 32px; height: 32px; background: var(--primary-light); border-radius: 50% 50% 50% 8px; margin-bottom: 8px; box-shadow: 0 4px 12px var(--primary-glow); }
+  .logo-name { font-family: var(--font-heading); color: #fff; font-size: 19px; letter-spacing: -0.3px; }
+  .logo-tag { color: rgba(255,255,255,0.4); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; }
+  
+  .user-card { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--primary-light); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; color: #fff; box-shadow: var(--shadow-sm); }
+  .user-name { font-size: 13px; font-weight: 500; color: #fff; line-height: 1.2; }
+  .user-role { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+  .role-badge { display: inline-block; padding: 2px 8px; background: rgba(82,183,136,0.12); color: var(--primary-light); border: 1px solid rgba(82,183,136,0.2); border-radius: 20px; font-size: 9.5px; font-weight: 500; margin-top: 4px; }
+  .verified-badge { display: inline-flex; align-items: center; gap: 3px; background: var(--primary-pale); color: var(--primary); border: 1px solid var(--primary-light); font-size: 9.5px; padding: 1px 6px; border-radius: 4px; font-weight: 600; }
+  
+  nav { padding: 16px 12px; flex: 1; display: flex; flex-direction: column; gap: 3px; }
+  .nav-section { font-size: 9.5px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.25); padding: 12px 12px 6px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: var(--radius-md); cursor: pointer; color: var(--sidebar-text); font-size: 13.5px; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
+  .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--sidebar-text-active); }
+  .nav-item.active { background: var(--sidebar-active); color: var(--sidebar-text-active); font-weight: 500; box-shadow: var(--shadow-sm); }
+  .nav-item.active::before { content: ''; position: absolute; left: 0; top: 25%; height: 50%; width: 3px; background: var(--primary-light); border-radius: 0 4px 4px 0; }
+  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .nav-badge { margin-left: auto; background: var(--accent); color: #fff; font-size: 9.5px; font-weight: 600; padding: 2px 7px; border-radius: 20px; }
+  .sidebar-bottom { padding: 20px 24px; border-top: 1px solid rgba(255,255,255,0.07); }
+  .logout-btn { color: rgba(255,255,255,0.35); font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: color 0.2s; }
+  .logout-btn:hover { color: #fff; }
 
-  /* Main */
-  .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-  .topbar{background:var(--card);border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between}
-  .page-title{font-family:'DM Serif Display',serif;font-size:20px;color:var(--text)}
-  .topbar-right{display:flex;align-items:center;gap:16px}
-  .notif-btn{position:relative;width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer}
-  .notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--amber);border-radius:50%;border:2px solid #fff}
-  .date-chip{background:var(--green-pale);color:var(--green);font-size:12px;font-weight:500;padding:6px 14px;border-radius:20px}
+  /* Main Area */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; height: 100vh; }
+  .topbar { background: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between; transition: all 0.3s; }
+  .page-title { font-family: var(--font-heading); font-size: 21px; color: var(--text-main); }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
+  .notif-btn { position: relative; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border-color); background: var(--bg-card); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+  .notif-btn:hover { background: var(--bg-app); transform: scale(1.05); }
+  .notif-dot { position: absolute; top: 7px; right: 7px; width: 7px; height: 7px; background: var(--accent); border-radius: 50%; border: 1.5px solid var(--bg-card); }
+  .date-chip { background: var(--primary-pale); color: var(--primary); font-size: 12px; font-weight: 500; padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(82, 183, 136, 0.15); }
+  .content { flex: 1; overflow-y: auto; padding: 28px 32px; display: flex; flex-direction: column; gap: 24px; }
 
-  .content{flex:1;overflow-y:auto;padding:28px 32px;display:flex;flex-direction:column;gap:24px}
-
-  /* Stats row */
-  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 22px;position:relative;overflow:hidden}
-  .stat-card::after{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:0.07}
-  .stat-card.green::after{background:var(--green)}
-  .stat-card.amber::after{background:var(--amber)}
-  .stat-card.gold::after{background:var(--gold)}
-  .stat-card.blue::after{background:#4361ee}
-  .stat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
-  .stat-icon.green{background:var(--green-pale)}
-  .stat-icon.amber{background:var(--amber-pale)}
-  .stat-icon.gold{background:var(--gold-pale)}
-  .stat-icon.blue{background:#e8ecff}
-  .stat-icon svg{width:18px;height:18px}
-  .stat-icon.green svg{color:var(--green)}
-  .stat-icon.amber svg{color:var(--amber)}
-  .stat-icon.gold svg{color:var(--gold)}
-  .stat-icon.blue svg{color:#4361ee}
-  .stat-val{font-family:'DM Serif Display',serif;font-size:28px;color:var(--text);line-height:1}
-  .stat-label{font-size:12px;color:var(--muted);margin-top:4px}
-  .stat-delta{font-size:11px;font-weight:500;margin-top:8px}
-  .stat-delta.up{color:var(--green)}
-  .stat-delta.down{color:var(--amber)}
-
-  /* Two-col grid */
-  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-  .grid-3{display:grid;grid-template-columns:2fr 1fr;gap:20px}
-
-  .panel{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 24px}
-  .panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-  .panel-title{font-size:14px;font-weight:500;color:var(--text)}
-  .panel-action{font-size:12px;color:var(--green);cursor:pointer;font-weight:500}
-
-  /* Listing cards */
-  .listing-item{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
-  .listing-item:last-child{border-bottom:none}
-  .listing-img{width:46px;height:46px;border-radius:10px;object-fit:cover;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-  .listing-info{flex:1}
-  .listing-name{font-size:13.5px;font-weight:500;color:var(--text)}
-  .listing-meta{font-size:11.5px;color:var(--muted);margin-top:2px}
-  .listing-price{font-size:13px;font-weight:600;color:var(--green);text-align:right}
-  .listing-qty{font-size:11px;color:var(--muted);text-align:right;margin-top:2px}
-  .status-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
-  .status-pill.active{background:var(--green-pale);color:var(--green)}
-  .status-pill.pending{background:var(--gold-pale);color:#b5621a}
-  .status-pill.inactive{background:#f1f1f1;color:var(--hint)}
-
-  /* Request items */
-  .request-item{padding:14px 0;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:6px}
-  .request-item:last-child{border-bottom:none}
-  .request-top{display:flex;align-items:center;justify-content:space-between}
-  .request-commodity{font-size:13.5px;font-weight:500;color:var(--text)}
-  .request-buyer{font-size:12px;color:var(--muted);margin-top:1px}
-  .request-details{font-size:12px;color:var(--muted);display:flex;gap:16px}
-  .request-actions{display:flex;gap:8px;margin-top:6px}
-  .btn-sm{padding:5px 14px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:none;transition:all 0.15s}
-  .btn-accept{background:var(--green);color:#fff}
-  .btn-accept:hover{background:#245a40}
-  .btn-reject{background:var(--surface);color:var(--muted);border:1px solid var(--border)}
-  .btn-counter{background:var(--gold-pale);color:#b5621a}
-
-  /* Ledger */
-  .ledger-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
-  .ledger-item:last-child{border-bottom:none}
-  .ledger-hash{font-family:monospace;font-size:10px;color:var(--hint);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .ledger-amt{font-size:13px;font-weight:600;color:var(--green)}
-  .ledger-label{font-size:12px;color:var(--muted)}
-  .hash-icon{width:28px;height:28px;border-radius:8px;background:var(--green-pale);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-  .hash-icon svg{width:14px;height:14px;color:var(--green)}
-
-  /* Reputation */
-  .rep-score{font-family:'DM Serif Display',serif;font-size:52px;color:var(--green);line-height:1}
-  .rep-label{font-size:12px;color:var(--muted);margin-top:4px}
-  .rep-bars{margin-top:16px;display:flex;flex-direction:column;gap:8px}
-  .rep-row{display:flex;align-items:center;gap:10px;font-size:12px}
-  .rep-row-label{color:var(--muted);width:70px;flex-shrink:0}
-  .bar-bg{flex:1;height:6px;background:var(--surface);border-radius:4px;overflow:hidden}
-  .bar-fill{height:100%;border-radius:4px;background:var(--green-light)}
-  .rep-row-val{color:var(--muted);width:24px;text-align:right;flex-shrink:0}
-
-  /* Earnings chart placeholder */
-  .chart-placeholder{height:120px;display:flex;align-items:flex-end;gap:6px;padding:0 4px}
-  .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
-  .bar-rect{width:100%;border-radius:4px 4px 0 0;background:var(--green-pale);transition:background 0.2s}
-  .bar-rect.highlight{background:var(--green-light)}
-  .bar-month{font-size:10px;color:var(--hint)}
-
-  /* Notification badge mini */
-  .dot-live{width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:5px;animation:pulse 2s infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-
-  /* Dark mode overrides */
-  body.dark {
-    --surface: #0f172a;
-    --card: #1e293b;
-    --border: #334155;
-    --text: #f8fafc;
-    --muted: #94a3b8;
-    background: var(--surface);
-    color: var(--text);
+  /* Content Switch Animations */
+  .content-section { animation: slideUpFade 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  @keyframes slideUpFade {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
   }
-  body.dark .topbar {
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
+
+  /* Stats Grid */
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .stat-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 20px 22px; position: relative; overflow: hidden; box-shadow: var(--shadow-sm); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+  .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: hsla(158, 64%, 48%, 0.3); }
+  .stat-card::after { content: ''; position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; border-radius: 50%; opacity: 0.05; }
+  .stat-card.green::after { background: var(--primary); }
+  .stat-card.amber::after { background: var(--accent); }
+  .stat-card.gold::after { background: var(--gold); }
+  .stat-card.blue::after { background: var(--info); }
+  
+  .stat-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+  .stat-icon.green { background: var(--primary-pale); color: var(--primary-light); }
+  .stat-icon.amber { background: var(--accent-pale); color: var(--accent); }
+  .stat-icon.gold { background: var(--gold-pale); color: var(--gold); }
+  .stat-icon.blue { background: var(--info-pale); color: var(--info); }
+  .stat-icon svg { width: 18px; height: 18px; }
+  
+  .stat-val { font-family: var(--font-heading); font-size: 28px; color: var(--text-main); line-height: 1.1; }
+  .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  .stat-delta { font-size: 11px; font-weight: 500; margin-top: 8px; display: flex; align-items: center; gap: 4px; }
+  .stat-delta.up { color: var(--primary-light); }
+  .stat-delta.down { color: var(--accent); }
+
+  /* Grid Layouts */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1.8fr 1.2fr; gap: 20px; }
+
+  /* Panels */
+  .panel { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); transition: all 0.3s; }
+  .panel:hover { border-color: hsla(158, 64%, 48%, 0.15); box-shadow: var(--shadow-md); }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .panel-title { font-size: 14.5px; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 6px; }
+  .panel-action { font-size: 12px; color: var(--primary-light); cursor: pointer; font-weight: 600; transition: all 0.2s; }
+  .panel-action:hover { color: var(--primary); text-shadow: 0 0 8px var(--primary-glow); }
+
+  /* Item Listings Cards */
+  .listing-item, .request-item, .ledger-item, .msg-item {
+    display: flex; align-items: center; gap: 14px; padding: 14px; margin-bottom: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-card); transition: all 0.25s ease;
   }
-  body.dark .panel {
-    background: var(--card);
-    border-color: var(--border);
+  .listing-item:hover, .request-item:hover, .ledger-item:hover, .msg-item:hover {
+    border-color: var(--primary-light); box-shadow: var(--shadow-sm); transform: translateX(2px);
   }
-  body.dark .form-input, body.dark .search-input {
-    background: #0f172a;
-    border-color: var(--border);
-    color: var(--text);
-  }
-  body.dark .listing-item, body.dark .request-item, body.dark .ledger-item, body.dark .msg-item {
-    border-color: var(--border);
-    background: #0f172a;
-  }
-  body.dark .msg-item.highlight {
-    background: rgba(45, 106, 79, 0.15);
-    border-color: rgba(82, 183, 136, 0.3);
-  }
-  body.dark .page-title {
-    color: var(--text);
-  }
+  .listing-img { width: 46px; height: 46px; border-radius: 10px; background: var(--primary-pale); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .listing-info { flex: 1; min-width: 0; }
+  .listing-name { font-size: 14px; font-weight: 600; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .listing-meta { font-size: 11.5px; color: var(--text-muted); margin-top: 3px; }
+  .listing-price { font-size: 14px; font-weight: 600; color: var(--primary-light); text-align: right; }
+  .status-pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; text-transform: uppercase; }
+  .status-pill.active { background: var(--primary-pale); color: var(--primary-light); border: 1px solid hsla(158, 64%, 48%, 0.2); }
+  .status-pill.pending { background: var(--gold-pale); color: var(--gold); border: 1px solid hsla(38, 92%, 56%, 0.2); }
+  .status-pill.inactive { background: var(--bg-app); color: var(--text-hint); border: 1px solid var(--border-color); }
+
+  /* B2B Incoming requests */
+  .request-item { flex-direction: column; align-items: stretch; gap: 10px; }
+  .request-top { display: flex; align-items: center; justify-content: space-between; }
+  .request-commodity { font-size: 14px; font-weight: 600; color: var(--text-main); }
+  .request-buyer { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+  .request-details { font-size: 12px; color: var(--text-muted); display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; background: var(--bg-app); padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); }
+  .request-actions { display: flex; gap: 8px; margin-top: 4px; }
+  .btn-sm { padding: 8px 18px; border-radius: 8px; font-size: 12.5px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+  .btn-sm:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+  .btn-accept { background: var(--primary); color: #fff; }
+  .btn-accept:hover { background: var(--primary-light); }
+  .btn-reject { background: var(--bg-app); color: var(--text-muted); border: 1px solid var(--border-color); }
+  .btn-reject:hover { background: var(--accent-pale); color: var(--accent); border-color: var(--accent); }
+  .btn-counter { background: var(--gold-pale); color: var(--gold); border: 1px solid hsla(38, 92%, 56%, 0.2); }
+  .btn-counter:hover { background: var(--gold); color: #fff; }
+
+  /* Blockchain Timeline */
+  .ledger-item { align-items: center; gap: 16px; position: relative; }
+  .hash-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--primary-pale); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .hash-icon svg { width: 16px; height: 16px; color: var(--primary-light); }
+  .ledger-hash { font-family: monospace; font-size: 10px; color: var(--text-hint); margin-top: 4px; background: var(--bg-app); padding: 2px 6px; border-radius: 4px; display: inline-block; }
+  .ledger-amt { font-size: 14.5px; font-weight: 600; color: var(--primary-light); }
+  
+  /* Reputation Stars */
+  .rep-score { font-family: var(--font-heading); font-size: 52px; color: var(--primary-light); line-height: 1; }
+  .rep-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  .rep-bars { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .rep-row { display: flex; align-items: center; gap: 12px; font-size: 12px; }
+  .rep-row-label { color: var(--text-muted); width: 80px; flex-shrink: 0; }
+  .bar-bg { flex: 1; height: 8px; background: var(--bg-app); border-radius: 10px; overflow: hidden; border: 1px solid var(--border-color); }
+  .bar-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%); transition: width 0.8s ease-in-out; }
+  .rep-row-val { color: var(--text-main); font-weight: 600; width: 28px; text-align: right; flex-shrink: 0; }
+
+  /* Monthly Earnings SVG Chart */
+  .chart-placeholder { height: 140px; display: flex; align-items: flex-end; gap: 12px; padding: 10px 4px 0; }
+  .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .bar-rect { width: 100%; border-radius: 6px 6px 0 0; background: var(--primary-pale); height: 0; transition: height 1s ease-in-out, background 0.3s; border: 1px solid var(--border-color); cursor: pointer; }
+  .bar-rect:hover { background: var(--primary-glow); border-color: var(--primary-light); }
+  .bar-rect.highlight { background: linear-gradient(180deg, var(--primary-light) 0%, var(--primary) 100%); border: none; }
+  .bar-rect.highlight:hover { filter: brightness(1.1); }
+  .bar-month { font-size: 10px; color: var(--text-hint); font-weight: 500; }
+
+  /* Forms & Inputs */
+  .form-row { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .form-field { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px; }
+  .form-label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .form-input { border: 1px solid var(--border-color); background: var(--bg-app); padding: 11px 16px; border-radius: var(--radius-md); outline: none; font-size: 13.5px; color: var(--text-main); transition: all 0.2s ease; font-family: inherit; }
+  .form-input:focus { border-color: var(--primary-light); background: var(--bg-card); box-shadow: 0 0 0 3px var(--primary-glow); }
+
+  /* Chat Window Styling */
+  .chat-layout { display: grid; grid-template-columns: 280px 1fr; gap: 0; height: 600px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
+  .chat-sidebar { border-right: 1px solid var(--border-color); display: flex; flex-direction: column; height: 100%; background: var(--bg-app); }
+  .chat-sidebar-header { padding: 16px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); border-bottom: 1px solid var(--border-color); background: var(--bg-card); }
+  .chat-list { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .chat-user-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s; background: var(--bg-card); border: 1px solid var(--border-color); }
+  .chat-user-item:hover { border-color: var(--primary-light); transform: translateX(2px); }
+  .chat-user-item.active { background: var(--primary-pale); border-color: var(--primary-light); box-shadow: var(--shadow-sm); }
+  .chat-user-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--primary-light); color: #fff; font-weight: 600; display: flex; align-items: center; justify-content: center; font-size: 12px; box-shadow: var(--shadow-sm); flex-shrink: 0; }
+  .chat-user-info { flex: 1; min-width: 0; }
+  .chat-user-name { font-size: 13px; font-weight: 600; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chat-user-meta { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+  .chat-unread-badge { background: var(--accent); color: #fff; font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 10px; margin-left: auto; }
+  .chat-main { display: flex; flex-direction: column; height: 100%; background: var(--bg-card); }
+  .chat-main-header { padding: 16px 24px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+  .chat-main-title { font-size: 14px; font-weight: 600; color: var(--text-main); }
+  .chat-messages-container { flex: 1; overflow-y: auto; padding: 24px; background: var(--bg-app); display: flex; flex-direction: column; gap: 16px; }
+  .chat-bubble { max-width: 65%; padding: 12px 16px; border-radius: var(--radius-md); font-size: 13px; line-height: 1.5; position: relative; box-shadow: var(--shadow-sm); word-break: break-word; }
+  .chat-bubble.sent { background: var(--primary); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .chat-bubble.received { background: var(--bg-card); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--border-color); }
+  .chat-bubble-time { font-size: 9px; color: inherit; opacity: 0.65; margin-top: 5px; text-align: right; }
+  .chat-input-area { padding: 16px 24px; border-top: 1px solid var(--border-color); display: flex; gap: 12px; align-items: center; background: var(--bg-card); }
+  .chat-input { flex: 1; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 12px 16px; outline: none; font-size: 13.5px; background: var(--bg-app); color: var(--text-main); transition: all 0.2s; font-family: inherit; }
+  .chat-input:focus { border-color: var(--primary-light); background: var(--bg-card); box-shadow: 0 0 0 3px var(--primary-glow); }
+  .chat-send-btn { background: var(--primary); color: #fff; border: none; border-radius: var(--radius-md); padding: 12px 20px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+  .chat-send-btn:hover { background: var(--primary-light); transform: translateY(-1px); }
+
+  /* Modals */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(18, 34, 25, 0.6); backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: center; justify-content: center; }
+  
+  /* Scrollbars */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-hint); }
+
+  .dot-live { width: 8px; height: 8px; border-radius: 50%; background: #10b981; display: inline-block; margin-right: 5px; box-shadow: 0 0 8px #10b981; animation: pulseLive 2s infinite; }
+  @keyframes pulseLive { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.5; } }
+
+  /* Toast Notifications */
+  #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+  .toast { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px 18px; min-width: 280px; max-width: 360px; box-shadow: var(--shadow-lg); display: flex; align-items: flex-start; gap: 12px; pointer-events: all; animation: toastIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+  .toast.removing { animation: toastOut 0.3s ease forwards; }
+  .toast-icon { font-size: 18px; line-height: 1; flex-shrink: 0; margin-top: 1px; }
+  .toast-body { flex: 1; }
+  .toast-title { font-weight: 600; font-size: 13px; color: var(--text-main); margin-bottom: 2px; }
+  .toast-msg { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+  .toast-close { background: none; border: none; color: var(--text-hint); cursor: pointer; font-size: 16px; line-height: 1; padding: 0; flex-shrink: 0; }
+  .toast.success { border-left: 3px solid var(--primary-light); }
+  .toast.error { border-left: 3px solid var(--accent); }
+  .toast.info { border-left: 3px solid var(--info); }
+  .toast.warning { border-left: 3px solid var(--gold); }
+  @keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(40px); } }
+
+  /* Socket status */
+  .socket-status { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; padding: 3px 8px; border-radius: 20px; background: rgba(16,185,129,0.1); color: #10b981; }
+  .socket-status.disconnected { background: rgba(231,111,81,0.1); color: var(--accent); }
+  .socket-status .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 </style>
 </head>
 <body>
@@ -191,10 +301,10 @@
   </div>
 
   <div class="user-card">
-    <div class="avatar">SK</div>
+    <div class="avatar" id="user-avatar">--</div>
     <div>
-      <div class="user-name">Sunil Karunarathne</div>
-      <div class="user-role" id="user-district">Kandy District</div>
+      <div class="user-name" id="user-name">Loading...</div>
+      <div class="user-role" id="user-district">Loading...</div>
       <div class="role-badge">Seller / Farmer</div>
       <div id="user-status-badge" style="margin-top: 4px;"></div>
       <div id="member-since" style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:4px;"></div>
@@ -255,7 +365,7 @@
   <div class="topbar">
     <div class="page-title" id="page-greeting">Seller Dashboard</div>
     <div class="topbar-right">
-      <span class="dot-live"></span><span style="font-size:12px;color:var(--muted)">Live</span>
+      <span id="socket-status" class="socket-status"><span class="dot"></span>Connecting...</span>
       <div class="notif-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         <div class="notif-dot"></div>
@@ -267,7 +377,7 @@
   <div class="content">
 
     <!-- Stats -->
-    <div class="stats-row" id="section-stats">
+    <div class="stats-row content-section" id="section-stats">
       <div class="stat-card green">
         <div class="stat-icon green">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2z"/><path d="M12 6v6l4 2"/></svg>
@@ -303,26 +413,26 @@
     </div>
 
     <!-- Listings + Requests -->
-    <div class="grid-2" id="section-listings-requests">
+    <div class="grid-2 content-section" id="section-listings-requests">
       <div class="panel" id="panel-crop-listings">
         <div class="panel-head">
           <div class="panel-title">My Crop Listings</div>
           <div class="panel-action" onclick="openAddCropModal()" style="cursor:pointer">+ Add New</div>
         </div>
         <div id="crop-listings-list">
-          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Loading listings...</div>
+          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">Loading listings...</div>
         </div>
       </div>
 
       <div class="panel" id="panel-buyer-requests">
         <div class="panel-head">
           <div class="panel-title">Incoming Buyer Requests</div>
-          <span style="font-size:11px;color:var(--amber);font-weight:500" id="buyer-requests-count">0 new</span>
+          <span style="font-size:11px;color:var(--accent);font-weight:500" id="buyer-requests-count">0 new</span>
         </div>
         <!-- Search and Filter Controls -->
-        <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; background:var(--surface); padding:10px; border-radius:8px; border:1px solid var(--border);">
-          <input type="text" id="requests-search" placeholder="Search crop..." style="flex:1; min-width:150px; border:1px solid var(--border); padding:8px 12px; border-radius:8px; font-size:12.5px; outline:none;" oninput="loadBuyerRequests()">
-          <select id="requests-district-filter" style="border:1px solid var(--border); padding:8px 12px; border-radius:8px; font-size:12.5px; outline:none; background:#fff; color:#000;" onchange="loadBuyerRequests()">
+        <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; background:var(--bg-app); padding:10px; border-radius:8px; border:1px solid var(--border-color);">
+          <input type="text" id="requests-search" placeholder="Search crop..." style="flex:1; min-width:150px; border:1px solid var(--border-color); padding:8px 12px; border-radius:8px; font-size:12.5px; outline:none;" oninput="loadBuyerRequests()">
+          <select id="requests-district-filter" style="border:1px solid var(--border-color); padding:8px 12px; border-radius:8px; font-size:12.5px; outline:none; background:var(--bg-card); color:var(--text-main);" onchange="loadBuyerRequests()">
             <option value="">All Districts</option>
             <option>Ampara</option><option>Anuradhapura</option><option>Badulla</option><option>Batticaloa</option>
             <option>Colombo</option><option>Galle</option><option>Gampaha</option><option>Hambantota</option>
@@ -333,13 +443,13 @@
           </select>
         </div>
         <div id="buyer-requests-list">
-          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Loading incoming requests...</div>
+          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">Loading incoming requests...</div>
         </div>
       </div>
     </div>
 
     <!-- Ledger + Reputation + Earnings -->
-    <div class="grid-3" id="section-ledger-rep">
+    <div class="grid-3 content-section" id="section-ledger-rep">
       <div class="panel" id="panel-ledger">
         <div class="panel-head">
           <div class="panel-title">Blockchain Ledger — Recent Rentals</div>
@@ -400,7 +510,7 @@
     </div>
 
     <!-- Equipment Rentals Section -->
-    <div class="grid-2" id="section-equipment" style="display:none;">
+    <div class="grid-2 content-section" id="section-equipment" style="display:none;">
       <!-- Equipment Listings -->
       <div class="panel" id="panel-equipment-listings">
         <div class="panel-head">
@@ -408,7 +518,7 @@
           <div class="panel-action" onclick="openAddEquipmentModal()" style="cursor:pointer">+ Add New</div>
         </div>
         <div id="equipment-listings-list" style="max-height: 400px; overflow-y: auto;">
-          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Loading equipment...</div>
+          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">Loading equipment...</div>
         </div>
       </div>
 
@@ -416,16 +526,16 @@
       <div class="panel" id="panel-equipment-bookings">
         <div class="panel-head">
           <div class="panel-title">📥 Incoming Booking Requests</div>
-          <span style="font-size:11px;color:var(--amber);font-weight:500" id="equipment-bookings-count">0 pending</span>
+          <span style="font-size:11px;color:var(--accent);font-weight:500" id="equipment-bookings-count">0 pending</span>
         </div>
         <div id="equipment-bookings-list" style="max-height: 400px; overflow-y: auto;">
-          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Loading booking requests...</div>
+          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">Loading booking requests...</div>
         </div>
       </div>
     </div>
 
     <!-- Profile Section -->
-    <div class="panel" id="section-profile" style="display:none;">
+    <div class="panel content-section" id="section-profile" style="display:none;">
       <div class="panel-head">
         <div class="panel-title">👤 My Profile Details</div>
       </div>
@@ -453,7 +563,7 @@
         <div class="form-row">
           <div class="form-field">
             <div class="form-label">District</div>
-            <select class="form-input" id="profile-district" required style="background:#fff; color:#000;">
+            <select class="form-input" id="profile-district" required style="background:var(--bg-card); color:var(--text-main);">
               <option>Ampara</option><option>Anuradhapura</option><option>Badulla</option><option>Batticaloa</option>
               <option>Colombo</option><option>Galle</option><option>Gampaha</option><option>Hambantota</option>
               <option>Jaffna</option><option>Kalutara</option><option>Kandy</option><option>Kegalle</option>
@@ -477,40 +587,90 @@
             <input class="form-input" id="profile-status" readonly type="text" style="background:rgba(200,200,200,0.1);cursor:not-allowed;">
           </div>
         </div>
-        <button type="submit" class="broadcast-btn" style="margin-top:16px;background:var(--green);color:#fff;border:none;padding:10px 20px;border-radius:10px;cursor:pointer;">
+        <button type="submit" class="btn-sm btn-accept" style="margin-top:16px;">
           💾 Save Changes
         </button>
       </form>
     </div>
 
     <!-- Settings Section -->
-    <div class="panel" id="section-settings" style="display:none; max-width: 600px;">
+    <div class="panel content-section" id="section-settings" style="display:none; max-width: 600px;">
       <div class="panel-head">
         <div class="panel-title">⚙️ App Settings</div>
       </div>
       <div style="display:flex; flex-direction:column; gap:20px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:15px;">
           <div>
-            <div style="font-size:14px; font-weight:500; color:var(--text);">Visual Theme</div>
-            <div style="font-size:12px; color:var(--muted);">Switch between light and dark modes</div>
+            <div style="font-size:14px; font-weight:500; color:var(--text-main);">Visual Theme</div>
+            <div style="font-size:12px; color:var(--text-muted);">Switch between light and dark modes</div>
           </div>
-          <button class="btn-sm btn-counter" id="dark-mode-btn" onclick="toggleDarkModeSetting()" style="width:140px; margin-top:0; border:1px solid var(--border); height:38px; cursor:pointer;">Toggle Dark Mode</button>
+          <button class="btn-sm btn-counter" id="dark-mode-btn" onclick="toggleDarkModeSetting()" style="width:140px; margin-top:0; border:1px solid var(--border-color); height:38px; cursor:pointer;">Toggle Dark Mode</button>
         </div>
-        <div>
-          <div style="font-size:14px; font-weight:500; color:var(--text); margin-bottom:10px;">Security</div>
-          <div style="font-size:12px; color:var(--muted);">Standard JWT encryption is active for your session.</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:15px;">
+          <div>
+            <div style="font-size:14px; font-weight:500; color:var(--text-main);">Websocket Diagnostic</div>
+            <div style="font-size:12px; color:var(--text-muted);">Check real-time network connection latency</div>
+          </div>
+          <button class="btn-sm btn-accept" onclick="checkWebsocketPing()" style="width:140px; margin-top:0; height:38px; cursor:pointer; background:var(--primary); color:#fff;">Ping Latency</button>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-size:14px; font-weight:500; color:var(--text-main);">Security</div>
+            <div style="font-size:12px; color:var(--text-muted);">Standard JWT encryption is active for your session.</div>
+          </div>
+          <span style="font-size:11px; color:var(--primary-light); font-weight:600; background:var(--primary-pale); border:1px solid var(--primary-light); padding:4px 8px; border-radius:4px;">ACTIVE (JWT)</span>
         </div>
       </div>
     </div>
 
     <!-- Messages Section -->
-    <div class="panel" id="section-messages" style="display:none;">
-      <div class="panel-head">
-        <div class="panel-title">💬 Messages & Notifications</div>
-        <div class="panel-action" onclick="markAllNotificationsRead()" style="cursor:pointer">Mark all as read</div>
+    <div class="content-section" id="section-messages" style="display:none;">
+      <div class="panel" style="padding:0; overflow:hidden; border-radius:var(--radius-lg);">
+        <div class="chat-layout">
+          <!-- Chat Sidebar (Active Conversations) -->
+          <div class="chat-sidebar">
+            <div class="chat-sidebar-header">
+              💬 Active Chats
+            </div>
+            <div class="chat-list" id="chat-conversations-list">
+              <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">No active chats.</div>
+            </div>
+          </div>
+          <!-- Chat Main Window -->
+          <div class="chat-main" id="chat-window-empty">
+            <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; background:var(--bg-app); color:var(--text-muted);">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <div style="font-size:14px; font-weight:500;">Select a contact to start messaging</div>
+            </div>
+          </div>
+          <div class="chat-main" id="chat-window-active" style="display:none;">
+            <div class="chat-main-header">
+              <div>
+                <div class="chat-main-title" id="chat-active-name">Buyer Name</div>
+                <div style="font-size:11px; color:var(--text-muted); margin-top:2px;" id="chat-active-role">Buyer</div>
+              </div>
+              <div class="verified-badge">Verified Partner</div>
+            </div>
+            <div class="chat-messages-container" id="chat-messages-box">
+              <!-- Messages bubbles will populate here -->
+            </div>
+            <form class="chat-input-area" onsubmit="sendChatMessage(event)">
+              <input type="text" class="chat-input" id="chat-message-input" placeholder="Type a message..." required autocomplete="off">
+              <button type="submit" class="chat-send-btn">Send</button>
+            </form>
+          </div>
+        </div>
       </div>
-      <div id="notifications-inbox-list" style="display:flex; flex-direction:column; gap:12px; max-height:400px; overflow-y:auto; padding-right:5px;">
-        <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No messages or notifications.</div>
+      
+      <!-- System Notifications -->
+      <div class="panel" style="margin-top:20px;">
+        <div class="panel-head">
+          <div class="panel-title">🔔 System Notifications & Alerts</div>
+          <div class="panel-action" onclick="markAllNotificationsRead()" style="cursor:pointer">Mark all as read</div>
+        </div>
+        <div id="notifications-inbox-list" style="display:flex; flex-direction:column; gap:12px; max-height:250px; overflow-y:auto; padding-right:5px;">
+          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">No messages or notifications.</div>
+        </div>
       </div>
     </div>
 
@@ -645,17 +805,82 @@
           </div>
           <button type="submit" class="btn-sm btn-accept" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;">Send Counter Offer</button>
         </form>
+    <!-- EDIT CROP MODAL -->
+    <div id="edit-crop-modal" style="display:none;position:fixed;inset:0;background:rgba(26,46,26,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
+      <div style="background:var(--bg-card);border-radius:20px;padding:32px;max-width:400px;width:95%;box-shadow:var(--shadow-lg);border:1px solid var(--border-color);position:relative;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <h3 style="font-family:var(--font-heading);font-size:1.4rem;color:var(--text-main)" id="edit-crop-title">Edit Crop Stock</h3>
+          <button onclick="closeEditCropModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-hint)">&times;</button>
+        </div>
+        <form id="edit-crop-form" onsubmit="submitEditCrop(event)">
+          <input type="hidden" id="edit-crop-id">
+          <div style="margin-bottom:14px;display:flex;flex-direction:column;gap:5px;">
+            <label class="form-label">Quantity (kg)</label>
+            <input class="form-input" type="number" step="0.01" id="edit-crop-qty" required placeholder="e.g. 100">
+          </div>
+          <div style="margin-bottom:20px;display:flex;flex-direction:column;gap:5px;">
+            <label class="form-label">Price per kg (Rs.)</label>
+            <input class="form-input" type="number" step="0.01" id="edit-crop-price" required placeholder="e.g. 250">
+          </div>
+          <button type="submit" class="btn-sm btn-accept" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;background:var(--primary);color:#fff;">Save Stock Changes</button>
+        </form>
       </div>
     </div>
 
   </div>
 </div>
 
+<div id="toast-container"></div>
 <script>
-var API_URL = window.location.origin.includes('localhost') ? 'http://localhost:3000' : 'https://agronexa-lk-production.up.railway.app';
+var API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:')
+  ? 'http://localhost:3000'
+  : 'https://agronexa-lk-production.up.railway.app';
+
+// ── TOAST NOTIFICATION SYSTEM ──
+function showToast(title, message, type, duration) {
+  type = type || 'info';
+  duration = duration || 4000;
+  const icons = { success: '✅', error: '❌', info: '🔔', warning: '⚠️' };
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  toast.innerHTML = `
+    <div class="toast-icon">${icons[type] || '🔔'}</div>
+    <div class="toast-body">
+      <div class="toast-title">${title}</div>
+      <div class="toast-msg">${message || ''}</div>
+    </div>
+    <button class="toast-close" onclick="this.closest('.toast').remove()">×</button>
+  `;
+  container.appendChild(toast);
+  setTimeout(function() {
+    if (toast.parentNode) {
+      toast.classList.add('removing');
+      setTimeout(function() { if (toast.parentNode) toast.remove(); }, 300);
+    }
+  }, duration);
+}
+
+// ── FORMAT TIME AGO ──
+function formatTimeAgo(date) {
+  if (!date || isNaN(date.getTime())) return '';
+  var now = new Date();
+  var diffMs = now - date;
+  var diffSec = Math.floor(diffMs / 1000);
+  var diffMin = Math.floor(diffSec / 60);
+  var diffHr = Math.floor(diffMin / 60);
+  var diffDay = Math.floor(diffHr / 24);
+  if (diffSec < 60) return 'Just now';
+  if (diffMin < 60) return diffMin + 'm ago';
+  if (diffHr < 24) return diffHr + 'h ago';
+  if (diffDay < 7) return diffDay + 'd ago';
+  return date.toLocaleDateString();
+}
 
 var _user = null;
 var socket = null;
+var activeChatUserId = null;
+var pingStart = 0;
 
 (function(){
   if (localStorage.getItem('agro_dark_mode') === 'enabled') {
@@ -668,6 +893,12 @@ var socket = null;
 
   initSocket();
 
+  // Set current date chip dynamically
+  const dateChip = document.querySelector('.date-chip');
+  if (dateChip) {
+    dateChip.textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
   // Immediately show what we have from session
   var name = _user.name || _user.email;
   var initials = name.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
@@ -678,7 +909,9 @@ var socket = null;
 
   // Fetch full profile from server
   if (_user.id) {
-    fetch(API_URL + '/api/profile/' + _user.id)
+    fetch(API_URL + '/api/profile/' + _user.id, {
+      headers: getAuthHeaders()
+    })
       .then(function(r){ return r.json(); })
       .then(function(data){
         if (!data.success) return;
@@ -739,15 +972,49 @@ var socket = null;
   } else {
     loadDashboardData();
   }
+
+  // Auto-refresh every 30 seconds for realtime-like experience
+  setInterval(function() {
+    loadDashboardData();
+    console.log('🔄 Auto-refreshed dashboard');
+  }, 30000);
 })();
 
 function initSocket() {
+  if (typeof io === 'undefined') {
+    console.warn('⚠️ Socket.io is not loaded. Real-time updates will be disabled.');
+    var el = document.getElementById('socket-status');
+    if (el) { el.className = 'socket-status disconnected'; el.innerHTML = '<span class="dot"></span>Offline'; }
+    return;
+  }
   socket = io(API_URL);
   
   if (_user && _user.id) {
     socket.emit('join', _user.id);
     console.log('📡 Joined room: user_' + _user.id);
   }
+
+  socket.on('pong_latency', function(data) {
+    const lat = Date.now() - pingStart;
+    showToast('Network Latency', '⚡ ' + lat + 'ms', 'info', 3000);
+  });
+
+  socket.on('connect', function() {
+    var el = document.getElementById('socket-status');
+    if (el) { el.className = 'socket-status'; el.innerHTML = '<span class="dot"></span>Live'; }
+    console.log('✅ Socket connected');
+  });
+
+  socket.on('disconnect', function() {
+    var el = document.getElementById('socket-status');
+    if (el) { el.className = 'socket-status disconnected'; el.innerHTML = '<span class="dot"></span>Offline'; }
+    console.log('❌ Socket disconnected');
+  });
+
+  socket.on('connect_error', function() {
+    var el = document.getElementById('socket-status');
+    if (el) { el.className = 'socket-status disconnected'; el.innerHTML = '<span class="dot"></span>Error'; }
+  });
   
   socket.on('dashboard_update', function(data) {
     console.log('🔄 Real-time update signal:', data);
@@ -756,13 +1023,36 @@ function initSocket() {
 
   socket.on('new_notification', function(notif) {
     console.log('🔔 New notification:', notif);
-    alert('🔔 Notification: ' + notif.title + ' - ' + notif.body);
+    showToast(notif.title, notif.body, 'info', 6000);
     loadDashboardData();
   });
 
   socket.on('requests_update', function() {
     console.log('🔄 Real-time requests update received');
     loadBuyerRequests();
+  });
+
+  socket.on('receive_message', function(data) {
+    console.log('💬 New real-time message received:', data);
+    if (activeChatUserId === data.sender_id) {
+      const box = document.getElementById('chat-messages-box');
+      const timeStr = new Date(data.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const bubble = document.createElement('div');
+      bubble.className = 'chat-bubble received';
+      bubble.innerHTML = `
+        <div>${data.message}</div>
+        <div class="chat-bubble-time">${timeStr}</div>
+      `;
+      box.appendChild(bubble);
+      box.scrollTop = box.scrollHeight;
+      
+      // Update read status on backend
+      fetch(API_URL + `/api/seller/messages?seller_id=${_user.id}&chat_user_id=${data.sender_id}`, {
+        headers: getAuthHeaders()
+      });
+    } else {
+      loadChatsList();
+    }
   });
 }
 
@@ -832,6 +1122,7 @@ function switchTab(tab) {
   } else if (tab === 'messages') {
     sectionMessages.style.display = 'block';
     loadNotificationsInbox();
+    loadChatsList();
   }
 }
 
@@ -878,7 +1169,7 @@ function saveProfile(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        alert('Profile updated successfully! 💾');
+        showToast('Profile Updated!', 'Your profile has been saved 💾', 'success');
         const p = data.user;
         const fullName = (p.first_name + ' ' + p.last_name).trim();
         const initials = fullName.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
@@ -896,7 +1187,7 @@ function saveProfile(e) {
         sessionStorage.setItem('agro_user', JSON.stringify(_user));
         loadProfileDetails();
       } else {
-        alert('❌ Error updating profile: ' + data.error);
+        showToast('Error', data.error || 'Failed to update profile', 'error');
       }
     });
 }
@@ -1105,12 +1396,12 @@ function submitNewEquipment(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        alert('Equipment listing published successfully! 🚜');
+        showToast('Equipment Listed!', 'Equipment listing published successfully 🚜', 'success');
         closeAddEquipmentModal();
         loadEquipmentData();
         loadDashboardData();
       } else {
-        alert('❌ Error: ' + data.error);
+        showToast('Error', data.error || 'Failed to list equipment', 'error');
       }
     });
 }
@@ -1125,10 +1416,11 @@ function deactivateEquipment(id) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
+        showToast('Equipment Deactivated', 'Listing removed from marketplace', 'warning');
         loadEquipmentData();
         loadDashboardData();
       } else {
-        alert('❌ Error: ' + data.error);
+        showToast('Error', data.error || 'Failed to deactivate', 'error');
       }
     });
 }
@@ -1143,11 +1435,11 @@ function confirmBooking(id) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        alert('Booking request confirmed! Ledger transaction ID: ' + data.ledger_tx.slice(0, 16) + '...');
+        showToast('Booking Confirmed!', 'Ledger TX: ' + (data.ledger_tx ? data.ledger_tx.slice(0, 16) + '...' : 'N/A'), 'success');
         loadEquipmentData();
         loadDashboardData();
       } else {
-        alert('❌ Error: ' + data.error);
+        showToast('Error', data.error || 'Failed to confirm booking', 'error');
       }
     });
 }
@@ -1281,13 +1573,14 @@ function loadCropListings() {
               <div class="listing-price">Rs. ${parseFloat(item.price_per_kg).toFixed(0)}/kg</div>
               <div style="display:flex;gap:8px;margin-top:4px;align-items:center;">
                 <span class="status-pill ${statusClass}">${statusLabel}</span>
-                <button onclick="deactivateListing(${item.id})" style="background:none;border:none;color:var(--amber);font-size:11px;cursor:pointer;font-weight:500;">Deactivate</button>
+                <button onclick="openEditCropModal(${item.id}, ${item.quantity_kg}, ${item.price_per_kg}, '${item.name.replace(/'/g, "\\'")}')" style="background:none;border:none;color:var(--primary-light);font-size:11px;cursor:pointer;font-weight:600;">Edit</button>
+                <button onclick="deactivateListing(${item.id})" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;font-weight:500;">Deactivate</button>
               </div>
             </div>
           </div>
         `;
       });
-      container.innerHTML = html || '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No active listings.</div>';
+      container.innerHTML = html || '<div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">No active listings.</div>';
     });
 }
 
@@ -1341,15 +1634,15 @@ function submitNewCrop(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        alert('Listing published successfully! 🌱');
+        showToast('Listing Published!', 'Your crop listing is now live 🌱', 'success');
         closeAddCropModal();
         loadDashboardData();
       } else {
-        alert('❌ Error: ' + data.error);
+        showToast('Error', data.error || 'Failed to publish listing', 'error');
       }
     })
     .catch(() => {
-      alert('❌ Server error publishing listing.');
+      showToast('Server Error', 'Could not publish listing. Check your connection.', 'error');
     });
 }
 
@@ -1363,9 +1656,10 @@ function deactivateListing(id) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
+        showToast('Listing Deactivated', 'Crop listing removed from marketplace', 'warning');
         loadDashboardData();
       } else {
-        alert('❌ Error: ' + data.error);
+        showToast('Error', data.error || 'Failed to deactivate', 'error');
       }
     });
 }
@@ -1420,7 +1714,7 @@ function loadBuyerRequests() {
         
         let actionsHtml = '';
         if (hasResponded) {
-          actionsHtml = `<span style="font-size:12px;color:var(--green);font-weight:500;">✓ Responded (${myResponse.type})</span>`;
+          actionsHtml = `<span style="font-size:12px;color:var(--green);font-weight:500;margin-right:8px;">✓ Responded (${myResponse.type})</span>`;
         } else {
           actionsHtml = `
             <button class="btn-sm btn-accept" onclick="acceptRequest(${item.id}, ${parseFloat(item.budget || 0)})">Accept Offer</button>
@@ -1428,6 +1722,7 @@ function loadBuyerRequests() {
             <button class="btn-sm btn-reject" onclick="declineRequest(${item.id})">Decline</button>
           `;
         }
+        actionsHtml += `<button class="btn-sm btn-reject" style="background:var(--primary-pale); color:var(--primary-light); border-color:var(--primary-light);" onclick="startChatWithUser(${item.buyer_id}, '${item.buyer_name.replace(/'/g, "\\'")}', 'buyer')">💬 Chat</button>`;
 
         html += `
           <div class="request-item">
@@ -1498,14 +1793,14 @@ function respondToRequest(requestId, type, price, qty, message) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        alert('Response submitted successfully! 🤝');
+        showToast('Response Sent!', 'Your response was submitted successfully 🤝', 'success');
         loadDashboardData();
       } else {
-        alert('❌ Error: ' + data.error);
+        showToast('Error', data.error || 'Failed to send response', 'error');
       }
     })
     .catch(() => {
-      alert('❌ Server error sending response.');
+      showToast('Server Error', 'Could not send response. Check your connection.', 'error');
     });
 }
 
@@ -1597,6 +1892,193 @@ function loadReputation() {
       document.getElementById('rep-bar-accuracy').style.width = accuracy + '%';
       document.getElementById('rep-val-accuracy').textContent = accuracy;
     });
+}
+
+// ── INLINE EDIT CROP FUNCTIONS ──
+function openEditCropModal(id, qty, price, name) {
+  document.getElementById('edit-crop-id').value = id;
+  document.getElementById('edit-crop-qty').value = qty;
+  document.getElementById('edit-crop-price').value = price;
+  document.getElementById('edit-crop-title').textContent = 'Edit ' + name;
+  document.getElementById('edit-crop-modal').style.display = 'flex';
+}
+
+function closeEditCropModal() {
+  document.getElementById('edit-crop-modal').style.display = 'none';
+  document.getElementById('edit-crop-form').reset();
+}
+
+function submitEditCrop(e) {
+  e.preventDefault();
+  const id = document.getElementById('edit-crop-id').value;
+  const qty = document.getElementById('edit-crop-qty').value;
+  const price = document.getElementById('edit-crop-price').value;
+
+  fetch(API_URL + '/api/seller/crops/' + id + '/update-stock', {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      seller_id: _user.id,
+      quantity_kg: qty,
+      price_per_kg: price
+    })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        showToast('Stock Updated!', 'Crop stock changes saved 🌱', 'success');
+        closeEditCropModal();
+        loadDashboardData();
+      } else {
+        showToast('Error', data.error || 'Failed to update stock', 'error');
+      }
+    })
+    .catch(() => {
+      showToast('Server Error', 'Could not save stock changes.', 'error');
+    });
+}
+
+// ── WEBSOCKET LATENCY CHECK ──
+function checkWebsocketPing() {
+  if (!socket) {
+    showToast('Not Connected', 'Websocket is not connected', 'warning');
+    return;
+  }
+  pingStart = Date.now();
+  socket.emit('ping_latency', { time: pingStart });
+}
+
+// ── LIVE CHAT PANEL FUNCTIONS ──
+function loadChatsList() {
+  if (!_user || !_user.id) return;
+  fetch(API_URL + '/api/seller/chats?seller_id=' + _user.id, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      const container = document.getElementById('chat-conversations-list');
+      if (!data.success || !data.chats || !data.chats.length) {
+        container.innerHTML = '<div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">No active chats.</div>';
+        return;
+      }
+      let html = '';
+      data.chats.forEach(chat => {
+        const activeClass = activeChatUserId === chat.id ? 'active' : '';
+        const unreadBadge = chat.unread_count > 0 ? `<span class="chat-unread-badge">${chat.unread_count}</span>` : '';
+        const initials = chat.name.split(' ').map(w => w[0] || '').join('').toUpperCase().slice(0, 2);
+        const lastMsg = chat.last_message || 'No messages';
+        
+        html += `
+          <div class="chat-user-item ${activeClass}" onclick="openDirectChat(${chat.id}, '${chat.name.replace(/'/g, "\\'")}', '${chat.role}')">
+            <div class="chat-user-avatar">${initials}</div>
+            <div class="chat-user-info">
+              <div class="chat-user-name">${chat.name}</div>
+              <div class="chat-user-meta">${lastMsg}</div>
+            </div>
+            ${unreadBadge}
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    });
+}
+
+function openDirectChat(buyerId, buyerName, buyerRole) {
+  activeChatUserId = buyerId;
+  document.getElementById('chat-window-empty').style.display = 'none';
+  document.getElementById('chat-window-active').style.display = 'flex';
+  document.getElementById('chat-active-name').textContent = buyerName;
+  document.getElementById('chat-active-role').textContent = buyerRole.toUpperCase() + ' · ' + (buyerRole === 'buyer' ? 'B2B Client' : 'Farmer');
+  
+  // Highlight active chat in list
+  const items = document.querySelectorAll('.chat-user-item');
+  items.forEach(item => item.classList.remove('active'));
+  // Reload chat list to update unread badge
+  loadChatsList();
+  
+  // Fetch message history
+  fetch(API_URL + `/api/seller/messages?seller_id=${_user.id}&chat_user_id=${buyerId}`, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      const box = document.getElementById('chat-messages-box');
+      if (!data.success || !data.messages) {
+        box.innerHTML = '';
+        return;
+      }
+      let html = '';
+      data.messages.forEach(msg => {
+        const isSent = msg.sender_id === _user.id;
+        const bubbleClass = isSent ? 'sent' : 'received';
+        const timeStr = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        html += `
+          <div class="chat-bubble ${bubbleClass}">
+            <div>${msg.message}</div>
+            <div class="chat-bubble-time">${timeStr}</div>
+          </div>
+        `;
+      });
+      box.innerHTML = html;
+      box.scrollTop = box.scrollHeight;
+    });
+}
+
+function sendChatMessage(e) {
+  e.preventDefault();
+  const input = document.getElementById('chat-message-input');
+  const msgText = input.value.trim();
+  if (!msgText || !activeChatUserId) return;
+  
+  // Send via HTTP POST
+  fetch(API_URL + '/api/seller/messages/send', {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      seller_id: _user.id,
+      receiver_id: activeChatUserId,
+      message: msgText
+    })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        const msg = data.message;
+        input.value = '';
+        
+        // Append bubble locally
+        const box = document.getElementById('chat-messages-box');
+        const timeStr = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const bubble = document.createElement('div');
+        bubble.className = 'chat-bubble sent';
+        bubble.innerHTML = `
+          <div>${msg.message}</div>
+          <div class="chat-bubble-time">${timeStr}</div>
+        `;
+        box.appendChild(bubble);
+        box.scrollTop = box.scrollHeight;
+        
+        // Emit via socket for real-time delivery
+        if (socket) {
+          socket.emit('send_message', {
+            id: msg.id,
+            sender_id: _user.id,
+            receiver_id: activeChatUserId,
+            message: msgText,
+            created_at: msg.created_at
+          });
+        }
+        
+        // Refresh conversations list to update last message
+        loadChatsList();
+      }
+    });
+}
+
+// ── CHAT UTILS ──
+function startChatWithUser(userId, userName, userRole) {
+  switchTab('messages');
+  openDirectChat(userId, userName, userRole);
 }
 
 function doLogout(){

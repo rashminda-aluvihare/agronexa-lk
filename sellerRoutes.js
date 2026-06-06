@@ -164,6 +164,17 @@ async function ensureTables(client) {
       created_at    TIMESTAMPTZ DEFAULT NOW()
     );
   `);
+
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS direct_messages (
+      id            SERIAL PRIMARY KEY,
+      sender_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      receiver_id   INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      message       TEXT NOT NULL,
+      is_read       BOOLEAN DEFAULT FALSE,
+      created_at    TIMESTAMPTZ DEFAULT NOW()
+    );
+  `);
 }
 
 // Run migration once at startup
@@ -229,7 +240,7 @@ router.get('/crops', authRequired, requireRole(['seller','farmer']), async (req,
 });
 
 // POST /api/seller/crops  — create a crop listing
-router.post('/crops', uploadListingImages.array('photos', 5), async (req, res) => {
+router.post('/crops', authRequired, uploadListingImages.array('photos', 5), async (req, res) => {
   try {
     const {
       seller_id, name, category, quantity_kg, price_per_kg,
@@ -729,6 +740,113 @@ router.get('/reputation/:seller_id', async (req, res) => {
     // Simple score: min(5, rentals / 10 * 5) scaled to 5.0
     const score = Math.min(5, (parseInt(completed_rentals) / 10) * 5).toFixed(1);
     res.json({ success: true, score: parseFloat(score), completed_rentals, total_value });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+// ═══════════════════════════════════════════════════════════════════════════════
+//  DIRECT MESSAGES & CHAT (FR8)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// GET /api/seller/chats?seller_id=
+router.get('/chats', async (req, res) => {
+  const { seller_id } = req.query;
+  if (!seller_id) return res.status(400).json({ error: 'seller_id is required' });
+  try {
+    const result = await pool.query(
+      `SELECT u.id, u.first_name || ' ' || u.last_name AS name, u.role, u.district,
+              (SELECT message FROM direct_messages 
+               WHERE (sender_id = $1 AND receiver_id = u.id) OR (sender_id = u.id AND receiver_id = $1)
+               ORDER BY created_at DESC LIMIT 1) AS last_message,
+              (SELECT created_at FROM direct_messages 
+               WHERE (sender_id = $1 AND receiver_id = u.id) OR (sender_id = u.id AND receiver_id = $1)
+               ORDER BY created_at DESC LIMIT 1) AS last_time,
+              (SELECT COUNT(*) FROM direct_messages 
+               WHERE sender_id = u.id AND receiver_id = $1 AND is_read = FALSE) AS unread_count
+       FROM users u
+       WHERE u.id IN (
+         SELECT DISTINCT CASE WHEN sender_id = $1 THEN receiver_id ELSE sender_id END
+         FROM direct_messages
+         WHERE sender_id = $1 OR receiver_id = $1
+       )
+       ORDER BY last_time DESC NULLS LAST`,
+      [seller_id]
+    );
+    res.json({ success: true, chats: result.rows });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/seller/messages?seller_id=&chat_user_id=
+router.get('/messages', async (req, res) => {
+  const { seller_id, chat_user_id } = req.query;
+  if (!seller_id || !chat_user_id) {
+    return res.status(400).json({ error: 'seller_id and chat_user_id are required' });
+  }
+  try {
+    // Mark as read
+    await pool.query(
+      `UPDATE direct_messages SET is_read = TRUE 
+       WHERE sender_id = $1 AND receiver_id = $2 AND is_read = FALSE`,
+      [chat_user_id, seller_id]
+    );
+    
+    // Fetch conversation
+    const result = await pool.query(
+      `SELECT dm.*, 
+              s.first_name || ' ' || s.last_name AS sender_name,
+              r.first_name || ' ' || r.last_name AS receiver_name
+       FROM direct_messages dm
+       JOIN users s ON s.id = dm.sender_id
+       JOIN users r ON r.id = dm.receiver_id
+       WHERE (dm.sender_id = $1 AND dm.receiver_id = $2)
+          OR (dm.sender_id = $2 AND dm.receiver_id = $1)
+       ORDER BY dm.created_at ASC`,
+      [seller_id, chat_user_id]
+    );
+    res.json({ success: true, messages: result.rows });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/seller/messages/send
+router.post('/messages/send', async (req, res) => {
+  const { seller_id, receiver_id, message } = req.body;
+  if (!seller_id || !receiver_id || !message) {
+    return res.status(400).json({ error: 'seller_id, receiver_id, and message are required' });
+  }
+  try {
+    const result = await pool.query(
+      `INSERT INTO direct_messages (sender_id, receiver_id, message)
+       VALUES ($1, $2, $3) RETURNING *`,
+      [seller_id, receiver_id, message]
+    );
+    res.json({ success: true, message: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PUT /api/seller/crops/:id/update-stock
+router.put('/crops/:id/update-stock', async (req, res) => {
+  const { seller_id, quantity_kg, price_per_kg } = req.body;
+  if (!seller_id) return res.status(400).json({ error: 'seller_id is required' });
+  try {
+    const result = await pool.query(
+      `UPDATE crop_listings SET quantity_kg = $1, price_per_kg = $2, updated_at = NOW()
+       WHERE id = $3 AND seller_id = $4 RETURNING *`,
+      [quantity_kg, price_per_kg, req.params.id, seller_id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Crop listing not found' });
+    }
+    // Emit socket notifications to update market
+    if (io) {
+      io.emit('requests_update');
+    }
+    res.json({ success: true, listing: result.rows[0] });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

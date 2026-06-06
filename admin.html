@@ -300,6 +300,9 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
     <button class="tab-btn" id="tab-all-btn" onclick="switchTab('all')">
       📋 All Registrations <span class="tab-count" id="all-count">0</span>
     </button>
+    <button class="tab-btn" id="tab-audit-btn" onclick="switchTab('audit')">
+      🛡️ Audit Logs
+    </button>
   </div>
 
   <div class="content">
@@ -310,6 +313,25 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
     <div id="tab-all" style="display:none;">
       <div class="section-title">All Registrations</div>
       <div class="cards" id="all-list"><div class="loading">Loading...</div></div>
+    </div>
+    <div id="tab-audit" style="display:none;">
+      <div class="section-title">System Audit Logs (Read-only)</div>
+      <div id="audit-list-container" style="background:#fff; border-radius:12px; border:1px solid var(--border); overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:left; min-width:600px;">
+          <thead>
+            <tr style="background:var(--paper); border-bottom:1px solid var(--border); color:var(--muted); font-weight:600; text-transform:uppercase; font-size:11px;">
+              <th style="padding:12px 16px;">Timestamp</th>
+              <th style="padding:12px 16px;">User Email</th>
+              <th style="padding:12px 16px;">Action</th>
+              <th style="padding:12px 16px;">IP Address</th>
+              <th style="padding:12px 16px;">Details</th>
+            </tr>
+          </thead>
+          <tbody id="audit-list">
+            <tr><td colspan="5" style="padding:20px; text-align:center; color:var(--muted);">Loading logs...</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
@@ -324,7 +346,9 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
 <div id="toast"></div>
 
 <script>
-var API_URL = 'https://agronexa-lk-production.up.railway.app';
+var API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:'
+  ? 'http://localhost:3000'
+  : 'https://agronexa-lk-production.up.railway.app';
 var adminEmail = '', adminPass = '';
 var allUsers = [], pendingUsers = [];
 var currentTab = 'pending';
@@ -431,6 +455,24 @@ function renderList(containerId, users, actionsVisible) {
         + '</div>'
         + (u.rejection_reason ? '<div style="background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--danger);"><strong>Rejection reason:</strong> ' + esc(u.rejection_reason) + '</div>' : '')
         + (actionsVisible && u.status === 'pending' ? renderActions(u.id) : '')
+        + '<div style="border-top:1px solid var(--border); padding-top:14px; margin-top:14px; display:flex; gap:16px; flex-wrap:wrap; align-items:center;">'
+          + '<div style="display:flex; align-items:center; gap:8px;">'
+            + '<span style="font-size:12px; font-weight:600; color:var(--muted);">Change Role:</span>'
+            + '<select onchange="changeRole(' + u.id + ', this.value)" style="padding:4px 8px; border-radius:6px; border:1px solid var(--border); font-size:12px; outline:none; background:#fff; cursor:pointer;">'
+              + '<option value="farmer"' + (u.role === 'farmer' ? ' selected' : '') + '>Farmer / Seller</option>'
+              + '<option value="buyer"' + (u.role === 'buyer' ? ' selected' : '') + '>Buyer</option>'
+            + '</select>'
+          + '</div>'
+          + '<div style="display:flex; align-items:center; gap:8px;">'
+            + '<span style="font-size:12px; font-weight:600; color:var(--muted);">Change Status:</span>'
+            + '<select onchange="changeStatus(' + u.id + ', this.value)" style="padding:4px 8px; border-radius:6px; border:1px solid var(--border); font-size:12px; outline:none; background:#fff; cursor:pointer;">'
+              + '<option value="approved"' + (u.status === 'approved' ? ' selected' : '') + '>Approved</option>'
+              + '<option value="pending"' + (u.status === 'pending' ? ' selected' : '') + '>Pending</option>'
+              + '<option value="rejected"' + (u.status === 'rejected' ? ' selected' : '') + '>Rejected</option>'
+              + '<option value="deactivated"' + (u.status === 'deactivated' ? ' selected' : '') + '>Deactivated</option>'
+            + '</select>'
+          + '</div>'
+        + '</div>'
       + '</div>';
     el.appendChild(card);
   });
@@ -526,8 +568,78 @@ function switchTab(t) {
   currentTab = t;
   document.getElementById('tab-pending').style.display = t==='pending' ? 'block' : 'none';
   document.getElementById('tab-all').style.display     = t==='all'     ? 'block' : 'none';
+  document.getElementById('tab-audit').style.display   = t==='audit'   ? 'block' : 'none';
+  
   document.getElementById('tab-pending-btn').classList.toggle('on', t==='pending');
   document.getElementById('tab-all-btn').classList.toggle('on', t==='all');
+  document.getElementById('tab-audit-btn').classList.toggle('on', t==='audit');
+  
+  if (t === 'audit') {
+    loadAuditLogs();
+  }
+}
+
+async function changeRole(uid, newRole) {
+  try {
+    var res = await fetch(API_URL + '/api/admin/user/' + uid + '/role', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ admin_email: adminEmail, admin_password: adminPass, role: newRole })
+    });
+    var data = await res.json();
+    if (data.success) {
+      showToast('✅ Role updated successfully.');
+      await loadAll();
+    } else { showToast('❌ ' + (data.error || 'Error')); }
+  } catch(e) { showToast('❌ Connection error'); }
+}
+
+async function changeStatus(uid, newStatus) {
+  try {
+    var res = await fetch(API_URL + '/api/admin/user/' + uid + '/status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ admin_email: adminEmail, admin_password: adminPass, status: newStatus })
+    });
+    var data = await res.json();
+    if (data.success) {
+      showToast('✅ Status updated successfully.');
+      await loadAll();
+    } else { showToast('❌ ' + (data.error || 'Error')); }
+  } catch(e) { showToast('❌ Connection error'); }
+}
+
+async function loadAuditLogs() {
+  var tbody = document.getElementById('audit-list');
+  try {
+    var res = await fetch(API_URL + '/api/admin/audit-logs?admin_email=' + encodeURIComponent(adminEmail) + '&admin_password=' + encodeURIComponent(adminPass));
+    var data = await res.json();
+    if (data.success && data.logs) {
+      if (data.logs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="padding:20px; text-align:center; color:var(--muted);">No logs recorded.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = '';
+      data.logs.forEach(function(l) {
+        var tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid var(--border)';
+        
+        var date = l.created_at ? new Date(l.created_at).toLocaleString() : '—';
+        var email = l.user_email || (l.user_id === 0 ? 'Admin' : 'Anonymous');
+        var details = l.details ? esc(l.details) : '—';
+        
+        tr.innerHTML = 
+          '<td style="padding:12px 16px;">' + date + '</td>' +
+          '<td style="padding:12px 16px;">' + esc(email) + '</td>' +
+          '<td style="padding:12px 16px; font-weight:600;">' + esc(l.action) + '</td>' +
+          '<td style="padding:12px 16px;">' + esc(l.ip_address || '—') + '</td>' +
+          '<td style="padding:12px 16px; color:var(--muted); font-family:monospace; max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="' + details + '">' + details + '</td>';
+        tbody.appendChild(tr);
+      });
+    }
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="5" style="padding:20px; text-align:center; color:var(--danger);">Error loading audit logs.</td></tr>';
+  }
 }
 
 // ── TOAST ──
