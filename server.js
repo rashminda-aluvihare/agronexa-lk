@@ -77,6 +77,127 @@ const pool = new Pool({
 });
 app.set('db', pool);
 // Test DB connection + auto-migrate + seed admin
+async function ensureTables(client) {
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS crop_listings (
+      id            SERIAL PRIMARY KEY,
+      seller_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      name          VARCHAR(120) NOT NULL,
+      category      VARCHAR(60),
+      quantity_kg   NUMERIC(10,2),
+      price_per_kg  NUMERIC(10,2),
+      district      VARCHAR(60),
+      available_date DATE,
+      description   TEXT,
+      photos        TEXT[],
+      status        VARCHAR(20) DEFAULT 'active',
+      created_at    TIMESTAMPTZ DEFAULT NOW(),
+      updated_at    TIMESTAMPTZ DEFAULT NOW()
+    );
+  `);
+
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS equipment_listings (
+      id            SERIAL PRIMARY KEY,
+      owner_id      INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      name          VARCHAR(120) NOT NULL,
+      type          VARCHAR(60),
+      description   TEXT,
+      rental_rate   NUMERIC(10,2),
+      district      VARCHAR(60),
+      condition     VARCHAR(40),
+      photos        TEXT[],
+      status        VARCHAR(20) DEFAULT 'available',
+      created_at    TIMESTAMPTZ DEFAULT NOW(),
+      updated_at    TIMESTAMPTZ DEFAULT NOW()
+    );
+  `);
+
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS equipment_bookings (
+      id            SERIAL PRIMARY KEY,
+      listing_id    INTEGER NOT NULL REFERENCES equipment_listings(id) ON DELETE CASCADE,
+      renter_id     INTEGER NOT NULL REFERENCES users(id),
+      owner_id      INTEGER NOT NULL REFERENCES users(id),
+      start_date    DATE NOT NULL,
+      end_date      DATE NOT NULL,
+      total_amount  NUMERIC(10,2),
+      status        VARCHAR(20) DEFAULT 'pending',
+      created_at    TIMESTAMPTZ DEFAULT NOW()
+    );
+  `);
+
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS buyer_requests (
+      id            SERIAL PRIMARY KEY,
+      buyer_id      INTEGER NOT NULL REFERENCES users(id),
+      buyer_name    VARCHAR(120),
+      crop          VARCHAR(120) NOT NULL,
+      category      VARCHAR(60),
+      quantity      VARCHAR(60),
+      unit          VARCHAR(20),
+      quality       VARCHAR(60),
+      urgency       VARCHAR(60),
+      budget        VARCHAR(60),
+      price_type    VARCHAR(20),
+      payment_method VARCHAR(60),
+      payment_terms  VARCHAR(60),
+      delivery_type  VARCHAR(60),
+      district      VARCHAR(60),
+      address       TEXT,
+      needed_by     DATE,
+      phone         VARCHAR(30),
+      whatsapp      VARCHAR(30),
+      email         VARCHAR(120),
+      notes         TEXT,
+      status        VARCHAR(20) DEFAULT 'open',
+      expires_at    TIMESTAMPTZ DEFAULT (NOW() + INTERVAL '72 hours'),
+      created_at    TIMESTAMPTZ DEFAULT NOW()
+    );
+  `);
+
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS request_responses (
+      id            SERIAL PRIMARY KEY,
+      request_id    INTEGER NOT NULL REFERENCES buyer_requests(id) ON DELETE CASCADE,
+      seller_id     INTEGER NOT NULL REFERENCES users(id),
+      type          VARCHAR(20) NOT NULL,
+      price         NUMERIC(10,2),
+      quantity      VARCHAR(60),
+      message       TEXT,
+      created_at    TIMESTAMPTZ DEFAULT NOW()
+    );
+  `);
+
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS rental_ledger (
+      id            SERIAL PRIMARY KEY,
+      tx_id         VARCHAR(64) UNIQUE NOT NULL,
+      listing_id    INTEGER,
+      listing_type  VARCHAR(20),
+      renter_id     INTEGER REFERENCES users(id),
+      owner_id      INTEGER REFERENCES users(id),
+      amount        NUMERIC(10,2),
+      duration_days INTEGER,
+      prev_hash     VARCHAR(64) NOT NULL DEFAULT '0',
+      block_hash    VARCHAR(64) NOT NULL,
+      created_at    TIMESTAMPTZ DEFAULT NOW()
+    );
+  `);
+
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS notifications (
+      id            SERIAL PRIMARY KEY,
+      user_id       INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      type          VARCHAR(40),
+      title         VARCHAR(200),
+      body          TEXT,
+      is_read       BOOLEAN DEFAULT FALSE,
+      created_at    TIMESTAMPTZ DEFAULT NOW()
+    );
+  `);
+}
+
 pool.connect(async (err, client, release) => {
   if (err) { console.error('❌ DB connection failed:', err.message); return; }
   console.log('✅ Connected to PostgreSQL!');
@@ -85,9 +206,10 @@ pool.connect(async (err, client, release) => {
     await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'pending';");
     await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS rejection_reason TEXT;");
     await client.query("UPDATE users SET status = 'approved' WHERE status IS NULL;");
-    console.log('✅ DB migration done');
 
-    // Admin is verified via env credentials only — no DB entry needed
+    // Migrate all app tables
+    await ensureTables(client);
+    console.log('✅ DB migration done');
   } catch (e) {
     console.error('Migration/seed warning:', e.message);
   }
