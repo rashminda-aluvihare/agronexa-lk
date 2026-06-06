@@ -319,6 +319,19 @@
           <div class="panel-title">Incoming Buyer Requests</div>
           <span style="font-size:11px;color:var(--amber);font-weight:500" id="buyer-requests-count">0 new</span>
         </div>
+        <!-- Search and Filter Controls -->
+        <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; background:var(--surface); padding:10px; border-radius:8px; border:1px solid var(--border);">
+          <input type="text" id="requests-search" placeholder="Search crop..." style="flex:1; min-width:150px; border:1px solid var(--border); padding:8px 12px; border-radius:8px; font-size:12.5px; outline:none;" oninput="loadBuyerRequests()">
+          <select id="requests-district-filter" style="border:1px solid var(--border); padding:8px 12px; border-radius:8px; font-size:12.5px; outline:none; background:#fff; color:#000;" onchange="loadBuyerRequests()">
+            <option value="">All Districts</option>
+            <option>Ampara</option><option>Anuradhapura</option><option>Badulla</option><option>Batticaloa</option>
+            <option>Colombo</option><option>Galle</option><option>Gampaha</option><option>Hambantota</option>
+            <option>Jaffna</option><option>Kalutara</option><option>Kandy</option><option>Kegalle</option>
+            <option>Kurunegala</option><option>Matale</option><option>Matara</option><option>Negombo</option>
+            <option>Nuwara Eliya</option><option>Polonnaruwa</option><option>Puttalam</option>
+            <option>Ratnapura</option><option>Trincomalee</option>
+          </select>
+        </div>
         <div id="buyer-requests-list">
           <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Loading incoming requests...</div>
         </div>
@@ -340,7 +353,7 @@
         </div>
       </div>
 
-      <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;flex-direction:column;gap:20px" id="panel-rep-earnings">
         <!-- Reputation -->
         <div class="panel" style="flex:1">
           <div class="panel-head">
@@ -793,16 +806,20 @@ function switchTab(tab) {
     panelCrops.style.display = 'block';
     panelRequests.style.display = 'block';
     sectionLedgerRep.style.display = 'grid';
+    document.getElementById('panel-ledger').style.display = 'block';
+    document.getElementById('panel-rep-earnings').style.display = 'flex';
   } else if (tab === 'listings') {
-    sectionListingsRequests.style.display = 'grid';
+    sectionListingsRequests.style.display = 'block';
     panelCrops.style.display = 'block';
     panelRequests.style.display = 'none';
   } else if (tab === 'requests') {
-    sectionListingsRequests.style.display = 'grid';
+    sectionListingsRequests.style.display = 'block';
     panelCrops.style.display = 'none';
     panelRequests.style.display = 'block';
   } else if (tab === 'ledger') {
-    sectionLedgerRep.style.display = 'grid';
+    sectionLedgerRep.style.display = 'block';
+    document.getElementById('panel-ledger').style.display = 'block';
+    document.getElementById('panel-rep-earnings').style.display = 'none';
   } else if (tab === 'equipment') {
     sectionEquipment.style.display = 'grid';
     loadEquipmentData();
@@ -1355,7 +1372,23 @@ function deactivateListing(id) {
 
 // ── BUYER REQUESTS FUNCTIONS ──
 function loadBuyerRequests() {
-  fetch(API_URL + '/api/seller/requests?district=' + (_user.district || ''), {
+  const searchInput = document.getElementById('requests-search');
+  const districtSelect = document.getElementById('requests-district-filter');
+  
+  const searchVal = searchInput ? searchInput.value.trim() : '';
+  let districtVal = '';
+  if (districtSelect) {
+    districtVal = districtSelect.value;
+  } else {
+    districtVal = _user.district || '';
+  }
+  
+  let url = API_URL + `/api/seller/requests?district=${encodeURIComponent(districtVal)}`;
+  if (searchVal) {
+    url += `&crop=${encodeURIComponent(searchVal)}`;
+  }
+
+  fetch(url, {
     headers: getAuthHeaders()
   })
     .then(r => r.json())

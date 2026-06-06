@@ -746,19 +746,21 @@ function switchTab(tab) {
     sectionBroadcastsResponses.style.display = 'grid';
     panelBroadcastForm.style.display = 'block';
     panelResponses.style.display = 'block';
+    document.getElementById('panel-my-requests').style.display = 'block';
     sectionBookingsMarket.style.display = 'grid';
     panelBookings.style.display = 'block';
     panelMarketplace.style.display = 'block';
   } else if (tab === 'marketplace') {
-    sectionBookingsMarket.style.display = 'grid';
+    sectionBookingsMarket.style.display = 'block';
     panelBookings.style.display = 'none';
     panelMarketplace.style.display = 'block';
   } else if (tab === 'requests') {
     sectionBroadcastsResponses.style.display = 'grid';
     panelBroadcastForm.style.display = 'block';
     panelResponses.style.display = 'block';
+    document.getElementById('panel-my-requests').style.display = 'block';
   } else if (tab === 'bookings') {
-    sectionBookingsMarket.style.display = 'grid';
+    sectionBookingsMarket.style.display = 'block';
     panelBookings.style.display = 'block';
     panelMarketplace.style.display = 'none';
   } else if (tab === 'ledger') {
