@@ -566,6 +566,10 @@ router.post('/requests/:id/respond', async (req, res) => {
       `A seller has ${typeLabel[type]} for your "${br.crop}" request.${price ? ' Offered: Rs. ' + price : ''}`
     );
 
+    if (io) {
+      io.emit('requests_update');
+    }
+
     res.status(201).json({ success: true, response: response.rows[0] });
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -426,6 +426,10 @@ router.post('/broadcasts', async (req, res) => {
     );
     await Promise.allSettled(notifyAll);
 
+    if (io) {
+      io.emit('requests_update');
+    }
+
     res.status(201).json({
       success: true,
       broadcast,
@@ -510,7 +514,65 @@ router.delete('/broadcasts/:id', async (req, res) => {
       [req.params.id, buyer_id]
     );
     if (!result.rows.length) return res.status(404).json({ error: 'Request not found or already closed' });
+    
+    if (io) {
+      io.emit('requests_update');
+    }
+
     res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PUT /api/buyer/broadcasts/:id — buyer edits request
+router.put('/broadcasts/:id', async (req, res) => {
+  const { buyer_id, crop, quantity, district, needed_by, budget } = req.body;
+  if (!buyer_id) return res.status(400).json({ error: 'buyer_id is required' });
+  try {
+    const result = await pool.query(
+      `UPDATE buyer_requests SET
+         crop = COALESCE($1, crop),
+         quantity = COALESCE($2, quantity),
+         district = COALESCE($3, district),
+         needed_by = COALESCE($4, needed_by),
+         budget = COALESCE($5, budget),
+         expires_at = NOW() + INTERVAL '72 hours'
+       WHERE id = $6 AND buyer_id = $7 AND status = 'open'
+       RETURNING *`,
+      [crop, quantity, district, needed_by || null, budget || null, req.params.id, buyer_id]
+    );
+
+    if (!result.rows.length) {
+      return res.status(404).json({ error: 'Request not found, already closed, or unauthorized' });
+    }
+
+    const updatedRequest = result.rows[0];
+
+    // Notify matching sellers again if updated
+    const sellers = await pool.query(
+      `SELECT DISTINCT u.id FROM users u
+       JOIN crop_listings cl ON cl.seller_id = u.id AND cl.status='active'
+       WHERE u.status='approved' AND u.role IN ('seller','farmer')
+         AND (u.district ILIKE $1 OR cl.district ILIKE $1)
+         AND cl.name ILIKE $2`,
+      [district || updatedRequest.district, `%${crop || updatedRequest.crop}%`]
+    );
+
+    const notifyAll = sellers.rows.map(s =>
+      pushNotification(
+        s.id, 'request',
+        `📢 Updated Buyer Request: ${crop || updatedRequest.crop}`,
+        `${updatedRequest.buyer_name || 'Buyer'} updated their request in ${district || updatedRequest.district}. Respond now!`
+      )
+    );
+    await Promise.allSettled(notifyAll);
+
+    if (io) {
+      io.emit('requests_update');
+    }
+
+    res.json({ success: true, broadcast: updatedRequest });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -537,6 +599,10 @@ router.post('/broadcasts/:id/accept-response', async (req, res) => {
         '🎉 Your offer was accepted!',
         `The buyer accepted your ${rr.rows[0].type} for "${br.rows[0].crop}". Contact them to arrange delivery.`
       );
+    }
+
+    if (io) {
+      io.emit('requests_update');
     }
 
     res.json({ success: true });

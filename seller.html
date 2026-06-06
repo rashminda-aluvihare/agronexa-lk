@@ -717,6 +717,11 @@ function initSocket() {
     alert('🔔 Notification: ' + notif.title + ' - ' + notif.body);
     loadDashboardData();
   });
+
+  socket.on('requests_update', function() {
+    console.log('🔄 Real-time requests update received');
+    loadBuyerRequests();
+  });
 }
 
 // ── TAB SWITCHING ──

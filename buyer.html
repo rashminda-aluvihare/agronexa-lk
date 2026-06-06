@@ -73,7 +73,7 @@
   .stat-delta.neutral{color:var(--muted)}
 
   .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-  .grid-3{display:grid;grid-template-columns:1.4fr 1fr;gap:20px}
+  .grid-3{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:20px}
   .panel{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 24px}
   .panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
   .panel-title{font-size:14px;font-weight:500;color:var(--text)}
@@ -344,6 +344,17 @@
           <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No active responses. Broadcast a request first!</div>
         </div>
       </div>
+
+      <!-- My Active Requests (History & Edit) -->
+      <div class="panel" id="panel-my-requests">
+        <div class="panel-head">
+          <div class="panel-title">My Broadcast History</div>
+          <span style="font-size:11px;color:var(--green);font-weight:500" id="my-requests-header-count">0 active</span>
+        </div>
+        <div id="my-requests-list" style="max-height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No history. Broadcast a request first!</div>
+        </div>
+      </div>
     </div>
 
     <!-- Bookings + Marketplace browse -->
@@ -523,6 +534,40 @@
       </div>
     </div>
 
+    <!-- EDIT REQUEST MODAL -->
+    <div id="edit-request-modal" style="display:none;position:fixed;inset:0;background:rgba(20,29,43,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:20px;padding:32px;max-width:400px;width:95%;box-shadow:0 20px 60px rgba(20,29,43,0.3);border:1px solid var(--border);position:relative;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <h3 style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--text)">Edit Request</h3>
+          <button onclick="closeEditRequestModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted)">&times;</button>
+        </div>
+        <form id="edit-request-form" onsubmit="submitEditRequest(event)">
+          <input type="hidden" id="edit-request-id">
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Commodity</label>
+            <input class="form-input" id="edit-request-crop" required type="text" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+          </div>
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Quantity (kg)</label>
+            <input class="form-input" id="edit-request-quantity" required type="number" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+          </div>
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Required By</label>
+            <input class="form-input" id="edit-request-date" required type="date" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+          </div>
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Location (District)</label>
+            <input class="form-input" id="edit-request-district" required type="text" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+          </div>
+          <div style="margin-bottom:20px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Price Offer (Rs./kg) — optional</label>
+            <input class="form-input" id="edit-request-budget" type="number" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+          </div>
+          <button type="submit" class="btn-sm btn-confirm" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;">Save Changes</button>
+        </form>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -612,6 +657,11 @@ function initSocket() {
   socket.on('new_notification', function(notif) {
     console.log('🔔 New notification:', notif);
     alert('🔔 Notification: ' + notif.title + ' - ' + notif.body);
+    loadDashboardData();
+  });
+
+  socket.on('requests_update', function() {
+    console.log('🔄 Real-time requests update received');
     loadDashboardData();
   });
 }
@@ -852,6 +902,7 @@ function loadDashboardData() {
 
   // 2. Load lists
   loadBroadcastsAndResponses();
+  loadMyRequests();
   loadBookings();
   loadMarketplace();
 }
@@ -984,6 +1035,136 @@ function acceptSellerResponse(broadcastId, responseId) {
       }
     });
 }
+
+function loadMyRequests() {
+  if (!_user || !_user.id) return;
+  fetch(API_URL + '/api/buyer/broadcasts?buyer_id=' + _user.id, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      const container = document.getElementById('my-requests-list');
+      const countHeader = document.getElementById('my-requests-header-count');
+      
+      if (!data.success || !data.broadcasts || !data.broadcasts.length) {
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No history. Broadcast a request first!</div>';
+        countHeader.textContent = '0 active';
+        return;
+      }
+
+      const activeCount = data.broadcasts.filter(b => b.status === 'open').length;
+      countHeader.textContent = `${activeCount} active`;
+
+      let html = '';
+      data.broadcasts.forEach(b => {
+        const neededDate = b.needed_by ? new Date(b.needed_by).toISOString().split('T')[0] : '';
+        const displayDate = b.needed_by ? new Date(b.needed_by).toLocaleDateString() : 'Immediate';
+        const isOpen = b.status === 'open';
+        const statusText = isOpen ? 'Active' : 'Closed';
+        const statusClass = isOpen ? 'confirmed' : 'rejected';
+        
+        let actionsHtml = '';
+        if (isOpen) {
+          // Serialize fields securely to pass to modal
+          const escapedCrop = b.crop.replace(/'/g, "\\'");
+          const escapedDistrict = b.district.replace(/'/g, "\\'");
+          actionsHtml = `
+            <div style="display: flex; gap: 8px; margin-top: 8px;">
+              <button onclick="openEditRequestModal(${b.id}, '${escapedCrop}', ${b.quantity}, '${neededDate}', '${escapedDistrict}', ${b.budget || 'null'})" style="background: var(--teal-pale); color: var(--teal); border: none; border-radius: 6px; padding: 6px 12px; font-size: 11px; font-weight: 500; cursor: pointer; font-family:'DM Sans',sans-serif;">✏️ Edit</button>
+              <button onclick="closeRequest(${b.id})" style="background: #fdeaea; color: #c53030; border: none; border-radius: 6px; padding: 6px 12px; font-size: 11px; font-weight: 500; cursor: pointer; font-family:'DM Sans',sans-serif;">🛑 Close</button>
+            </div>
+          `;
+        }
+
+        html += `
+          <div class="booking-item" style="display: block; padding: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 2px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-weight: 600; font-size: 13px; color: var(--text);">${b.crop}</span>
+              <span class="booking-status ${statusClass}" style="margin: 0; padding: 2px 8px; font-size: 10px;">${statusText}</span>
+            </div>
+            <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">
+              Quantity: ${b.quantity} kg | Location: ${b.district}
+            </div>
+            <div style="font-size: 12px; color: var(--muted); margin-top: 2px;">
+              Needed: ${displayDate} ${b.budget ? ' | Price: Rs. ' + b.budget + '/kg' : ''}
+            </div>
+            ${actionsHtml}
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    });
+}
+
+function openEditRequestModal(id, crop, quantity, neededDate, district, budget) {
+  document.getElementById('edit-request-id').value = id;
+  document.getElementById('edit-request-crop').value = crop;
+  document.getElementById('edit-request-quantity').value = quantity;
+  document.getElementById('edit-request-date').value = neededDate;
+  document.getElementById('edit-request-district').value = district;
+  document.getElementById('edit-request-budget').value = budget !== null ? budget : '';
+  
+  document.getElementById('edit-request-modal').style.display = 'flex';
+}
+
+function closeEditRequestModal() {
+  document.getElementById('edit-request-modal').style.display = 'none';
+}
+
+function submitEditRequest(e) {
+  e.preventDefault();
+  const id = document.getElementById('edit-request-id').value;
+  const crop = document.getElementById('edit-request-crop').value.trim();
+  const quantity = document.getElementById('edit-request-quantity').value;
+  const neededBy = document.getElementById('edit-request-date').value;
+  const district = document.getElementById('edit-request-district').value.trim();
+  const budget = document.getElementById('edit-request-budget').value;
+
+  fetch(API_URL + '/api/buyer/broadcasts/' + id, {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      buyer_id: _user.id,
+      crop: crop,
+      quantity: quantity,
+      district: district,
+      needed_by: neededBy,
+      budget: budget || null
+    })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        alert('Broadcast request updated successfully! 📡');
+        closeEditRequestModal();
+        loadDashboardData();
+      } else {
+        alert('❌ Error: ' + data.error);
+      }
+    });
+}
+
+function closeRequest(id) {
+  if (!confirm('Are you sure you want to close this request? No more sellers will be able to respond.')) return;
+  
+  fetch(API_URL + '/api/buyer/broadcasts/' + id, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      buyer_id: _user.id
+    })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        alert('Broadcast request closed successfully.');
+        loadDashboardData();
+      } else {
+        alert('❌ Error: ' + data.error);
+      }
+    });
+}
+
 
 // ── BOOKINGS FUNCTIONS ──
 function loadBookings() {
