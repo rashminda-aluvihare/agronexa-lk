@@ -1,9 +1,21 @@
 const express = require('express');
 const router = express.Router();
+const authController = require('../controllers/auth.controller');
+const { uploadNic } = require('../middlewares/upload.middleware');
 
-// Placeholder route to validate boot.
-// Full auth implementation will be added in later phases.
-router.get('/_ping', (_req, res) => res.json({ ok: true }));
+router.post('/send-otp', authController.sendOtp);
+router.post('/verify-otp', authController.verifyOtp);
+
+router.post(
+  '/register-with-otp',
+  uploadNic.fields([
+    { name: 'nic_front', maxCount: 1 },
+    { name: 'nic_back', maxCount: 1 },
+  ]),
+  authController.registerWithOtp
+);
+
+router.post('/forgot-password', authController.forgotPassword);
+router.post('/reset-password', authController.resetPassword);
 
 module.exports = router;
-

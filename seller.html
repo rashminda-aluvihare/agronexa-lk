@@ -142,6 +142,41 @@
   /* Notification badge mini */
   .dot-live{width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:5px;animation:pulse 2s infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+  /* Dark mode overrides */
+  body.dark {
+    --surface: #0f172a;
+    --card: #1e293b;
+    --border: #334155;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    background: var(--surface);
+    color: var(--text);
+  }
+  body.dark .topbar {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+  }
+  body.dark .panel {
+    background: var(--card);
+    border-color: var(--border);
+  }
+  body.dark .form-input, body.dark .search-input {
+    background: #0f172a;
+    border-color: var(--border);
+    color: var(--text);
+  }
+  body.dark .listing-item, body.dark .request-item, body.dark .ledger-item, body.dark .msg-item {
+    border-color: var(--border);
+    background: #0f172a;
+  }
+  body.dark .msg-item.highlight {
+    background: rgba(45, 106, 79, 0.15);
+    border-color: rgba(82, 183, 136, 0.3);
+  }
+  body.dark .page-title {
+    color: var(--text);
+  }
 </style>
 </head>
 <body>
@@ -166,41 +201,47 @@
 
   <nav>
     <div class="nav-section">Main</div>
-    <div class="nav-item active">
+    <div class="nav-item active" onclick="switchTab('dashboard')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       Dashboard
     </div>
-    <div class="nav-item">
+    <div class="nav-item" onclick="switchTab('listings')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h18v4H3z"/><path d="M3 10h18v11H3z"/></svg>
       My Listings
-      <span class="nav-badge">6</span>
+      <span class="nav-badge" id="sidebar-listings-count">0</span>
     </div>
-    <div class="nav-item">
+    <div class="nav-item" onclick="switchTab('requests')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
       Buyer Requests
-      <span class="nav-badge">3</span>
+      <span class="nav-badge" id="sidebar-requests-count">0</span>
     </div>
-    <div class="nav-item">
+    <div class="nav-item" onclick="switchTab('equipment')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 3H8v4h8V3z"/></svg>
       Equipment Rentals
+      <span class="nav-badge" id="sidebar-equipment-count" style="display:none;background:var(--amber);">0</span>
     </div>
     <div class="nav-section">Account</div>
-    <div class="nav-item">
+    <div class="nav-item" onclick="switchTab('ledger')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
       Ledger History
     </div>
-    <div class="nav-item">
+    <div class="nav-item" onclick="switchTab('messages')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      Messages
+      <span class="nav-badge" id="sidebar-messages-count" style="display:none;background:var(--amber);">0</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('profile')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       Profile
     </div>
-    <div class="nav-item">
+    <div class="nav-item" onclick="switchTab('settings')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
       Settings
     </div>
   </nav>
 
   <div class="sidebar-bottom">
-    <div class="logout-btn">
+    <div class="logout-btn" onclick="doLogout()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       Sign out
     </div>
@@ -260,170 +301,40 @@
     </div>
 
     <!-- Listings + Requests -->
-    <div class="grid-2">
-      <div class="panel">
+    <div class="grid-2" id="section-listings-requests">
+      <div class="panel" id="panel-crop-listings">
         <div class="panel-head">
           <div class="panel-title">My Crop Listings</div>
-          <div class="panel-action">+ Add New</div>
+          <div class="panel-action" onclick="openAddCropModal()" style="cursor:pointer">+ Add New</div>
         </div>
-        <div class="listing-item">
-          <div class="listing-img">🍅</div>
-          <div class="listing-info">
-            <div class="listing-name">Tomatoes – Cherry Variety</div>
-            <div class="listing-meta">Kandy · 120 kg available · Listed today</div>
-          </div>
-          <div>
-            <div class="listing-price">Rs. 280/kg</div>
-            <div style="text-align:right;margin-top:4px"><span class="status-pill active">● Active</span></div>
-          </div>
-        </div>
-        <div class="listing-item">
-          <div class="listing-img">🥬</div>
-          <div class="listing-info">
-            <div class="listing-name">Gotukola (Centella)</div>
-            <div class="listing-meta">Kandy · 60 kg available · 3 days ago</div>
-          </div>
-          <div>
-            <div class="listing-price">Rs. 320/kg</div>
-            <div style="text-align:right;margin-top:4px"><span class="status-pill active">● Active</span></div>
-          </div>
-        </div>
-        <div class="listing-item">
-          <div class="listing-img">🥕</div>
-          <div class="listing-info">
-            <div class="listing-name">Carrots – Nantes Type</div>
-            <div class="listing-meta">Nuwara Eliya · 200 kg · Avail. May 12</div>
-          </div>
-          <div>
-            <div class="listing-price">Rs. 195/kg</div>
-            <div style="text-align:right;margin-top:4px"><span class="status-pill pending">⏳ Pending</span></div>
-          </div>
-        </div>
-        <div class="listing-item">
-          <div class="listing-img">🌶️</div>
-          <div class="listing-info">
-            <div class="listing-name">Red Chilies – Dried</div>
-            <div class="listing-meta">Kandy · 35 kg available · 1 week ago</div>
-          </div>
-          <div>
-            <div class="listing-price">Rs. 1,150/kg</div>
-            <div style="text-align:right;margin-top:4px"><span class="status-pill active">● Active</span></div>
-          </div>
+        <div id="crop-listings-list">
+          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Loading listings...</div>
         </div>
       </div>
 
-      <div class="panel">
+      <div class="panel" id="panel-buyer-requests">
         <div class="panel-head">
           <div class="panel-title">Incoming Buyer Requests</div>
-          <span style="font-size:11px;color:var(--amber);font-weight:500">3 new</span>
+          <span style="font-size:11px;color:var(--amber);font-weight:500" id="buyer-requests-count">0 new</span>
         </div>
-        <div class="request-item">
-          <div class="request-top">
-            <div>
-              <div class="request-commodity">Tomatoes – 80 kg</div>
-              <div class="request-buyer">Buyer: Chaminda Perera · Colombo</div>
-            </div>
-            <span class="status-pill pending">New</span>
-          </div>
-          <div class="request-details">
-            <span>📅 May 10, 2026</span>
-            <span>💰 Offer: Rs. 260/kg</span>
-          </div>
-          <div class="request-actions">
-            <button class="btn-sm btn-accept">Accept</button>
-            <button class="btn-sm btn-counter">Counter</button>
-            <button class="btn-sm btn-reject">Decline</button>
-          </div>
-        </div>
-        <div class="request-item">
-          <div class="request-top">
-            <div>
-              <div class="request-commodity">Red Chilies – 20 kg</div>
-              <div class="request-buyer">Buyer: Nimal Exports Pvt Ltd · Gampaha</div>
-            </div>
-            <span class="status-pill pending">New</span>
-          </div>
-          <div class="request-details">
-            <span>📅 May 13, 2026</span>
-            <span>💰 Offer: Rs. 1,100/kg</span>
-          </div>
-          <div class="request-actions">
-            <button class="btn-sm btn-accept">Accept</button>
-            <button class="btn-sm btn-counter">Counter</button>
-            <button class="btn-sm btn-reject">Decline</button>
-          </div>
-        </div>
-        <div class="request-item">
-          <div class="request-top">
-            <div>
-              <div class="request-commodity">Gotukola – 30 kg</div>
-              <div class="request-buyer">Buyer: Ayurveda Shop – Matale</div>
-            </div>
-            <span class="status-pill pending">New</span>
-          </div>
-          <div class="request-details">
-            <span>📅 May 11, 2026</span>
-            <span>💰 Offer: Rs. 300/kg</span>
-          </div>
-          <div class="request-actions">
-            <button class="btn-sm btn-accept">Accept</button>
-            <button class="btn-sm btn-counter">Counter</button>
-            <button class="btn-sm btn-reject">Decline</button>
-          </div>
+        <div id="buyer-requests-list">
+          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Loading incoming requests...</div>
         </div>
       </div>
     </div>
 
     <!-- Ledger + Reputation + Earnings -->
-    <div class="grid-3">
-      <div class="panel">
+    <div class="grid-3" id="section-ledger-rep">
+      <div class="panel" id="panel-ledger">
         <div class="panel-head">
           <div class="panel-title">Blockchain Ledger — Recent Rentals</div>
-          <div class="panel-action">View all</div>
+          <div class="panel-action" onclick="verifyLedger()" style="cursor:pointer">Verify Chain</div>
         </div>
-        <div class="ledger-item">
-          <div class="hash-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-          </div>
-          <div style="flex:1">
-            <div class="ledger-label">Kubota Mini Tractor · 3 days</div>
-            <div class="ledger-hash">sha256:3e4a1c9b7f2d…</div>
-          </div>
-          <div class="ledger-amt">Rs. 15,000</div>
+        <div id="ledger-list">
+          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Loading ledger records...</div>
         </div>
-        <div class="ledger-item">
-          <div class="hash-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-          </div>
-          <div style="flex:1">
-            <div class="ledger-label">Water Pump (5HP) · 1 day</div>
-            <div class="ledger-hash">sha256:8b2f0e6d1a9c…</div>
-          </div>
-          <div class="ledger-amt">Rs. 3,500</div>
-        </div>
-        <div class="ledger-item">
-          <div class="hash-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-          </div>
-          <div style="flex:1">
-            <div class="ledger-label">Lorry Transport · 2 days</div>
-            <div class="ledger-hash">sha256:c7a3d5f9b1e4…</div>
-          </div>
-          <div class="ledger-amt">Rs. 12,000</div>
-        </div>
-        <div class="ledger-item">
-          <div class="hash-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-          </div>
-          <div style="flex:1">
-            <div class="ledger-label">Sprayer Machine · 2 days</div>
-            <div class="ledger-hash">sha256:0d6e8b2f4a7c…</div>
-          </div>
-          <div class="ledger-amt">Rs. 4,200</div>
-        </div>
-        <div style="margin-top:16px;background:var(--green-pale);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          <span style="font-size:12px;color:var(--green);font-weight:500">Chain verified · No tampering detected</span>
+        <div id="ledger-verification-status" style="margin-top:16px;background:#f5f8fb;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;border:1px solid var(--border);">
+          <span style="font-size:12px;color:var(--muted);font-weight:500" id="ledger-status-text">Integrity status unknown</span>
         </div>
       </div>
 
@@ -433,23 +344,23 @@
           <div class="panel-head">
             <div class="panel-title">Seller Reputation</div>
           </div>
-          <div class="rep-score">4.8</div>
-          <div class="rep-label">Based on 24 verified rentals</div>
+          <div class="rep-score" id="rep-score-value">0.0</div>
+          <div class="rep-label" id="rep-rentals-count">Based on 0 verified rentals</div>
           <div class="rep-bars">
             <div class="rep-row">
               <div class="rep-row-label">Reliability</div>
-              <div class="bar-bg"><div class="bar-fill" style="width:95%"></div></div>
-              <div class="rep-row-val">95</div>
+              <div class="bar-bg"><div class="bar-fill" id="rep-bar-reliability" style="width:0%"></div></div>
+              <div class="rep-row-val" id="rep-val-reliability">0</div>
             </div>
             <div class="rep-row">
               <div class="rep-row-label">Timeliness</div>
-              <div class="bar-bg"><div class="bar-fill" style="width:88%"></div></div>
-              <div class="rep-row-val">88</div>
+              <div class="bar-bg"><div class="bar-fill" id="rep-bar-timeliness" style="width:0%"></div></div>
+              <div class="rep-row-val" id="rep-val-timeliness">0</div>
             </div>
             <div class="rep-row">
               <div class="rep-row-label">Accuracy</div>
-              <div class="bar-bg"><div class="bar-fill" style="width:92%"></div></div>
-              <div class="rep-row-val">92</div>
+              <div class="bar-bg"><div class="bar-fill" id="rep-bar-accuracy" style="width:0%"></div></div>
+              <div class="rep-row-val" id="rep-val-accuracy">0</div>
             </div>
           </div>
         </div>
@@ -463,10 +374,259 @@
             <div class="bar-col"><div class="bar-rect" style="height:70px"></div><div class="bar-month">Feb</div></div>
             <div class="bar-col"><div class="bar-rect" style="height:60px"></div><div class="bar-month">Mar</div></div>
             <div class="bar-col"><div class="bar-rect" style="height:90px"></div><div class="bar-month">Apr</div></div>
-            <div class="bar-col"><div class="bar-rect highlight" style="height:110px"></div><div class="bar-month">May</div></div>
+            <div class="bar-col"><div class="bar-rect highlight" id="earnings-current-bar" style="height:20px"></div><div class="bar-month">May</div></div>
           </div>
-          <div style="margin-top:10px;font-size:12px;color:var(--muted)">Rs. 47,200 earned in May</div>
+          <div style="margin-top:10px;font-size:12px;color:var(--muted)" id="earnings-current-label">Rs. 0 earned in May</div>
         </div>
+      </div>
+    </div>
+
+    <!-- Equipment Rentals Section -->
+    <div class="grid-2" id="section-equipment" style="display:none;">
+      <!-- Equipment Listings -->
+      <div class="panel" id="panel-equipment-listings">
+        <div class="panel-head">
+          <div class="panel-title">🚜 My Equipment Listings</div>
+          <div class="panel-action" onclick="openAddEquipmentModal()" style="cursor:pointer">+ Add New</div>
+        </div>
+        <div id="equipment-listings-list" style="max-height: 400px; overflow-y: auto;">
+          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Loading equipment...</div>
+        </div>
+      </div>
+
+      <!-- Equipment Booking Requests -->
+      <div class="panel" id="panel-equipment-bookings">
+        <div class="panel-head">
+          <div class="panel-title">📥 Incoming Booking Requests</div>
+          <span style="font-size:11px;color:var(--amber);font-weight:500" id="equipment-bookings-count">0 pending</span>
+        </div>
+        <div id="equipment-bookings-list" style="max-height: 400px; overflow-y: auto;">
+          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Loading booking requests...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="panel" id="section-profile" style="display:none;">
+      <div class="panel-head">
+        <div class="panel-title">👤 My Profile Details</div>
+      </div>
+      <form id="profile-form" onsubmit="saveProfile(event)">
+        <div class="form-row">
+          <div class="form-field">
+            <div class="form-label">First Name</div>
+            <input class="form-input" id="profile-fname" required type="text">
+          </div>
+          <div class="form-field">
+            <div class="form-label">Last Name</div>
+            <input class="form-input" id="profile-lname" required type="text">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <div class="form-label">Email Address (Read-only)</div>
+            <input class="form-input" id="profile-email" readonly type="email" style="background:rgba(200,200,200,0.1);cursor:not-allowed;">
+          </div>
+          <div class="form-field">
+            <div class="form-label">Phone Number</div>
+            <input class="form-input" id="profile-phone" required type="text">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <div class="form-label">District</div>
+            <select class="form-input" id="profile-district" required style="background:#fff; color:#000;">
+              <option>Ampara</option><option>Anuradhapura</option><option>Badulla</option><option>Batticaloa</option>
+              <option>Colombo</option><option>Galle</option><option>Gampaha</option><option>Hambantota</option>
+              <option>Jaffna</option><option>Kalutara</option><option>Kandy</option><option>Kegalle</option>
+              <option>Kurunegala</option><option>Matale</option><option>Matara</option><option>Negombo</option>
+              <option>Nuwara Eliya</option><option>Polonnaruwa</option><option>Puttalam</option>
+              <option>Ratnapura</option><option>Trincomalee</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <div class="form-label">Address</div>
+            <input class="form-input" id="profile-address" type="text">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <div class="form-label">Role</div>
+            <input class="form-input" id="profile-role" readonly type="text" style="background:rgba(200,200,200,0.1);cursor:not-allowed;">
+          </div>
+          <div class="form-field">
+            <div class="form-label">Status</div>
+            <input class="form-input" id="profile-status" readonly type="text" style="background:rgba(200,200,200,0.1);cursor:not-allowed;">
+          </div>
+        </div>
+        <button type="submit" class="broadcast-btn" style="margin-top:16px;background:var(--green);color:#fff;border:none;padding:10px 20px;border-radius:10px;cursor:pointer;">
+          💾 Save Changes
+        </button>
+      </form>
+    </div>
+
+    <!-- Settings Section -->
+    <div class="panel" id="section-settings" style="display:none; max-width: 600px;">
+      <div class="panel-head">
+        <div class="panel-title">⚙️ App Settings</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px;">
+          <div>
+            <div style="font-size:14px; font-weight:500; color:var(--text);">Visual Theme</div>
+            <div style="font-size:12px; color:var(--muted);">Switch between light and dark modes</div>
+          </div>
+          <button class="btn-sm btn-counter" id="dark-mode-btn" onclick="toggleDarkModeSetting()" style="width:140px; margin-top:0; border:1px solid var(--border); height:38px; cursor:pointer;">Toggle Dark Mode</button>
+        </div>
+        <div>
+          <div style="font-size:14px; font-weight:500; color:var(--text); margin-bottom:10px;">Security</div>
+          <div style="font-size:12px; color:var(--muted);">Standard JWT encryption is active for your session.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Messages Section -->
+    <div class="panel" id="section-messages" style="display:none;">
+      <div class="panel-head">
+        <div class="panel-title">💬 Messages & Notifications</div>
+        <div class="panel-action" onclick="markAllNotificationsRead()" style="cursor:pointer">Mark all as read</div>
+      </div>
+      <div id="notifications-inbox-list" style="display:flex; flex-direction:column; gap:12px; max-height:400px; overflow-y:auto; padding-right:5px;">
+        <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No messages or notifications.</div>
+      </div>
+    </div>
+
+    <!-- ADD EQUIPMENT MODAL -->
+    <div id="add-equipment-modal" style="display:none;position:fixed;inset:0;background:rgba(26,46,26,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:20px;padding:32px;max-width:500px;width:95%;box-shadow:0 20px 60px rgba(26,46,26,0.3);border:1px solid var(--border);max-height:90vh;overflow-y:auto;position:relative;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <h3 style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--text)">Add Equipment Listing</h3>
+          <button onclick="closeAddEquipmentModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted)">&times;</button>
+        </div>
+        <form id="add-equipment-form" onsubmit="submitNewEquipment(event)">
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Equipment Name</label>
+            <input class="form-input" id="equip-name" required placeholder="e.g. Massey Ferguson Tractor, Water Pump" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Type</label>
+              <select id="equip-type" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;background:#fff;color:#000;outline:none;">
+                <option value="tractor">Tractor</option>
+                <option value="pump">Water Pump</option>
+                <option value="harvester">Harvester</option>
+                <option value="transport">Transport Lorry</option>
+                <option value="other">Other Machinery</option>
+              </select>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Condition</label>
+              <select id="equip-condition" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;background:#fff;color:#000;outline:none;">
+                <option value="Excellent">Excellent</option>
+                <option value="Good">Good</option>
+                <option value="Fair">Fair</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Daily Rental Rate (Rs.)</label>
+              <input class="form-input" type="number" step="0.01" id="equip-rate" required placeholder="e.g. 5000" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">District</label>
+              <input class="form-input" id="equip-district" required placeholder="e.g. Kurunegala" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+            </div>
+          </div>
+          <div style="margin-bottom:20px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Description</label>
+            <textarea id="equip-desc" rows="3" placeholder="Specify terms, driver availability..." style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;font-family:inherit;font-size:13px;outline:none;"></textarea>
+          </div>
+          <button type="submit" class="btn-sm btn-accept" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;background:var(--green);color:#fff;">Publish Equipment Listing</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ADD CROP MODAL -->
+    <div id="add-crop-modal" style="display:none;position:fixed;inset:0;background:rgba(26,46,26,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:20px;padding:32px;max-width:500px;width:95%;box-shadow:0 20px 60px rgba(26,46,26,0.3);border:1px solid var(--border);max-height:90vh;overflow-y:auto;position:relative;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <h3 style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--text)">Add Crop Listing</h3>
+          <button onclick="closeAddCropModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted)">&times;</button>
+        </div>
+        <form id="add-crop-form" onsubmit="submitNewCrop(event)">
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Crop Name</label>
+            <input class="form-input" id="crop-name" required placeholder="e.g. Red Chilies, Tomatoes" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Category</label>
+              <select id="crop-category" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;background:#fff;outline:none;">
+                <option value="Vegetables">Vegetables</option>
+                <option value="Fruits">Fruits</option>
+                <option value="Spices">Spices</option>
+                <option value="Grains">Grains</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Quantity (kg)</label>
+              <input class="form-input" type="number" step="0.01" id="crop-qty" required placeholder="e.g. 100" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Price per kg (Rs.)</label>
+              <input class="form-input" type="number" step="0.01" id="crop-price" required placeholder="e.g. 250" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">District</label>
+              <input class="form-input" id="crop-district" required placeholder="e.g. Kandy" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Available Date</label>
+              <input class="form-input" type="date" id="crop-date" required style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Photos (optional)</label>
+              <input type="file" id="crop-photos" multiple accept="image/*" style="width:100%;font-size:12px;padding:8px;">
+            </div>
+          </div>
+          <div style="margin-bottom:20px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Description</label>
+            <textarea id="crop-desc" rows="3" placeholder="Additional details..." style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;font-family:inherit;font-size:13px;outline:none;"></textarea>
+          </div>
+          <button type="submit" class="btn-sm btn-accept" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;">Publish Listing</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- COUNTER OFFER MODAL -->
+    <div id="counter-offer-modal" style="display:none;position:fixed;inset:0;background:rgba(26,46,26,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:20px;padding:32px;max-width:400px;width:95%;box-shadow:0 20px 60px rgba(26,46,26,0.3);border:1px solid var(--border);position:relative;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <h3 style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--text)">Make Counter Offer</h3>
+          <button onclick="closeCounterModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted)">&times;</button>
+        </div>
+        <form id="counter-offer-form" onsubmit="submitCounterOffer(event)">
+          <input type="hidden" id="counter-request-id">
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Counter Price (Rs./kg)</label>
+            <input class="form-input" type="number" step="0.01" id="counter-price" required placeholder="e.g. 275" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+          </div>
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Quantity (kg)</label>
+            <input class="form-input" type="number" step="0.01" id="counter-qty" required placeholder="e.g. 80" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+          </div>
+          <div style="margin-bottom:20px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Message to Buyer</label>
+            <textarea id="counter-msg" rows="2" placeholder="e.g. Can supply top quality organic produce." style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;font-family:inherit;font-size:13px;outline:none;"></textarea>
+          </div>
+          <button type="submit" class="btn-sm btn-accept" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;">Send Counter Offer</button>
+        </form>
       </div>
     </div>
 
@@ -474,13 +634,15 @@
 </div>
 
 <script>
-// Automatically detect if running locally or in production
 var API_URL = window.location.origin.includes('localhost') ? 'http://localhost:3000' : 'https://agronexa-lk-production.up.railway.app';
 
 var _user = null;
 var socket = null;
 
 (function(){
+  if (localStorage.getItem('agro_dark_mode') === 'enabled') {
+    document.body.classList.add('dark');
+  }
   var u = sessionStorage.getItem('agro_user');
   if (!u) { window.location.href = 'index.html'; return; }
   _user = JSON.parse(u);
@@ -491,7 +653,8 @@ var socket = null;
   // Immediately show what we have from session
   var name = _user.name || _user.email;
   var initials = name.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
-  document.getElementById('user-avatar').textContent = initials;
+  const avatarEl = document.querySelector('.avatar');
+  if (avatarEl) avatarEl.textContent = initials;
   document.getElementById('user-name').textContent = name;
   document.getElementById('page-greeting').textContent = 'Welcome back, ' + name.split(' ')[0] + ' 👋';
 
@@ -503,17 +666,14 @@ var socket = null;
         if (!data.success) return;
         var p = data.user;
 
-        // Full name (use DB first+last)
         var fullName = (p.first_name + ' ' + p.last_name).trim();
         var ini = fullName.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
-        document.getElementById('user-avatar').textContent = ini;
+        if (avatarEl) avatarEl.textContent = ini;
         document.getElementById('user-name').textContent = fullName;
         document.getElementById('page-greeting').textContent = 'Welcome back, ' + p.first_name + ' 👋';
 
-        // District
         if (p.district) document.getElementById('user-district').textContent = p.district + ' District';
 
-        // Member since
         if (p.created_at) {
           var d = new Date(p.created_at);
           var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -523,16 +683,24 @@ var socket = null;
         // Update topbar greeting
         document.getElementById('page-greeting').textContent = 'Welcome back, ' + p.first_name + ' 👋';
 
-        // Store enriched user back to session
+        // Store enriched user data
+        _user = {
+          id: p.id, email: p.email, role: p.role,
+          name: p.first_name, district: p.district, phone: p.phone,
+          address: p.address
+        };
+        sessionStorage.setItem('agro_user', JSON.stringify(_user));
+
         loadDashboardData();
       })
-      .catch(function(){ /* offline - session data already shown */ });
+      .catch(function(){ loadDashboardData(); });
+  } else {
+    loadDashboardData();
   }
 })();
 
 function initSocket() {
-  // Connect to the same server as API_URL
-  socket = io(); // Connects to the same host that served this page
+  socket = io(API_URL);
   
   if (_user && _user.id) {
     socket.emit('join', _user.id);
@@ -546,37 +714,827 @@ function initSocket() {
 
   socket.on('new_notification', function(notif) {
     console.log('🔔 New notification:', notif);
-    // Refresh stats to update counts
+    alert('🔔 Notification: ' + notif.title + ' - ' + notif.body);
     loadDashboardData();
   });
 }
 
+// ── TAB SWITCHING ──
+function switchTab(tab) {
+  const navItems = document.querySelectorAll('nav .nav-item');
+  navItems.forEach(item => {
+    item.classList.remove('active');
+    if (item.textContent.toLowerCase().includes(tab.toLowerCase()) || 
+       (tab === 'listings' && item.textContent.toLowerCase().includes('listings')) ||
+       (tab === 'requests' && item.textContent.toLowerCase().includes('requests')) ||
+       (tab === 'ledger' && item.textContent.toLowerCase().includes('ledger')) ||
+       (tab === 'equipment' && item.textContent.toLowerCase().includes('equipment'))) {
+      item.classList.add('active');
+    }
+  });
+
+  const sectionStats = document.getElementById('section-stats');
+  const sectionListingsRequests = document.getElementById('section-listings-requests');
+  const sectionLedgerRep = document.getElementById('section-ledger-rep');
+  const sectionEquipment = document.getElementById('section-equipment');
+  const sectionProfile = document.getElementById('section-profile');
+  const sectionSettings = document.getElementById('section-settings');
+  const sectionMessages = document.getElementById('section-messages');
+
+  const panelCrops = document.getElementById('panel-crop-listings');
+  const panelRequests = document.getElementById('panel-buyer-requests');
+
+  // Hide all sections first
+  sectionStats.style.display = 'none';
+  sectionListingsRequests.style.display = 'none';
+  sectionLedgerRep.style.display = 'none';
+  sectionEquipment.style.display = 'none';
+  sectionProfile.style.display = 'none';
+  sectionSettings.style.display = 'none';
+  sectionMessages.style.display = 'none';
+
+  if (tab === 'dashboard') {
+    sectionStats.style.display = 'grid';
+    sectionListingsRequests.style.display = 'grid';
+    panelCrops.style.display = 'block';
+    panelRequests.style.display = 'block';
+    sectionLedgerRep.style.display = 'grid';
+  } else if (tab === 'listings') {
+    sectionListingsRequests.style.display = 'grid';
+    panelCrops.style.display = 'block';
+    panelRequests.style.display = 'none';
+  } else if (tab === 'requests') {
+    sectionListingsRequests.style.display = 'grid';
+    panelCrops.style.display = 'none';
+    panelRequests.style.display = 'block';
+  } else if (tab === 'ledger') {
+    sectionLedgerRep.style.display = 'grid';
+  } else if (tab === 'equipment') {
+    sectionEquipment.style.display = 'grid';
+    loadEquipmentData();
+  } else if (tab === 'profile') {
+    sectionProfile.style.display = 'block';
+    loadProfileDetails();
+  } else if (tab === 'settings') {
+    sectionSettings.style.display = 'block';
+    loadSettingsDetails();
+  } else if (tab === 'messages') {
+    sectionMessages.style.display = 'block';
+    loadNotificationsInbox();
+  }
+}
+
+// ── PROFILE FUNCTIONS ──
+function loadProfileDetails() {
+  if (!_user || !_user.id) return;
+  fetch(API_URL + '/api/profile/' + _user.id, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success) return;
+      const u = data.user;
+      document.getElementById('profile-fname').value = u.first_name || '';
+      document.getElementById('profile-lname').value = u.last_name || '';
+      document.getElementById('profile-email').value = u.email || '';
+      document.getElementById('profile-phone').value = u.phone || '';
+      document.getElementById('profile-district').value = u.district || '';
+      document.getElementById('profile-address').value = u.address || '';
+      document.getElementById('profile-role').value = u.role ? u.role.toUpperCase() : '';
+      document.getElementById('profile-status').value = u.status ? u.status.toUpperCase() : '';
+    });
+}
+
+function saveProfile(e) {
+  e.preventDefault();
+  const fname = document.getElementById('profile-fname').value.trim();
+  const lname = document.getElementById('profile-lname').value.trim();
+  const phone = document.getElementById('profile-phone').value.trim();
+  const district = document.getElementById('profile-district').value;
+  const address = document.getElementById('profile-address').value.trim();
+
+  fetch(API_URL + '/api/profile/' + _user.id, {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      first_name: fname,
+      last_name: lname,
+      phone: phone,
+      district: district,
+      address: address
+    })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        alert('Profile updated successfully! 💾');
+        const p = data.user;
+        const fullName = (p.first_name + ' ' + p.last_name).trim();
+        const initials = fullName.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
+        
+        const avatarEl = document.querySelector('.avatar');
+        if (avatarEl) avatarEl.textContent = initials;
+        document.getElementById('user-name').textContent = fullName;
+        document.getElementById('user-district').textContent = p.district + ' District';
+        
+        _user = {
+          id: p.id, email: p.email, role: p.role,
+          name: p.first_name, district: p.district, phone: p.phone,
+          address: p.address
+        };
+        sessionStorage.setItem('agro_user', JSON.stringify(_user));
+        loadProfileDetails();
+      } else {
+        alert('❌ Error updating profile: ' + data.error);
+      }
+    });
+}
+
+// ── SETTINGS & THEME FUNCTIONS ──
+function loadSettingsDetails() {
+  const isDark = document.body.classList.contains('dark');
+  document.getElementById('dark-mode-btn').textContent = isDark ? '🌞 Light Mode' : '🌙 Dark Mode';
+}
+
+function toggleDarkModeSetting() {
+  document.body.classList.toggle('dark');
+  const isDark = document.body.classList.contains('dark');
+  localStorage.setItem('agro_dark_mode', isDark ? 'enabled' : 'disabled');
+  loadSettingsDetails();
+}
+
+// ── MESSAGES / NOTIFICATIONS INBOX ──
+function loadNotificationsInbox() {
+  if (!_user || !_user.id) return;
+  fetch(API_URL + '/api/seller/notifications?user_id=' + _user.id, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      const container = document.getElementById('notifications-inbox-list');
+      if (!data.success || !data.notifications.length) {
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No messages or notifications.</div>';
+        return;
+      }
+      let html = '';
+      data.notifications.forEach(n => {
+        const dateStr = new Date(n.created_at).toLocaleString();
+        const unreadStyle = !n.is_read ? 'border-left: 4px solid var(--green-light); background: rgba(82,183,136,0.05);' : '';
+        html += `
+          <div class="msg-item" style="padding:14px; margin-bottom:0; border-radius:10px; ${unreadStyle}">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">
+              <div style="font-weight:600; font-size:13px; color:var(--text);">${n.title}</div>
+              <div style="font-size:11px; color:var(--hint);">${formatTimeAgo(new Date(n.created_at))}</div>
+            </div>
+            <div style="font-size:12.5px; color:var(--muted); line-height:1.45;">${n.body}</div>
+            <div style="font-size:10px; color:var(--hint); margin-top:6px;">🕒 ${dateStr}</div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    });
+}
+
+function markAllNotificationsRead() {
+  if (!_user || !_user.id) return;
+  fetch(API_URL + '/api/seller/notifications/read-all', {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ user_id: _user.id })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        loadNotificationsInbox();
+        loadDashboardData();
+      }
+    });
+}
+
+// ── EQUIPMENT RENTALS FUNCTIONS ──
+function loadEquipmentData() {
+  if (!_user || !_user.id) return;
+
+  // 1. Load listings
+  fetch(API_URL + '/api/seller/equipment?owner_id=' + _user.id, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      const container = document.getElementById('equipment-listings-list');
+      const badge = document.getElementById('sidebar-equipment-count');
+      if (!data.success || !data.listings.length) {
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No equipment listed. Click "+ Add New" to list.</div>';
+        if (badge) badge.style.display = 'none';
+        return;
+      }
+
+      const activeListings = data.listings.filter(e => e.status !== 'deactivated');
+      if (badge) {
+        badge.textContent = activeListings.length;
+        badge.style.display = activeListings.length > 0 ? 'inline-block' : 'none';
+      }
+
+      let html = '';
+      data.listings.forEach(item => {
+        if (item.status === 'deactivated') return;
+        let icon = '🚜';
+        if (item.name.toLowerCase().includes('pump') || item.name.toLowerCase().includes('water')) icon = '💧';
+        if (item.name.toLowerCase().includes('transport') || item.name.toLowerCase().includes('lorry')) icon = '🚛';
+        if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) icon = '🌿';
+
+        const isBooked = item.status === 'booked';
+        const statusLabel = isBooked ? '● Rented' : '● Available';
+        const statusClass = isBooked ? 'pending' : 'active';
+
+        html += `
+          <div class="listing-item">
+            <div class="listing-img">${icon}</div>
+            <div class="listing-info">
+              <div class="listing-name">${item.name}</div>
+              <div class="listing-meta">${item.district || _user.district || 'Kurunegala'} · ${item.condition} condition</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;">
+              <div class="listing-price">Rs. ${parseFloat(item.rental_rate).toLocaleString()}/day</div>
+              <div style="display:flex;gap:8px;margin-top:4px;align-items:center;">
+                <span class="status-pill ${statusClass}">${statusLabel}</span>
+                <button onclick="deactivateEquipment(${item.id})" style="background:none;border:none;color:var(--amber);font-size:11px;cursor:pointer;font-weight:500;">Deactivate</button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html || '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No active equipment listings.</div>';
+    });
+
+  // 2. Load booking requests
+  fetch(API_URL + '/api/seller/bookings?owner_id=' + _user.id, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      const container = document.getElementById('equipment-bookings-list');
+      const countHeader = document.getElementById('equipment-bookings-count');
+      if (!data.success || !data.bookings.length) {
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No incoming booking requests.</div>';
+        countHeader.textContent = '0 pending';
+        return;
+      }
+
+      const pending = data.bookings.filter(b => b.status === 'pending');
+      countHeader.textContent = pending.length + ' pending';
+
+      let html = '';
+      data.bookings.forEach(item => {
+        const start = new Date(item.start_date).toLocaleDateString();
+        const end = new Date(item.end_date).toLocaleDateString();
+        const isPending = item.status === 'pending';
+        let actionButtons = '';
+        if (isPending) {
+          actionButtons = `
+            <div style="display:flex; gap:6px; margin-top:8px;">
+              <button class="btn-sm btn-accept" onclick="confirmBooking(${item.id})" style="background:var(--green); color:#fff; cursor:pointer;">Confirm</button>
+              <button class="btn-sm btn-reject" onclick="rejectBooking(${item.id})" style="cursor:pointer;">Reject</button>
+            </div>
+          `;
+        } else {
+          actionButtons = `<span style="font-size:12px; font-weight:500; margin-top:4px; color:${item.status === 'confirmed' ? 'var(--green)' : 'var(--amber)'}">${item.status.toUpperCase()}</span>`;
+        }
+
+        html += `
+          <div class="booking-item" style="display:flex; justify-content:space-between; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--border);">
+            <div>
+              <div style="font-size:13.5px; font-weight:500; color:var(--text);">${item.listing_name}</div>
+              <div style="font-size:12px; color:var(--muted); margin-top:2px;">Renter: ${item.renter_name} · 📞 ${item.renter_phone || 'N/A'}</div>
+              <div style="font-size:11.5px; color:var(--muted); margin-top:4px;">📅 ${start} – ${end}</div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:flex-end;">
+              <div style="font-size:13.5px; font-weight:600; color:var(--green);">Rs. ${parseFloat(item.total_amount).toLocaleString()}</div>
+              ${actionButtons}
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    });
+}
+
+function openAddEquipmentModal() {
+  document.getElementById('equip-district').value = _user.district || '';
+  document.getElementById('add-equipment-modal').style.display = 'flex';
+}
+
+function closeAddEquipmentModal() {
+  document.getElementById('add-equipment-modal').style.display = 'none';
+  document.getElementById('add-equipment-form').reset();
+}
+
+function submitNewEquipment(e) {
+  e.preventDefault();
+  const name = document.getElementById('equip-name').value.trim();
+  const type = document.getElementById('equip-type').value;
+  const condition = document.getElementById('equip-condition').value;
+  const rate = document.getElementById('equip-rate').value;
+  const district = document.getElementById('equip-district').value.trim();
+  const desc = document.getElementById('equip-desc').value.trim();
+
+  fetch(API_URL + '/api/seller/equipment', {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      owner_id: _user.id,
+      name: name,
+      type: type,
+      condition: condition,
+      rental_rate: rate,
+      district: district,
+      description: desc
+    })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        alert('Equipment listing published successfully! 🚜');
+        closeAddEquipmentModal();
+        loadEquipmentData();
+        loadDashboardData();
+      } else {
+        alert('❌ Error: ' + data.error);
+      }
+    });
+}
+
+function deactivateEquipment(id) {
+  if (!confirm('Are you sure you want to deactivate this equipment listing?')) return;
+  fetch(API_URL + '/api/seller/equipment/' + id, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ owner_id: _user.id })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        loadEquipmentData();
+        loadDashboardData();
+      } else {
+        alert('❌ Error: ' + data.error);
+      }
+    });
+}
+
+function confirmBooking(id) {
+  if (!confirm('Are you sure you want to confirm this booking request? This will write to the blockchain ledger.')) return;
+  fetch(API_URL + `/api/seller/bookings/${id}/confirm`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ owner_id: _user.id })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        alert('Booking request confirmed! Ledger transaction ID: ' + data.ledger_tx.slice(0, 16) + '...');
+        loadEquipmentData();
+        loadDashboardData();
+      } else {
+        alert('❌ Error: ' + data.error);
+      }
+    });
+}
+
+function rejectBooking(id) {
+  const reason = prompt('Please enter a reason for rejection (optional):');
+  if (reason === null) return;
+  
+  fetch(API_URL + `/api/seller/bookings/${id}/reject`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ owner_id: _user.id, reason: reason })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        alert('Booking request rejected.');
+        loadEquipmentData();
+        loadDashboardData();
+      } else {
+        alert('❌ Error: ' + data.error);
+      }
+    });
+}
+
+// ── GET JWT HEADERS ──
+function getAuthHeaders(extraHeaders = {}) {
+  const token = sessionStorage.getItem('agro_token');
+  return Object.assign({
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  }, extraHeaders);
+}
+
+// ── LOAD DASHBOARD DATA ──
 function loadDashboardData() {
   if (!_user || !_user.id) return;
-  
-  // Fetch Analytics (Revenue, Active Listings, Completed Rentals)
-  fetch(API_URL + '/api/seller/analytics?seller_id=' + _user.id)
+
+  // 1. Fetch Analytics
+  fetch(API_URL + '/api/seller/analytics?seller_id=' + _user.id, {
+    headers: getAuthHeaders()
+  })
     .then(r => r.json())
     .then(data => {
       if (!data.success) return;
       const a = data.analytics;
-      document.getElementById('stat-active-listings').textContent = a.crop_listings.active;
-      document.getElementById('stat-completed-rentals').textContent = a.bookings.confirmed;
-      document.getElementById('stat-revenue').textContent = 'Rs. ' + a.ledger.total_revenue.toLocaleString();
+      document.getElementById('stat-active-listings').textContent = a.crop_listings.active || 0;
+      document.getElementById('stat-completed-rentals').textContent = a.bookings.confirmed || 0;
+      document.getElementById('stat-revenue').textContent = 'Rs. ' + (a.ledger.total_revenue || 0).toLocaleString();
+      document.getElementById('earnings-current-label').textContent = 'Rs. ' + (a.ledger.total_revenue || 0).toLocaleString() + ' earned in May';
+      
+      // Update simple mini chart height
+      const currentBar = document.getElementById('earnings-current-bar');
+      if (currentBar) {
+        const height = Math.min(110, 10 + (a.ledger.total_revenue / 1000));
+        currentBar.style.height = height + 'px';
+      }
     });
 
-  // Fetch Pending Requests (based on district)
-  fetch(API_URL + '/api/seller/requests?district=' + (_user.district || ''))
+  // 2. Fetch Notifications for badge
+  fetch(API_URL + '/api/seller/notifications?user_id=' + _user.id + '&unread_only=true', {
+    headers: getAuthHeaders()
+  })
     .then(r => r.json())
     .then(data => {
-       if (data.success) {
-         document.getElementById('stat-pending-requests').textContent = data.requests.length;
-       }
+      if (!data.success) return;
+      const msgBadge = document.getElementById('sidebar-messages-count');
+      if (msgBadge) {
+        msgBadge.textContent = data.unread_count || 0;
+        msgBadge.style.display = data.unread_count > 0 ? 'inline-block' : 'none';
+      }
+    });
+
+  // 3. Load lists
+  loadCropListings();
+  loadBuyerRequests();
+  loadLedger();
+  loadReputation();
+  
+  // Fetch equipment to update equipment badge count
+  fetch(API_URL + '/api/seller/equipment?owner_id=' + _user.id, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success) return;
+      const activeListings = data.listings.filter(e => e.status !== 'deactivated');
+      const badge = document.getElementById('sidebar-equipment-count');
+      if (badge) {
+        badge.textContent = activeListings.length;
+        badge.style.display = activeListings.length > 0 ? 'inline-block' : 'none';
+      }
+    });
+}
+
+// ── CROP LISTINGS FUNCTIONS ──
+function loadCropListings() {
+  fetch(API_URL + '/api/seller/crops?seller_id=' + _user.id, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      const container = document.getElementById('crop-listings-list');
+      if (!data.success || !data.listings.length) {
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No active listings. Click "+ Add New" to sell.</div>';
+        const sbCount = document.getElementById('sidebar-listings-count');
+        if(sbCount) sbCount.textContent = '0';
+        return;
+      }
+
+      const sbCount = document.getElementById('sidebar-listings-count');
+      if(sbCount) sbCount.textContent = data.listings.length;
+
+      let html = '';
+      data.listings.forEach(item => {
+        if (item.status === 'deactivated') return;
+        const img = '🌾'; // default crop symbol
+        const dateStr = item.available_date ? new Date(item.available_date).toLocaleDateString() : 'N/A';
+        const isPending = item.status === 'pending';
+        const statusLabel = isPending ? '⏳ Pending' : '● Active';
+        const statusClass = isPending ? 'pending' : 'active';
+
+        html += `
+          <div class="listing-item">
+            <div class="listing-img">${img}</div>
+            <div class="listing-info">
+              <div class="listing-name">${item.name}</div>
+              <div class="listing-meta">${item.district || _user.district || 'Kandy'} · ${item.quantity_kg} kg · Avail: ${dateStr}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;">
+              <div class="listing-price">Rs. ${parseFloat(item.price_per_kg).toFixed(0)}/kg</div>
+              <div style="display:flex;gap:8px;margin-top:4px;align-items:center;">
+                <span class="status-pill ${statusClass}">${statusLabel}</span>
+                <button onclick="deactivateListing(${item.id})" style="background:none;border:none;color:var(--amber);font-size:11px;cursor:pointer;font-weight:500;">Deactivate</button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html || '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No active listings.</div>';
+    });
+}
+
+function openAddCropModal() {
+  document.getElementById('crop-district').value = _user.district || '';
+  document.getElementById('crop-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('add-crop-modal').style.display = 'flex';
+}
+
+function closeAddCropModal() {
+  document.getElementById('add-crop-modal').style.display = 'none';
+  document.getElementById('add-crop-form').reset();
+}
+
+function submitNewCrop(e) {
+  e.preventDefault();
+  const name = document.getElementById('crop-name').value.trim();
+  const category = document.getElementById('crop-category').value;
+  const quantity = document.getElementById('crop-qty').value;
+  const price = document.getElementById('crop-price').value;
+  const district = document.getElementById('crop-district').value.trim();
+  const date = document.getElementById('crop-date').value;
+  const desc = document.getElementById('crop-desc').value.trim();
+  const photosInput = document.getElementById('crop-photos');
+
+  const formData = new FormData();
+  formData.append('seller_id', _user.id);
+  formData.append('name', name);
+  formData.append('category', category);
+  formData.append('quantity_kg', quantity);
+  formData.append('price_per_kg', price);
+  formData.append('district', district);
+  formData.append('available_date', date);
+  formData.append('description', desc);
+
+  if (photosInput.files.length) {
+    for (let i = 0; i < photosInput.files.length; i++) {
+      formData.append('photos', photosInput.files[i]);
+    }
+  }
+
+  // File upload requires multipart/form-data
+  const token = sessionStorage.getItem('agro_token');
+  fetch(API_URL + '/api/seller/crops', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + token
+    },
+    body: formData
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        alert('Listing published successfully! 🌱');
+        closeAddCropModal();
+        loadDashboardData();
+      } else {
+        alert('❌ Error: ' + data.error);
+      }
+    })
+    .catch(() => {
+      alert('❌ Server error publishing listing.');
+    });
+}
+
+function deactivateListing(id) {
+  if (!confirm('Are you sure you want to deactivate this listing?')) return;
+  fetch(API_URL + '/api/seller/crops/' + id, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ seller_id: _user.id })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        loadDashboardData();
+      } else {
+        alert('❌ Error: ' + data.error);
+      }
+    });
+}
+
+// ── BUYER REQUESTS FUNCTIONS ──
+function loadBuyerRequests() {
+  fetch(API_URL + '/api/seller/requests?district=' + (_user.district || ''), {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      const container = document.getElementById('buyer-requests-list');
+      const countBadge = document.getElementById('buyer-requests-count');
+      const sidebarBadge = document.getElementById('sidebar-requests-count');
+
+      if (!data.success || !data.requests.length) {
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No incoming buyer requests in your area.</div>';
+        countBadge.textContent = '0 new';
+        if(sidebarBadge) sidebarBadge.textContent = '0';
+        document.getElementById('stat-pending-requests').textContent = '0';
+        return;
+      }
+
+      countBadge.textContent = data.requests.length + ' new';
+      if(sidebarBadge) sidebarBadge.textContent = data.requests.length;
+      document.getElementById('stat-pending-requests').textContent = data.requests.length;
+
+      let html = '';
+      data.requests.forEach(item => {
+        // Format date
+        const dateStr = item.needed_by ? new Date(item.needed_by).toLocaleDateString() : 'Immediate';
+        
+        // Check if we have already responded to this request
+        const myResponse = item.responses && item.responses.find(r => r.seller_id === _user.id);
+        const hasResponded = !!myResponse;
+        
+        let actionsHtml = '';
+        if (hasResponded) {
+          actionsHtml = `<span style="font-size:12px;color:var(--green);font-weight:500;">✓ Responded (${myResponse.type})</span>`;
+        } else {
+          actionsHtml = `
+            <button class="btn-sm btn-accept" onclick="acceptRequest(${item.id}, ${parseFloat(item.budget || 0)})">Accept Offer</button>
+            <button class="btn-sm btn-counter" onclick="openCounterModal(${item.id})">Counter</button>
+            <button class="btn-sm btn-reject" onclick="declineRequest(${item.id})">Decline</button>
+          `;
+        }
+
+        html += `
+          <div class="request-item">
+            <div class="request-top">
+              <div>
+                <div class="request-commodity">${item.crop} – ${item.quantity} ${item.unit || 'kg'}</div>
+                <div class="request-buyer">Buyer: ${item.buyer_name || 'Buyer'} · ${item.district}</div>
+              </div>
+              <span class="status-pill pending">${item.urgency || 'Normal'}</span>
+            </div>
+            <div class="request-details">
+              <span>📅 Needed: ${dateStr}</span>
+              <span>💰 Budget: ${item.budget ? 'Rs. ' + item.budget : 'Open'}</span>
+            </div>
+            <div class="request-actions">
+              ${actionsHtml}
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    });
+}
+
+function acceptRequest(requestId, budget) {
+  if (!confirm('Are you sure you want to accept this request?')) return;
+  respondToRequest(requestId, 'accept', budget, null, 'I can supply this commodity as requested.');
+}
+
+function declineRequest(requestId) {
+  if (!confirm('Are you sure you want to decline this request?')) return;
+  respondToRequest(requestId, 'reject', null, null, 'Declined.');
+}
+
+function openCounterModal(requestId) {
+  document.getElementById('counter-request-id').value = requestId;
+  document.getElementById('counter-offer-modal').style.display = 'flex';
+}
+
+function closeCounterModal() {
+  document.getElementById('counter-offer-modal').style.display = 'none';
+  document.getElementById('counter-offer-form').reset();
+}
+
+function submitCounterOffer(e) {
+  e.preventDefault();
+  const requestId = document.getElementById('counter-request-id').value;
+  const price = document.getElementById('counter-price').value;
+  const qty = document.getElementById('counter-qty').value;
+  const msg = document.getElementById('counter-msg').value.trim();
+
+  respondToRequest(requestId, 'counter', price, qty, msg);
+  closeCounterModal();
+}
+
+function respondToRequest(requestId, type, price, qty, message) {
+  fetch(API_URL + '/api/seller/requests/' + requestId + '/respond', {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      seller_id: _user.id,
+      type: type,
+      price: price,
+      quantity: qty,
+      message: message
+    })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        alert('Response submitted successfully! 🤝');
+        loadDashboardData();
+      } else {
+        alert('❌ Error: ' + data.error);
+      }
+    })
+    .catch(() => {
+      alert('❌ Server error sending response.');
+    });
+}
+
+// ── BLOCKCHAIN LEDGER FUNCTIONS ──
+function loadLedger() {
+  fetch(API_URL + '/api/seller/ledger?owner_id=' + _user.id, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      const container = document.getElementById('ledger-list');
+      if (!data.success || !data.ledger.length) {
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No ledger records found.</div>';
+        return;
+      }
+
+      let html = '';
+      data.ledger.forEach(item => {
+        html += `
+          <div class="ledger-item">
+            <div class="hash-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            </div>
+            <div style="flex:1">
+              <div class="ledger-label">${item.listing_name || 'Equipment'} · Rented to ${item.renter_name || 'Buyer'} (${item.duration_days} days)</div>
+              <div class="ledger-hash">block_hash: ${item.block_hash.slice(0,18)}…</div>
+            </div>
+            <div class="ledger-amt">Rs. ${parseFloat(item.amount).toLocaleString()}</div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+      verifyLedger(); // auto verify on load
+    });
+}
+
+function verifyLedger() {
+  const statusText = document.getElementById('ledger-status-text');
+  const statusBox = document.getElementById('ledger-verification-status');
+  
+  statusText.textContent = 'Verifying blockchain integrity...';
+  
+  fetch(API_URL + '/api/seller/ledger/verify', {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success && data.valid) {
+        statusText.textContent = 'Chain verified · No tampering detected';
+        statusBox.style.background = 'var(--green-pale)';
+        statusBox.style.borderColor = 'var(--green-light)';
+        statusText.style.color = 'var(--green)';
+      } else {
+        statusText.textContent = '⚠️ WARNING: Blockchain validation failed! Tampering detected!';
+        statusBox.style.background = 'var(--amber-pale)';
+        statusBox.style.borderColor = 'var(--amber)';
+        statusText.style.color = 'var(--amber)';
+      }
+    })
+    .catch(() => {
+      statusText.textContent = 'Verification server offline';
+    });
+}
+
+// ── REPUTATION SCORE FUNCTIONS ──
+function loadReputation() {
+  fetch(API_URL + '/api/seller/reputation/' + _user.id, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success) return;
+      
+      const score = parseFloat(data.score || 0);
+      document.getElementById('rep-score-value').textContent = score > 0 ? score.toFixed(1) : '0.0';
+      document.getElementById('rep-rentals-count').textContent = `Based on ${data.completed_rentals || 0} verified rentals`;
+
+      // Set sliders based on reputation (mock details from average)
+      const reliability = score > 0 ? Math.min(100, Math.round((score / 5) * 100)) : 0;
+      const timeliness = score > 0 ? Math.min(100, Math.round((score / 5) * 98)) : 0;
+      const accuracy = score > 0 ? Math.min(100, Math.round((score / 5) * 96)) : 0;
+
+      document.getElementById('rep-bar-reliability').style.width = reliability + '%';
+      document.getElementById('rep-val-reliability').textContent = reliability;
+
+      document.getElementById('rep-bar-timeliness').style.width = timeliness + '%';
+      document.getElementById('rep-val-timeliness').textContent = timeliness;
+
+      document.getElementById('rep-bar-accuracy').style.width = accuracy + '%';
+      document.getElementById('rep-val-accuracy').textContent = accuracy;
     });
 }
 
 function doLogout(){
   sessionStorage.removeItem('agro_user');
+  sessionStorage.removeItem('agro_token');
   window.location.href = 'index.html';
 }
 </script>

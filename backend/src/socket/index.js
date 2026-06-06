@@ -1,7 +1,27 @@
-function attachSocket(_io) {
-  // Socket event handlers will be implemented in subsequent steps.
-  // This scaffold allows the backend to boot once dependencies are installed.
+let ioInstance = null;
+
+function attachSocket(io) {
+  ioInstance = io;
+
+  io.on('connection', (socket) => {
+    socket.on('join', (userId) => {
+      if (userId) {
+        socket.join(`user_${userId}`);
+        console.log(`📡 User ${userId} joined room user_${userId}`);
+      }
+    });
+
+    socket.on('disconnect', () => {
+      // Clean up if needed
+    });
+  });
 }
 
-module.exports = { attachSocket };
+function getIo() {
+  return ioInstance;
+}
 
+module.exports = {
+  attachSocket,
+  getIo,
+};

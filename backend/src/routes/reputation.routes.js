@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
-router.get('/_ping', (_req, res) => res.json({ ok: true }));
-module.exports = router;
+const reputationController = require('../controllers/reputation.controller');
 
+router.get('/:seller_id', reputationController.getReputationScore);
+
+module.exports = router;

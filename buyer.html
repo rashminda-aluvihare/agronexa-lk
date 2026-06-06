@@ -136,6 +136,45 @@
   .search-input{flex:1;background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none}
   .search-input:focus{border-color:var(--teal-light)}
   .filter-btn{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:13px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif}
+
+  /* Dark mode overrides */
+  body.dark {
+    --surface: #0f172a;
+    --card: #1e293b;
+    --border: #334155;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    background: var(--surface);
+    color: var(--text);
+  }
+  body.dark .topbar {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+  }
+  body.dark .panel, body.dark .broadcast-panel {
+    background: var(--card);
+    border-color: var(--border);
+  }
+  body.dark .form-input, body.dark .search-input {
+    background: #0f172a;
+    border-color: var(--border);
+    color: var(--text);
+  }
+  body.dark .market-card {
+    background: #0f172a;
+    border-color: var(--border);
+  }
+  body.dark .booking-item, body.dark .msg-item {
+    border-color: var(--border);
+    background: #0f172a;
+  }
+  body.dark .msg-item.highlight {
+    background: rgba(27,108,168,0.15);
+    border-color: rgba(77,182,228,0.3);
+  }
+  body.dark .page-title {
+    color: var(--text);
+  }
 </style>
 </head>
 <body>
@@ -160,42 +199,42 @@
 
   <nav>
     <div class="nav-section">Main</div>
-    <div class="nav-item active">
+    <div class="nav-item active" onclick="switchTab('dashboard')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       Dashboard
     </div>
-    <div class="nav-item">
+    <div class="nav-item" onclick="switchTab('marketplace')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h18l-2 13H5L3 3z"/><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
       Marketplace
     </div>
-    <div class="nav-item">
+    <div class="nav-item" onclick="switchTab('requests')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
       My Requests
-      <span class="nav-badge">2</span>
+      <span class="nav-badge" id="sidebar-requests-count">0</span>
     </div>
-    <div class="nav-item">
+    <div class="nav-item" onclick="switchTab('bookings')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       My Bookings
-      <span class="nav-badge">3</span>
+      <span class="nav-badge" id="sidebar-bookings-count">0</span>
     </div>
     <div class="nav-section">Account</div>
-    <div class="nav-item">
+    <div class="nav-item" onclick="switchTab('messages')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
       Messages
-      <span class="nav-badge">5</span>
+      <span class="nav-badge" id="sidebar-messages-count" style="display:none;background:var(--amber);">0</span>
     </div>
-    <div class="nav-item">
+    <div class="nav-item" onclick="switchTab('profile')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       Profile
     </div>
-    <div class="nav-item">
+    <div class="nav-item" onclick="switchTab('settings')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
       Settings
     </div>
   </nav>
 
   <div class="sidebar-bottom">
-    <div class="logout-btn">
+    <div class="logout-btn" onclick="doLogout()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       Sign out
     </div>
@@ -219,7 +258,7 @@
   <div class="content">
 
     <!-- Stats -->
-    <div class="stats-row">
+    <div class="stats-row" id="section-stats">
       <div class="stat-card teal">
         <div class="stat-icon teal">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
@@ -242,195 +281,215 @@
         </div>
         <div class="stat-val" id="stat-confirmed-bookings">—</div>
         <div class="stat-label">Confirmed Bookings</div>
-        <div class="stat-delta up">↑ 1 this week</div>
+        <div class="stat-delta up" id="stat-bookings-delta">Active rentals</div>
       </div>
       <div class="stat-card purple">
         <div class="stat-icon purple">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18l-2 13H5L3 3z"/><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
         </div>
         <div class="stat-val" id="stat-total-purchases">—</div>
-        <div class="stat-label">Past Purchases</div>
+        <div class="stat-label">Total Bookings</div>
         <div class="stat-delta up">Lifetime</div>
       </div>
     </div>
 
     <!-- Broadcast + Marketplace -->
-    <div class="grid-3">
+    <div class="grid-3" id="section-broadcasts-responses">
       <!-- Broadcast request -->
-      <div class="broadcast-panel">
+      <div class="broadcast-panel" id="panel-broadcast-form">
         <div class="broadcast-title">📡 Broadcast a Buyer Request</div>
         <div class="broadcast-sub">Your request will be SMS-broadcasted to all matching sellers instantly</div>
-        <div class="form-row">
-          <div class="form-field">
-            <div class="form-label">Commodity</div>
-            <input class="form-input" type="text" placeholder="e.g. Tomatoes, Carrots...">
+        <form id="broadcast-form" onsubmit="submitBroadcast(event)">
+          <div class="form-row">
+            <div class="form-field">
+              <div class="form-label">Commodity</div>
+              <input class="form-input" id="broadcast-crop" required type="text" placeholder="e.g. Tomatoes, Carrots...">
+            </div>
+            <div class="form-field" style="max-width:120px">
+              <div class="form-label">Quantity (kg)</div>
+              <input class="form-input" id="broadcast-quantity" required type="number" placeholder="e.g. 50">
+            </div>
           </div>
-          <div class="form-field" style="max-width:120px">
-            <div class="form-label">Quantity (kg)</div>
-            <input class="form-input" type="number" placeholder="e.g. 50">
+          <div class="form-row">
+            <div class="form-field">
+              <div class="form-label">Required By</div>
+              <input class="form-input" id="broadcast-date" required type="date">
+            </div>
+            <div class="form-field">
+              <div class="form-label">Your Location</div>
+              <input class="form-input" id="broadcast-district" required type="text" placeholder="District">
+            </div>
           </div>
-        </div>
-        <div class="form-row">
-          <div class="form-field">
-            <div class="form-label">Required By</div>
-            <input class="form-input" type="date" value="2026-05-10">
+          <div class="form-row">
+            <div class="form-field">
+              <div class="form-label">Price Offer (Rs./kg) — optional</div>
+              <input class="form-input" id="broadcast-budget" type="number" placeholder="Leave blank for open offer">
+            </div>
           </div>
-          <div class="form-field">
-            <div class="form-label">Your Location</div>
-            <input class="form-input" type="text" placeholder="District" value="Colombo">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-field">
-            <div class="form-label">Price Offer (Rs./kg) — optional</div>
-            <input class="form-input" type="number" placeholder="Leave blank for open offer">
-          </div>
-        </div>
-        <button class="broadcast-btn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>
-          Broadcast to Sellers
-        </button>
+          <button type="submit" class="broadcast-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+            Broadcast to Sellers
+          </button>
+        </form>
         <div class="broadcast-note">⚠️ Requests expire after 72 hours if no response is accepted</div>
       </div>
 
       <!-- Seller responses -->
-      <div class="panel">
+      <div class="panel" id="panel-responses">
         <div class="panel-head">
           <div class="panel-title">Seller Responses</div>
-          <span style="font-size:11px;color:var(--amber);font-weight:500">5 new</span>
+          <span style="font-size:11px;color:var(--amber);font-weight:500" id="responses-header-count">0 new</span>
         </div>
-        <div class="msg-item highlight">
-          <div class="msg-top">
-            <div class="msg-from">Sunil K. — Kandy</div>
-            <div class="msg-time">2h ago</div>
-          </div>
-          <div class="msg-text">Can supply 80 kg Tomatoes @ Rs. 270/kg. Delivery available May 10.</div>
-          <div class="msg-actions">
-            <button class="btn-sm btn-confirm">Confirm</button>
-            <button class="btn-sm btn-decline">Decline</button>
-          </div>
-        </div>
-        <div class="msg-item">
-          <div class="msg-top">
-            <div class="msg-from">Priya Farms — Matale</div>
-            <div class="msg-time">5h ago</div>
-          </div>
-          <div class="msg-text">Counter offer: 60 kg @ Rs. 290/kg. Best quality organic. Ready May 9.</div>
-          <div class="msg-actions">
-            <button class="btn-sm btn-confirm">Accept Counter</button>
-            <button class="btn-sm btn-decline">Decline</button>
-          </div>
-        </div>
-        <div class="msg-item">
-          <div class="msg-top">
-            <div class="msg-from">Green Valley Exports — Gampaha</div>
-            <div class="msg-time">8h ago</div>
-          </div>
-          <div class="msg-text">We have 100 kg Tomatoes ready @ Rs. 265/kg. Can arrange transport.</div>
-          <div class="msg-actions">
-            <button class="btn-sm btn-confirm">Confirm</button>
-            <button class="btn-sm btn-decline">Decline</button>
-          </div>
+        <div id="seller-responses-list" style="max-height: 350px; overflow-y: auto;">
+          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No active responses. Broadcast a request first!</div>
         </div>
       </div>
     </div>
 
     <!-- Bookings + Marketplace browse -->
-    <div class="grid-2">
-      <div class="panel">
+    <div class="grid-2" id="section-bookings-market">
+      <div class="panel" id="panel-bookings">
         <div class="panel-head">
           <div class="panel-title">My Equipment Bookings</div>
-          <div class="panel-action">View all</div>
+          <div class="panel-action" onclick="switchTab('bookings')" style="cursor:pointer">View all</div>
         </div>
-        <div class="booking-item">
-          <div class="booking-icon">🚜</div>
-          <div class="booking-info">
-            <div class="booking-name">Kubota Mini Tractor</div>
-            <div class="booking-owner">Owner: Nimal Jayasuriya · Kurunegala</div>
-            <div class="booking-dates">
-              <span>📅 May 12 – 14</span>
-              <span>Rs. 15,000</span>
-            </div>
-          </div>
-          <span class="booking-status confirmed">Confirmed</span>
-        </div>
-        <div class="booking-item">
-          <div class="booking-icon">💧</div>
-          <div class="booking-info">
-            <div class="booking-name">Water Pump (5HP)</div>
-            <div class="booking-owner">Owner: Ruwan Silva · Polonnaruwa</div>
-            <div class="booking-dates">
-              <span>📅 May 15</span>
-              <span>Rs. 3,500</span>
-            </div>
-          </div>
-          <span class="booking-status pending">Pending</span>
-        </div>
-        <div class="booking-item">
-          <div class="booking-icon">🚛</div>
-          <div class="booking-info">
-            <div class="booking-name">Lorry Transport (3T)</div>
-            <div class="booking-owner">Owner: Lanka Transport Co. · Colombo</div>
-            <div class="booking-dates">
-              <span>📅 May 10 – 11</span>
-              <span>Rs. 12,000</span>
-            </div>
-          </div>
-          <span class="booking-status confirmed">Confirmed</span>
-        </div>
-        <div class="booking-item">
-          <div class="booking-icon">🌿</div>
-          <div class="booking-info">
-            <div class="booking-name">Sprayer Machine</div>
-            <div class="booking-owner">Owner: Agro Tools LK · Gampaha</div>
-            <div class="booking-dates">
-              <span>📅 May 8</span>
-              <span>Rs. 4,200</span>
-            </div>
-          </div>
-          <span class="booking-status rejected">Rejected</span>
+        <div id="bookings-list" style="max-height: 400px; overflow-y: auto;">
+          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Loading bookings...</div>
         </div>
       </div>
 
-      <div class="panel">
+      <div class="panel" id="panel-marketplace">
         <div class="panel-head">
-          <div class="panel-title">Browse Marketplace</div>
-          <div class="panel-action">View all listings</div>
+          <div class="panel-title" id="market-title">Marketplace Crops</div>
+          <div class="panel-action" onclick="switchTab('marketplace')" style="cursor:pointer">View all listings</div>
         </div>
         <div class="search-bar">
-          <input class="search-input" type="text" placeholder="Search crops, equipment, location...">
-          <button class="filter-btn">⚙ Filter</button>
+          <input class="search-input" id="market-search" type="text" placeholder="Search produce or equipment..." oninput="loadMarketplace()">
+          <button class="filter-btn" id="market-toggle-btn" onclick="toggleMarketType()" style="white-space:nowrap;">🚜 View Equipment</button>
         </div>
-        <div class="market-grid">
-          <div class="market-card">
-            <div class="market-card-img">🥬</div>
-            <div class="market-card-name">Gotukola</div>
-            <div class="market-card-meta">Kandy · 60 kg · In stock</div>
-            <div class="market-card-price">Rs. 320/kg</div>
-            <button class="interest-btn">Express Interest</button>
+        <div id="marketplace-grid" class="market-grid" style="max-height: 350px; overflow-y: auto; padding-right: 5px;">
+          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Loading marketplace...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EQUIPMENT BOOKING MODAL -->
+    <div id="book-equip-modal" style="display:none;position:fixed;inset:0;background:rgba(20,29,43,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:20px;padding:32px;max-width:400px;width:95%;box-shadow:0 20px 60px rgba(20,29,43,0.3);border:1px solid var(--border);position:relative;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <h3 style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--text)" id="book-equip-title">Book Equipment</h3>
+          <button onclick="closeBookingModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted)">&times;</button>
+        </div>
+        <form id="book-equip-form" onsubmit="submitEquipmentBooking(event)">
+          <input type="hidden" id="book-equip-id">
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Daily Rate</label>
+            <div id="book-equip-rate" style="font-size:15px;font-weight:600;color:var(--teal)">Rs. 0 / day</div>
           </div>
-          <div class="market-card">
-            <div class="market-card-img">🌶️</div>
-            <div class="market-card-name">Red Chilies</div>
-            <div class="market-card-meta">Kandy · 35 kg · In stock</div>
-            <div class="market-card-price">Rs. 1,150/kg</div>
-            <button class="interest-btn">Express Interest</button>
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Start Date</label>
+            <input class="form-input" type="date" id="book-start-date" required style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
           </div>
-          <div class="market-card">
-            <div class="market-card-img">🥕</div>
-            <div class="market-card-name">Carrots</div>
-            <div class="market-card-meta">Nuwara Eliya · 200 kg</div>
-            <div class="market-card-price">Rs. 195/kg</div>
-            <button class="interest-btn">Express Interest</button>
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">End Date</label>
+            <input class="form-input" type="date" id="book-end-date" required style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
           </div>
-          <div class="market-card">
-            <div class="market-card-img">🍅</div>
-            <div class="market-card-name">Tomatoes</div>
-            <div class="market-card-meta">Kandy · 120 kg · In stock</div>
-            <div class="market-card-price">Rs. 280/kg</div>
-            <button class="interest-btn">Express Interest</button>
+          <div style="margin-bottom:20px;background:var(--teal-pale);padding:10px 14px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:12px;color:var(--teal);font-weight:500;">Estimated Cost</span>
+            <span style="font-size:15px;color:var(--teal);font-600;" id="book-total-cost">Rs. 0</span>
+          </div>
+          <button type="submit" class="btn-sm btn-confirm" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;">Confirm Booking Request</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="panel" id="section-profile" style="display:none;">
+      <div class="panel-head">
+        <div class="panel-title">👤 My Profile Details</div>
+      </div>
+      <form id="profile-form" onsubmit="saveProfile(event)">
+        <div class="form-row">
+          <div class="form-field">
+            <div class="form-label">First Name</div>
+            <input class="form-input" id="profile-fname" required type="text">
+          </div>
+          <div class="form-field">
+            <div class="form-label">Last Name</div>
+            <input class="form-input" id="profile-lname" required type="text">
           </div>
         </div>
+        <div class="form-row">
+          <div class="form-field">
+            <div class="form-label">Email Address (Read-only)</div>
+            <input class="form-input" id="profile-email" readonly type="email" style="background:rgba(200,200,200,0.1);cursor:not-allowed;">
+          </div>
+          <div class="form-field">
+            <div class="form-label">Phone Number</div>
+            <input class="form-input" id="profile-phone" required type="text">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <div class="form-label">District</div>
+            <select class="form-input" id="profile-district" required style="background:#fff; color:#000;">
+              <option>Ampara</option><option>Anuradhapura</option><option>Badulla</option><option>Batticaloa</option>
+              <option>Colombo</option><option>Galle</option><option>Gampaha</option><option>Hambantota</option>
+              <option>Jaffna</option><option>Kalutara</option><option>Kandy</option><option>Kegalle</option>
+              <option>Kurunegala</option><option>Matale</option><option>Matara</option><option>Negombo</option>
+              <option>Nuwara Eliya</option><option>Polonnaruwa</option><option>Puttalam</option>
+              <option>Ratnapura</option><option>Trincomalee</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <div class="form-label">Address</div>
+            <input class="form-input" id="profile-address" type="text">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <div class="form-label">Role</div>
+            <input class="form-input" id="profile-role" readonly type="text" style="background:rgba(200,200,200,0.1);cursor:not-allowed;">
+          </div>
+          <div class="form-field">
+            <div class="form-label">Status</div>
+            <input class="form-input" id="profile-status" readonly type="text" style="background:rgba(200,200,200,0.1);cursor:not-allowed;">
+          </div>
+        </div>
+        <button type="submit" class="broadcast-btn" style="margin-top:16px;">
+          💾 Save Changes
+        </button>
+      </form>
+    </div>
+
+    <!-- Settings Section -->
+    <div class="panel" id="section-settings" style="display:none; max-width: 600px;">
+      <div class="panel-head">
+        <div class="panel-title">⚙️ App Settings</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px;">
+          <div>
+            <div style="font-size:14px; font-weight:500; color:var(--text);">Visual Theme</div>
+            <div style="font-size:12px; color:var(--muted);">Switch between light and dark modes</div>
+          </div>
+          <button class="interest-btn" id="dark-mode-btn" onclick="toggleDarkModeSetting()" style="width:140px; margin-top:0;">Toggle Dark Mode</button>
+        </div>
+        <div>
+          <div style="font-size:14px; font-weight:500; color:var(--text); margin-bottom:10px;">Security</div>
+          <div style="font-size:12px; color:var(--muted);">Standard JWT encryption is active for your session.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Messages Section -->
+    <div class="panel" id="section-messages" style="display:none;">
+      <div class="panel-head">
+        <div class="panel-title">💬 Messages & Notifications</div>
+        <div class="panel-action" onclick="markAllNotificationsRead()" style="cursor:pointer">Mark all as read</div>
+      </div>
+      <div id="notifications-inbox-list" style="display:flex; flex-direction:column; gap:12px; max-height:400px; overflow-y:auto; padding-right:5px;">
+        <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No messages or notifications.</div>
       </div>
     </div>
 
@@ -442,8 +501,13 @@ var API_URL = window.location.origin.includes('localhost') ? 'http://localhost:3
 
 var _user = null;
 var socket = null;
+var marketType = 'crops'; // 'crops' or 'equipment'
+var currentEquipmentRate = 0;
 
 (function(){
+  if (localStorage.getItem('agro_dark_mode') === 'enabled') {
+    document.body.classList.add('dark');
+  }
   var u = sessionStorage.getItem('agro_user');
   if (!u) { window.location.href = 'index.html'; return; }
   _user = JSON.parse(u);
@@ -458,11 +522,10 @@ var socket = null;
   document.getElementById('user-name').textContent = name;
   document.getElementById('page-greeting').textContent = 'Welcome back, ' + name.split(' ')[0] + ' 👋';
 
-  // Pre-fill broadcast district from session if available
   if (_user.district) {
-    var locInput = document.querySelector('.broadcast-panel input[type="text"][placeholder="District"]');
-    if (locInput) locInput.value = _user.district;
+    document.getElementById('broadcast-district').value = _user.district;
   }
+  document.getElementById('broadcast-date').value = new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0]; // +3 days
 
   // Fetch full profile
   if (_user.id) {
@@ -478,35 +541,670 @@ var socket = null;
         document.getElementById('user-name').textContent = fullName;
         document.getElementById('page-greeting').textContent = 'Welcome back, ' + p.first_name + ' 👋';
 
-        // District in sidebar
         if (p.district) {
           document.getElementById('user-district').textContent = p.district + ' District';
-          // Also fill broadcast form district
-          var locInput = document.querySelector('.broadcast-panel input[type="text"][placeholder="District"]');
-          if (locInput) locInput.value = p.district;
+          document.getElementById('broadcast-district').value = p.district;
         }
 
-        // Member since
         if (p.created_at) {
           var d = new Date(p.created_at);
           var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
           document.getElementById('member-since').textContent = 'Member since ' + months[d.getMonth()] + ' ' + d.getFullYear();
         }
 
-        // Store enriched data back
-        sessionStorage.setItem('agro_user', JSON.stringify({
+        _user = {
           id: p.id, email: p.email, role: p.role,
           name: p.first_name, district: p.district, phone: p.phone,
           address: p.address
-        }));
+        };
+        sessionStorage.setItem('agro_user', JSON.stringify(_user));
+        loadDashboardData();
       })
-      .catch(function(){ /* offline - session data already shown */ });
+      .catch(function(){ loadDashboardData(); });
+  } else {
+    loadDashboardData();
   }
 })();
 
+function initSocket() {
+  socket = io(API_URL);
+  
+  if (_user && _user.id) {
+    socket.emit('join', _user.id);
+    console.log('📡 Joined room: user_' + _user.id);
+  }
+  
+  socket.on('dashboard_update', function(data) {
+    console.log('🔄 Real-time update signal:', data);
+    loadDashboardData();
+  });
+
+  socket.on('new_notification', function(notif) {
+    console.log('🔔 New notification:', notif);
+    alert('🔔 Notification: ' + notif.title + ' - ' + notif.body);
+    loadDashboardData();
+  });
+}
+
 function doLogout(){
   sessionStorage.removeItem('agro_user');
+  sessionStorage.removeItem('agro_token');
   window.location.href = 'index.html';
+}
+
+// ── GET JWT HEADERS ──
+function getAuthHeaders(extraHeaders = {}) {
+  const token = sessionStorage.getItem('agro_token');
+  return Object.assign({
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  }, extraHeaders);
+}
+
+// ── TAB SWITCHING ──
+function switchTab(tab) {
+  const navItems = document.querySelectorAll('nav .nav-item');
+  navItems.forEach(item => {
+    item.classList.remove('active');
+    if (item.textContent.toLowerCase().includes(tab.toLowerCase()) ||
+       (tab === 'requests' && item.textContent.toLowerCase().includes('requests')) ||
+       (tab === 'bookings' && item.textContent.toLowerCase().includes('bookings')) ||
+       (tab === 'marketplace' && item.textContent.toLowerCase().includes('marketplace'))) {
+      item.classList.add('active');
+    }
+  });
+
+  const sectionStats = document.getElementById('section-stats');
+  const sectionBroadcastsResponses = document.getElementById('section-broadcasts-responses');
+  const sectionBookingsMarket = document.getElementById('section-bookings-market');
+  const sectionProfile = document.getElementById('section-profile');
+  const sectionSettings = document.getElementById('section-settings');
+  const sectionMessages = document.getElementById('section-messages');
+
+  const panelBroadcastForm = document.getElementById('panel-broadcast-form');
+  const panelResponses = document.getElementById('panel-responses');
+  const panelBookings = document.getElementById('panel-bookings');
+  const panelMarketplace = document.getElementById('panel-marketplace');
+
+  // Hide all sections first
+  sectionStats.style.display = 'none';
+  sectionBroadcastsResponses.style.display = 'none';
+  sectionBookingsMarket.style.display = 'none';
+  sectionProfile.style.display = 'none';
+  sectionSettings.style.display = 'none';
+  sectionMessages.style.display = 'none';
+
+  if (tab === 'dashboard') {
+    sectionStats.style.display = 'grid';
+    sectionBroadcastsResponses.style.display = 'grid';
+    panelBroadcastForm.style.display = 'block';
+    panelResponses.style.display = 'block';
+    sectionBookingsMarket.style.display = 'grid';
+    panelBookings.style.display = 'block';
+    panelMarketplace.style.display = 'block';
+  } else if (tab === 'marketplace') {
+    sectionBookingsMarket.style.display = 'grid';
+    panelBookings.style.display = 'none';
+    panelMarketplace.style.display = 'block';
+  } else if (tab === 'requests') {
+    sectionBroadcastsResponses.style.display = 'grid';
+    panelBroadcastForm.style.display = 'block';
+    panelResponses.style.display = 'block';
+  } else if (tab === 'bookings') {
+    sectionBookingsMarket.style.display = 'grid';
+    panelBookings.style.display = 'block';
+    panelMarketplace.style.display = 'none';
+  } else if (tab === 'profile') {
+    sectionProfile.style.display = 'block';
+    loadProfileDetails();
+  } else if (tab === 'settings') {
+    sectionSettings.style.display = 'block';
+    loadSettingsDetails();
+  } else if (tab === 'messages') {
+    sectionMessages.style.display = 'block';
+    loadNotificationsInbox();
+  }
+}
+
+// ── PROFILE FUNCTIONS ──
+function loadProfileDetails() {
+  if (!_user || !_user.id) return;
+  fetch(API_URL + '/api/profile/' + _user.id, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success) return;
+      const u = data.user;
+      document.getElementById('profile-fname').value = u.first_name || '';
+      document.getElementById('profile-lname').value = u.last_name || '';
+      document.getElementById('profile-email').value = u.email || '';
+      document.getElementById('profile-phone').value = u.phone || '';
+      document.getElementById('profile-district').value = u.district || '';
+      document.getElementById('profile-address').value = u.address || '';
+      document.getElementById('profile-role').value = u.role ? u.role.toUpperCase() : '';
+      document.getElementById('profile-status').value = u.status ? u.status.toUpperCase() : '';
+    });
+}
+
+function saveProfile(e) {
+  e.preventDefault();
+  const fname = document.getElementById('profile-fname').value.trim();
+  const lname = document.getElementById('profile-lname').value.trim();
+  const phone = document.getElementById('profile-phone').value.trim();
+  const district = document.getElementById('profile-district').value;
+  const address = document.getElementById('profile-address').value.trim();
+
+  fetch(API_URL + '/api/profile/' + _user.id, {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      first_name: fname,
+      last_name: lname,
+      phone: phone,
+      district: district,
+      address: address
+    })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        alert('Profile updated successfully! 💾');
+        const p = data.user;
+        const fullName = (p.first_name + ' ' + p.last_name).trim();
+        const initials = fullName.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
+        
+        document.getElementById('user-avatar').textContent = initials;
+        document.getElementById('user-name').textContent = fullName;
+        document.getElementById('user-district').textContent = p.district + ' District';
+        
+        _user = {
+          id: p.id, email: p.email, role: p.role,
+          name: p.first_name, district: p.district, phone: p.phone,
+          address: p.address
+        };
+        sessionStorage.setItem('agro_user', JSON.stringify(_user));
+        loadProfileDetails();
+      } else {
+        alert('❌ Error updating profile: ' + data.error);
+      }
+    });
+}
+
+// ── SETTINGS & THEME FUNCTIONS ──
+function loadSettingsDetails() {
+  const isDark = document.body.classList.contains('dark');
+  document.getElementById('dark-mode-btn').textContent = isDark ? '🌞 Light Mode' : '🌙 Dark Mode';
+}
+
+function toggleDarkModeSetting() {
+  document.body.classList.toggle('dark');
+  const isDark = document.body.classList.contains('dark');
+  localStorage.setItem('agro_dark_mode', isDark ? 'enabled' : 'disabled');
+  loadSettingsDetails();
+}
+
+// ── MESSAGES / NOTIFICATIONS INBOX ──
+function loadNotificationsInbox() {
+  if (!_user || !_user.id) return;
+  fetch(API_URL + '/api/buyer/notifications?user_id=' + _user.id, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      const container = document.getElementById('notifications-inbox-list');
+      if (!data.success || !data.notifications.length) {
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No messages or notifications.</div>';
+        return;
+      }
+      let html = '';
+      data.notifications.forEach(n => {
+        const dateStr = new Date(n.created_at).toLocaleString();
+        const unreadStyle = !n.is_read ? 'border-left: 4px solid var(--teal-light); background: rgba(77,182,228,0.05);' : '';
+        html += `
+          <div class="msg-item" style="padding:14px; margin-bottom:0; border-radius:10px; ${unreadStyle}">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">
+              <div style="font-weight:600; font-size:13px; color:var(--text);">${n.title}</div>
+              <div style="font-size:11px; color:var(--hint);">${formatTimeAgo(new Date(n.created_at))}</div>
+            </div>
+            <div style="font-size:12.5px; color:var(--muted); line-height:1.45;">${n.body}</div>
+            <div style="font-size:10px; color:var(--hint); margin-top:6px;">🕒 ${dateStr}</div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    });
+}
+
+function markAllNotificationsRead() {
+  if (!_user || !_user.id) return;
+  fetch(API_URL + '/api/buyer/notifications/read-all', {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ user_id: _user.id })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        loadNotificationsInbox();
+        loadDashboardData();
+      }
+    });
+}
+
+// ── LOAD DASHBOARD DATA ──
+function loadDashboardData() {
+  if (!_user || !_user.id) return;
+
+  // 1. Fetch Stats/Summary
+  fetch(API_URL + '/api/buyer/dashboard?buyer_id=' + _user.id, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success) return;
+      const db = data.dashboard;
+      document.getElementById('stat-active-requests').textContent = db.broadcasts.open || 0;
+      document.getElementById('stat-unread-notif').textContent = db.notifications.unread || 0;
+      document.getElementById('stat-confirmed-bookings').textContent = db.bookings.confirmed || 0;
+      document.getElementById('stat-total-purchases').textContent = db.bookings.total || 0;
+
+      document.getElementById('sidebar-requests-count').textContent = db.broadcasts.open || 0;
+      document.getElementById('sidebar-bookings-count').textContent = db.bookings.total || 0;
+
+      const msgBadge = document.getElementById('sidebar-messages-count');
+      if (msgBadge) {
+        const unreadCount = db.notifications.unread || 0;
+        msgBadge.textContent = unreadCount;
+        msgBadge.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+      }
+    });
+
+  // 2. Load lists
+  loadBroadcastsAndResponses();
+  loadBookings();
+  loadMarketplace();
+}
+
+// ── BROADCASTS & RESPONSES ──
+function loadBroadcastsAndResponses() {
+  fetch(API_URL + '/api/buyer/broadcasts?buyer_id=' + _user.id, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      const responsesContainer = document.getElementById('seller-responses-list');
+      const headerCount = document.getElementById('responses-header-count');
+
+      if (!data.success || !data.broadcasts.length) {
+        responsesContainer.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No active responses. Broadcast a request first!</div>';
+        headerCount.textContent = '0 new';
+        return;
+      }
+
+      // Collect all seller responses across all broadcasts
+      let allResponses = [];
+      data.broadcasts.forEach(b => {
+        if (b.responses && b.responses.length) {
+          b.responses.forEach(r => {
+            allResponses.push({
+              broadcastId: b.id,
+              crop: b.crop,
+              responseId: r.id,
+              type: r.type,
+              price: r.price,
+              quantity: r.quantity,
+              message: r.message,
+              sellerName: r.seller_name,
+              sellerPhone: r.seller_phone,
+              createdAt: r.created_at
+            });
+          });
+        }
+      });
+
+      headerCount.textContent = allResponses.length + ' new';
+
+      if (!allResponses.length) {
+        responsesContainer.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No offers from sellers yet. We will notify you!</div>';
+        return;
+      }
+
+      let html = '';
+      allResponses.forEach(res => {
+        const timeAgo = formatTimeAgo(new Date(res.createdAt));
+        const priceLabel = res.price ? `Rs. ${res.price}/kg` : 'requested price';
+        const qtyLabel = res.quantity ? `${res.quantity} kg` : 'requested quantity';
+        const counterText = res.type === 'counter' ? 'Counter offer:' : 'Offer details:';
+
+        html += `
+          <div class="msg-item highlight">
+            <div class="msg-top">
+              <div class="msg-from">${res.sellerName || 'Farmer'}</div>
+              <div class="msg-time">${timeAgo}</div>
+            </div>
+            <div class="msg-text">
+              <strong>${res.crop}</strong> - ${counterText} ${qtyLabel} @ ${priceLabel}.
+              <div style="font-style:italic;margin-top:4px;">"${res.message || 'Ready to supply'}"</div>
+              <div style="margin-top:6px;font-size:11px;color:var(--teal)">📞 Phone: ${res.sellerPhone || 'N/A'}</div>
+            </div>
+            <div class="msg-actions">
+              <button class="btn-sm btn-confirm" onclick="acceptSellerResponse(${res.broadcastId}, ${res.responseId})">Confirm & Accept</button>
+            </div>
+          </div>
+        `;
+      });
+      responsesContainer.innerHTML = html;
+    });
+}
+
+function submitBroadcast(e) {
+  e.preventDefault();
+  const crop = document.getElementById('broadcast-crop').value.trim();
+  const quantity = document.getElementById('broadcast-quantity').value;
+  const neededBy = document.getElementById('broadcast-date').value;
+  const district = document.getElementById('broadcast-district').value.trim();
+  const budget = document.getElementById('broadcast-budget').value;
+
+  fetch(API_URL + '/api/buyer/broadcasts', {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      buyer_id: _user.id,
+      buyer_name: _user.name,
+      crop: crop,
+      quantity: quantity,
+      district: district,
+      needed_by: neededBy,
+      budget: budget || null,
+      unit: 'kg'
+    })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        alert('Buyer request broadcasted to sellers successfully! 📡');
+        document.getElementById('broadcast-form').reset();
+        if (_user.district) document.getElementById('broadcast-district').value = _user.district;
+        loadDashboardData();
+      } else {
+        alert('❌ Error: ' + data.error);
+      }
+    });
+}
+
+function acceptSellerResponse(broadcastId, responseId) {
+  if (!confirm('Are you sure you want to accept this offer? This will close the broadcast.')) return;
+  
+  fetch(API_URL + `/api/buyer/broadcasts/${broadcastId}/accept-response`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      buyer_id: _user.id,
+      response_id: responseId
+    })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        alert('Offer accepted successfully! Contact the seller directly to coordinate delivery.');
+        loadDashboardData();
+      } else {
+        alert('❌ Error: ' + data.error);
+      }
+    });
+}
+
+// ── BOOKINGS FUNCTIONS ──
+function loadBookings() {
+  fetch(API_URL + '/api/buyer/bookings?buyer_id=' + _user.id, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      const container = document.getElementById('bookings-list');
+      if (!data.success || !data.bookings.length) {
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No equipment bookings. Visit the marketplace to rent tools!</div>';
+        return;
+      }
+
+      let html = '';
+      data.bookings.forEach(item => {
+        const start = new Date(item.start_date).toLocaleDateString();
+        const end = new Date(item.end_date).toLocaleDateString();
+        
+        let icon = '🚜';
+        if (item.listing_name.toLowerCase().includes('pump') || item.listing_name.toLowerCase().includes('water')) icon = '💧';
+        if (item.listing_name.toLowerCase().includes('transport') || item.listing_name.toLowerCase().includes('lorry')) icon = '🚛';
+        if (item.listing_name.toLowerCase().includes('sprayer') || item.listing_name.toLowerCase().includes('machine')) icon = '🌿';
+
+        const isPending = item.status === 'pending';
+        const cancelBtn = isPending ? `<button onclick="cancelBooking(${item.id})" style="background:none;border:none;color:var(--amber);font-size:11.5px;cursor:pointer;margin-top:4px;font-weight:500;">Cancel Request</button>` : '';
+
+        html += `
+          <div class="booking-item">
+            <div class="booking-icon">${icon}</div>
+            <div class="booking-info">
+              <div class="booking-name">${item.listing_name}</div>
+              <div class="booking-owner">Owner: ${item.owner_name} · 📞 ${item.owner_phone || 'N/A'}</div>
+              <div class="booking-dates">
+                <span>📅 ${start} – ${end}</span>
+                <span>Rs. ${parseFloat(item.total_amount).toLocaleString()}</span>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;">
+              <span class="booking-status ${item.status}">${item.status.toUpperCase()}</span>
+              ${cancelBtn}
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    });
+}
+
+function cancelBooking(id) {
+  if (!confirm('Are you sure you want to cancel this booking request?')) return;
+  fetch(API_URL + '/api/buyer/bookings/' + id, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ buyer_id: _user.id })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        loadDashboardData();
+      } else {
+        alert('❌ Error: ' + data.error);
+      }
+    });
+}
+
+// ── MARKETPLACE FUNCTIONS ──
+function toggleMarketType() {
+  const searchInput = document.getElementById('market-search');
+  if (marketType === 'crops') {
+    marketType = 'equipment';
+    document.getElementById('market-title').textContent = 'Marketplace Equipment';
+    document.getElementById('market-toggle-btn').textContent = '🥬 View Crops';
+    searchInput.placeholder = 'Search tractors, pumps, machinery...';
+  } else {
+    marketType = 'crops';
+    document.getElementById('market-title').textContent = 'Marketplace Crops';
+    document.getElementById('market-toggle-btn').textContent = '🚜 View Equipment';
+    searchInput.placeholder = 'Search produce...';
+  }
+  loadMarketplace();
+}
+
+function loadMarketplace() {
+  const query = document.getElementById('market-search').value.trim();
+  const container = document.getElementById('marketplace-grid');
+
+  if (marketType === 'crops') {
+    fetch(API_URL + `/api/buyer/marketplace/crops?search=${encodeURIComponent(query)}`, {
+      headers: getAuthHeaders()
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (!data.success || !data.listings.length) {
+          container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;grid-column: span 2;">No crops available matching your search.</div>';
+          return;
+        }
+
+        let html = '';
+        data.listings.forEach(item => {
+          let symbol = '🥬';
+          if (item.name.toLowerCase().includes('tomato')) symbol = '🍅';
+          if (item.name.toLowerCase().includes('carrot')) symbol = '🥕';
+          if (item.name.toLowerCase().includes('chili')) symbol = '🌶️';
+          if (item.name.toLowerCase().includes('potato')) symbol = '🥔';
+          if (item.name.toLowerCase().includes('onion')) symbol = '🧅';
+          if (item.name.toLowerCase().includes('banana')) symbol = '🍌';
+
+          html += `
+            <div class="market-card">
+              <div class="market-card-img">${symbol}</div>
+              <div class="market-card-name">${item.name}</div>
+              <div class="market-card-meta">${item.district || 'Kandy'} · ${item.quantity_kg} kg · Seller rep: ${item.seller_rep || 0}</div>
+              <div class="market-card-price">Rs. ${parseFloat(item.price_per_kg).toFixed(0)}/kg</div>
+              <button class="interest-btn" onclick="expressInterest(${item.id})">Express Interest</button>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+      });
+  } else {
+    // Equipment
+    fetch(API_URL + `/api/buyer/marketplace/equipment?search=${encodeURIComponent(query)}`, {
+      headers: getAuthHeaders()
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (!data.success || !data.listings.length) {
+          container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;grid-column: span 2;">No equipment available matching your search.</div>';
+          return;
+        }
+
+        let html = '';
+        data.listings.forEach(item => {
+          let symbol = '🚜';
+          if (item.name.toLowerCase().includes('pump') || item.name.toLowerCase().includes('water')) symbol = '💧';
+          if (item.name.toLowerCase().includes('transport') || item.name.toLowerCase().includes('lorry')) symbol = '🚛';
+          if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) symbol = '🌿';
+
+          html += `
+            <div class="market-card">
+              <div class="market-card-img">${symbol}</div>
+              <div class="market-card-name">${item.name}</div>
+              <div class="market-card-meta">${item.district || 'Kurunegala'} · ${item.condition || 'Good'} condition</div>
+              <div class="market-card-price">Rs. ${parseFloat(item.rental_rate).toLocaleString()} / day</div>
+              <button class="interest-btn" onclick="openBookingModal(${item.id}, ${item.rental_rate}, '${item.name}')">Rent Now</button>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+      });
+  }
+}
+
+function expressInterest(cropId) {
+  fetch(API_URL + `/api/buyer/marketplace/crops/${cropId}/interest`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ buyer_id: _user.id })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        alert('Interest registered! The seller has been notified and will contact you. 🥬');
+        loadDashboardData();
+      } else {
+        alert('❌ Error: ' + data.error);
+      }
+    });
+}
+
+// ── EQUIPMENT BOOKING MODAL ACTIONS ──
+function openBookingModal(id, rate, name) {
+  document.getElementById('book-equip-id').value = id;
+  document.getElementById('book-equip-title').textContent = 'Book ' + name;
+  document.getElementById('book-equip-rate').textContent = `Rs. ${parseFloat(rate).toLocaleString()} / day`;
+  
+  currentEquipmentRate = parseFloat(rate);
+  
+  const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+  document.getElementById('book-start-date').value = tomorrow;
+  document.getElementById('book-end-date').value = tomorrow;
+  
+  document.getElementById('book-start-date').addEventListener('change', calculateTotalBookingCost);
+  document.getElementById('book-end-date').addEventListener('change', calculateTotalBookingCost);
+  
+  calculateTotalBookingCost();
+  document.getElementById('book-equip-modal').style.display = 'flex';
+}
+
+function calculateTotalBookingCost() {
+  const start = new Date(document.getElementById('book-start-date').value);
+  const end = new Date(document.getElementById('book-end-date').value);
+  
+  if (isNaN(start) || isNaN(end) || end < start) {
+    document.getElementById('book-total-cost').textContent = 'Rs. 0';
+    return;
+  }
+  
+  const days = Math.ceil((end - start) / 86400000) + 1;
+  const total = days * currentEquipmentRate;
+  document.getElementById('book-total-cost').textContent = 'Rs. ' + total.toLocaleString();
+}
+
+function closeBookingModal() {
+  document.getElementById('book-equip-modal').style.display = 'none';
+  document.getElementById('book-equip-form').reset();
+}
+
+function submitEquipmentBooking(e) {
+  e.preventDefault();
+  const id = document.getElementById('book-equip-id').value;
+  const start = document.getElementById('book-start-date').value;
+  const end = document.getElementById('book-end-date').value;
+
+  fetch(API_URL + '/api/buyer/bookings', {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      buyer_id: _user.id,
+      listing_id: id,
+      start_date: start,
+      end_date: end
+    })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        alert('Booking request submitted to owner successfully! 🚜');
+        closeBookingModal();
+        loadDashboardData();
+      } else {
+        alert('❌ Error: ' + data.error);
+      }
+    });
+}
+
+// ── UTILS ──
+function formatTimeAgo(date) {
+  const seconds = Math.floor((new Date() - date) / 1000);
+  let interval = Math.floor(seconds / 31536000);
+  if (interval >= 1) return interval + 'y ago';
+  interval = Math.floor(seconds / 2592000);
+  if (interval >= 1) return interval + 'mo ago';
+  interval = Math.floor(seconds / 86400);
+  if (interval >= 1) return interval + 'd ago';
+  interval = Math.floor(seconds / 3600);
+  if (interval >= 1) return interval + 'h ago';
+  interval = Math.floor(seconds / 60);
+  if (interval >= 1) return interval + 'm ago';
+  return 'just now';
 }
 </script>
 </body>

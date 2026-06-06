@@ -8,6 +8,11 @@ const multer = require('multer');
 const cors = require('cors');
 const path = require('path');
 const authRoutes = require('./authRoutes');
+const jwt = require('jsonwebtoken');
+const sellerRoutes = require('./sellerRoutes');
+const buyerRoutes = require('./buyerRoutes');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-me';
 
 // ── ADMIN CONFIG ──
 // Change these before deploying!
@@ -48,11 +53,17 @@ app.use('/uploads', express.static('uploads'));
 
 // ── TWILIO OTP ROUTES ──
 app.use('/api/auth', authRoutes);
+app.use('/api/seller', sellerRoutes);
+app.use('/api/buyer', buyerRoutes);
 
-// Serve admin panel
-app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin.html'));
-});
+// Serve pages securely
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/index.html', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/buyer.html', (req, res) => res.sendFile(path.join(__dirname, 'buyer.html')));
+app.get('/seller.html', (req, res) => res.sendFile(path.join(__dirname, 'seller.html')));
+app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
+app.get('/admin.html', (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
+app.get('/logo.png', (req, res) => res.sendFile(path.join(__dirname, 'logo.png')));
 
 // PostgreSQL connection
 const pool = new Pool({
@@ -64,6 +75,7 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
+app.set('db', pool);
 // Test DB connection + auto-migrate + seed admin
 pool.connect(async (err, client, release) => {
   if (err) { console.error('❌ DB connection failed:', err.message); return; }
@@ -114,8 +126,14 @@ app.post('/api/login', async (req, res) => {
     // ── Check if admin credentials ──
     if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
       console.log('✅ Admin logged in:', email);
+      const token = jwt.sign(
+        { id: 0, email: ADMIN_EMAIL, role: 'admin' },
+        JWT_SECRET,
+        { expiresIn: '30d' }
+      );
       return res.json({
         success: true,
+        token,
         user: { id: 0, email: ADMIN_EMAIL, role: 'admin', name: 'Admin' }
       });
     }
@@ -150,8 +168,15 @@ app.post('/api/login', async (req, res) => {
     }
 
     console.log('✅ User logged in:', user.email);
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      JWT_SECRET,
+      { expiresIn: '30d' }
+    );
+
     res.json({
       success: true,
+      token,
       user: {
         id: user.id,
         email: user.email,
@@ -259,6 +284,32 @@ app.get('/api/profile/:id', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// ── PROFILE: UPDATE USER DATA ──
+app.put('/api/profile/:id', async (req, res) => {
+  const { first_name, last_name, district, address, phone } = req.body;
+  try {
+    const result = await pool.query(
+      `UPDATE users SET
+         first_name = COALESCE($1, first_name),
+         last_name = COALESCE($2, last_name),
+         district = COALESCE($3, district),
+         address = COALESCE($4, address),
+         phone = COALESCE($5, phone),
+         updated_at = NOW()
+       WHERE id = $6
+       RETURNING id, role, first_name, last_name, email, phone, district, address, status, created_at`,
+      [first_name, last_name, district, address, phone, req.params.id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json({ success: true, user: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {

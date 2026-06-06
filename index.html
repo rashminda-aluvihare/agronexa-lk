@@ -718,6 +718,7 @@ document.getElementById('btn-login').addEventListener('click', async function ()
     if (data.success) {
       // Store user info in sessionStorage for dashboard use
       sessionStorage.setItem('agro_user', JSON.stringify(data.user));
+      if (data.token) sessionStorage.setItem('agro_token', data.token);
       // Redirect based on role
       var role = data.user.role;
       if (role === 'admin') {
