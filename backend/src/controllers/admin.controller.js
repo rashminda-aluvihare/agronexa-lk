@@ -336,6 +336,46 @@ async function getDashboardStats(req, res, next) {
   }
 }
 
+/**
+ * POST /api/admin/system/reset
+ */
+async function resetSystemDatabase(req, res, next) {
+  if (!verifyAdminAccess(req)) {
+    return res.status(401).json({ error: 'Unauthorized admin access.' });
+  }
+
+  try {
+    const tables = [
+      'direct_messages',
+      'audit_logs',
+      'notifications',
+      'rental_ledger',
+      'request_responses',
+      'crop_orders',
+      'buyer_requests',
+      'equipment_bookings',
+      'equipment_listings',
+      'crop_listings',
+      'transport_providers',
+      'users'
+    ];
+
+    for (const table of tables) {
+      await db.query(`TRUNCATE TABLE ${table} RESTART IDENTITY CASCADE;`);
+    }
+
+    // Write audit log for system reset
+    await db.query(
+      `INSERT INTO audit_logs (user_id, action, ip_address, details) VALUES ($1, $2, $3, $4)`,
+      [0, 'SYSTEM_RESET', req.ip, 'System database factory reset by admin.']
+    );
+
+    return res.json({ success: true, message: 'System database cleared successfully.' });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getPendingUsers,
   getAllUsers,
@@ -346,4 +386,5 @@ module.exports = {
   changeUserRole,
   changeUserStatus,
   getDashboardStats,
+  resetSystemDatabase,
 };

@@ -565,6 +565,15 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
           </div>
         </div>
       </div>
+
+      <!-- EMERGENCY SYSTEM RESET -->
+      <div style="background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 24px; margin-top: 24px;">
+        <div class="widget-title" style="color: var(--danger); font-size: 11px;"><span style="font-size: 1.2rem;">⚠️</span> Emergency System Maintenance</div>
+        <p style="font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 20px;">
+          This action will permanently delete all registered users (Farmers and Buyers), crop listings, equipment listings, bookings, transactions, audit logs, and chat messages. This cannot be undone. Use this only when resetting the environment.
+        </p>
+        <button class="a-btn" onclick="triggerSystemReset()" id="reset-db-btn" style="background: linear-gradient(135deg, var(--danger), #c0392b); box-shadow: 0 2px 12px rgba(192,57,43,0.25); max-width: 280px;">Wipe & Reset System Database</button>
+      </div>
     </div>
 
     <!-- PENDING review TAB -->
@@ -1196,6 +1205,36 @@ function initSocket() {
       loadDashboardStats();
       loadPending();
     });
+  }
+}
+
+async function triggerSystemReset() {
+  const confirm1 = confirm("🚨 WARNING: Are you absolutely sure you want to delete ALL data? This will clear all users, crop listings, equipment bookings, chats, and logs. This action CANNOT be undone!");
+  if (!confirm1) return;
+
+  const confirm2 = confirm("⚠️ FINAL CONFIRMATION: Double check your choice. Are you 100% sure you want to factory reset the database?");
+  if (!confirm2) return;
+
+  var btn = document.getElementById('reset-db-btn');
+  btn.textContent = '⏳ Wiping Database...'; btn.disabled = true;
+
+  try {
+    var res = await fetch(API_URL + '/api/admin/system/reset', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ admin_email: adminEmail, admin_password: adminPass })
+    });
+    var data = await res.json();
+    if (data.success) {
+      alert("✅ System database has been successfully factory reset! Logging out...");
+      logout();
+    } else {
+      showToast('❌ ' + (data.error || 'Failed to reset database.'));
+      btn.textContent = 'Wipe & Reset System Database'; btn.disabled = false;
+    }
+  } catch (err) {
+    showToast('❌ Connection error during database reset.');
+    btn.textContent = 'Wipe & Reset System Database'; btn.disabled = false;
   }
 }
 </script>
