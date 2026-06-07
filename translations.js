@@ -83,7 +83,9 @@ const TRANSLATIONS = {
     "qa-view-requests-desc": "See recent crop demands from corporate buyers",
     "nav-seller-listings": "My Listings",
     "nav-seller-requests": "Buyer Requests",
-    "nav-seller-equipment": "Equipment Rentals"
+    "nav-seller-equipment": "Equipment Rentals",
+    "nav-weather-advisory": "Weather & Advisory",
+    "nav-price-index": "Daily Price Index"
   },
   si: {
     // Nav & General
@@ -168,7 +170,9 @@ const TRANSLATIONS = {
     "qa-view-requests-desc": "ආයතනික ගැනුම්කරුවන්ගේ නවතම බෝග ඉල්ලීම් සොයාගන්න",
     "nav-seller-listings": "මගේ දැන්වීම්",
     "nav-seller-requests": "ගැනුම්කරුවන්ගේ ඉල්ලීම්",
-    "nav-seller-equipment": "යන්ත්‍රෝපකරණ කුලියට දීම"
+    "nav-seller-equipment": "යන්ත්‍රෝපකරණ කුලියට දීම",
+    "nav-weather-advisory": "කාලගුණ සහ වගා උපදෙස්",
+    "nav-price-index": "දෛනික බෝග මිල ගණන්"
   },
   ta: {
     // Nav & General
@@ -253,7 +257,9 @@ const TRANSLATIONS = {
     "qa-view-requests-desc": "வாங்குபவர்களின் சமீபத்திய பயிர் கோரிக்கைகளை கண்டறியவும்",
     "nav-seller-listings": "எனது விளம்பரங்கள்",
     "nav-seller-requests": "கொள்முதல் கோரிக்கைகள்",
-    "nav-seller-equipment": "இயந்திர வாடகை"
+    "nav-seller-equipment": "இயந்திர வாடகை",
+    "nav-weather-advisory": "வானிலை மற்றும் ஆலோசனை",
+    "nav-price-index": "தினசரி சந்தை விலை"
   }
 };
 

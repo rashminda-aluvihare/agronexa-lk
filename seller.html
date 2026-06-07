@@ -477,6 +477,14 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="3" width="15" height="13" rx="2" ry="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
       <span data-i18n="nav-transport">Transport Logistics</span>
     </div>
+    <div class="nav-item" onclick="switchTab('weather')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      <span data-i18n="nav-weather-advisory">Weather & Advisory</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('prices')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span data-i18n="nav-price-index">Daily Price Index</span>
+    </div>
     <div class="nav-section">Account</div>
     <div class="nav-item" onclick="switchTab('ledger')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
@@ -578,46 +586,43 @@
       </div>
     </div>
 
-    <!-- Weather & Market Prices Analytics Section -->
-    <div class="grid-2 content-section" id="section-analytics" style="margin-top: 20px; margin-bottom: 20px;">
-      <!-- Weather Card -->
-      <div class="panel" id="panel-weather">
-        <div class="panel-head">
-          <div class="panel-title" data-i18n="weather-title">🌦️ Weather Alert & Farming Advisory</div>
-          <div id="weather-district-display" style="font-size:12px; font-weight:600; color:var(--primary);">Loading district...</div>
+    <!-- Weather Section -->
+    <div class="panel content-section" id="section-weather" style="display: none; margin-top: 20px; margin-bottom: 20px;">
+      <div class="panel-head">
+        <div class="panel-title" data-i18n="weather-title">🌦️ Weather Alert & Farming Advisory</div>
+        <div id="weather-district-display" style="font-size:12px; font-weight:600; color:var(--primary);">Loading district...</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div id="weather-widget-content" style="display:flex; justify-content:space-between; align-items:center; background:var(--primary-pale); border-radius:12px; padding:16px;">
+          <div style="font-size:12.5px; color:var(--text-muted);" data-i18n="weather-loading">Loading local weather...</div>
         </div>
-        <div style="display:flex; flex-direction:column; gap:12px;">
-          <div id="weather-widget-content" style="display:flex; justify-content:space-between; align-items:center; background:var(--primary-pale); border-radius:12px; padding:16px;">
-            <div style="font-size:12.5px; color:var(--text-muted);" data-i18n="weather-loading">Loading local weather...</div>
-          </div>
-          <div id="weather-advisory-content" style="border-left:3px solid var(--primary); background:#fcfefb; padding:12px; border-radius:4px; font-size:12.5px; line-height:1.6; color:var(--text-main);">
-            <span data-i18n="weather-desc">Weather advice for your district.</span>
-          </div>
+        <div id="weather-advisory-content" style="border-left:3px solid var(--primary); background:#fcfefb; padding:12px; border-radius:4px; font-size:12.5px; line-height:1.6; color:var(--text-main);">
+          <span data-i18n="weather-desc">Weather advice for your district.</span>
         </div>
       </div>
+    </div>
 
-      <!-- Price Index Card -->
-      <div class="panel" id="panel-price-index">
-        <div class="panel-head">
-          <div class="panel-title" data-i18n="price-index-title">📊 Daily Crop Market Price Index (Sri Lanka)</div>
-        </div>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom: 12px;" data-i18n="price-index-sub">Average market rates per kg from dedicated economic centres.</p>
-        <div style="max-height: 155px; overflow-y: auto;">
-          <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:left;">
-            <thead>
-              <tr style="border-bottom:2px solid var(--border-color); color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:0.5px;">
-                <th style="padding:6px 4px;" data-i18n="price-crop">Crop</th>
-                <th style="padding:6px 4px; text-align:right;" data-i18n="price-avg">Avg Price</th>
-                <th style="padding:6px 4px; text-align:right;" data-i18n="price-change">Change</th>
-              </tr>
-            </thead>
-            <tbody id="price-index-table-body">
-              <tr>
-                <td colspan="3" style="text-align:center; padding:20px; color:var(--text-muted);">Loading prices...</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+    <!-- Price Index Section -->
+    <div class="panel content-section" id="section-price-index" style="display: none; margin-top: 20px; margin-bottom: 20px;">
+      <div class="panel-head">
+        <div class="panel-title" data-i18n="price-index-title">📊 Daily Crop Market Price Index (Sri Lanka)</div>
+      </div>
+      <p style="font-size:12px; color:var(--text-muted); margin-bottom: 12px;" data-i18n="price-index-sub">Average market rates per kg from dedicated economic centres.</p>
+      <div style="max-height: 400px; overflow-y: auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:left;">
+          <thead>
+            <tr style="border-bottom:2px solid var(--border-color); color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:0.5px;">
+              <th style="padding:6px 4px;" data-i18n="price-crop">Crop</th>
+              <th style="padding:6px 4px; text-align:right;" data-i18n="price-avg">Avg Price</th>
+              <th style="padding:6px 4px; text-align:right;" data-i18n="price-change">Change</th>
+            </tr>
+          </thead>
+          <tbody id="price-index-table-body">
+            <tr>
+              <td colspan="3" style="text-align:center; padding:20px; color:var(--text-muted);">Loading prices...</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -1450,7 +1455,8 @@ function switchTab(tab) {
   const sectionProfile = document.getElementById('section-profile');
   const sectionSettings = document.getElementById('section-settings');
   const sectionMessages = document.getElementById('section-messages');
-  const sectionAnalytics = document.getElementById('section-analytics');
+  const sectionWeather = document.getElementById('section-weather');
+  const sectionPriceIndex = document.getElementById('section-price-index');
   const sectionTransport = document.getElementById('section-transport');
 
   const panelCrops = document.getElementById('panel-crop-listings');
@@ -1465,13 +1471,13 @@ function switchTab(tab) {
   sectionProfile.style.display = 'none';
   sectionSettings.style.display = 'none';
   sectionMessages.style.display = 'none';
-  if (sectionAnalytics) sectionAnalytics.style.display = 'none';
+  if (sectionWeather) sectionWeather.style.display = 'none';
+  if (sectionPriceIndex) sectionPriceIndex.style.display = 'none';
   if (sectionTransport) sectionTransport.style.display = 'none';
 
   if (tab === 'dashboard') {
     sectionStats.style.display = 'grid';
     if (sectionQuickActions) sectionQuickActions.style.display = 'grid';
-    if (sectionAnalytics) sectionAnalytics.style.display = 'grid';
   } else if (tab === 'listings') {
     sectionListingsRequests.style.display = 'block';
     panelCrops.style.display = 'block';
@@ -1497,6 +1503,23 @@ function switchTab(tab) {
     sectionMessages.style.display = 'block';
     loadNotificationsInbox();
     loadChatsList();
+  } else if (tab === 'weather') {
+    if (sectionWeather) {
+      sectionWeather.style.display = 'block';
+      if (_user && _user.district) {
+        loadWeather(_user.district);
+      } else {
+        const displayDistrict = document.getElementById('weather-district-display');
+        if (displayDistrict) displayDistrict.textContent = 'District not set';
+        const contentEl = document.getElementById('weather-widget-content');
+        if (contentEl) contentEl.innerHTML = `<div style="font-size:12px; color:var(--text-muted);">Set district in Profile to load weather advisory.</div>`;
+      }
+    }
+  } else if (tab === 'prices') {
+    if (sectionPriceIndex) {
+      sectionPriceIndex.style.display = 'block';
+      loadMarketPrices();
+    }
   } else if (tab === 'transport') {
     if (sectionTransport) {
       sectionTransport.style.display = 'block';
@@ -1928,16 +1951,6 @@ function loadDashboardData() {
       }
     });
 
-  // 4. Load Weather & Price Index
-  if (_user && _user.district) {
-    loadWeather(_user.district);
-  } else {
-    const displayDistrict = document.getElementById('weather-district-display');
-    if (displayDistrict) displayDistrict.textContent = 'District not set';
-    const contentEl = document.getElementById('weather-widget-content');
-    if (contentEl) contentEl.innerHTML = `<div style="font-size:12px; color:var(--text-muted);">Set district in Profile to load weather advisory.</div>`;
-  }
-  loadMarketPrices();
 }
 
 // ── CROP LISTINGS FUNCTIONS ──
