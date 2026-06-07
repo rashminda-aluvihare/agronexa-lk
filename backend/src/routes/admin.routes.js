@@ -1,9 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/admin.controller');
+const ledgerController = require('../controllers/ledger.controller');
 const { authRequired, requireRole } = require('../middlewares/auth.middleware');
 
 // Admin panel actions
+router.get('/stats', authRequired, requireRole(['admin']), adminController.getDashboardStats);
+router.get('/ledger/verify', authRequired, requireRole(['admin']), ledgerController.verifyLedger);
 router.get('/pending', authRequired, requireRole(['admin']), adminController.getPendingUsers);
 router.get('/users', authRequired, requireRole(['admin']), adminController.getAllUsers);
 router.post('/approve/:id', authRequired, requireRole(['admin']), adminController.approveUser);

@@ -230,6 +230,187 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
   font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;
 }
 
+/* ── KPI STATS CARDS ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.2s;
+}
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(4,26,13,0.06);
+}
+.stat-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--ok-bg);
+  color: var(--ok);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.stat-card-info {
+  flex: 1;
+}
+.stat-card-val {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-top: 2px;
+}
+.stat-card-lbl {
+  font-size: 10px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* ── WIDGETS ── */
+.widget-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+@media(max-width:768px) {
+  .widget-grid { grid-template-columns: 1fr; }
+}
+.widget-card {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+}
+.widget-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── SEARCH & FILTERS ── */
+.filter-bar {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.filter-input {
+  flex: 1;
+  min-width: 200px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13.5px;
+  outline: none;
+  background: #fff;
+  transition: all 0.2s;
+}
+.filter-input:focus {
+  border-color: var(--g4);
+}
+.filter-select {
+  height: 40px;
+  padding: 0 24px 0 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.filter-select:focus {
+  border-color: var(--g4);
+}
+
+/* ── QUICK ACTIONS ── */
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+}
+.btn-secondary {
+  height: 40px;
+  border: 1.5px solid var(--border);
+  background: #fff;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--g3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.btn-secondary:hover {
+  background: var(--ok-bg);
+  border-color: var(--g4);
+}
+
+/* ── FORM LAYOUTS ── */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.form-label {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--g3);
+}
+.form-inp {
+  height: 38px;
+  padding: 0 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+}
+.form-inp:focus {
+  border-color: var(--g4);
+}
+
 @media(max-width:640px){
   .content{padding:16px;}
   .tab-row{padding:16px 16px 0;}
@@ -294,11 +475,17 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
   </div>
 
   <div class="tab-row">
-    <button class="tab-btn on" id="tab-pending-btn" onclick="switchTab('pending')">
+    <button class="tab-btn on" id="tab-overview-btn" onclick="switchTab('overview')">
+      📊 Overview
+    </button>
+    <button class="tab-btn" id="tab-pending-btn" onclick="switchTab('pending')">
       ⏳ Pending Review <span class="tab-count" id="pending-count">0</span>
     </button>
     <button class="tab-btn" id="tab-all-btn" onclick="switchTab('all')">
       📋 All Registrations <span class="tab-count" id="all-count">0</span>
+    </button>
+    <button class="tab-btn" id="tab-transport-btn" onclick="switchTab('transport')">
+      🚛 Transport Providers
     </button>
     <button class="tab-btn" id="tab-audit-btn" onclick="switchTab('audit')">
       🛡️ Audit Logs
@@ -306,14 +493,175 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
   </div>
 
   <div class="content">
-    <div id="tab-pending">
+    <!-- OVERVIEW TAB -->
+    <div id="tab-overview">
+      <div class="section-title">System Overview</div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-icon">👨‍🌾</div>
+          <div class="stat-card-info">
+            <div class="stat-card-lbl">Total Farmers</div>
+            <div class="stat-card-val" id="stat-farmers">—</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon">🛒</div>
+          <div class="stat-card-info">
+            <div class="stat-card-lbl">Total Buyers</div>
+            <div class="stat-card-val" id="stat-buyers">—</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon">🌾</div>
+          <div class="stat-card-info">
+            <div class="stat-card-lbl">Active Crops</div>
+            <div class="stat-card-val" id="stat-crops">—</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon">🚜</div>
+          <div class="stat-card-info">
+            <div class="stat-card-lbl">Active Equipment</div>
+            <div class="stat-card-val" id="stat-equipment">—</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon">⛓️</div>
+          <div class="stat-card-info">
+            <div class="stat-card-lbl">Ledger Transactions</div>
+            <div class="stat-card-val" id="stat-txs">—</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon">💰</div>
+          <div class="stat-card-info">
+            <div class="stat-card-lbl">Ledger Value (LKR)</div>
+            <div class="stat-card-val" id="stat-val">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="widget-grid">
+        <div class="widget-card">
+          <div class="widget-title">🛡️ Cryptographic Ledger Integrity</div>
+          <p style="font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 20px;">
+            Check the cryptographic integrity of the AgroNexa LK transaction ledger. This re-verifies the SHA-256 block hash chaining to detect database tampering.
+          </p>
+          <div id="ledger-status-box" style="padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; font-size: 13.5px; display: flex; align-items: center; gap: 10px; background: var(--paper); border: 1.5px solid var(--border);">
+            🔍 Not verified in this session
+          </div>
+          <button class="a-btn" onclick="verifyLedgerChain()" id="verify-ledger-btn">Verify Ledger Chain Integrity</button>
+        </div>
+
+        <div class="widget-card">
+          <div class="widget-title">📥 Quick CSV Exports</div>
+          <p style="font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 20px;">
+            Export live platform registers directly as CSV spreadsheets for backup, audit, or report generation.
+          </p>
+          <div class="action-grid">
+            <button class="btn-secondary" onclick="exportCSV('users')">👥 Users Register</button>
+            <button class="btn-secondary" onclick="exportCSV('ledger')">⛓️ Ledger Blocks</button>
+            <button class="btn-secondary" onclick="exportCSV('audit-logs')">📋 System Logs</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PENDING review TAB -->
+    <div id="tab-pending" style="display:none;">
       <div class="section-title">Awaiting NIC Verification</div>
       <div class="cards" id="pending-list"><div class="loading">Loading...</div></div>
     </div>
+
+    <!-- ALL REGISTRATIONS TAB -->
     <div id="tab-all" style="display:none;">
       <div class="section-title">All Registrations</div>
+      <div class="filter-bar">
+        <input class="filter-input" type="text" id="search-user" oninput="filterUsers()" placeholder="Search users by name, email, phone, NIC..." />
+        <select class="filter-select" id="filter-role" onchange="filterUsers()">
+          <option value="all">🌾 All Roles</option>
+          <option value="farmer">Farmer / Seller</option>
+          <option value="buyer">Corporate Buyer</option>
+        </select>
+        <select class="filter-select" id="filter-district" onchange="filterUsers()">
+          <option value="all">📍 All Districts</option>
+          <option>Ampara</option><option>Anuradhapura</option><option>Badulla</option><option>Badulla</option><option>Batticaloa</option>
+          <option>Colombo</option><option>Galle</option><option>Gampaha</option><option>Hambantota</option>
+          <option>Jaffna</option><option>Kalutara</option><option>Kandy</option><option>Kegalle</option>
+          <option>Kurunegala</option><option>Matale</option><option>Matara</option><option>Negombo</option>
+          <option>Nuwara Eliya</option><option>Polonnaruwa</option><option>Puttalam</option>
+          <option>Ratnapura</option><option>Trincomalee</option>
+        </select>
+        <select class="filter-select" id="filter-status" onchange="filterUsers()">
+          <option value="all">🚦 All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+          <option value="deactivated">Deactivated</option>
+        </select>
+      </div>
       <div class="cards" id="all-list"><div class="loading">Loading...</div></div>
     </div>
+
+    <!-- TRANSPORT REGISTRY TAB -->
+    <div id="tab-transport" style="display:none;">
+      <div class="section-title">Logistics & Transport Registry</div>
+      <div class="widget-grid">
+        <div class="widget-card">
+          <div class="widget-title">🚛 Register Transport Vehicle</div>
+          <form id="admin-transport-form" onsubmit="submitAdminTransport(event)">
+            <div class="form-grid">
+              <div class="form-field">
+                <label class="form-label">Owner Name</label>
+                <input class="form-inp" type="text" id="tp-name" required placeholder="Driver / Owner name" />
+              </div>
+              <div class="form-field">
+                <label class="form-label">Vehicle Type</label>
+                <input class="form-inp" type="text" id="tp-type" required placeholder="Lorry, Dimo Batta, etc." />
+              </div>
+            </div>
+            <div class="form-grid">
+              <div class="form-field">
+                <label class="form-label">Vehicle Number</label>
+                <input class="form-inp" type="text" id="tp-number" required placeholder="WP CP-1234" />
+              </div>
+              <div class="form-field">
+                <label class="form-label">Capacity (kg)</label>
+                <input class="form-inp" type="number" id="tp-capacity" required placeholder="e.g. 1500" />
+              </div>
+            </div>
+            <div class="form-grid">
+              <div class="form-field">
+                <label class="form-label">District</label>
+                <select class="form-inp" id="tp-district" required style="padding: 0 8px;">
+                  <option value="" disabled selected>Select District</option>
+                  <option>Ampara</option><option>Anuradhapura</option><option>Badulla</option><option>Batticaloa</option>
+                  <option>Colombo</option><option>Galle</option><option>Gampaha</option><option>Hambantota</option>
+                  <option>Jaffna</option><option>Kalutara</option><option>Kandy</option><option>Kegalle</option>
+                  <option>Kurunegala</option><option>Matale</option><option>Matara</option><option>Negombo</option>
+                  <option>Nuwara Eliya</option><option>Polonnaruwa</option><option>Puttalam</option>
+                  <option>Ratnapura</option><option>Trincomalee</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label class="form-label">Phone Number</label>
+                <input class="form-inp" type="tel" id="tp-phone" required placeholder="07XXXXXXXX" />
+              </div>
+            </div>
+            <button class="a-btn" type="submit" id="tp-submit-btn" style="margin-top: 10px;">Publish Transport Provider</button>
+          </form>
+        </div>
+
+        <div class="widget-card" style="display: flex; flex-direction: column;">
+          <div class="widget-title">📋 Active Providers</div>
+          <div id="admin-transport-list" style="flex: 1; overflow-y: auto; max-height: 340px; display: flex; flex-direction: column; gap: 12px; padding-right: 4px;">
+            <div class="loading">Loading transport listings...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUDIT LOGS TAB -->
     <div id="tab-audit" style="display:none;">
       <div class="section-title">System Audit Logs (Read-only)</div>
       <div id="audit-list-container" style="background:#fff; border-radius:12px; border:1px solid var(--border); overflow-x:auto;">
@@ -351,7 +699,7 @@ var API_URL = window.location.hostname === 'localhost' || window.location.hostna
   : 'https://agronexa-lk-production.up.railway.app';
 var adminEmail = '', adminPass = '';
 var allUsers = [], pendingUsers = [];
-var currentTab = 'pending';
+var currentTab = 'overview';
 
 // ── AUTH ──
 async function doLogin() {
@@ -389,7 +737,7 @@ function logout() {
 
 // ── DATA ──
 async function loadAll() {
-  await Promise.all([loadPending(), loadAllUsers()]);
+  await Promise.all([loadDashboardStats(), loadPending(), loadAllUsers(), loadTransport()]);
 }
 async function loadPending() {
   try {
@@ -566,15 +914,23 @@ async function doReject(uid) {
 // ── TABS ──
 function switchTab(t) {
   currentTab = t;
-  document.getElementById('tab-pending').style.display = t==='pending' ? 'block' : 'none';
-  document.getElementById('tab-all').style.display     = t==='all'     ? 'block' : 'none';
-  document.getElementById('tab-audit').style.display   = t==='audit'   ? 'block' : 'none';
+  document.getElementById('tab-overview').style.display  = t==='overview'  ? 'block' : 'none';
+  document.getElementById('tab-pending').style.display   = t==='pending'   ? 'block' : 'none';
+  document.getElementById('tab-all').style.display       = t==='all'       ? 'block' : 'none';
+  document.getElementById('tab-transport').style.display = t==='transport' ? 'block' : 'none';
+  document.getElementById('tab-audit').style.display     = t==='audit'     ? 'block' : 'none';
   
+  document.getElementById('tab-overview-btn').classList.toggle('on', t==='overview');
   document.getElementById('tab-pending-btn').classList.toggle('on', t==='pending');
   document.getElementById('tab-all-btn').classList.toggle('on', t==='all');
+  document.getElementById('tab-transport-btn').classList.toggle('on', t==='transport');
   document.getElementById('tab-audit-btn').classList.toggle('on', t==='audit');
   
-  if (t === 'audit') {
+  if (t === 'overview') {
+    loadDashboardStats();
+  } else if (t === 'transport') {
+    loadTransport();
+  } else if (t === 'audit') {
     loadAuditLogs();
   }
 }
@@ -647,6 +1003,180 @@ function showToast(msg) {
   var t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(function(){ t.classList.remove('show'); }, 3000);
+}
+
+// ── OVERVIEW ANALYTICS ──
+async function loadDashboardStats() {
+  try {
+    var res = await fetch(API_URL + '/api/admin/stats?admin_email=' + encodeURIComponent(adminEmail) + '&admin_password=' + encodeURIComponent(adminPass));
+    var data = await res.json();
+    if (data.success && data.stats) {
+      document.getElementById('stat-farmers').textContent = data.stats.total_farmers;
+      document.getElementById('stat-buyers').textContent = data.stats.total_buyers;
+      document.getElementById('stat-crops').textContent = data.stats.active_crops;
+      document.getElementById('stat-equipment').textContent = data.stats.active_equipment;
+      document.getElementById('stat-txs').textContent = data.stats.total_transactions;
+      document.getElementById('stat-val').textContent = data.stats.total_volume.toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+  } catch(e) {
+    console.error('Error loading dashboard stats:', e);
+  }
+}
+
+// ── LEDGER INTEGRITY CHECKER ──
+async function verifyLedgerChain() {
+  var btn = document.getElementById('verify-ledger-btn');
+  var statusBox = document.getElementById('ledger-status-box');
+  btn.textContent = '⏳ Verifying Chain...'; btn.disabled = true;
+  statusBox.innerHTML = '⏳ Computing SHA-256 hashes...';
+  statusBox.style.borderColor = 'var(--border)';
+  statusBox.style.background = 'var(--paper)';
+  statusBox.style.color = 'var(--muted)';
+  
+  try {
+    var res = await fetch(API_URL + '/api/admin/ledger/verify?admin_email=' + encodeURIComponent(adminEmail) + '&admin_password=' + encodeURIComponent(adminPass));
+    var data = await res.json();
+    if (data.success) {
+      if (data.valid) {
+        statusBox.innerHTML = '✅ <strong>Ledger Intact!</strong> Verified ' + data.total_records + ' transactions securely.';
+        statusBox.style.background = 'var(--ok-bg)';
+        statusBox.style.borderColor = 'var(--ok-border)';
+        statusBox.style.color = 'var(--ok)';
+      } else {
+        statusBox.innerHTML = '❌ <strong>Ledger Compromised!</strong> Broken at TX ID: <code style="word-break:break-all;">' + data.broken_at + '</code>';
+        statusBox.style.background = 'var(--danger-bg)';
+        statusBox.style.borderColor = 'var(--danger-border)';
+        statusBox.style.color = 'var(--danger)';
+      }
+    } else {
+      statusBox.innerHTML = '❌ Verification failed: ' + (data.error || 'Server error');
+    }
+  } catch(e) {
+    statusBox.innerHTML = '❌ Connection error during cryptographic verification.';
+  }
+  btn.textContent = 'Verify Ledger Chain Integrity'; btn.disabled = false;
+}
+
+// ── EXPORT CSV ──
+function exportCSV(resource) {
+  var url = API_URL + '/api/admin/export/' + resource + '?admin_email=' + encodeURIComponent(adminEmail) + '&admin_password=' + encodeURIComponent(adminPass);
+  window.open(url, '_blank');
+}
+
+// ── SEARCH & FILTER USERS ──
+function filterUsers() {
+  var searchVal = document.getElementById('search-user').value.toLowerCase().trim();
+  var roleVal   = document.getElementById('filter-role').value;
+  var distVal   = document.getElementById('filter-district').value;
+  var statusVal = document.getElementById('filter-status').value;
+
+  var filtered = allUsers.filter(function(u) {
+    // Search text match
+    var searchMatch = !searchVal || 
+      (u.first_name + ' ' + u.last_name).toLowerCase().includes(searchVal) ||
+      u.email.toLowerCase().includes(searchVal) ||
+      u.phone.toLowerCase().includes(searchVal) ||
+      (u.nic_number && u.nic_number.toLowerCase().includes(searchVal));
+
+    // Role filter match
+    var roleMatch = roleVal === 'all' || u.role === roleVal || (roleVal === 'farmer' && u.role === 'seller');
+
+    // District filter match
+    var distMatch = distVal === 'all' || u.district === distVal;
+
+    // Status filter match
+    var statusMatch = statusVal === 'all' || u.status === statusVal;
+
+    return searchMatch && roleMatch && distMatch && statusMatch;
+  });
+
+  renderList('all-list', filtered, false);
+}
+
+// ── TRANSPORT MANAGEMENT ──
+async function loadTransport() {
+  var listEl = document.getElementById('admin-transport-list');
+  try {
+    var res = await fetch(API_URL + '/api/transport');
+    var data = await res.json();
+    if (data.success && data.providers) {
+      if (data.providers.length === 0) {
+        listEl.innerHTML = '<div style="font-size:12.5px;color:var(--muted);text-align:center;padding:30px 0;">No active transport providers registered.</div>';
+        return;
+      }
+      listEl.innerHTML = '';
+      data.providers.forEach(function(tp) {
+        var el = document.createElement('div');
+        el.style.cssText = 'background:var(--paper); border:1px solid var(--border); border-radius:12px; padding:12px 14px; display:flex; justify-content:space-between; align-items:center;';
+        el.innerHTML = 
+          '<div>' +
+            '<div style="font-size:13.5px; font-weight:600; color:var(--ink);">' + esc(tp.owner_name) + '</div>' +
+            '<div style="font-size:11.5px; color:var(--muted); margin-top:2px;">🚛 ' + esc(tp.vehicle_type) + ' (' + esc(tp.vehicle_no) + ')</div>' +
+            '<div style="display:flex; gap:6px; margin-top:6px; flex-wrap:wrap;">' +
+              '<span class="meta-pill">📍 ' + esc(tp.district) + '</span>' +
+              '<span class="meta-pill">Capacity: ' + tp.capacity_kg + ' kg</span>' +
+              '<span class="meta-pill">📞 ' + esc(tp.phone) + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<button onclick="deactivateTransport(' + tp.id + ')" style="background:transparent; border:1px solid var(--danger-border); color:var(--danger); border-radius:8px; padding:6px 12px; font-size:12px; cursor:pointer; font-weight:600; height:32px; flex-shrink:0; margin-left:10px;">Delete</button>';
+        listEl.appendChild(el);
+      });
+    }
+  } catch(e) {
+    listEl.innerHTML = '<div class="loading">Error loading transport providers.</div>';
+  }
+}
+
+async function submitAdminTransport(e) {
+  e.preventDefault();
+  var btn = document.getElementById('tp-submit-btn');
+  btn.textContent = '⏳ Registering...'; btn.disabled = true;
+  
+  var payload = {
+    owner_name: document.getElementById('tp-name').value.trim(),
+    vehicle_type: document.getElementById('tp-type').value.trim(),
+    vehicle_no: document.getElementById('tp-number').value.trim(),
+    capacity_kg: document.getElementById('tp-capacity').value,
+    district: document.getElementById('tp-district').value,
+    phone: document.getElementById('tp-phone').value.trim()
+  };
+
+  try {
+    var res = await fetch(API_URL + '/api/transport', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    var data = await res.json();
+    if (data.success) {
+      showToast('✅ Vehicle registered successfully!');
+      document.getElementById('admin-transport-form').reset();
+      await loadTransport();
+      await loadDashboardStats();
+    } else {
+      showToast('❌ ' + (data.error || 'Failed to register'));
+    }
+  } catch(e) {
+    showToast('❌ Connection error');
+  }
+  btn.textContent = 'Publish Transport Provider'; btn.disabled = false;
+}
+
+async function deactivateTransport(id) {
+  if (!confirm('Are you sure you want to delete this transport provider?')) return;
+  try {
+    var res = await fetch(API_URL + '/api/transport/' + id, { method: 'DELETE' });
+    var data = await res.json();
+    if (data.success) {
+      showToast('🗑️ Provider removed.');
+      await loadTransport();
+      await loadDashboardStats();
+    } else {
+      showToast('❌ ' + (data.error || 'Failed to delete'));
+    }
+  } catch(e) {
+    showToast('❌ Connection error');
+  }
 }
 </script>
 </body>

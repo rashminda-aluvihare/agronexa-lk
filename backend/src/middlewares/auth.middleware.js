@@ -22,6 +22,21 @@ async function authRequired(req, res, next) {
                    req.body.buyer_id || 
                    req.body.user_id;
 
+    const adminEmailInput = req.query.admin_email || req.body.admin_email;
+    const adminPasswordInput = req.query.admin_password || req.body.admin_password;
+    const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@agronexa.lk';
+    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'ChangeThisToASecurePassword123!';
+
+    if (adminEmailInput === ADMIN_EMAIL && adminPasswordInput === ADMIN_PASSWORD) {
+      req.auth = {
+        id: 0,
+        email: ADMIN_EMAIL,
+        role: 'admin',
+        name: 'Admin',
+      };
+      return next();
+    }
+
     if (userId) {
       const result = await db.query('SELECT id, email, role, first_name, status FROM users WHERE id = $1', [userId]);
       if (result.rows.length > 0) {

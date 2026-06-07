@@ -305,6 +305,37 @@ async function changeUserStatus(req, res, next) {
   }
 }
 
+/**
+ * GET /api/admin/stats
+ */
+async function getDashboardStats(req, res, next) {
+  if (!verifyAdminAccess(req)) {
+    return res.status(401).json({ error: 'Unauthorized admin access.' });
+  }
+
+  try {
+    const farmersResult = await db.query("SELECT COUNT(*) FROM users WHERE role = 'farmer' OR role = 'seller'");
+    const buyersResult = await db.query("SELECT COUNT(*) FROM users WHERE role = 'buyer'");
+    const cropsResult = await db.query("SELECT COUNT(*) FROM crop_listings WHERE status = 'active'");
+    const equipmentResult = await db.query("SELECT COUNT(*) FROM equipment_listings WHERE status = 'available'");
+    const transactionsResult = await db.query("SELECT COUNT(*), COALESCE(SUM(amount), 0) AS total_val FROM rental_ledger");
+
+    return res.json({
+      success: true,
+      stats: {
+        total_farmers: parseInt(farmersResult.rows[0].count, 10),
+        total_buyers: parseInt(buyersResult.rows[0].count, 10),
+        active_crops: parseInt(cropsResult.rows[0].count, 10),
+        active_equipment: parseInt(equipmentResult.rows[0].count, 10),
+        total_transactions: parseInt(transactionsResult.rows[0].count, 10),
+        total_volume: parseFloat(transactionsResult.rows[0].total_val),
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getPendingUsers,
   getAllUsers,
@@ -314,4 +345,5 @@ module.exports = {
   exportResource,
   changeUserRole,
   changeUserStatus,
+  getDashboardStats,
 };
