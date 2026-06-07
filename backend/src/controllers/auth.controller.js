@@ -110,6 +110,26 @@ async function registerWithOtp(req, res, next) {
     // Audit log
     await auditService.logAction(newUser.id, 'USER_REGISTRATION', req.ip, { role });
 
+    // Emit real-time Socket.io notification to admin (room user_0)
+    try {
+      const { getIo } = require('../socket');
+      const io = getIo();
+      if (io) {
+        io.to('user_0').emit('new_user_registered', {
+          message: `${newUser.first_name} ${newUser.last_name} (${role === 'farmer' ? 'Farmer' : 'Buyer'})`
+        });
+      }
+    } catch (err) {
+      console.error('Failed to emit Socket.io alert to admin:', err.message);
+    }
+
+    // Send SMS alert to admin if ADMIN_PHONE is configured
+    if (process.env.ADMIN_PHONE) {
+      const smsText = `[AgroNexa Admin] New user registration: ${newUser.first_name} ${newUser.last_name} (${role === 'farmer' ? 'Farmer' : 'Buyer'}) awaits your approval.`;
+      twilioService.sendSms(process.env.ADMIN_PHONE, smsText)
+        .catch((err) => console.warn(`Admin SMS alert failed: ${err.message}`));
+    }
+
     return res.status(201).json({ success: true, user: newUser });
   } catch (err) {
     if (err.code === '23505') {

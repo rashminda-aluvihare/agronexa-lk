@@ -693,6 +693,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
 <!-- TOAST -->
 <div id="toast"></div>
 
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 <script>
 var API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:'
   ? 'http://localhost:3000'
@@ -719,6 +720,7 @@ async function doLogin() {
       adminEmail = email; adminPass = pass;
       document.getElementById('auth-screen').style.display = 'none';
       document.getElementById('dashboard').style.display = 'block';
+      initSocket();
       loadAll();
     } else { showErr(data.error || 'Invalid credentials'); }
   } catch(e) { showErr('Cannot connect to server.'); }
@@ -1176,6 +1178,24 @@ async function deactivateTransport(id) {
     }
   } catch(e) {
     showToast('❌ Connection error');
+  }
+}
+
+var socket;
+function initSocket() {
+  if (typeof io !== 'undefined') {
+    socket = io(API_URL);
+    socket.on('connect', function() {
+      console.log('📡 Connected to Socket.io server');
+      socket.emit('join', 0); // Admin joins room user_0
+    });
+
+    socket.on('new_user_registered', function(data) {
+      showToast('🔔 New registration: ' + data.message + ' awaits your approval!');
+      // Auto-reload stats and pending lists
+      loadDashboardStats();
+      loadPending();
+    });
   }
 }
 </script>
