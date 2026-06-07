@@ -361,6 +361,127 @@ async function acceptSellerResponse(req, res, next) {
   }
 }
 
+/**
+ * GET /api/buyer/dashboard
+ */
+async function getBuyerDashboard(req, res, next) {
+  const buyer_id = req.query.buyer_id || req.auth.id;
+
+  if (!buyer_id) {
+    return res.status(400).json({ error: 'buyer_id is required' });
+  }
+
+  try {
+    const [broadcasts, bookings, notifications] = await Promise.all([
+      db.query(
+        `SELECT
+           COUNT(*) AS total,
+           COUNT(*) FILTER (WHERE status='open') AS open,
+           COUNT(*) FILTER (WHERE status='closed') AS closed
+         FROM buyer_requests WHERE buyer_id = $1`,
+        [buyer_id]
+      ),
+      db.query(
+        `SELECT
+           COUNT(*) AS total,
+           COUNT(*) FILTER (WHERE status='confirmed') AS confirmed,
+           COUNT(*) FILTER (WHERE status='pending') AS pending
+         FROM equipment_bookings WHERE renter_id = $1`,
+        [buyer_id]
+      ),
+      db.query(
+        `SELECT COUNT(*) AS unread FROM notifications WHERE user_id = $1 AND is_read = FALSE`,
+        [buyer_id]
+      ),
+    ]);
+
+    const recent = await db.query(
+      `SELECT br.id, br.crop, br.quantity, br.district, br.status, br.created_at,
+              (SELECT COUNT(*) FROM request_responses rr WHERE rr.request_id = br.id) AS response_count
+       FROM buyer_requests br
+       WHERE br.buyer_id = $1
+       ORDER BY br.created_at DESC LIMIT 5`,
+      [buyer_id]
+    );
+
+    return res.json({
+      success: true,
+      dashboard: {
+        broadcasts: broadcasts.rows[0],
+        bookings: bookings.rows[0],
+        notifications: notifications.rows[0],
+        recent_broadcasts: recent.rows,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * PUT /api/buyer/broadcasts/:id (Edit broadcast request)
+ */
+async function updateBroadcastRequest(req, res, next) {
+  const { id } = req.params;
+  const buyer_id = req.body.buyer_id || req.auth.id;
+  const { crop, quantity, district, needed_by, budget } = req.body;
+
+  if (!buyer_id) {
+    return res.status(400).json({ error: 'buyer_id is required' });
+  }
+
+  try {
+    const result = await db.query(
+      `UPDATE buyer_requests SET
+         crop = COALESCE($1, crop),
+         quantity = COALESCE($2, quantity),
+         district = COALESCE($3, district),
+         needed_by = COALESCE($4, needed_by),
+         budget = COALESCE($5, budget),
+         expires_at = NOW() + INTERVAL '72 hours'
+       WHERE id = $6 AND buyer_id = $7 AND status = 'open'
+       RETURNING *`,
+      [crop, quantity, district, needed_by || null, budget || null, id, buyer_id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Request not found, already closed, or unauthorized' });
+    }
+
+    const updatedRequest = result.rows[0];
+
+    // Notify matching sellers again if updated
+    const sellers = await db.query(
+      `SELECT DISTINCT u.id FROM users u
+       JOIN crop_listings cl ON cl.seller_id = u.id AND cl.status = 'active'
+       WHERE u.status = 'approved' AND u.role IN ('seller', 'farmer')
+         AND (u.district ILIKE $1 OR cl.district ILIKE $1)
+         AND cl.name ILIKE $2`,
+      [
+        district || updatedRequest.district,
+        `%${crop || updatedRequest.crop}%`,
+      ]
+    );
+
+    const notificationPromises = sellers.rows.map((s) =>
+      notificationService.pushNotification(
+        s.id,
+        'request',
+        `📢 Updated Buyer Request: ${crop || updatedRequest.crop}`,
+        `${updatedRequest.buyer_name || 'Buyer'} updated their request in ${district || updatedRequest.district}. Respond now!`
+      )
+    );
+    await Promise.allSettled(notificationPromises);
+
+    // Audit log
+    await auditService.logAction(buyer_id, 'UPDATE_BROADCAST', req.ip, { id });
+
+    return res.json({ success: true, broadcast: updatedRequest });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   createBroadcastRequest,
   getBuyerBroadcasts,
@@ -369,4 +490,6 @@ module.exports = {
   getSellerMatchingRequests,
   respondToRequest,
   acceptSellerResponse,
+  getBuyerDashboard,
+  updateBroadcastRequest,
 };

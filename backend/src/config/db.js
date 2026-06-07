@@ -46,10 +46,22 @@ async function initDatabase() {
         nic_back_path TEXT,
         status VARCHAR(20) DEFAULT 'pending',
         rejection_reason TEXT,
+        failed_login_attempts INTEGER DEFAULT 0,
+        locked_until TIMESTAMPTZ,
+        reset_token VARCHAR(255),
+        reset_token_expires TIMESTAMPTZ,
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()
       );
     `);
+
+    // Ensure columns exist on legacy tables
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'pending';");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS rejection_reason TEXT;");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS failed_login_attempts INTEGER DEFAULT 0;");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS locked_until TIMESTAMPTZ;");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token VARCHAR(255);");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token_expires TIMESTAMPTZ;");
 
     // 2. Crop Listings Table
     await client.query(`
@@ -185,6 +197,33 @@ async function initDatabase() {
         action VARCHAR(100) NOT NULL,
         ip_address VARCHAR(45),
         details TEXT,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+
+    // 10. Direct Messages Table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS direct_messages (
+        id SERIAL PRIMARY KEY,
+        sender_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        receiver_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        message TEXT NOT NULL,
+        is_read BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+
+    // 11. Transport Providers Table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS transport_providers (
+        id SERIAL PRIMARY KEY,
+        owner_name VARCHAR(120) NOT NULL,
+        vehicle_type VARCHAR(60) NOT NULL,
+        vehicle_no VARCHAR(30) UNIQUE NOT NULL,
+        capacity_kg NUMERIC(10,2),
+        district VARCHAR(60) NOT NULL,
+        phone VARCHAR(30) NOT NULL,
+        status VARCHAR(20) DEFAULT 'available',
         created_at TIMESTAMPTZ DEFAULT NOW()
       );
     `);

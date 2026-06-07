@@ -279,12 +279,126 @@ async function resetPassword(req, res, next) {
   }
 }
 
+/**
+ * PUT /api/profile/:id
+ */
+async function updateProfile(req, res, next) {
+  const { first_name, last_name, district, address, phone } = req.body;
+  try {
+    const result = await db.query(
+      `UPDATE users SET
+         first_name = COALESCE($1, first_name),
+         last_name = COALESCE($2, last_name),
+         district = COALESCE($3, district),
+         address = COALESCE($4, address),
+         phone = COALESCE($5, phone),
+         updated_at = NOW()
+       WHERE id = $6
+       RETURNING id, role, first_name, last_name, email, phone, district, address, status, created_at`,
+      [first_name, last_name, district, address, phone, req.params.id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    return res.json({ success: true, user: result.rows[0] });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * POST /api/auth/forgot-password-link
+ */
+async function forgotPasswordLink(req, res, next) {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ success: false, error: "Email is required." });
+  }
+
+  try {
+    const result = await db.query("SELECT id, first_name FROM users WHERE email = $1", [email]);
+    if (result.rows.length === 0) {
+      console.log(`ℹ️ Password reset requested for non-existent email: ${email}`);
+      return res.json({ success: true, message: "If this email is registered, a password reset link has been sent." });
+    }
+
+    const user = result.rows[0];
+    const crypto = require("crypto");
+    const token = crypto.randomBytes(32).toString("hex");
+    const expires = new Date(Date.now() + 15 * 60000); // 15 minutes
+
+    await db.query(
+      "UPDATE users SET reset_token = $1, reset_token_expires = $2 WHERE id = $3",
+      [token, expires, user.id]
+    );
+
+    // Simulate sending email
+    const resetLink = `${req.protocol}://${req.get("host")}/index.html?reset_token=${token}`;
+    console.log(`\n📧 [SIMULATED EMAIL TO ${email}]`);
+    console.log(`Hello ${user.first_name},`);
+    console.log(`You requested a password reset for your AgroNexa LK account.`);
+    console.log(`Please click the link below to reset your password (valid for 15 minutes):`);
+    console.log(`${resetLink}\n`);
+
+    return res.json({
+      success: true,
+      message: "A password reset link has been sent to your email.",
+      resetLinkSimulated: resetLink
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * POST /api/auth/reset-password-link
+ */
+async function resetPasswordLink(req, res, next) {
+  const { token, newPassword } = req.body;
+  if (!token || !newPassword) {
+    return res.status(400).json({ success: false, error: "Token and new password are required." });
+  }
+
+  if (newPassword.length < 8 || !/[A-Z]/.test(newPassword) || !/[0-9]/.test(newPassword) || !/[^A-Za-z0-9]/.test(newPassword)) {
+    return res.status(400).json({ success: false, error: "Password must be at least 8 characters, and contain at least one uppercase letter, one number, and one special character." });
+  }
+
+  try {
+    const result = await db.query(
+      "SELECT id FROM users WHERE reset_token = $1 AND reset_token_expires > NOW()",
+      [token]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(400).json({ success: false, error: "Invalid or expired reset token." });
+    }
+
+    const user = result.rows[0];
+    const passwordHash = await bcrypt.hash(newPassword, 12);
+
+    await db.query(
+      "UPDATE users SET password_hash = $1, reset_token = NULL, reset_token_expires = NULL, failed_login_attempts = 0, locked_until = NULL WHERE id = $2",
+      [passwordHash, user.id]
+    );
+
+    // Write audit log
+    await auditService.logAction(user.id, 'PASSWORD_RESET', req.ip);
+
+    return res.json({ success: true, message: "Your password has been reset successfully." });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   sendOtp,
   verifyOtp,
   registerWithOtp,
   login,
   getProfile,
+  updateProfile,
   forgotPassword,
   resetPassword,
+  forgotPasswordLink,
+  resetPasswordLink,
 };

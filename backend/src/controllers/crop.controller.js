@@ -338,6 +338,79 @@ async function expressInterest(req, res, next) {
   }
 }
 
+/**
+ * POST/PUT /api/seller/crops/:id/update-stock
+ */
+async function updateCropStock(req, res, next) {
+  const { id } = req.params;
+  const seller_id = req.body.seller_id || req.auth.id;
+  const { quantity_kg } = req.body;
+
+  if (!seller_id) {
+    return res.status(400).json({ error: 'seller_id is required' });
+  }
+
+  try {
+    const result = await db.query(
+      `UPDATE crop_listings SET quantity_kg = $1, updated_at = NOW()
+       WHERE id = $2 AND seller_id = $3 RETURNING *`,
+      [quantity_kg, id, seller_id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Listing not found or unauthorized' });
+    }
+
+    return res.json({ success: true, listing: result.rows[0] });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * GET /api/seller/analytics
+ */
+async function getSellerAnalytics(req, res, next) {
+  const seller_id = req.query.seller_id || (req.auth && req.auth.id);
+
+  if (!seller_id) {
+    return res.status(400).json({ error: 'seller_id is required' });
+  }
+
+  try {
+    const [crops, equipment, bookings, ledger] = await Promise.all([
+      db.query(
+        `SELECT COUNT(*) AS total, COUNT(*) FILTER (WHERE status='active') AS active
+         FROM crop_listings WHERE seller_id = $1`, [seller_id]
+      ),
+      db.query(
+        `SELECT COUNT(*) AS total, COUNT(*) FILTER (WHERE status='available') AS available
+         FROM equipment_listings WHERE owner_id = $1`, [seller_id]
+      ),
+      db.query(
+        `SELECT COUNT(*) AS total, COUNT(*) FILTER (WHERE status='confirmed') AS confirmed
+         FROM equipment_bookings WHERE owner_id = $1`, [seller_id]
+      ),
+      db.query(
+        `SELECT COALESCE(SUM(amount), 0) AS total_revenue, COUNT(*) AS tx_count
+         FROM rental_ledger WHERE owner_id = $1`, [seller_id]
+      ),
+    ]);
+
+    return res.json({
+      success: true,
+      analytics: {
+        crop_listings: crops.rows[0],
+        equipment_listings: equipment.rows[0],
+        bookings: bookings.rows[0],
+        ledger: ledger.rows[0],
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getSellerCrops,
   createCropListing,
@@ -346,4 +419,6 @@ module.exports = {
   browseMarketplaceCrops,
   getCropListingDetail,
   expressInterest,
+  updateCropStock,
+  getSellerAnalytics,
 };

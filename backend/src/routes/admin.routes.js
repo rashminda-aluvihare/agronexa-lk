@@ -8,6 +8,8 @@ router.get('/pending', authRequired, requireRole(['admin']), adminController.get
 router.get('/users', authRequired, requireRole(['admin']), adminController.getAllUsers);
 router.post('/approve/:id', authRequired, requireRole(['admin']), adminController.approveUser);
 router.post('/reject/:id', authRequired, requireRole(['admin']), adminController.rejectUser);
+router.post('/user/:id/role', authRequired, requireRole(['admin']), adminController.changeUserRole);
+router.post('/user/:id/status', authRequired, requireRole(['admin']), adminController.changeUserStatus);
 
 // Audit logs and CSV exports
 router.get('/audit-logs', authRequired, requireRole(['admin']), adminController.getAuditLogs);

@@ -259,6 +259,52 @@ async function exportResource(req, res, next) {
   }
 }
 
+/**
+ * POST /api/admin/user/:id/role
+ */
+async function changeUserRole(req, res, next) {
+  if (!verifyAdminAccess(req)) {
+    return res.status(401).json({ error: 'Unauthorized admin access.' });
+  }
+
+  const { id } = req.params;
+  const { role } = req.body;
+
+  try {
+    const result = await db.query('UPDATE users SET role = $1 WHERE id = $2 RETURNING id', [role, id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+    await auditService.logAction(0, 'USER_ROLE_CHANGE', req.ip, { target_user_id: id, new_role: role });
+    return res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * POST /api/admin/user/:id/status
+ */
+async function changeUserStatus(req, res, next) {
+  if (!verifyAdminAccess(req)) {
+    return res.status(401).json({ error: 'Unauthorized admin access.' });
+  }
+
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    const result = await db.query('UPDATE users SET status = $1 WHERE id = $2 RETURNING id', [status, id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+    await auditService.logAction(0, 'USER_STATUS_CHANGE', req.ip, { target_user_id: id, new_status: status });
+    return res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getPendingUsers,
   getAllUsers,
@@ -266,4 +312,6 @@ module.exports = {
   rejectUser,
   getAuditLogs,
   exportResource,
+  changeUserRole,
+  changeUserStatus,
 };

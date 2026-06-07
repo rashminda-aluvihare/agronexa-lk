@@ -1,5 +1,10 @@
 const express = require('express');
 const router = express.Router();
-router.get('/_ping', (_req, res) => res.json({ ok: true }));
-module.exports = router;
 
+const transportController = require('../controllers/transport.controller');
+
+router.get('/', transportController.getProviders);
+router.post('/', transportController.createOrUpdateProvider);
+router.delete('/:id', transportController.deactivateProvider);
+
+module.exports = router;

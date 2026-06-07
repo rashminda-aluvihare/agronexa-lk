@@ -5,8 +5,12 @@ const { Server } = require('socket.io');
 
 const { createApp } = require('./app');
 const { attachSocket } = require('./socket');
+const { initDatabase } = require('./config/db');
 
 async function start() {
+  // Run database migrations on start
+  await initDatabase();
+
   const app = createApp();
   const server = http.createServer(app);
 
