@@ -627,7 +627,7 @@
     </div>
 
     <!-- Listings + Requests -->
-    <div class="grid-2 content-section" id="section-listings-requests">
+    <div class="grid-2 content-section" id="section-listings-requests" style="display: none;">
       <div class="panel" id="panel-crop-listings">
         <div class="panel-head">
           <div class="panel-title">My Crop Listings</div>
@@ -683,7 +683,7 @@
     </div>
 
     <!-- Ledger + Reputation + Earnings -->
-    <div class="grid-3 content-section" id="section-ledger-rep">
+    <div class="grid-3 content-section" id="section-ledger-rep" style="display: none;">
       <div class="panel" id="panel-ledger">
         <div class="panel-head">
           <div class="panel-title">Blockchain Ledger — Recent Rentals</div>
@@ -1352,6 +1352,7 @@ var pingStart = 0;
   } else {
     loadDashboardData();
   }
+  switchTab('dashboard');
 
   // Auto-refresh every 30 seconds for realtime-like experience
   setInterval(function() {

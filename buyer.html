@@ -635,7 +635,7 @@
     </div>
 
     <!-- Broadcast + Marketplace -->
-    <div class="grid-3" id="section-broadcasts-responses">
+    <div class="grid-3" id="section-broadcasts-responses" style="display: none;">
       <!-- Broadcast request -->
       <div class="broadcast-panel" id="panel-broadcast-form">
         <div class="broadcast-title">📡 Broadcast a Buyer Request</div>
@@ -699,7 +699,7 @@
     </div>
 
     <!-- Bookings + Marketplace browse -->
-    <div class="grid-2" id="section-bookings-market">
+    <div class="grid-2" id="section-bookings-market" style="display: none;">
       <div class="panel" id="panel-bookings">
         <div class="panel-head">
           <div class="panel-title" id="bookings-panel-title">My Equipment Bookings</div>
@@ -944,7 +944,7 @@
     </div>
 
     <!-- Messages Section -->
-    <div id="section-messages" style="display:none; display:flex; flex-direction:column; gap:24px; width: 100%;">
+    <div id="section-messages" style="display: none; flex-direction: column; gap: 24px; width: 100%;">
       <div class="panel" style="padding:0; overflow:hidden; border-radius:14px;">
         <div class="chat-layout">
           <!-- Chat Sidebar (Active Conversations) -->
@@ -1304,6 +1304,7 @@ var marketMarkers = [];
   } else {
     loadDashboardData();
   }
+  switchTab('dashboard');
 
   // Auto-refresh every 30 seconds
   setInterval(function() {
