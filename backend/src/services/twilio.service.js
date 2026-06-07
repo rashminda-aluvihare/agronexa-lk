@@ -14,13 +14,19 @@ function getTwilioClient() {
 function normalizePhoneToE164(phone) {
   if (!phone || typeof phone !== 'string') return null;
 
-  // Keep + prefix if provided
-  if (phone.startsWith('+')) return phone;
+  // Clean all non-digit characters except the leading + to check if there is one
+  const hasPlus = phone.startsWith('+');
+  let d = phone.replace(/\D/g, '');
 
-  const d = phone.replace(/\D/g, '');
+  // Strip country code leading zero if present (e.g. 940771234567 -> 94771234567)
+  if (d.startsWith('940')) {
+    d = '94' + d.slice(3);
+  }
+
   if (d.length === 10 && d.startsWith('0')) return '+94' + d.slice(1);
   if (d.length === 9 && d.startsWith('7')) return '+94' + d; // e.g. 7XXXXXXXX
-  if (d.length === 12 && d.startsWith('94')) return '+' + d;
+  if (d.length === 11 && d.startsWith('94')) return '+' + d;
+  if (hasPlus) return '+' + d;
   return null;
 }
 

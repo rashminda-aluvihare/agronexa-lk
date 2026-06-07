@@ -827,7 +827,12 @@ async function sendOTP() {
     return;
   }
 
-  const fullPhone = "+94" + phone;
+  // Sri Lankan E.164 format: strip leading '0'
+  let formattedPhone = phone;
+  if (formattedPhone.startsWith('0')) {
+    formattedPhone = formattedPhone.slice(1);
+  }
+  const fullPhone = "+94" + formattedPhone;
   const btn = document.getElementById('send-otp-btn');
   
   btn.innerHTML = "Sending...";
@@ -845,7 +850,7 @@ async function sendOTP() {
       verifiedPhone = fullPhone;
       document.getElementById('otp-input-group').style.display = 'block';
       document.getElementById('otp-status').innerHTML = 
-        `<span style="color:#10b981;">✅ OTP sent to +94${phone}</span>`;
+        `<span style="color:#10b981;">✅ OTP sent to +94${formattedPhone}</span>`;
     } else {
       alert("❌ " + (data.error || "Failed to send OTP"));
     }

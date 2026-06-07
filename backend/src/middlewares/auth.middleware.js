@@ -18,12 +18,12 @@ async function authRequired(req, res, next) {
     const userId = req.query.seller_id || 
                    req.query.buyer_id || 
                    req.query.user_id || 
-                   req.body.seller_id || 
-                   req.body.buyer_id || 
-                   req.body.user_id;
+                   (req.body && req.body.seller_id) || 
+                   (req.body && req.body.buyer_id) || 
+                   (req.body && req.body.user_id);
 
-    const adminEmailInput = req.query.admin_email || req.body.admin_email;
-    const adminPasswordInput = req.query.admin_password || req.body.admin_password;
+    const adminEmailInput = req.query.admin_email || (req.body && req.body.admin_email);
+    const adminPasswordInput = req.query.admin_password || (req.body && req.body.admin_password);
     const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@agronexa.lk';
     const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'ChangeThisToASecurePassword123!';
 
