@@ -1585,15 +1585,6 @@ function switchTab(tab) {
     sectionStats.style.display = 'grid';
     if (sectionQuickActions) sectionQuickActions.style.display = 'grid';
     if (sectionAnalytics) sectionAnalytics.style.display = 'grid';
-    sectionBroadcastsResponses.style.display = 'grid';
-    panelBroadcastForm.style.display = 'block';
-    panelResponses.style.display = 'block';
-    document.getElementById('panel-my-requests').style.display = 'block';
-    sectionBookingsMarket.style.display = 'grid';
-    panelBookings.style.display = 'block';
-    panelMarketplace.style.display = 'block';
-    const mapEl = document.getElementById('market-map');
-    if (mapEl) mapEl.style.display = 'none';
   } else if (tab === 'marketplace') {
     sectionBookingsMarket.style.display = 'block';
     panelBookings.style.display = 'none';
