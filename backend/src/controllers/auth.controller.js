@@ -214,7 +214,26 @@ async function getProfile(req, res, next) {
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
-    return res.json({ success: true, user: result.rows[0] });
+
+    const user = result.rows[0];
+
+    // Compute ledger stats
+    const ledgerStats = await db.query(
+      `SELECT COUNT(*) AS completed_rentals, COALESCE(SUM(amount), 0) AS total_value
+       FROM rental_ledger 
+       WHERE owner_id = $1 OR renter_id = $1`,
+      [user.id]
+    );
+    
+    const { completed_rentals, total_value } = ledgerStats.rows[0];
+    const rentalsCount = parseInt(completed_rentals, 10);
+    const score = Math.min(5.0, (rentalsCount / 10.0) * 5.0).toFixed(1);
+
+    user.completed_rentals = rentalsCount;
+    user.trust_score = parseFloat(score);
+    user.total_value = parseFloat(total_value);
+
+    return res.json({ success: true, user });
   } catch (err) {
     next(err);
   }

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -850,7 +851,7 @@
           <div class="chat-main" id="chat-window-active" style="display:none;">
             <div class="chat-main-header">
               <div>
-                <div class="chat-main-title" id="chat-active-name">Buyer Name</div>
+                <div class="chat-main-title" id="chat-active-name" style="cursor:pointer; text-decoration:underline;" onclick="showUserProfileModal(activeChatUserId)">Buyer Name</div>
                 <div style="font-size:11px; color:var(--text-muted); margin-top:2px;" id="chat-active-role">Buyer</div>
               </div>
               <div class="verified-badge">Verified Partner</div>
@@ -1009,6 +1010,9 @@
           </div>
           <button type="submit" class="btn-sm btn-accept" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;">Send Counter Offer</button>
         </form>
+      </div>
+    </div>
+
     <!-- EDIT CROP MODAL -->
     <div id="edit-crop-modal" style="display:none;position:fixed;inset:0;background:rgba(26,46,26,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
       <div style="background:var(--bg-card);border-radius:20px;padding:32px;max-width:400px;width:95%;box-shadow:var(--shadow-lg);border:1px solid var(--border-color);position:relative;">
@@ -1028,6 +1032,78 @@
           </div>
           <button type="submit" class="btn-sm btn-accept" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;background:var(--primary);color:#fff;">Save Stock Changes</button>
         </form>
+      </div>
+    </div>
+
+    <!-- EDIT EQUIPMENT MODAL -->
+    <div id="edit-equipment-modal" style="display:none;position:fixed;inset:0;background:rgba(26,46,26,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
+      <div style="background:var(--bg-card);border-radius:20px;padding:32px;max-width:400px;width:95%;box-shadow:var(--shadow-lg);border:1px solid var(--border-color);position:relative;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <h3 style="font-family:var(--font-heading);font-size:1.4rem;color:var(--text-main)">Edit Equipment Listing</h3>
+          <button onclick="closeEditEquipmentModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-hint)">&times;</button>
+        </div>
+        <form id="edit-equipment-form" onsubmit="submitEditEquipment(event)">
+          <input type="hidden" id="edit-equip-id">
+          <div style="margin-bottom:14px;display:flex;flex-direction:column;gap:5px;">
+            <label class="form-label">Rental Rate (Rs. / day)</label>
+            <input class="form-input" type="number" step="0.01" id="edit-equip-rate" required placeholder="e.g. 5000">
+          </div>
+          <div style="margin-bottom:20px;display:flex;flex-direction:column;gap:5px;">
+            <label class="form-label">Condition</label>
+            <select class="form-input" id="edit-equip-condition" required style="width:100%; border:1px solid var(--border-color); padding:10px; border-radius:10px; outline:none; background:var(--bg-card); color:var(--text-main);">
+              <option value="Excellent">Excellent</option>
+              <option value="Good">Good</option>
+              <option value="Fair">Fair</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-sm btn-accept" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;background:var(--primary);color:#fff;">Save Listing Changes</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- USER PROFILE MODAL -->
+    <div id="user-profile-modal" style="display:none;position:fixed;inset:0;background:rgba(26,46,26,0.7);backdrop-filter:blur(4px);z-index:1001;align-items:center;justify-content:center;">
+      <div style="background:var(--bg-card);border-radius:20px;padding:32px;max-width:420px;width:95%;box-shadow:var(--shadow-lg);border:1px solid var(--border-color);position:relative;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <h3 style="font-family:var(--font-heading);font-size:1.4rem;color:var(--text-main)">User Profile</h3>
+          <button onclick="closeUserProfileModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-hint)">&times;</button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div style="display:flex;align-items:center;gap:16px;">
+            <div class="avatar" id="profile-modal-avatar" style="width:64px;height:64px;font-size:24px;background:var(--primary);color:#fff;">U</div>
+            <div>
+              <div style="font-size:18px;font-weight:600;color:var(--text-main);" id="profile-modal-name">User Name</div>
+              <div style="font-size:13px;color:var(--text-hint);margin-top:2px;" id="profile-modal-role">ROLE</div>
+            </div>
+          </div>
+          
+          <div style="border-top:1px solid var(--border-color);padding-top:16px;display:flex;flex-direction:column;gap:10px;font-size:13.5px;">
+            <div>🛡️ <strong>Verification Status:</strong> <span id="profile-modal-status" style="font-weight:600;">Pending</span></div>
+            <div>📍 <strong>District:</strong> <span id="profile-modal-district">Unknown</span></div>
+            <div>📞 <strong>Phone:</strong> <span id="profile-modal-phone">N/A</span></div>
+            <div>📧 <strong>Email:</strong> <span id="profile-modal-email">N/A</span></div>
+          </div>
+
+          <div style="background:var(--primary-pale);border:1px solid var(--border-color);border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+            <div>
+              <div style="font-size:12px;color:var(--text-hint);text-transform:uppercase;font-weight:600;letter-spacing:0.5px;">Trust Rating</div>
+              <div style="font-size:20px;font-weight:700;color:var(--primary);margin-top:2px;" id="profile-modal-rating">5.0 / 5.0</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:12px;color:var(--text-hint);text-transform:uppercase;font-weight:600;letter-spacing:0.5px;">Ledger Deals</div>
+              <div style="font-size:20px;font-weight:700;color:var(--text-main);margin-top:2px;" id="profile-modal-deals">0 completed</div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;margin-top:12px;">
+            <button id="profile-modal-chat-btn" class="btn-sm btn-accept" style="flex:1;height:40px;border-radius:10px;border:none;cursor:pointer;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;">
+              💬 Start Chat
+            </button>
+            <button onclick="closeUserProfileModal()" class="btn-sm" style="flex:1;height:40px;border-radius:10px;border:1px solid var(--border-color);background:transparent;color:var(--text-muted);cursor:pointer;">
+              Close
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1517,6 +1593,7 @@ function loadEquipmentData() {
               <div class="listing-price">Rs. ${parseFloat(item.rental_rate).toLocaleString()}/day</div>
               <div style="display:flex;gap:8px;margin-top:4px;align-items:center;">
                 <span class="status-pill ${statusClass}">${statusLabel}</span>
+                <button onclick="openEditEquipmentModal(${item.id}, ${item.rental_rate}, '${item.condition}')" style="background:none;border:none;color:var(--primary-light);font-size:11px;cursor:pointer;font-weight:600;">Edit</button>
                 <button onclick="deactivateEquipment(${item.id})" style="background:none;border:none;color:var(--amber);font-size:11px;cursor:pointer;font-weight:500;">Deactivate</button>
               </div>
             </div>
@@ -1557,14 +1634,21 @@ function loadEquipmentData() {
             </div>
           `;
         } else {
-          actionButtons = `<span style="font-size:12px; font-weight:500; margin-top:4px; color:${item.status === 'confirmed' ? 'var(--green)' : 'var(--amber)'}">${item.status.toUpperCase()}</span>`;
+          let pdfBtn = '';
+          if (item.status === 'confirmed') {
+            pdfBtn = `<button onclick="downloadBookingSlip(${item.id}, '${item.listing_name.replace(/'/g, "\\'")}', '${item.renter_name.replace(/'/g, "\\'")}', '${start}', '${end}', ${item.total_amount})" style="background:none; border:none; color:var(--primary-light); font-size:11px; cursor:pointer; font-weight:600; margin-top:4px; display:flex; align-items:center; gap:2px;">📥 PDF</button>`;
+          }
+          actionButtons = `
+            <span style="font-size:12px; font-weight:500; margin-top:4px; color:${item.status === 'confirmed' ? 'var(--green)' : 'var(--amber)'}">${item.status.toUpperCase()}</span>
+            ${pdfBtn}
+          `;
         }
 
         html += `
           <div class="booking-item" style="display:flex; justify-content:space-between; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--border);">
             <div>
               <div style="font-size:13.5px; font-weight:500; color:var(--text);">${item.listing_name}</div>
-              <div style="font-size:12px; color:var(--muted); margin-top:2px;">Renter: ${item.renter_name} · 📞 ${item.renter_phone || 'N/A'}</div>
+              <div style="font-size:12px; color:var(--muted); margin-top:2px;">Renter: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--primary);" onclick="showUserProfileModal(${item.renter_id})">${item.renter_name}</span> · 📞 ${item.renter_phone || 'N/A'}</div>
               <div style="font-size:11.5px; color:var(--muted); margin-top:4px;">📅 ${start} – ${end}</div>
             </div>
             <div style="display:flex; flex-direction:column; align-items:flex-end;">
@@ -1957,7 +2041,7 @@ function loadBuyerRequests() {
             <div class="request-top">
               <div>
                 <div class="request-commodity">${item.crop} – ${item.quantity} ${item.unit || 'kg'}</div>
-                <div class="request-buyer">Buyer: ${item.buyer_name || 'Buyer'} · ${item.district}</div>
+                <div class="request-buyer">Buyer: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--primary);" onclick="showUserProfileModal(${item.buyer_id})">${item.buyer_name || 'Buyer'}</span> · ${item.district}</div>
               </div>
               <span class="status-pill pending">${item.urgency || 'Normal'}</span>
             </div>
@@ -2053,10 +2137,13 @@ function loadLedger() {
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
             </div>
             <div style="flex:1">
-              <div class="ledger-label">${item.listing_name || 'Equipment'} · Rented to ${item.renter_name || 'Buyer'} (${item.duration_days} days)</div>
+              <div class="ledger-label">${item.listing_name || 'Equipment'} · Rented to <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--primary);" onclick="showUserProfileModal(${item.renter_id})">${item.renter_name || 'Buyer'}</span> (${item.duration_days} days)</div>
               <div class="ledger-hash">block_hash: ${item.block_hash.slice(0,18)}…</div>
             </div>
-            <div class="ledger-amt">Rs. ${parseFloat(item.amount).toLocaleString()}</div>
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+              <div class="ledger-amt">Rs. ${parseFloat(item.amount).toLocaleString()}</div>
+              <button onclick="downloadLedgerReceipt('${item.tx_id}', '${(item.listing_name || 'Equipment').replace(/'/g, "\\'")}', '${(item.renter_name || 'Buyer').replace(/'/g, "\\'")}', ${item.amount}, ${item.duration_days}, '${item.block_hash}', '${item.prev_hash}')" style="background:none; border:none; color:var(--primary-light); font-size:11px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:2px;">📥 PDF</button>
+            </div>
           </div>
         `;
       });
@@ -2154,7 +2241,7 @@ function submitEditCrop(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Stock Updated!', 'Crop stock changes saved 🌱', 'success');
+        showToast('Stock Updated!', 'Crop listing updated 🥬', 'success');
         closeEditCropModal();
         loadDashboardData();
       } else {
@@ -2164,6 +2251,284 @@ function submitEditCrop(e) {
     .catch(() => {
       showToast('Server Error', 'Could not save stock changes.', 'error');
     });
+}
+
+// ── INLINE EDIT EQUIPMENT FUNCTIONS ──
+function openEditEquipmentModal(id, rate, condition) {
+  document.getElementById('edit-equip-id').value = id;
+  document.getElementById('edit-equip-rate').value = rate;
+  document.getElementById('edit-equip-condition').value = condition;
+  document.getElementById('edit-equipment-modal').style.display = 'flex';
+}
+
+function closeEditEquipmentModal() {
+  document.getElementById('edit-equipment-modal').style.display = 'none';
+  document.getElementById('edit-equipment-form').reset();
+}
+
+function submitEditEquipment(e) {
+  e.preventDefault();
+  const id = document.getElementById('edit-equip-id').value;
+  const rate = document.getElementById('edit-equip-rate').value;
+  const condition = document.getElementById('edit-equip-condition').value;
+
+  fetch(API_URL + '/api/seller/equipment/' + id, {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      owner_id: _user.id,
+      rental_rate: rate,
+      condition: condition
+    })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        showToast('Listing Updated!', 'Equipment changes saved 🚜', 'success');
+        closeEditEquipmentModal();
+        loadDashboardData();
+      } else {
+        showToast('Error', data.error || 'Failed to update equipment', 'error');
+      }
+    })
+    .catch(() => {
+      showToast('Server Error', 'Could not save equipment changes.', 'error');
+    });
+}
+
+// ── USER PROFILE MODAL FUNCTIONS ──
+function showUserProfileModal(userId) {
+  if (!userId) return;
+  fetch(API_URL + '/api/profile/' + userId, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success || !data.user) {
+        showToast('Error', 'Failed to retrieve user profile', 'error');
+        return;
+      }
+      const u = data.user;
+      const initials = u.first_name.charAt(0) + (u.last_name ? u.last_name.charAt(0) : '');
+      document.getElementById('profile-modal-avatar').textContent = initials.toUpperCase();
+      document.getElementById('profile-modal-name').textContent = u.first_name + ' ' + (u.last_name || '');
+      document.getElementById('profile-modal-role').textContent = u.role.toUpperCase();
+      
+      const statusText = u.status === 'approved' ? '🛡️ Verified Partner' : (u.status === 'rejected' ? '❌ Verification Rejected' : '⏳ Pending Verification');
+      const statusColor = u.status === 'approved' ? 'var(--primary-light)' : (u.status === 'rejected' ? '#D95050' : 'var(--accent)');
+      
+      const statusEl = document.getElementById('profile-modal-status');
+      statusEl.textContent = statusText;
+      statusEl.style.color = statusColor;
+      
+      document.getElementById('profile-modal-district').textContent = u.district || 'N/A';
+      document.getElementById('profile-modal-phone').textContent = u.phone || 'N/A';
+      document.getElementById('profile-modal-email').textContent = u.email || 'N/A';
+      
+      document.getElementById('profile-modal-rating').textContent = u.trust_score ? u.trust_score.toFixed(1) + ' / 5.0' : '5.0 / 5.0';
+      document.getElementById('profile-modal-deals').textContent = (u.completed_rentals || 0) + ' completed';
+      
+      // Update chat button link
+      const chatBtn = document.getElementById('profile-modal-chat-btn');
+      chatBtn.onclick = function() {
+        closeUserProfileModal();
+        startChatWithUser(u.id, u.first_name + ' ' + (u.last_name || ''), u.role);
+      };
+      
+      document.getElementById('user-profile-modal').style.display = 'flex';
+    })
+    .catch(() => {
+      showToast('Error', 'Could not load user profile details.', 'error');
+    });
+}
+
+function closeUserProfileModal() {
+  document.getElementById('user-profile-modal').style.display = 'none';
+}
+
+// ── LEDGER PDF RECEIPT EXPORT ──
+function downloadLedgerReceipt(txId, listingName, buyerName, amount, duration, blockHash, prevHash) {
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a5'
+    });
+
+    // Theme header color bar
+    doc.setFillColor(21, 92, 53); // Emerald Green
+    doc.rect(0, 0, 148, 25, 'F');
+
+    // Title
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.text('AGRONEXA LK', 12, 11);
+    doc.setFontSize(9);
+    doc.text('Smart Agricultural Blockchain Ledger', 12, 17);
+
+    // Header Right - Date
+    doc.setFontSize(8);
+    doc.text('Transaction Receipt', 100, 15);
+
+    // Body details
+    doc.setTextColor(40, 40, 40);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+
+    let y = 38;
+    doc.setFont('helvetica', 'bold');
+    doc.text('LEDGER TRANSACTION DETAILS', 12, y);
+    doc.setDrawColor(21, 92, 53);
+    doc.setLineWidth(0.5);
+    doc.line(12, y + 2, 136, y + 2);
+
+    y += 10;
+    doc.setFont('helvetica', 'bold'); doc.text('TX ID:', 12, y);
+    doc.setFont('helvetica', 'normal'); doc.text(String(txId), 50, y);
+
+    y += 8;
+    doc.setFont('helvetica', 'bold'); doc.text('Item Rented:', 12, y);
+    doc.setFont('helvetica', 'normal'); doc.text(String(listingName), 50, y);
+
+    y += 8;
+    doc.setFont('helvetica', 'bold'); doc.text('Rented To:', 12, y);
+    doc.setFont('helvetica', 'normal'); doc.text(String(buyerName), 50, y);
+
+    y += 8;
+    doc.setFont('helvetica', 'bold'); doc.text('Rental Period:', 12, y);
+    doc.setFont('helvetica', 'normal'); doc.text(`${duration} Days`, 50, y);
+
+    y += 8;
+    doc.setFont('helvetica', 'bold'); doc.text('Total Amount:', 12, y);
+    doc.setFont('helvetica', 'bold'); doc.text(`Rs. ${parseFloat(amount).toLocaleString()}`, 50, y);
+
+    y += 12;
+    doc.setFont('helvetica', 'bold'); doc.text('BLOCKCHAIN HASH VALIDATION', 12, y);
+    doc.line(12, y + 2, 136, y + 2);
+
+    y += 10;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.text('block_hash:', 12, y);
+    doc.setFont('courier', 'normal');
+    doc.text(String(blockHash), 35, y);
+
+    y += 6;
+    doc.setFont('helvetica', 'normal');
+    doc.text('prev_hash:', 12, y);
+    doc.setFont('courier', 'normal');
+    doc.text(String(prevHash), 35, y);
+
+    y += 12;
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(8);
+    doc.setTextColor(100, 100, 100);
+    doc.text('This receipt has been generated automatically by the AgroNexa LK blockchain ledger.', 12, y);
+    doc.text('Transactions are verified cryptographically and cannot be modified.', 12, y + 4);
+
+    // Footer decoration
+    doc.setFillColor(240, 245, 241);
+    doc.rect(0, 195, 148, 15, 'F');
+
+    doc.save(`AgroNexa_Receipt_${txId.slice(0, 8)}.pdf`);
+    showToast('PDF Generated!', 'Receipt downloaded successfully 📄', 'success');
+  } catch (err) {
+    console.error(err);
+    showToast('PDF Error', 'Failed to generate PDF receipt', 'error');
+  }
+}
+
+function downloadBookingSlip(bookingId, listingName, renterName, start, end, totalAmount) {
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a5'
+    });
+
+    // Theme header color bar
+    doc.setFillColor(21, 92, 53);
+    doc.rect(0, 0, 148, 25, 'F');
+
+    // Title
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.text('AGRONEXA LK', 12, 11);
+    doc.setFontSize(9);
+    doc.text('Verified Equipment Rental Confirmation', 12, 17);
+
+    // Header Right - Date
+    doc.setFontSize(8);
+    doc.text('Booking Slip', 105, 15);
+
+    // Body details
+    doc.setTextColor(40, 40, 40);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+
+    let y = 38;
+    doc.setFont('helvetica', 'bold');
+    doc.text('RENTAL CONFIRMATION DETAILS', 12, y);
+    doc.setDrawColor(21, 92, 53);
+    doc.setLineWidth(0.5);
+    doc.line(12, y + 2, 136, y + 2);
+
+    y += 10;
+    doc.setFont('helvetica', 'bold'); doc.text('Booking ID:', 12, y);
+    doc.setFont('helvetica', 'normal'); doc.text(String(bookingId), 50, y);
+
+    y += 8;
+    doc.setFont('helvetica', 'bold'); doc.text('Equipment:', 12, y);
+    doc.setFont('helvetica', 'normal'); doc.text(String(listingName), 50, y);
+
+    y += 8;
+    doc.setFont('helvetica', 'bold'); doc.text('Rented To:', 12, y);
+    doc.setFont('helvetica', 'normal'); doc.text(String(renterName), 50, y);
+
+    y += 8;
+    doc.setFont('helvetica', 'bold'); doc.text('Start Date:', 12, y);
+    doc.setFont('helvetica', 'normal'); doc.text(String(start), 50, y);
+
+    y += 8;
+    doc.setFont('helvetica', 'bold'); doc.text('End Date:', 12, y);
+    doc.setFont('helvetica', 'normal'); doc.text(String(end), 50, y);
+
+    y += 8;
+    doc.setFont('helvetica', 'bold'); doc.text('Total Cost:', 12, y);
+    doc.setFont('helvetica', 'bold'); doc.text(`Rs. ${parseFloat(totalAmount).toLocaleString()}`, 50, y);
+
+    y += 12;
+    doc.setFont('helvetica', 'bold'); doc.text('RENTAL CONDITIONS', 12, y);
+    doc.line(12, y + 2, 136, y + 2);
+
+    y += 10;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.text('1. Renter is responsible for return delivery.', 12, y);
+    y += 5;
+    doc.text('2. Equipment damage must be reported immediately.', 12, y);
+    y += 5;
+    doc.text('3. Rental charges are verified by AgroNexa blockchain smart contracts.', 12, y);
+
+    y += 15;
+    doc.setFont('helvetica', 'italic');
+    doc.setTextColor(100, 100, 100);
+    doc.text('Thank you for using AgroNexa LK. Safe and reliable agricultural trading.', 12, y);
+
+    // Footer decoration
+    doc.setFillColor(240, 245, 241);
+    doc.rect(0, 195, 148, 15, 'F');
+
+    doc.save(`AgroNexa_Booking_${bookingId}.pdf`);
+    showToast('PDF Generated!', 'Booking slip downloaded successfully 📄', 'success');
+  } catch (err) {
+    console.error(err);
+    showToast('PDF Error', 'Failed to generate booking slip PDF', 'error');
+  }
 }
 
 // ── WEBSOCKET LATENCY CHECK ──
@@ -2240,10 +2605,11 @@ function openDirectChat(buyerId, buyerName, buyerRole) {
         const isSent = msg.sender_id === _user.id;
         const bubbleClass = isSent ? 'sent' : 'received';
         const timeStr = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const ticks = isSent ? (msg.is_read ? '<span style="font-size:10px; margin-left:4px; color:#cbe3db;">✔️✔️</span>' : '<span style="font-size:10px; margin-left:4px; color:#cbe3db;">✔️</span>') : '';
         html += `
           <div class="chat-bubble ${bubbleClass}">
             <div>${msg.message}</div>
-            <div class="chat-bubble-time">${timeStr}</div>
+            <div class="chat-bubble-time">${timeStr}${ticks}</div>
           </div>
         `;
       });
@@ -2281,7 +2647,7 @@ function sendChatMessage(e) {
         bubble.className = 'chat-bubble sent';
         bubble.innerHTML = `
           <div>${msg.message}</div>
-          <div class="chat-bubble-time">${timeStr}</div>
+          <div class="chat-bubble-time">${timeStr}<span style="font-size:10px; margin-left:4px; color:#cbe3db;">✔️</span></div>
         `;
         box.appendChild(bubble);
         box.scrollTop = box.scrollHeight;

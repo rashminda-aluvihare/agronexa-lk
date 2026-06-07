@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -883,7 +884,7 @@
           <div class="chat-main" id="chat-window-active" style="display:none;">
             <div class="chat-main-header">
               <div>
-                <div class="chat-main-title" id="chat-active-name">Seller Name</div>
+                <div class="chat-main-title" id="chat-active-name" style="cursor:pointer; text-decoration:underline;" onclick="showUserProfileModal(activeChatUserId)">Seller Name</div>
                 <div style="font-size:11px; color:var(--muted); margin-top:2px;" id="chat-active-role">Seller</div>
               </div>
               <div class="verified-badge">Verified Farmer</div>
@@ -972,6 +973,52 @@
           </div>
           <button type="submit" class="btn-sm btn-confirm" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;">Save Changes</button>
         </form>
+      </div>
+    </div>
+
+    <!-- USER PROFILE MODAL -->
+    <div id="user-profile-modal" style="display:none;position:fixed;inset:0;background:rgba(22,34,44,0.6);backdrop-filter:blur(4px);z-index:2001;align-items:center;justify-content:center;">
+      <div style="background:var(--card);border-radius:20px;padding:32px;max-width:420px;width:95%;box-shadow:0 12px 32px rgba(22,34,44,0.12);border:1px solid var(--border);position:relative;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <h3 style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--text)">User Profile</h3>
+          <button onclick="closeUserProfileModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted)">&times;</button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div style="display:flex;align-items:center;gap:16px;">
+            <div class="avatar" id="profile-modal-avatar" style="width:64px;height:64px;font-size:24px;background:var(--teal-mid);color:#fff;">U</div>
+            <div>
+              <div style="font-size:18px;font-weight:600;color:var(--text);" id="profile-modal-name">User Name</div>
+              <div style="font-size:13px;color:var(--muted);margin-top:2px;" id="profile-modal-role">ROLE</div>
+            </div>
+          </div>
+          
+          <div style="border-top:1px solid var(--border);padding-top:16px;display:flex;flex-direction:column;gap:10px;font-size:13.5px;">
+            <div>🛡️ <strong>Verification Status:</strong> <span id="profile-modal-status" style="font-weight:600;">Pending</span></div>
+            <div>📍 <strong>District:</strong> <span id="profile-modal-district">Unknown</span></div>
+            <div>📞 <strong>Phone:</strong> <span id="profile-modal-phone">N/A</span></div>
+            <div>📧 <strong>Email:</strong> <span id="profile-modal-email">N/A</span></div>
+          </div>
+
+          <div style="background:var(--teal-pale);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+            <div>
+              <div style="font-size:12px;color:var(--muted);text-transform:uppercase;font-weight:600;letter-spacing:0.5px;">Trust Rating</div>
+              <div style="font-size:20px;font-weight:700;color:var(--teal);margin-top:2px;" id="profile-modal-rating">5.0 / 5.0</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:12px;color:var(--muted);text-transform:uppercase;font-weight:600;letter-spacing:0.5px;">Ledger Deals</div>
+              <div style="font-size:20px;font-weight:700;color:var(--text);margin-top:2px;" id="profile-modal-deals">0 completed</div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;margin-top:12px;">
+            <button id="profile-modal-chat-btn" class="btn-sm btn-confirm" style="flex:1;height:40px;border-radius:10px;border:none;cursor:pointer;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;">
+              💬 Start Chat
+            </button>
+            <button onclick="closeUserProfileModal()" class="btn-sm btn-decline" style="flex:1;height:40px;border-radius:10px;cursor:pointer;">
+              Close
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1272,10 +1319,11 @@ function openDirectChat(sellerId, sellerName, sellerRole) {
         const isSent = msg.sender_id === _user.id;
         const bubbleClass = isSent ? 'sent' : 'received';
         const timeStr = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const ticks = isSent ? (msg.is_read ? '<span style="font-size:10px; margin-left:4px; color:#cbe3db;">✔️✔️</span>' : '<span style="font-size:10px; margin-left:4px; color:#cbe3db;">✔️</span>') : '';
         html += `
           <div class="chat-bubble ${bubbleClass}">
             <div>${msg.message}</div>
-            <div class="chat-bubble-time">${timeStr}</div>
+            <div class="chat-bubble-time">${timeStr}${ticks}</div>
           </div>
         `;
       });
@@ -1313,7 +1361,7 @@ function sendChatMessage(e) {
         bubble.className = 'chat-bubble sent';
         bubble.innerHTML = `
           <div>${msg.message}</div>
-          <div class="chat-bubble-time">${timeStr}</div>
+          <div class="chat-bubble-time">${timeStr}<span style="font-size:10px; margin-left:4px; color:#cbe3db;">✔️</span></div>
         `;
         box.appendChild(bubble);
         box.scrollTop = box.scrollHeight;
@@ -1668,7 +1716,7 @@ function loadBroadcastsAndResponses() {
             <div class="msg-top" style="display:flex; flex-direction:column; gap:4px; align-items:flex-start;">
               <div style="display:flex; align-items:center; width:100%; justify-content:space-between;">
                 <div class="msg-from" style="display:flex; align-items:center; gap:4px;">
-                  ${res.sellerName || 'Farmer'}
+                  <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${res.sellerId})">${res.sellerName || 'Farmer'}</span>
                   <span class="verified-badge">✓ Verified</span>
                 </div>
                 <div class="msg-time">${timeAgo}</div>
@@ -1859,6 +1907,241 @@ function submitEditRequest(e) {
     });
 }
 
+// ── USER PROFILE MODAL FUNCTIONS ──
+function showUserProfileModal(userId) {
+  if (!userId) return;
+  fetch(API_URL + '/api/profile/' + userId, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success || !data.user) {
+        showToast('Error', 'Failed to retrieve user profile', 'error');
+        return;
+      }
+      const u = data.user;
+      const initials = u.first_name.charAt(0) + (u.last_name ? u.last_name.charAt(0) : '');
+      document.getElementById('profile-modal-avatar').textContent = initials.toUpperCase();
+      document.getElementById('profile-modal-name').textContent = u.first_name + ' ' + (u.last_name || '');
+      document.getElementById('profile-modal-role').textContent = u.role.toUpperCase();
+      
+      const statusText = u.status === 'approved' ? '🛡️ Verified Partner' : (u.status === 'rejected' ? '❌ Verification Rejected' : '⏳ Pending Verification');
+      const statusColor = u.status === 'approved' ? 'var(--green)' : (u.status === 'rejected' ? '#D95050' : 'var(--amber)');
+      
+      const statusEl = document.getElementById('profile-modal-status');
+      statusEl.textContent = statusText;
+      statusEl.style.color = statusColor;
+      
+      document.getElementById('profile-modal-district').textContent = u.district || 'N/A';
+      document.getElementById('profile-modal-phone').textContent = u.phone || 'N/A';
+      document.getElementById('profile-modal-email').textContent = u.email || 'N/A';
+      
+      document.getElementById('profile-modal-rating').textContent = u.trust_score ? u.trust_score.toFixed(1) + ' / 5.0' : '5.0 / 5.0';
+      document.getElementById('profile-modal-deals').textContent = (u.completed_rentals || 0) + ' completed';
+      
+      // Update chat button link
+      const chatBtn = document.getElementById('profile-modal-chat-btn');
+      chatBtn.onclick = function() {
+        closeUserProfileModal();
+        startChatWithUser(u.id, u.first_name + ' ' + (u.last_name || ''), u.role);
+      };
+      
+      document.getElementById('user-profile-modal').style.display = 'flex';
+    })
+    .catch(() => {
+      showToast('Error', 'Could not load user profile details.', 'error');
+    });
+}
+
+function closeUserProfileModal() {
+  document.getElementById('user-profile-modal').style.display = 'none';
+}
+
+// ── LEDGER PDF RECEIPT EXPORT ──
+function downloadLedgerReceipt(txId, listingName, sellerName, amount, duration, blockHash, prevHash) {
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a5'
+    });
+
+    // Theme header color bar - Teal color (26, 79, 114)
+    doc.setFillColor(26, 79, 114);
+    doc.rect(0, 0, 148, 25, 'F');
+
+    // Title
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.text('AGRONEXA LK', 12, 11);
+    doc.setFontSize(9);
+    doc.text('Smart Agricultural Blockchain Ledger', 12, 17);
+
+    // Header Right - Date
+    doc.setFontSize(8);
+    doc.text('Transaction Receipt', 100, 15);
+
+    // Body details
+    doc.setTextColor(40, 40, 40);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+
+    let y = 38;
+    doc.setFont('helvetica', 'bold');
+    doc.text('LEDGER TRANSACTION DETAILS', 12, y);
+    doc.setDrawColor(26, 79, 114);
+    doc.setLineWidth(0.5);
+    doc.line(12, y + 2, 136, y + 2);
+
+    y += 10;
+    doc.setFont('helvetica', 'bold'); doc.text('TX ID:', 12, y);
+    doc.setFont('helvetica', 'normal'); doc.text(String(txId), 50, y);
+
+    y += 8;
+    doc.setFont('helvetica', 'bold'); doc.text('Item Rented:', 12, y);
+    doc.setFont('helvetica', 'normal'); doc.text(String(listingName), 50, y);
+
+    y += 8;
+    doc.setFont('helvetica', 'bold'); doc.text('Seller Partner:', 12, y);
+    doc.setFont('helvetica', 'normal'); doc.text(String(sellerName), 50, y);
+
+    y += 8;
+    doc.setFont('helvetica', 'bold'); doc.text('Rental Period:', 12, y);
+    doc.setFont('helvetica', 'normal'); doc.text(`${duration} Days`, 50, y);
+
+    y += 8;
+    doc.setFont('helvetica', 'bold'); doc.text('Total Amount:', 12, y);
+    doc.setFont('helvetica', 'bold'); doc.text(`Rs. ${parseFloat(amount).toLocaleString()}`, 50, y);
+
+    y += 12;
+    doc.setFont('helvetica', 'bold'); doc.text('BLOCKCHAIN HASH VALIDATION', 12, y);
+    doc.line(12, y + 2, 136, y + 2);
+
+    y += 10;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.text('block_hash:', 12, y);
+    doc.setFont('courier', 'normal');
+    doc.text(String(blockHash), 35, y);
+
+    y += 6;
+    doc.setFont('helvetica', 'normal');
+    doc.text('prev_hash:', 12, y);
+    doc.setFont('courier', 'normal');
+    doc.text(String(prevHash), 35, y);
+
+    y += 12;
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(8);
+    doc.setTextColor(100, 100, 100);
+    doc.text('This receipt has been generated automatically by the AgroNexa LK blockchain ledger.', 12, y);
+    doc.text('Transactions are verified cryptographically and cannot be modified.', 12, y + 4);
+
+    // Footer decoration
+    doc.setFillColor(240, 245, 248);
+    doc.rect(0, 195, 148, 15, 'F');
+
+    doc.save(`AgroNexa_Receipt_${txId.slice(0, 8)}.pdf`);
+    showToast('PDF Generated!', 'Receipt downloaded successfully 📄', 'success');
+  } catch (err) {
+    console.error(err);
+    showToast('PDF Error', 'Failed to generate PDF receipt', 'error');
+  }
+}
+
+function downloadBookingSlip(bookingId, listingName, ownerName, start, end, totalAmount) {
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a5'
+    });
+
+    // Theme header color bar - Teal color (26, 79, 114)
+    doc.setFillColor(26, 79, 114);
+    doc.rect(0, 0, 148, 25, 'F');
+
+    // Title
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.text('AGRONEXA LK', 12, 11);
+    doc.setFontSize(9);
+    doc.text('Verified Equipment Rental Confirmation', 12, 17);
+
+    // Header Right - Date
+    doc.setFontSize(8);
+    doc.text('Booking Slip', 105, 15);
+
+    // Body details
+    doc.setTextColor(40, 40, 40);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+
+    let y = 38;
+    doc.setFont('helvetica', 'bold');
+    doc.text('RENTAL CONFIRMATION DETAILS', 12, y);
+    doc.setDrawColor(26, 79, 114);
+    doc.setLineWidth(0.5);
+    doc.line(12, y + 2, 136, y + 2);
+
+    y += 10;
+    doc.setFont('helvetica', 'bold'); doc.text('Booking ID:', 12, y);
+    doc.setFont('helvetica', 'normal'); doc.text(String(bookingId), 50, y);
+
+    y += 8;
+    doc.setFont('helvetica', 'bold'); doc.text('Equipment:', 12, y);
+    doc.setFont('helvetica', 'normal'); doc.text(String(listingName), 50, y);
+
+    y += 8;
+    doc.setFont('helvetica', 'bold'); doc.text('Owner (Seller):', 12, y);
+    doc.setFont('helvetica', 'normal'); doc.text(String(ownerName), 50, y);
+
+    y += 8;
+    doc.setFont('helvetica', 'bold'); doc.text('Start Date:', 12, y);
+    doc.setFont('helvetica', 'normal'); doc.text(String(start), 50, y);
+
+    y += 8;
+    doc.setFont('helvetica', 'bold'); doc.text('End Date:', 12, y);
+    doc.setFont('helvetica', 'normal'); doc.text(String(end), 50, y);
+
+    y += 8;
+    doc.setFont('helvetica', 'bold'); doc.text('Total Cost:', 12, y);
+    doc.setFont('helvetica', 'bold'); doc.text(`Rs. ${parseFloat(totalAmount).toLocaleString()}`, 50, y);
+
+    y += 12;
+    doc.setFont('helvetica', 'bold'); doc.text('RENTAL CONDITIONS', 12, y);
+    doc.line(12, y + 2, 136, y + 2);
+
+    y += 10;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.text('1. Renter is responsible for return delivery.', 12, y);
+    y += 5;
+    doc.text('2. Equipment damage must be reported immediately.', 12, y);
+    y += 5;
+    doc.text('3. Rental charges are verified by AgroNexa blockchain smart contracts.', 12, y);
+
+    y += 15;
+    doc.setFont('helvetica', 'italic');
+    doc.setTextColor(100, 100, 100);
+    doc.text('Thank you for using AgroNexa LK. Safe and reliable agricultural trading.', 12, y);
+
+    // Footer decoration
+    doc.setFillColor(240, 245, 248);
+    doc.rect(0, 195, 148, 15, 'F');
+
+    doc.save(`AgroNexa_Booking_${bookingId}.pdf`);
+    showToast('PDF Generated!', 'Booking slip downloaded successfully 📄', 'success');
+  } catch (err) {
+    console.error(err);
+    showToast('PDF Error', 'Failed to generate booking slip PDF', 'error');
+  }
+}
+
 function closeRequest(id) {
   if (!confirm('Are you sure you want to close this request? No more sellers will be able to respond.')) return;
   
@@ -1906,13 +2189,17 @@ function loadBookings() {
 
         const isPending = item.status === 'pending';
         const cancelBtn = isPending ? `<button onclick="cancelBooking(${item.id})" style="background:none;border:none;color:var(--amber);font-size:11.5px;cursor:pointer;margin-top:4px;font-weight:500;">Cancel Request</button>` : '';
+        let pdfBtn = '';
+        if (item.status === 'confirmed') {
+          pdfBtn = `<button onclick="downloadBookingSlip(${item.id}, '${item.listing_name.replace(/'/g, "\\'")}', '${item.owner_name.replace(/'/g, "\\'")}', '${start}', '${end}', ${item.total_amount})" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; margin-top:4px; display:flex; align-items:center; gap:2px;">📥 PDF</button>`;
+        }
 
         html += `
           <div class="booking-item">
             <div class="booking-icon">${icon}</div>
             <div class="booking-info">
               <div class="booking-name">${item.listing_name}</div>
-              <div class="booking-owner">Owner: ${item.owner_name} · 📞 ${item.owner_phone || 'N/A'}</div>
+              <div class="booking-owner">Owner: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.owner_id})">${item.owner_name}</span> · 📞 ${item.owner_phone || 'N/A'}</div>
               <div class="booking-dates">
                 <span>📅 ${start} – ${end}</span>
                 <span>Rs. ${parseFloat(item.total_amount).toLocaleString()}</span>
@@ -1921,6 +2208,7 @@ function loadBookings() {
             <div style="display:flex;flex-direction:column;align-items:flex-end;">
               <span class="booking-status ${item.status}">${item.status.toUpperCase()}</span>
               ${cancelBtn}
+              ${pdfBtn}
             </div>
           </div>
         `;
@@ -1998,7 +2286,7 @@ function loadMarketplace() {
               <div class="market-card-name">${item.name}</div>
               <div class="market-card-meta">${item.district || 'Kandy'} · ${item.quantity_kg} kg</div>
               <div style="font-size:11.5px; color:var(--text); font-weight:500; display:flex; align-items:center; gap:4px; margin-top:4px;">
-                <span>${item.seller_name}</span>
+                <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.seller_id})">${item.seller_name}</span>
                 <span class="verified-badge">✓ Verified</span>
               </div>
               <div style="font-size:11px; color:#f4a261; font-weight:600; display:flex; align-items:center; gap:2px; margin-top:2px; margin-bottom:6px;">
@@ -2043,7 +2331,7 @@ function loadMarketplace() {
               <div class="market-card-name">${item.name}</div>
               <div class="market-card-meta">${item.district || 'Kurunegala'} · ${item.condition || 'Good'} condition</div>
               <div style="font-size:11.5px; color:var(--text); font-weight:500; display:flex; align-items:center; gap:4px; margin-top:4px;">
-                <span>${item.owner_name}</span>
+                <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.owner_id})">${item.owner_name}</span>
                 <span class="verified-badge">✓ Verified</span>
               </div>
               <div style="font-size:11px; color:#f4a261; font-weight:600; display:flex; align-items:center; gap:2px; margin-top:2px; margin-bottom:6px;">
@@ -2170,11 +2458,14 @@ function loadLedger() {
           <div class="booking-item" style="display:block; padding:16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; margin-bottom: 2px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
               <span style="font-weight:600; font-size:13.5px; color:var(--text);">${item.listing_name || 'Agro Deal'}</span>
-              <span style="font-weight:600; font-size:14px; color:var(--teal);">Rs. ${parseFloat(item.amount).toLocaleString()}</span>
+              <div style="text-align:right;">
+                <span style="font-weight:600; font-size:14px; color:var(--teal); display:block;">Rs. ${parseFloat(item.amount).toLocaleString()}</span>
+                <button onclick="downloadLedgerReceipt('${item.tx_id}', '${(item.listing_name || 'Equipment').replace(/'/g, "\\'")}', '${(item.owner_name || 'Seller').replace(/'/g, "\\'")}', ${item.amount}, ${item.duration_days || 1}, '${item.block_hash}', '${item.prev_hash}')" style="background:none; border:none; color:var(--teal-light); font-size:11.5px; cursor:pointer; font-weight:600; margin-top:4px;">📥 PDF</button>
+              </div>
             </div>
             <div style="font-size:12px; color:var(--muted); display:flex; flex-direction:column; gap:4px;">
               <span><strong>Type:</strong> ${typeLabel} (${item.duration_days || 1} days)</span>
-              <span><strong>Partner (Seller):</strong> ${item.owner_name}</span>
+              <span><strong>Partner (Seller):</strong> <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.owner_id})">${item.owner_name}</span></span>
               <span><strong>Transaction Hashed Block:</strong> <span style="font-family:monospace; background:rgba(0,0,0,0.04); padding:2px 6px; border-radius:4px; font-size:11px;">${shortHash}</span></span>
               <span><strong>Timestamp:</strong> ${dateStr}</span>
             </div>
