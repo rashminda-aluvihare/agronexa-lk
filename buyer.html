@@ -2142,9 +2142,11 @@ async function downloadLedgerReceipt(txId, listingName, sellerName, amount, dura
     doc.setFillColor(26, 79, 114);
     doc.rect(0, 0, 148, 28, 'F');
 
-    // Draw logo if loaded
+    // Draw logo with white background badge if loaded
     if (logoImg) {
-      doc.addImage(logoImg, 'PNG', 12, 5, 18, 18);
+      doc.setFillColor(255, 255, 255);
+      doc.circle(21, 14, 10.5, 'F'); // White circle background
+      doc.addImage(logoImg, 'PNG', 13, 6, 16, 16); // Logo centered on circle
       // Title shifted right
       doc.setTextColor(255, 255, 255);
       doc.setFont('helvetica', 'bold');
@@ -2231,45 +2233,55 @@ async function downloadLedgerReceipt(txId, listingName, sellerName, amount, dura
 
     y += 15;
 
-    // Section 2: Blockchain Verification Card
+    // Section 2: Trust & Quality Guarantee Card
     doc.setTextColor(26, 79, 114);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(10.5);
-    doc.text('Cryptographic Validation Proof', 14, y);
+    doc.text('AgroNexa Trust & Quality Guarantee', 14, y);
     doc.setDrawColor(26, 79, 114);
     doc.setLineWidth(0.4);
     doc.line(14, y + 2, 134, y + 2);
 
     y += 8;
 
-    // Shaded card for Monospace hashes
+    // Shaded card for Trust details
     doc.setFillColor(247, 250, 252);
     doc.setDrawColor(226, 237, 245);
     doc.setLineWidth(0.3);
-    doc.roundedRect(14, y - 4, 120, 26, 3, 3, 'FD');
+    doc.roundedRect(14, y - 4, 120, 36, 3, 3, 'FD');
 
     y += 2;
-    doc.setTextColor(120, 120, 120);
+    doc.setTextColor(26, 79, 114);
     doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8.5);
+    doc.text('SECURED ESCROW PROTECTION', 18, y);
+    
+    y += 4.5;
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(80, 80, 80);
     doc.setFontSize(7.5);
-    doc.text('BLOCK HASH:', 18, y);
-    doc.setFont('courier', 'normal');
-    doc.setTextColor(60, 60, 60);
-    doc.text(String(blockHash), 40, y);
+    const text1 = "This transaction is verified and protected by AgroNexa smart contracts. Payments are held in a secure escrow account and released only after delivery confirmation.";
+    const lines1 = doc.splitTextToSize(text1, 112);
+    doc.text(lines1, 18, y);
 
-    y += 8;
-    doc.setTextColor(120, 120, 120);
+    y += 11;
+    doc.setTextColor(26, 79, 114);
     doc.setFont('helvetica', 'bold');
-    doc.text('PREV HASH:', 18, y);
-    doc.setFont('courier', 'normal');
-    doc.setTextColor(60, 60, 60);
-    doc.text(String(prevHash), 40, y);
+    doc.setFontSize(8.5);
+    doc.text('100% DIRECT TRADE GUARANTEE', 18, y);
+    
+    y += 4.5;
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(80, 80, 80);
+    const text2 = "We guarantee direct farm-to-market trade with verified local producers, ensuring high-quality agricultural goods, fair pricing, and sustainable trade standards.";
+    const lines2 = doc.splitTextToSize(text2, 112);
+    doc.text(lines2, 18, y);
 
-    y += 8;
+    y += 9;
     doc.setTextColor(26, 79, 114);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(7.5);
-    doc.text('🛡️ Cryptographically sealed and validated by AgroNexa blockchain ledger.', 18, y);
+    doc.text('Verified Partner Guarantee  |  Escrow Protected  |  Quality Assured', 18, y);
 
     y += 18;
     doc.setFont('helvetica', 'italic');
@@ -2311,9 +2323,11 @@ async function downloadBookingSlip(bookingId, listingName, ownerName, start, end
     doc.setFillColor(26, 79, 114);
     doc.rect(0, 0, 148, 28, 'F');
 
-    // Draw logo if loaded
+    // Draw logo with white background badge if loaded
     if (logoImg) {
-      doc.addImage(logoImg, 'PNG', 12, 5, 18, 18);
+      doc.setFillColor(255, 255, 255);
+      doc.circle(21, 14, 10.5, 'F'); // White circle background
+      doc.addImage(logoImg, 'PNG', 13, 6, 16, 16); // Logo centered on circle
       // Title shifted right
       doc.setTextColor(255, 255, 255);
       doc.setFont('helvetica', 'bold');
