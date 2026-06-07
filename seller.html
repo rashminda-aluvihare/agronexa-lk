@@ -551,10 +551,30 @@
       <div class="panel" id="panel-crop-listings">
         <div class="panel-head">
           <div class="panel-title">My Crop Listings</div>
-          <div class="panel-action" onclick="openAddCropModal()" style="cursor:pointer">+ Add New</div>
         </div>
+        
+        <!-- Prominent Add Crop Listing CTA Banner -->
+        <div style="background: linear-gradient(135deg, rgba(82, 183, 136, 0.12) 0%, rgba(45, 106, 79, 0.05) 100%); border: 1px dashed var(--primary-light); border-radius: 12px; padding: 18px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+          <div>
+            <h4 style="font-size: 13.5px; font-weight: 600; color: var(--primary); margin-bottom: 3px;">🥬 Ready to Sell Your Harvest?</h4>
+            <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4; margin: 0;">Publish a new crop listing with photos. AgroNexa will SMS-broadcast it to buyers in your district instantly!</p>
+          </div>
+          <button class="btn-sm btn-accept" onclick="openAddCropModal()" style="margin: 0; padding: 10px 18px; font-size: 12.5px; font-weight: 600; background: var(--primary); color: #fff; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap;">➕ List New Produce</button>
+        </div>
+
         <div id="crop-listings-list">
           <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">Loading listings...</div>
+        </div>
+      </div>
+
+      <!-- Incoming Crop Orders Panel -->
+      <div class="panel" id="panel-crop-orders" style="margin-top: 20px;">
+        <div class="panel-head">
+          <div class="panel-title">Incoming Crop Orders</div>
+          <span style="font-size:11px;color:var(--primary-light);font-weight:500" id="crop-orders-count">0 pending</span>
+        </div>
+        <div id="crop-orders-list" style="max-height: 300px; overflow-y: auto;">
+          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">No incoming crop orders.</div>
         </div>
       </div>
 
@@ -1816,6 +1836,7 @@ function loadDashboardData() {
 
   // 3. Load lists
   loadCropListings();
+  loadCropOrders();
   loadBuyerRequests();
   loadLedger();
   loadReputation();
@@ -1868,7 +1889,10 @@ function loadCropListings() {
       let html = '';
       data.listings.forEach(item => {
         if (item.status === 'deactivated') return;
-        const img = '🌾'; // default crop symbol
+        let img = '🌾';
+        if (item.photos && item.photos.length > 0) {
+          img = `<img src="${API_URL}/${item.photos[0]}" style="width:100%; height:100%; object-fit:cover; border-radius:10px;">`;
+        }
         const dateStr = item.available_date ? new Date(item.available_date).toLocaleDateString() : 'N/A';
         const isPending = item.status === 'pending';
         const statusLabel = isPending ? '⏳ Pending' : '● Active';
@@ -1972,6 +1996,96 @@ function deactivateListing(id) {
         loadDashboardData();
       } else {
         showToast('Error', data.error || 'Failed to deactivate', 'error');
+      }
+    });
+}
+
+function loadCropOrders() {
+  if (!_user || !_user.id) return;
+  fetch(API_URL + '/api/seller/crop-orders?seller_id=' + _user.id, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      const container = document.getElementById('crop-orders-list');
+      const badge = document.getElementById('crop-orders-count');
+      if (!data.success || !data.orders || !data.orders.length) {
+        container.innerHTML = '<div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">No incoming crop orders.</div>';
+        if (badge) badge.textContent = '0 pending';
+        return;
+      }
+
+      const pending = data.orders.filter(o => o.status === 'pending');
+      if (badge) badge.textContent = pending.length + ' pending';
+
+      let html = '';
+      data.orders.forEach(item => {
+        const isPending = item.status === 'pending';
+        let actionButtons = '';
+        if (isPending) {
+          actionButtons = `
+            <div style="display:flex; gap:6px; margin-top:8px;">
+              <button class="btn-sm btn-accept" onclick="confirmCropOrder(${item.id})" style="background:var(--green); color:#fff; cursor:pointer; padding:6px 12px; font-size:11px;">Confirm</button>
+              <button class="btn-sm btn-reject" onclick="rejectCropOrder(${item.id})" style="cursor:pointer; padding:6px 12px; font-size:11px;">Reject</button>
+            </div>
+          `;
+        } else {
+          actionButtons = `<span style="font-size:12px; font-weight:600; margin-top:4px; color:${item.status === 'confirmed' ? 'var(--green)' : 'var(--accent)'}">${item.status.toUpperCase()}</span>`;
+        }
+
+        html += `
+          <div class="booking-item" style="display:flex; justify-content:space-between; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--border-color);">
+            <div>
+              <div style="font-size:13.5px; font-weight:500; color:var(--text-main);">${item.crop_name}</div>
+              <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Buyer: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--primary);" onclick="showUserProfileModal(${item.buyer_id})">${item.buyer_name || 'Buyer'}</span> · 📞 ${item.buyer_phone || 'N/A'}</div>
+              <div style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">Qty: <strong>${item.quantity_kg} kg</strong> · Deliv: ${item.delivery_date ? new Date(item.delivery_date).toLocaleDateString() : 'N/A'}</div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:flex-end;">
+              <div style="font-size:13.5px; font-weight:600; color:var(--green);">Rs. ${parseFloat(item.total_amount).toLocaleString()}</div>
+              ${actionButtons}
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    });
+}
+
+function confirmCropOrder(id) {
+  if (!confirm('Are you sure you want to confirm this crop purchase? This will deduct listing stock and write to the blockchain ledger.')) return;
+  fetch(API_URL + `/api/seller/crop-orders/${id}/confirm`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ seller_id: _user.id })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        showToast('Order Confirmed!', 'Ledger TX: ' + (data.ledger_tx ? data.ledger_tx.slice(0, 16) + '...' : 'N/A'), 'success');
+        loadCropOrders();
+        loadCropListings();
+        loadDashboardData();
+      } else {
+        showToast('Error', data.error || 'Failed to confirm crop order', 'error');
+      }
+    });
+}
+
+function rejectCropOrder(id) {
+  if (!confirm('Are you sure you want to reject this crop order request?')) return;
+  fetch(API_URL + `/api/seller/crop-orders/${id}/reject`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ seller_id: _user.id })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        showToast('Order Rejected', 'Crop purchase request rejected', 'warning');
+        loadCropOrders();
+        loadDashboardData();
+      } else {
+        showToast('Error', data.error || 'Failed to reject order', 'error');
       }
     });
 }

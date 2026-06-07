@@ -145,6 +145,22 @@ async function initDatabase() {
       );
     `);
 
+    // 5.5 Crop Orders Table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS crop_orders (
+        id SERIAL PRIMARY KEY,
+        crop_listing_id INTEGER NOT NULL REFERENCES crop_listings(id) ON DELETE CASCADE,
+        buyer_id INTEGER NOT NULL REFERENCES users(id),
+        seller_id INTEGER NOT NULL REFERENCES users(id),
+        quantity_kg NUMERIC(10,2) NOT NULL,
+        price_per_kg NUMERIC(10,2) NOT NULL,
+        total_amount NUMERIC(10,2) NOT NULL,
+        delivery_date DATE,
+        status VARCHAR(20) DEFAULT 'pending',
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+
     // 6. Request Responses Table
     await client.query(`
       CREATE TABLE IF NOT EXISTS request_responses (

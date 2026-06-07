@@ -12,48 +12,55 @@ const notificationController = require('../controllers/notification.controller')
 const { authRequired, requireRole } = require('../middlewares/auth.middleware');
 const { uploadListings } = require('../middlewares/upload.middleware');
 
-// Apply seller authorization to all routes by default
+// Apply authentication to all routes
 router.use(authRequired);
-router.use(requireRole(['seller', 'farmer']));
+
+// Shared read routes accessible by seller, farmer, and buyer roles
+router.get('/crops', requireRole(['seller', 'farmer', 'buyer']), cropController.getSellerCrops);
+router.get('/equipment', requireRole(['seller', 'farmer', 'buyer']), equipmentController.getOwnerEquipment);
+router.get('/ledger', requireRole(['seller', 'farmer', 'buyer']), ledgerController.getLedger);
+router.get('/ledger/verify', requireRole(['seller', 'farmer', 'buyer']), ledgerController.verifyLedger);
+router.get('/reputation/:seller_id', requireRole(['seller', 'farmer', 'buyer']), reputationController.getReputationScore);
+
+// Modify/action routes require seller/farmer role
+const sellerRoleCheck = requireRole(['seller', 'farmer']);
 
 // Crop Listings
-router.get('/crops', cropController.getSellerCrops);
-router.post('/crops', uploadListings.array('photos', 5), cropController.createCropListing);
-router.put('/crops/:id', uploadListings.array('photos', 5), cropController.updateCropListing);
-router.delete('/crops/:id', cropController.deleteCropListing);
-router.post('/crops/:id/update-stock', cropController.updateCropStock);
-router.put('/crops/:id/update-stock', cropController.updateCropStock); // Support both methods
+router.post('/crops', sellerRoleCheck, uploadListings.array('photos', 5), cropController.createCropListing);
+router.put('/crops/:id', sellerRoleCheck, uploadListings.array('photos', 5), cropController.updateCropListing);
+router.delete('/crops/:id', sellerRoleCheck, cropController.deleteCropListing);
+router.post('/crops/:id/update-stock', sellerRoleCheck, cropController.updateCropStock);
+router.put('/crops/:id/update-stock', sellerRoleCheck, cropController.updateCropStock); // Support both methods
+
+// Crop Orders (seller side)
+router.get('/crop-orders', sellerRoleCheck, cropController.getSellerCropOrders);
+router.post('/crop-orders/:id/confirm', sellerRoleCheck, cropController.confirmCropOrder);
+router.post('/crop-orders/:id/reject', sellerRoleCheck, cropController.rejectCropOrder);
 
 // Equipment Listings
-router.get('/equipment', equipmentController.getOwnerEquipment);
-router.post('/equipment', uploadListings.array('photos', 5), equipmentController.createEquipmentListing);
-router.put('/equipment/:id', uploadListings.array('photos', 5), equipmentController.updateEquipmentListing);
-router.delete('/equipment/:id', equipmentController.deleteEquipmentListing);
+router.post('/equipment', sellerRoleCheck, uploadListings.array('photos', 5), equipmentController.createEquipmentListing);
+router.put('/equipment/:id', sellerRoleCheck, uploadListings.array('photos', 5), equipmentController.updateEquipmentListing);
+router.delete('/equipment/:id', sellerRoleCheck, equipmentController.deleteEquipmentListing);
 
 // Bookings (owner side)
-router.get('/bookings', equipmentController.getSellerBookings);
-router.post('/bookings/:id/confirm', equipmentController.confirmBooking);
-router.post('/bookings/:id/reject', equipmentController.rejectBooking);
+router.get('/bookings', sellerRoleCheck, equipmentController.getSellerBookings);
+router.post('/bookings/:id/confirm', sellerRoleCheck, equipmentController.confirmBooking);
+router.post('/bookings/:id/reject', sellerRoleCheck, equipmentController.rejectBooking);
 
 // Buyer Requests
-router.get('/requests', requestController.getSellerMatchingRequests);
-router.post('/requests/:id/respond', requestController.respondToRequest);
-
-// Ledger & Reputation
-router.get('/ledger', ledgerController.getLedger);
-router.get('/ledger/verify', ledgerController.verifyLedger);
-router.get('/reputation/:seller_id', reputationController.getReputationScore);
+router.get('/requests', sellerRoleCheck, requestController.getSellerMatchingRequests);
+router.post('/requests/:id/respond', sellerRoleCheck, requestController.respondToRequest);
 
 // Chats & Messaging
-router.get('/chats', chatController.getUserChats);
-router.get('/messages', chatController.getChatMessages);
-router.post('/messages/send', chatController.sendChatMessage);
+router.get('/chats', sellerRoleCheck, chatController.getUserChats);
+router.get('/messages', sellerRoleCheck, chatController.getChatMessages);
+router.post('/messages/send', sellerRoleCheck, chatController.sendChatMessage);
 
 // Notifications
-router.get('/notifications', notificationController.getNotifications);
-router.post('/notifications/read-all', notificationController.markAllAsRead);
+router.get('/notifications', sellerRoleCheck, notificationController.getNotifications);
+router.post('/notifications/read-all', sellerRoleCheck, notificationController.markAllAsRead);
 
 // Analytics
-router.get('/analytics', cropController.getSellerAnalytics);
+router.get('/analytics', sellerRoleCheck, cropController.getSellerAnalytics);
 
 module.exports = router;

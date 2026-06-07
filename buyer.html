@@ -627,11 +627,18 @@
     <div class="grid-2" id="section-bookings-market">
       <div class="panel" id="panel-bookings">
         <div class="panel-head">
-          <div class="panel-title">My Equipment Bookings</div>
+          <div class="panel-title" id="bookings-panel-title">My Equipment Bookings</div>
           <div class="panel-action" onclick="switchTab('bookings')" style="cursor:pointer">View all</div>
+        </div>
+        <div style="display:flex; background:var(--teal-pale); border-radius:10px; padding:4px; gap:4px; margin-bottom:15px;">
+          <button id="bookings-subtab-rentals" onclick="switchBookingSubtab('rentals')" style="flex:1; height:32px; border:none; border-radius:8px; font-size:12.5px; font-weight:500; cursor:pointer; background:#fff; color:var(--teal); transition: all 0.2s;">🚜 Tool Rentals</button>
+          <button id="bookings-subtab-purchases" onclick="switchBookingSubtab('purchases')" style="flex:1; height:32px; border:none; border-radius:8px; font-size:12.5px; font-weight:500; cursor:pointer; background:transparent; color:var(--muted); transition: all 0.2s;">🌾 Crop Orders</button>
         </div>
         <div id="bookings-list" style="max-height: 400px; overflow-y: auto;">
           <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Loading bookings...</div>
+        </div>
+        <div id="crop-orders-list" style="max-height: 400px; overflow-y: auto; display:none;">
+          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Loading crop orders...</div>
         </div>
       </div>
 
@@ -942,6 +949,37 @@
       </div>
     </div>
 
+    <!-- CROP PURCHASE ORDER MODAL -->
+    <div id="book-crop-modal" style="display:none;position:fixed;inset:0;background:rgba(20,29,43,0.7);backdrop-filter:blur(4px);z-index:2000;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:20px;padding:32px;max-width:400px;width:95%;box-shadow:0 20px 60px rgba(20,29,43,0.3);border:1px solid var(--border);position:relative;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <h3 style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--text)" id="book-crop-title">Order Crops</h3>
+          <button onclick="closeCropOrderModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted)">&times;</button>
+        </div>
+        <form id="book-crop-form" onsubmit="submitCropOrder(event)">
+          <input type="hidden" id="book-crop-id">
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Price per kg</label>
+            <div id="book-crop-rate" style="font-size:15px;font-weight:600;color:var(--teal)">Rs. 0 / kg</div>
+          </div>
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Quantity to Buy (kg)</label>
+            <input class="form-input" type="number" step="0.01" id="book-crop-quantity" required style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+            <span style="font-size:11px;color:var(--muted);" id="book-crop-available-lbl">Max Available: 0 kg</span>
+          </div>
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Delivery/Pickup Date</label>
+            <input class="form-input" type="date" id="book-crop-date" required style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+          </div>
+          <div style="margin-bottom:20px;background:var(--teal-pale);padding:10px 14px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:12px;color:var(--teal);font-weight:500;">Estimated Cost</span>
+            <span style="font-size:15px;color:var(--teal);font-weight:600;" id="book-crop-total-cost">Rs. 0</span>
+          </div>
+          <button type="submit" class="btn-sm btn-confirm" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;">Confirm Purchase Order</button>
+        </form>
+      </div>
+    </div>
+
     <!-- EDIT REQUEST MODAL -->
     <div id="edit-request-modal" style="display:none;position:fixed;inset:0;background:rgba(20,29,43,0.7);backdrop-filter:blur(4px);z-index:2000;align-items:center;justify-content:center;">
       <div style="background:#fff;border-radius:20px;padding:32px;max-width:400px;width:95%;box-shadow:0 20px 60px rgba(20,29,43,0.3);border:1px solid var(--border);position:relative;">
@@ -978,7 +1016,7 @@
 
     <!-- USER PROFILE MODAL -->
     <div id="user-profile-modal" style="display:none;position:fixed;inset:0;background:rgba(22,34,44,0.6);backdrop-filter:blur(4px);z-index:2001;align-items:center;justify-content:center;">
-      <div style="background:var(--card);border-radius:20px;padding:32px;max-width:420px;width:95%;box-shadow:0 12px 32px rgba(22,34,44,0.12);border:1px solid var(--border);position:relative;">
+      <div style="background:var(--card);border-radius:20px;padding:32px;max-width:420px;width:95%;box-shadow:0 12px 32px rgba(22,34,44,0.12);border:1px solid var(--border);position:relative; max-height:90vh; overflow-y:auto;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
           <h3 style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--text)">User Profile</h3>
           <button onclick="closeUserProfileModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted)">&times;</button>
@@ -1007,6 +1045,48 @@
             <div style="text-align:right;">
               <div style="font-size:12px;color:var(--muted);text-transform:uppercase;font-weight:600;letter-spacing:0.5px;">Ledger Deals</div>
               <div style="font-size:20px;font-weight:700;color:var(--text);margin-top:2px;" id="profile-modal-deals">0 completed</div>
+            </div>
+          </div>
+
+          <!-- Reputation Ratings Sliders -->
+          <div style="display:flex; flex-direction:column; gap:10px; margin-top:8px; border:1px solid var(--border); border-radius:12px; padding:16px;">
+            <div style="font-size:12px;color:var(--muted);text-transform:uppercase;font-weight:600;letter-spacing:0.5px;margin-bottom:4px;">Detailed Ratings</div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <div>
+                <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text); margin-bottom:3px;">
+                  <span>Reliability</span>
+                  <span id="profile-modal-reliability-val" style="font-weight:600;">0%</span>
+                </div>
+                <div style="width:100%; height:6px; background:var(--border); border-radius:3px; overflow:hidden;">
+                  <div id="profile-modal-reliability-bar" style="width:0%; height:100%; background:var(--teal-light); transition: width 0.3s;"></div>
+                </div>
+              </div>
+              <div>
+                <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text); margin-bottom:3px;">
+                  <span>Timeliness</span>
+                  <span id="profile-modal-timeliness-val" style="font-weight:600;">0%</span>
+                </div>
+                <div style="width:100%; height:6px; background:var(--border); border-radius:3px; overflow:hidden;">
+                  <div id="profile-modal-timeliness-bar" style="width:0%; height:100%; background:var(--teal-light); transition: width 0.3s;"></div>
+                </div>
+              </div>
+              <div>
+                <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text); margin-bottom:3px;">
+                  <span>Accuracy</span>
+                  <span id="profile-modal-accuracy-val" style="font-weight:600;">0%</span>
+                </div>
+                <div style="width:100%; height:6px; background:var(--border); border-radius:3px; overflow:hidden;">
+                  <div id="profile-modal-accuracy-bar" style="width:0%; height:100%; background:var(--teal-light); transition: width 0.3s;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Active listings of the seller -->
+          <div id="profile-modal-listings-sect" style="display:none; flex-direction:column; gap:10px; margin-top:8px; border:1px solid var(--border); border-radius:12px; padding:16px; max-height:160px; overflow-y:auto;">
+            <div style="font-size:12px;color:var(--muted);text-transform:uppercase;font-weight:600;letter-spacing:0.5px;margin-bottom:4px;">Active Listings</div>
+            <div id="profile-modal-listings-list" style="display:flex; flex-direction:column; gap:6px;">
+              <!-- Listings populated here -->
             </div>
           </div>
 
@@ -1643,6 +1723,7 @@ function loadDashboardData() {
   loadBroadcastsAndResponses();
   loadMyRequests();
   loadBookings();
+  loadCropOrders();
   loadMarketplace();
 
   // 3. Load Weather & Price Index
@@ -1936,9 +2017,80 @@ function showUserProfileModal(userId) {
       document.getElementById('profile-modal-phone').textContent = u.phone || 'N/A';
       document.getElementById('profile-modal-email').textContent = u.email || 'N/A';
       
-      document.getElementById('profile-modal-rating').textContent = u.trust_score ? u.trust_score.toFixed(1) + ' / 5.0' : '5.0 / 5.0';
+      const score = parseFloat(u.trust_score || 5.0);
+      document.getElementById('profile-modal-rating').textContent = score.toFixed(1) + ' / 5.0';
       document.getElementById('profile-modal-deals').textContent = (u.completed_rentals || 0) + ' completed';
       
+      // Update detailed ratings sliders
+      const reliability = u.completed_rentals > 0 ? Math.min(100, Math.round((score / 5) * 100)) : 100;
+      const timeliness = u.completed_rentals > 0 ? Math.min(100, Math.round((score / 5) * 98)) : 100;
+      const accuracy = u.completed_rentals > 0 ? Math.min(100, Math.round((score / 5) * 96)) : 100;
+
+      document.getElementById('profile-modal-reliability-bar').style.width = reliability + '%';
+      document.getElementById('profile-modal-reliability-val').textContent = reliability + '%';
+
+      document.getElementById('profile-modal-timeliness-bar').style.width = timeliness + '%';
+      document.getElementById('profile-modal-timeliness-val').textContent = timeliness + '%';
+
+      document.getElementById('profile-modal-accuracy-bar').style.width = accuracy + '%';
+      document.getElementById('profile-modal-accuracy-val').textContent = accuracy + '%';
+      
+      // Query active listings if seller/farmer
+      const isSeller = u.role === 'farmer' || u.role === 'seller';
+      const listingsSect = document.getElementById('profile-modal-listings-sect');
+      const listingsList = document.getElementById('profile-modal-listings-list');
+      
+      if (isSeller) {
+        listingsSect.style.display = 'flex';
+        listingsList.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:10px 0;">Loading listings...</div>';
+        
+        Promise.all([
+          fetch(API_URL + '/api/seller/crops?seller_id=' + userId, { headers: getAuthHeaders() }).then(r => r.json()),
+          fetch(API_URL + '/api/seller/equipment?owner_id=' + userId, { headers: getAuthHeaders() }).then(r => r.json())
+        ])
+          .then(([cropsData, equipData]) => {
+            let listingsHtml = '';
+            let count = 0;
+            
+            if (cropsData.success && cropsData.listings && cropsData.listings.length) {
+              cropsData.listings.forEach(listing => {
+                if (listing.status !== 'active') return;
+                count++;
+                listingsHtml += `
+                  <div style="display:flex; justify-content:space-between; font-size:12px; border-bottom:1px solid var(--surface); padding-bottom:4px; margin-bottom:4px;">
+                    <span style="color:var(--text); font-weight:500;">🥬 ${listing.name}</span>
+                    <span style="color:var(--teal); font-weight:600;">Rs. ${parseFloat(listing.price_per_kg).toFixed(0)}/kg</span>
+                  </div>
+                `;
+              });
+            }
+            
+            if (equipData.success && equipData.listings && equipData.listings.length) {
+              equipData.listings.forEach(listing => {
+                if (listing.status === 'deactivated') return;
+                count++;
+                listingsHtml += `
+                  <div style="display:flex; justify-content:space-between; font-size:12px; border-bottom:1px solid var(--surface); padding-bottom:4px; margin-bottom:4px;">
+                    <span style="color:var(--text); font-weight:500;">🚜 ${listing.name}</span>
+                    <span style="color:var(--teal); font-weight:600;">Rs. ${parseFloat(listing.rental_rate).toLocaleString()}/day</span>
+                  </div>
+                `;
+              });
+            }
+            
+            if (count === 0) {
+              listingsList.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:10px 0;">No active listings.</div>';
+            } else {
+              listingsList.innerHTML = listingsHtml;
+            }
+          })
+          .catch(err => {
+            listingsList.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:10px 0;">Failed to load listings.</div>';
+          });
+      } else {
+        listingsSect.style.display = 'none';
+      }
+
       // Update chat button link
       const chatBtn = document.getElementById('profile-modal-chat-btn');
       chatBtn.onclick = function() {
@@ -2235,6 +2387,157 @@ function cancelBooking(id) {
     });
 }
 
+// ── CROP ORDERS FUNCTIONS ──
+var bookingSubtab = 'rentals';
+function switchBookingSubtab(subtab) {
+  bookingSubtab = subtab;
+  const rentalsBtn = document.getElementById('bookings-subtab-rentals');
+  const purchasesBtn = document.getElementById('bookings-subtab-purchases');
+  const rentalsList = document.getElementById('bookings-list');
+  const purchasesList = document.getElementById('crop-orders-list');
+  const titleEl = document.getElementById('bookings-panel-title');
+
+  if (subtab === 'rentals') {
+    rentalsBtn.style.background = '#fff';
+    rentalsBtn.style.color = 'var(--teal)';
+    purchasesBtn.style.background = 'transparent';
+    purchasesBtn.style.color = 'var(--muted)';
+    rentalsList.style.display = 'block';
+    purchasesList.style.display = 'none';
+    if (titleEl) titleEl.textContent = 'My Equipment Bookings';
+  } else {
+    purchasesBtn.style.background = '#fff';
+    purchasesBtn.style.color = 'var(--teal)';
+    rentalsBtn.style.background = 'transparent';
+    rentalsBtn.style.color = 'var(--muted)';
+    rentalsList.style.display = 'none';
+    purchasesList.style.display = 'block';
+    if (titleEl) titleEl.textContent = 'My Crop Purchase Orders';
+  }
+}
+
+var currentCropRate = 0;
+var currentCropMaxQty = 0;
+
+function openCropOrderModal(id, rate, name, maxQty) {
+  document.getElementById('book-crop-id').value = id;
+  document.getElementById('book-crop-title').textContent = 'Order ' + name;
+  document.getElementById('book-crop-rate').textContent = `Rs. ${parseFloat(rate).toFixed(0)} / kg`;
+  document.getElementById('book-crop-available-lbl').textContent = `Max Available: ${parseFloat(maxQty)} kg`;
+  
+  currentCropRate = parseFloat(rate);
+  currentCropMaxQty = parseFloat(maxQty);
+  
+  const qtyInput = document.getElementById('book-crop-quantity');
+  qtyInput.value = '';
+  qtyInput.max = maxQty;
+  qtyInput.placeholder = `e.g. 10`;
+  
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('book-crop-date').value = today;
+  
+  qtyInput.addEventListener('input', calculateTotalCropOrderCost);
+  calculateTotalCropOrderCost();
+  
+  document.getElementById('book-crop-modal').style.display = 'flex';
+}
+
+function calculateTotalCropOrderCost() {
+  const qty = parseFloat(document.getElementById('book-crop-quantity').value);
+  if (isNaN(qty) || qty <= 0 || qty > currentCropMaxQty) {
+    document.getElementById('book-crop-total-cost').textContent = 'Rs. 0';
+    return;
+  }
+  const total = qty * currentCropRate;
+  document.getElementById('book-crop-total-cost').textContent = 'Rs. ' + total.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
+}
+
+function closeCropOrderModal() {
+  document.getElementById('book-crop-modal').style.display = 'none';
+  document.getElementById('book-crop-form').reset();
+}
+
+function submitCropOrder(e) {
+  e.preventDefault();
+  const id = document.getElementById('book-crop-id').value;
+  const qty = parseFloat(document.getElementById('book-crop-quantity').value);
+  const date = document.getElementById('book-crop-date').value;
+
+  if (qty <= 0 || qty > currentCropMaxQty) {
+    showToast('Invalid Quantity', `Please enter a quantity between 0 and ${currentCropMaxQty} kg.`, 'error');
+    return;
+  }
+
+  fetch(API_URL + '/api/buyer/crop-orders', {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      buyer_id: _user.id,
+      crop_listing_id: id,
+      quantity_kg: qty,
+      delivery_date: date
+    })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        showToast('Order Placed!', 'Your crop purchase order has been sent to the farmer 🌾', 'success');
+        closeCropOrderModal();
+        switchBookingSubtab('purchases');
+        loadDashboardData();
+      } else {
+        showToast('Error', data.error || 'Failed to submit order', 'error');
+      }
+    })
+    .catch(err => {
+      showToast('Error', 'Server connection failure', 'error');
+    });
+}
+
+function loadCropOrders() {
+  if (!_user || !_user.id) return;
+  fetch(API_URL + '/api/buyer/crop-orders?buyer_id=' + _user.id, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      const container = document.getElementById('crop-orders-list');
+      if (!data.success || !data.orders || !data.orders.length) {
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No crop orders placed. Visit the marketplace to buy fresh produce!</div>';
+        return;
+      }
+
+      let html = '';
+      data.orders.forEach(item => {
+        const deliveryDate = item.delivery_date ? new Date(item.delivery_date).toLocaleDateString() : 'N/A';
+        const isPending = item.status === 'pending';
+        
+        let statusClass = 'pending';
+        if (item.status === 'confirmed') statusClass = 'confirmed';
+        if (item.status === 'rejected') statusClass = 'rejected';
+
+        html += `
+          <div class="booking-item">
+            <div class="booking-icon" style="background:var(--green-pale); color:var(--green);">🌾</div>
+            <div class="booking-info">
+              <div class="booking-name">${item.crop_name}</div>
+              <div class="booking-owner">Seller: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.seller_id})">${item.seller_name}</span> · 📞 ${item.seller_phone || 'N/A'}</div>
+              <div class="booking-dates">
+                <span>📅 Deliv: ${deliveryDate}</span>
+                <span>Qty: ${item.quantity_kg} kg @ Rs. ${parseFloat(item.price_per_kg).toFixed(0)}/kg</span>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;">
+              <span class="booking-status ${statusClass}">${item.status.toUpperCase()}</span>
+              <div style="font-size:13px; font-weight:600; color:var(--teal); margin-top: 4px;">Rs. ${parseFloat(item.total_amount).toLocaleString()}</div>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    });
+}
+
 // ── MARKETPLACE FUNCTIONS ──
 function toggleMarketType() {
   const searchInput = document.getElementById('market-search');
@@ -2271,12 +2574,18 @@ function loadMarketplace() {
         let html = '';
         data.listings.forEach(item => {
           let symbol = '🥬';
-          if (item.name.toLowerCase().includes('tomato')) symbol = '🍅';
-          if (item.name.toLowerCase().includes('carrot')) symbol = '🥕';
-          if (item.name.toLowerCase().includes('chili')) symbol = '🌶️';
-          if (item.name.toLowerCase().includes('potato')) symbol = '🥔';
-          if (item.name.toLowerCase().includes('onion')) symbol = '🧅';
-          if (item.name.toLowerCase().includes('banana')) symbol = '🍌';
+          if (item.photos && item.photos.length > 0) {
+            symbol = `<img src="${API_URL}/${item.photos[0]}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;">`;
+          } else {
+            let emoji = '🥬';
+            if (item.name.toLowerCase().includes('tomato')) emoji = '🍅';
+            if (item.name.toLowerCase().includes('carrot')) emoji = '🥕';
+            if (item.name.toLowerCase().includes('chili')) emoji = '🌶️';
+            if (item.name.toLowerCase().includes('potato')) emoji = '🥔';
+            if (item.name.toLowerCase().includes('onion')) emoji = '🧅';
+            if (item.name.toLowerCase().includes('banana')) emoji = '🍌';
+            symbol = emoji;
+          }
 
           const repScore = Math.min(5, (parseInt(item.seller_rep || 0) / 10) * 5).toFixed(1);
 
@@ -2294,7 +2603,7 @@ function loadMarketplace() {
               </div>
               <div class="market-card-price">Rs. ${parseFloat(item.price_per_kg).toFixed(0)}/kg</div>
               <div style="display:flex; gap:6px; margin-top:8px;">
-                <button class="interest-btn" style="margin-top:0;" onclick="expressInterest(${item.id})">Express Interest</button>
+                <button class="interest-btn" style="margin-top:0;" onclick="openCropOrderModal(${item.id}, ${item.price_per_kg}, '${item.name.replace(/'/g, "\\'")}', ${item.quantity_kg})">🛒 Order Now</button>
                 <button class="interest-btn" style="margin-top:0; background:var(--teal); color:#fff;" onclick="startChatWithUser(${item.seller_id}, '${item.seller_name.replace(/'/g, "\\'")}', 'farmer')">💬 Chat</button>
               </div>
             </div>
@@ -2319,9 +2628,15 @@ function loadMarketplace() {
         let html = '';
         data.listings.forEach(item => {
           let symbol = '🚜';
-          if (item.name.toLowerCase().includes('pump') || item.name.toLowerCase().includes('water')) symbol = '💧';
-          if (item.name.toLowerCase().includes('transport') || item.name.toLowerCase().includes('lorry')) symbol = '🚛';
-          if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) symbol = '🌿';
+          if (item.photos && item.photos.length > 0) {
+            symbol = `<img src="${API_URL}/${item.photos[0]}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;">`;
+          } else {
+            let emoji = '🚜';
+            if (item.name.toLowerCase().includes('pump') || item.name.toLowerCase().includes('water')) emoji = '💧';
+            if (item.name.toLowerCase().includes('transport') || item.name.toLowerCase().includes('lorry')) emoji = '🚛';
+            if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) emoji = '🌿';
+            symbol = emoji;
+          }
 
           const repScore = Math.min(5, (parseInt(item.owner_rep || 0) / 10) * 5).toFixed(1);
 

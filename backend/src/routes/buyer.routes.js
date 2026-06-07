@@ -28,6 +28,10 @@ router.post('/bookings', equipmentController.bookEquipment);
 router.get('/bookings', equipmentController.getBuyerBookings);
 router.delete('/bookings/:id', equipmentController.cancelBooking);
 
+// Crop Orders (buyer side)
+router.post('/crop-orders', cropController.placeCropOrder);
+router.get('/crop-orders', cropController.getBuyerCropOrders);
+
 // Buyer Broadcast Requests
 router.post('/broadcasts', requestController.createBroadcastRequest);
 router.get('/broadcasts', requestController.getBuyerBroadcasts);

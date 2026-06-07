@@ -1,6 +1,7 @@
 const db = require('../config/db');
 const auditService = require('../services/audit.service');
 const notificationService = require('../services/notification.service');
+const ledgerService = require('../services/ledger.service');
 
 /**
  * GET /api/seller/crops (under seller crops)
@@ -411,6 +412,232 @@ async function getSellerAnalytics(req, res, next) {
   }
 }
 
+/**
+ * POST /api/buyer/crop-orders (place crop order)
+ */
+async function placeCropOrder(req, res, next) {
+  const buyer_id = req.body.buyer_id || req.auth.id;
+  const { crop_listing_id, quantity_kg, delivery_date } = req.body;
+
+  if (!buyer_id || !crop_listing_id || !quantity_kg) {
+    return res.status(400).json({ error: 'buyer_id, crop_listing_id, and quantity_kg are required' });
+  }
+
+  try {
+    // 1. Get the crop listing
+    const listingRes = await db.query(
+      `SELECT * FROM crop_listings WHERE id = $1 AND status = 'active'`,
+      [crop_listing_id]
+    );
+    if (listingRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Crop listing not found or inactive' });
+    }
+    const listing = listingRes.rows[0];
+
+    // 2. Validate quantity
+    const qtyRequested = parseFloat(quantity_kg);
+    const qtyAvailable = parseFloat(listing.quantity_kg);
+    if (qtyRequested <= 0 || qtyRequested > qtyAvailable) {
+      return res.status(400).json({ error: `Invalid quantity requested. Available stock: ${qtyAvailable} kg` });
+    }
+
+    // 3. Compute amount
+    const pricePerKg = parseFloat(listing.price_per_kg);
+    const totalAmount = qtyRequested * pricePerKg;
+
+    // 4. Insert order
+    const result = await db.query(
+      `INSERT INTO crop_orders 
+         (crop_listing_id, buyer_id, seller_id, quantity_kg, price_per_kg, total_amount, delivery_date, status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, 'pending')
+       RETURNING *`,
+      [crop_listing_id, buyer_id, listing.seller_id, qtyRequested, pricePerKg, totalAmount, delivery_date || null]
+    );
+
+    const order = result.rows[0];
+
+    // 5. Notify seller
+    const buyerRes = await db.query('SELECT first_name FROM users WHERE id = $1', [buyer_id]);
+    const buyerName = buyerRes.rows[0]?.first_name || 'A buyer';
+
+    await notificationService.pushNotification(
+      listing.seller_id,
+      'booking',
+      `New Crop Order: ${listing.name}`,
+      `${buyerName} requested to buy ${qtyRequested} kg of your ${listing.name} for Rs. ${totalAmount.toLocaleString()}.`
+    );
+
+    // Audit log
+    await auditService.logAction(buyer_id, 'PLACE_CROP_ORDER', req.ip, { id: order.id, crop_listing_id });
+
+    return res.status(201).json({ success: true, order });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * GET /api/buyer/crop-orders (buyer history)
+ */
+async function getBuyerCropOrders(req, res, next) {
+  const buyer_id = req.query.buyer_id || req.auth.id;
+  if (!buyer_id) {
+    return res.status(400).json({ error: 'buyer_id is required' });
+  }
+  try {
+    const result = await db.query(
+      `SELECT co.*, cl.name AS crop_name, cl.district,
+              u.first_name || ' ' || u.last_name AS seller_name,
+              u.phone AS seller_phone
+       FROM crop_orders co
+       JOIN crop_listings cl ON cl.id = co.crop_listing_id
+       JOIN users u ON u.id = co.seller_id
+       WHERE co.buyer_id = $1
+       ORDER BY co.created_at DESC`,
+      [buyer_id]
+    );
+    return res.json({ success: true, orders: result.rows });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * GET /api/seller/crop-orders (seller incoming)
+ */
+async function getSellerCropOrders(req, res, next) {
+  const seller_id = req.query.seller_id || req.auth.id;
+  if (!seller_id) {
+    return res.status(400).json({ error: 'seller_id is required' });
+  }
+  try {
+    const result = await db.query(
+      `SELECT co.*, cl.name AS crop_name,
+              u.first_name || ' ' || u.last_name AS buyer_name,
+              u.phone AS buyer_phone, u.email AS buyer_email
+       FROM crop_orders co
+       JOIN crop_listings cl ON cl.id = co.crop_listing_id
+       JOIN users u ON u.id = co.buyer_id
+       WHERE co.seller_id = $1
+       ORDER BY co.created_at DESC`,
+      [seller_id]
+    );
+    return res.json({ success: true, orders: result.rows });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * POST /api/seller/crop-orders/:id/confirm (farmer confirms order)
+ */
+async function confirmCropOrder(req, res, next) {
+  const { id } = req.params;
+  const seller_id = req.body.seller_id || req.auth.id;
+
+  if (!seller_id) {
+    return res.status(400).json({ error: 'seller_id is required' });
+  }
+
+  try {
+    // 1. Get and update order status
+    const orderRes = await db.query(
+      `UPDATE crop_orders SET status = 'confirmed'
+       WHERE id = $1 AND seller_id = $2 AND status = 'pending'
+       RETURNING *`,
+      [id, seller_id]
+    );
+    if (orderRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Crop order not found or already processed' });
+    }
+    const order = orderRes.rows[0];
+
+    // 2. Fetch current crop listing to check stock
+    const listingRes = await db.query(
+      `SELECT * FROM crop_listings WHERE id = $1`,
+      [order.crop_listing_id]
+    );
+    if (listingRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Crop listing not found' });
+    }
+    const listing = listingRes.rows[0];
+
+    // 3. Deduct stock quantity
+    const newQty = Math.max(0, parseFloat(listing.quantity_kg) - parseFloat(order.quantity_kg));
+    const newStatus = newQty <= 0 ? 'deactivated' : 'active';
+
+    await db.query(
+      `UPDATE crop_listings SET quantity_kg = $1, status = $2, updated_at = NOW() WHERE id = $3`,
+      [newQty, newStatus, order.crop_listing_id]
+    );
+
+    // 4. Write to blockchain ledger
+    const ledgerEntry = await ledgerService.writeLedgerEntry(
+      order.crop_listing_id,
+      'crop',
+      order.buyer_id,
+      order.seller_id,
+      order.total_amount,
+      1
+    );
+
+    // 5. Notify buyer
+    await notificationService.pushNotification(
+      order.buyer_id,
+      'booking',
+      `Crop Order Confirmed ✅`,
+      `Your order of ${order.quantity_kg} kg of ${listing.name} was confirmed by the seller. Ledger TX: ${ledgerEntry.tx_id.slice(0, 12)}...`
+    );
+
+    // Audit log
+    await auditService.logAction(seller_id, 'CONFIRM_CROP_ORDER', req.ip, { id, ledger_tx: ledgerEntry.tx_id });
+
+    return res.json({ success: true, order, ledger_tx: ledgerEntry.tx_id });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * POST /api/seller/crop-orders/:id/reject
+ */
+async function rejectCropOrder(req, res, next) {
+  const { id } = req.params;
+  const seller_id = req.body.seller_id || req.auth.id;
+
+  if (!seller_id) {
+    return res.status(400).json({ error: 'seller_id is required' });
+  }
+
+  try {
+    const orderRes = await db.query(
+      `UPDATE crop_orders SET status = 'rejected'
+       WHERE id = $1 AND seller_id = $2 AND status = 'pending'
+       RETURNING *`,
+      [id, seller_id]
+    );
+    if (orderRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Crop order not found or already processed' });
+    }
+    const order = orderRes.rows[0];
+
+    // Notify buyer
+    await notificationService.pushNotification(
+      order.buyer_id,
+      'booking',
+      `Crop Order Rejected ❌`,
+      `Your crop purchase request for listing #${order.crop_listing_id} was rejected by the seller.`
+    );
+
+    // Audit log
+    await auditService.logAction(seller_id, 'REJECT_CROP_ORDER', req.ip, { id });
+
+    return res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getSellerCrops,
   createCropListing,
@@ -421,4 +648,9 @@ module.exports = {
   expressInterest,
   updateCropStock,
   getSellerAnalytics,
+  placeCropOrder,
+  getBuyerCropOrders,
+  getSellerCropOrders,
+  confirmCropOrder,
+  rejectCropOrder,
 };
