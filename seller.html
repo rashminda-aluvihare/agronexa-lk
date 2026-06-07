@@ -1266,7 +1266,7 @@ var pingStart = 0;
         // Store enriched user data
         _user = {
           id: p.id, email: p.email, role: p.role,
-          name: p.first_name, district: p.district, phone: p.phone,
+          name: p.first_name, first_name: p.first_name, last_name: p.last_name, district: p.district, phone: p.phone,
           address: p.address
         };
         sessionStorage.setItem('agro_user', JSON.stringify(_user));
@@ -1499,7 +1499,7 @@ function saveProfile(e) {
         
         _user = {
           id: p.id, email: p.email, role: p.role,
-          name: p.first_name, district: p.district, phone: p.phone,
+          name: p.first_name, first_name: p.first_name, last_name: p.last_name, district: p.district, phone: p.phone,
           address: p.address
         };
         sessionStorage.setItem('agro_user', JSON.stringify(_user));
@@ -2477,6 +2477,7 @@ function loadImage(url) {
 }
 
 // ── LEDGER PDF RECEIPT EXPORT ──
+// ── LEDGER PDF RECEIPT EXPORT ──
 async function downloadLedgerReceipt(txId, listingName, buyerName, amount, duration, blockHash, prevHash) {
   try {
     const { jsPDF } = window.jspdf;
@@ -2502,15 +2503,15 @@ async function downloadLedgerReceipt(txId, listingName, buyerName, amount, durat
     if (logoImg) {
       doc.setFillColor(255, 255, 255);
       doc.circle(21, 14, 10.5, 'F'); // White circle background
-      doc.addImage(logoImg, 'PNG', 13, 6, 16, 16); // Logo centered on circle
+      doc.addImage(logoImg, 'PNG', 11, 4, 20, 20); // Enlarged to fit circle perfectly
       // Title shifted right
       doc.setTextColor(255, 255, 255);
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(16);
-      doc.text('AGRONEXA LK', 34, 12);
+      doc.text('AGRONEXA LK', 35, 12);
       doc.setFontSize(8.5);
       doc.setFont('helvetica', 'normal');
-      doc.text('Smart Agricultural Blockchain Ledger', 34, 18);
+      doc.text('Smart Agricultural Blockchain Ledger', 35, 18);
     } else {
       // Title fallback
       doc.setTextColor(255, 255, 255);
@@ -2526,69 +2527,128 @@ async function downloadLedgerReceipt(txId, listingName, buyerName, amount, durat
     doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(9);
-    doc.text('TRANSACTION RECEIPT', 102, 11);
+    doc.text('INVOICE RECEIPT', 102, 11);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(7.5);
     const dateStr = new Date().toLocaleDateString('en-LK', { day: '2-digit', month: 'short', year: 'numeric' });
-    doc.text(`Date: ${dateStr}`, 102, 17);
+    doc.text(`Date: ${dateStr}`, 102, 16);
+    doc.text(`Invoice No: ANX-${txId.slice(0, 6).toUpperCase()}`, 102, 21);
 
     // Body Container Frame
     doc.setDrawColor(226, 237, 231);
     doc.setLineWidth(0.3);
-    doc.rect(10, 34, 128, 152);
+    doc.rect(10, 32, 128, 166);
 
-    // Section 1: Transaction Details
-    let y = 42;
+    // Section 1: Addresses
+    let y = 38;
     doc.setTextColor(11, 61, 34);
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(10.5);
-    doc.text('Ledger Transaction Details', 14, y);
+    doc.setFontSize(8.5);
+    doc.text('PROVIDER (SELLER)', 14, y);
+    doc.text('CUSTOMER (BUYER)', 78, y);
+
+    doc.setDrawColor(200, 215, 205);
+    doc.setLineWidth(0.2);
+    doc.line(14, y + 1.5, 134, y + 1.5);
+
+    y += 5.5;
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(40, 40, 40);
+    doc.setFontSize(8);
+    // Provider Details
+    const sellerTextName = _user ? ((_user.first_name || _user.name || '') + ' ' + (_user.last_name || '')).trim() : 'AgroNexa Seller';
+    doc.text(sellerTextName, 14, y);
+    // Customer Details
+    doc.text(String(buyerName), 78, y);
+
+    y += 4.5;
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(100, 100, 100);
+    doc.setFontSize(7.5);
+    // Provider Info
+    doc.text(_user ? (_user.phone || 'N/A') : 'N/A', 14, y);
+    // Customer Info
+    doc.text('Verified Buyer Partner', 78, y);
+
+    y += 4;
+    // Provider Location
+    const sellerDist = _user ? (_user.district || 'Verified') : 'Verified';
+    doc.text(`${sellerDist} District, LK`, 14, y);
+    // Customer Location
+    doc.text('Sri Lanka', 78, y);
+
+    y += 10;
+    // Table Header
+    doc.setFillColor(240, 245, 241); // light green background for table header
+    doc.rect(14, y - 4, 120, 6, 'F');
+    doc.setTextColor(11, 61, 34);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.5);
+    doc.text('DESCRIPTION', 16, y);
+    doc.text('RATE (PER DAY)', 68, y);
+    doc.text('DURATION', 95, y);
+    doc.text('TOTAL AMOUNT', 115, y);
+
     doc.setDrawColor(11, 61, 34);
-    doc.setLineWidth(0.4);
+    doc.setLineWidth(0.3);
     doc.line(14, y + 2, 134, y + 2);
 
-    y += 8;
-
-    // Helper to draw clean data row
-    function drawDataRow(label, value, rowY, isBold = false, isAlternating = false) {
-      if (isAlternating) {
-        doc.setFillColor(244, 248, 245);
-        doc.rect(14, rowY - 4, 120, 6, 'F');
-      }
-      doc.setTextColor(100, 100, 100);
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(9);
-      doc.text(label, 16, rowY);
-
-      doc.setTextColor(40, 40, 40);
-      doc.setFont('helvetica', isBold ? 'bold' : 'normal');
-      doc.text(value, 54, rowY);
-    }
-
-    drawDataRow('Transaction ID', String(txId), y, false, false);
     y += 7;
-    drawDataRow('Item Rented', String(listingName), y, false, true);
-    y += 7;
-    drawDataRow('Rented To', String(buyerName), y, false, false);
-    y += 7;
-    drawDataRow('Rental Duration', `${duration} Days`, y, false, true);
-    y += 7;
+    // Table Body
+    doc.setTextColor(60, 60, 60);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    // Description
+    doc.text(String(listingName), 16, y);
+    // Rate
+    const rateVal = amount / duration;
+    doc.text(`Rs. ${parseFloat(rateVal).toLocaleString(undefined, {minimumFractionDigits: 2})}`, 68, y);
+    // Duration
+    doc.text(`${duration} Days`, 98, y);
+    // Total
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(40, 40, 40);
+    doc.text(`Rs. ${parseFloat(amount).toLocaleString(undefined, {minimumFractionDigits: 2})}`, 115, y);
 
-    // Highlight Total Amount Row
-    doc.setFillColor(237, 245, 239);
-    doc.rect(14, y - 5, 120, 8, 'F');
-    doc.setDrawColor(30, 122, 71);
+    doc.setDrawColor(220, 230, 223);
     doc.setLineWidth(0.2);
-    doc.line(14, y - 5, 134, y - 5);
-    doc.line(14, y + 3, 134, y + 3);
+    doc.line(14, y + 2.5, 134, y + 2.5);
+
+    y += 7.5;
+    // Subtotal
+    doc.setTextColor(100, 100, 100);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7.5);
+    doc.text('Subtotal', 85, y);
+    doc.setTextColor(40, 40, 40);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Rs. ${parseFloat(amount).toLocaleString(undefined, {minimumFractionDigits: 2})}`, 115, y);
+
+    y += 4.5;
+    // Service Fee
+    doc.setTextColor(100, 100, 100);
+    doc.setFont('helvetica', 'normal');
+    doc.text('AgroNexa Platform Fee', 85, y);
+    doc.setTextColor(40, 40, 40);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Rs. 0.00', 115, y);
+
+    y += 6;
+    // Net Total (Highlighted row)
+    doc.setFillColor(237, 245, 239);
+    doc.rect(82, y - 4, 52, 6, 'F');
+    doc.setDrawColor(30, 122, 71);
+    doc.setLineWidth(0.3);
+    doc.line(82, y - 4, 134, y - 4);
+    doc.line(82, y + 2, 134, y + 2);
 
     doc.setTextColor(11, 61, 34);
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(9.5);
-    doc.text('Total Paid', 16, y);
-    doc.text(`Rs. ${parseFloat(amount).toLocaleString()}`, 54, y);
+    doc.setFontSize(8);
+    doc.text('TOTAL PAID', 85, y);
+    doc.text(`Rs. ${parseFloat(amount).toLocaleString(undefined, {minimumFractionDigits: 2})}`, 115, y);
 
-    y += 15;
+    y += 12;
 
     // Section 2: Trust & Quality Guarantee Card
     doc.setTextColor(11, 61, 34);
@@ -2649,7 +2709,7 @@ async function downloadLedgerReceipt(txId, listingName, buyerName, amount, durat
 
     // Footer decoration
     doc.setFillColor(240, 245, 241);
-    doc.rect(10, 180, 128, 6, 'F');
+    doc.rect(10, 192, 128, 4, 'F');
 
     doc.save(`AgroNexa_Receipt_${txId.slice(0, 8)}.pdf`);
     showToast('PDF Generated!', 'Receipt downloaded successfully 📄', 'success');
@@ -2684,7 +2744,7 @@ async function downloadBookingSlip(bookingId, listingName, renterName, start, en
     if (logoImg) {
       doc.setFillColor(255, 255, 255);
       doc.circle(21, 14, 10.5, 'F'); // White circle background
-      doc.addImage(logoImg, 'PNG', 13, 6, 16, 16); // Logo centered on circle
+      doc.addImage(logoImg, 'PNG', 11, 4, 20, 20); // Enlarged to fit circle perfectly
       // Title shifted right
       doc.setTextColor(255, 255, 255);
       doc.setFont('helvetica', 'bold');
