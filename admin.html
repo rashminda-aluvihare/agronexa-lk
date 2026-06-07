@@ -93,6 +93,11 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
 .tab-row{
   display:flex;gap:2px;padding:20px 28px 0;border-bottom:1px solid var(--border);
   background:#fff;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.tab-row::-webkit-scrollbar {
+  display: none;
 }
 .tab-btn{
   padding:10px 20px;border:none;background:transparent;font-family:'DM Sans',sans-serif;
@@ -411,12 +416,147 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
   border-color: var(--g4);
 }
 
+.tp-card {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.tp-delete-btn {
+  background: transparent;
+  border: 1px solid var(--danger-border);
+  color: var(--danger);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  height: 32px;
+  flex-shrink: 0;
+  margin-left: 10px;
+  transition: all 0.2s;
+}
+.tp-delete-btn:hover {
+  background: var(--danger-bg);
+}
+
+@media(max-width:768px){
+  .tab-row {
+    padding: 12px 16px 0;
+    overflow-x: auto;
+    white-space: nowrap;
+    gap: 8px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .tab-row::-webkit-scrollbar {
+    display: none;
+  }
+  .tab-btn {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    font-size: 12.5px;
+  }
+}
+
 @media(max-width:640px){
   .content{padding:16px;}
-  .tab-row{padding:16px 16px 0;}
+  .tab-row{padding:12px 16px 0;}
   .topbar{padding:0 16px;}
   .nic-viewer{grid-template-columns:1fr;}
-  .tb-stat{display:none;}
+  .tb-stat, .tb-sep {display:none;}
+  .widget-card {
+    padding: 16px;
+  }
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 14px;
+    gap: 10px;
+  }
+  .filter-input, .filter-select {
+    width: 100%;
+    min-width: 0;
+  }
+  #toast {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    text-align: center;
+  }
+}
+
+@media(max-width:540px){
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    padding: 12px;
+    gap: 10px;
+  }
+  .stat-card-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+  .stat-card-val {
+    font-size: 1.15rem;
+  }
+  .stat-card-lbl {
+    font-size: 9px;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .ucard-top {
+    padding: 12px;
+    gap: 10px;
+  }
+  .ucard-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 0.95rem;
+    border-radius: 10px;
+  }
+  .ucard-name {
+    font-size: 13.5px;
+  }
+  .ucard-email {
+    font-size: 11px;
+  }
+  .meta-pill {
+    font-size: 9.5px;
+    padding: 2px 6px;
+  }
+  .ucard-status {
+    font-size: 9px;
+    padding: 3px 8px;
+  }
+}
+
+@media(max-width:480px){
+  .auth-card{padding:24px 20px; margin: 16px; width: calc(100% - 32px);}
+  .tb-name { font-size: 0.8rem; }
+  .tb-badge { font-size: 8px; padding: 2px 6px; }
+  .tb-logout { padding: 4px 10px; font-size: 11px; }
+  .tp-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .tp-delete-btn {
+    align-self: flex-start;
+    margin-left: 0 !important;
+    width: 100%;
+    text-align: center;
+  }
 }
 </style>
 </head>
@@ -1118,7 +1258,7 @@ async function loadTransport() {
       listEl.innerHTML = '';
       data.providers.forEach(function(tp) {
         var el = document.createElement('div');
-        el.style.cssText = 'background:var(--paper); border:1px solid var(--border); border-radius:12px; padding:12px 14px; display:flex; justify-content:space-between; align-items:center;';
+        el.className = 'tp-card';
         el.innerHTML = 
           '<div>' +
             '<div style="font-size:13.5px; font-weight:600; color:var(--ink);">' + esc(tp.owner_name) + '</div>' +
@@ -1129,7 +1269,7 @@ async function loadTransport() {
               '<span class="meta-pill">📞 ' + esc(tp.phone) + '</span>' +
             '</div>' +
           '</div>' +
-          '<button onclick="deactivateTransport(' + tp.id + ')" style="background:transparent; border:1px solid var(--danger-border); color:var(--danger); border-radius:8px; padding:6px 12px; font-size:12px; cursor:pointer; font-weight:600; height:32px; flex-shrink:0; margin-left:10px;">Delete</button>';
+          '<button class="tp-delete-btn" onclick="deactivateTransport(' + tp.id + ')">Delete</button>';
         listEl.appendChild(el);
       });
     }
