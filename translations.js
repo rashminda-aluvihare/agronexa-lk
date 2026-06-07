@@ -85,7 +85,26 @@ const TRANSLATIONS = {
     "nav-seller-requests": "Buyer Requests",
     "nav-seller-equipment": "Equipment Rentals",
     "nav-weather-advisory": "Weather & Advisory",
-    "nav-price-index": "Daily Price Index"
+    "nav-price-index": "Daily Price Index",
+    "logistics-tab-bookings": "My Bookings",
+    "logistics-btn-book": "Book Transport",
+    "logistics-book-title": "Book Transport Provider",
+    "logistics-label-commodity": "Commodity Name",
+    "logistics-label-qty": "Quantity (kg)",
+    "logistics-label-pickup": "Pickup Address",
+    "logistics-label-delivery": "Delivery Address",
+    "logistics-label-price": "Offered Price (Rs.)",
+    "logistics-btn-submit-booking": "Confirm Booking Request",
+    "booking-status-pending": "Pending",
+    "booking-status-confirmed": "Confirmed",
+    "booking-status-transit": "In-Transit",
+    "booking-status-delivered": "Delivered",
+    "booking-status-cancelled": "Cancelled",
+    "booking-action-cancel": "Cancel",
+    "booking-action-confirm": "Confirm",
+    "booking-action-transit": "Start Transit",
+    "booking-action-delivered": "Mark Delivered",
+    "logistics-no-bookings": "No transport bookings found."
   },
   si: {
     // Nav & General
@@ -172,7 +191,26 @@ const TRANSLATIONS = {
     "nav-seller-requests": "ගැනුම්කරුවන්ගේ ඉල්ලීම්",
     "nav-seller-equipment": "යන්ත්‍රෝපකරණ කුලියට දීම",
     "nav-weather-advisory": "කාලගුණ සහ වගා උපදෙස්",
-    "nav-price-index": "දෛනික බෝග මිල ගණන්"
+    "nav-price-index": "දෛනික බෝග මිල ගණන්",
+    "logistics-tab-bookings": "මගේ ඇණවුම්",
+    "logistics-btn-book": "ප්‍රවාහනය වෙන්කරන්න",
+    "logistics-book-title": "ප්‍රවාහන සේවාව වෙන්කරවා ගැනීම",
+    "logistics-label-commodity": "බෝග වර්ගය/ද්‍රව්‍යය",
+    "logistics-label-qty": "ප්‍රමාණය (කි.ග්‍රෑ)",
+    "logistics-label-pickup": "පටවන ස්ථානය (ලිපිනය)",
+    "logistics-label-delivery": "භාරදෙන ස්ථානය (ලිපිනය)",
+    "logistics-label-price": "පිරිනමන මිල (රු.)",
+    "logistics-btn-submit-booking": "වෙන්කිරීම තහවුරු කරන්න",
+    "booking-status-pending": "පෙරලකුණු කළ (Pending)",
+    "booking-status-confirmed": "තහවුරු කරන ලද (Confirmed)",
+    "booking-status-transit": "ගමනේ යෙදෙන (In-Transit)",
+    "booking-status-delivered": "භාරදෙන ලද (Delivered)",
+    "booking-status-cancelled": "අවලංගු කළ (Cancelled)",
+    "booking-action-cancel": "අවලංගု කරන්න",
+    "booking-action-confirm": "තහවුරු කරන්න",
+    "booking-action-transit": "ගමන ආරම්භ කරන්න",
+    "booking-action-delivered": "භාරදුන් බව සලකුණු කරන්න",
+    "logistics-no-bookings": "ප්‍රවාහන ඇණවුම් කිසිවක් හමු නොවීය."
   },
   ta: {
     // Nav & General
@@ -259,7 +297,26 @@ const TRANSLATIONS = {
     "nav-seller-requests": "கொள்முதல் கோரிக்கைகள்",
     "nav-seller-equipment": "இயந்திர வாடகை",
     "nav-weather-advisory": "வானிலை மற்றும் ஆலோசனை",
-    "nav-price-index": "தினசரி சந்தை விலை"
+    "nav-price-index": "தினசரி சந்தை விலை",
+    "logistics-tab-bookings": "எனது முன்பதிவுகள்",
+    "logistics-btn-book": "போக்குவரத்து முன்பதிவு",
+    "logistics-book-title": "போக்குவரத்து வழங்குநரை முன்பதிவு செய்க",
+    "logistics-label-commodity": "பயிர் வகை",
+    "logistics-label-qty": "அளவு (கிலோ)",
+    "logistics-label-pickup": "ஏற்றும் இடம்",
+    "logistics-label-delivery": "இறக்கும் இடம்",
+    "logistics-label-price": "வழங்கப்படும் விலை (ரூ.)",
+    "logistics-btn-submit-booking": "முன்பதிவு கோரிக்கையை உறுதிசெய்",
+    "booking-status-pending": "காத்திருக்கிறது",
+    "booking-status-confirmed": "உறுதிப்படுத்தப்பட்டது",
+    "booking-status-transit": "பயணத்தில் உள்ளது",
+    "booking-status-delivered": "வழங்கப்பட்டது",
+    "booking-status-cancelled": "ரத்து செய்யப்பட்டது",
+    "booking-action-cancel": "ரத்து செய்க",
+    "booking-action-confirm": "உறுதிசெய்",
+    "booking-action-transit": "பயணத்தை தொடங்கு",
+    "booking-action-delivered": "வழங்கப்பட்டதாக குறி",
+    "logistics-no-bookings": "முன்பதிவுகள் எதுவும் இல்லை."
   }
 };
 

@@ -244,6 +244,27 @@ async function initDatabase() {
       );
     `);
 
+    // Ensure owner_id column exists on transport_providers table
+    await client.query("ALTER TABLE transport_providers ADD COLUMN IF NOT EXISTS owner_id INTEGER REFERENCES users(id);");
+
+    // 12. Transport Bookings Table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS transport_bookings (
+        id SERIAL PRIMARY KEY,
+        provider_id INTEGER NOT NULL REFERENCES transport_providers(id) ON DELETE CASCADE,
+        requester_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        requester_name VARCHAR(120),
+        commodity_name VARCHAR(120) NOT NULL,
+        quantity_kg NUMERIC(10,2) NOT NULL,
+        pickup_address TEXT NOT NULL,
+        delivery_address TEXT NOT NULL,
+        price NUMERIC(10,2),
+        status VARCHAR(20) DEFAULT 'pending',
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+
     await client.query('COMMIT');
     console.log('✅ Database migration completed successfully.');
   } catch (err) {

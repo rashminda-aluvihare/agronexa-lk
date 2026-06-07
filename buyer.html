@@ -3,6 +3,7 @@
 <head>
   <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -632,6 +633,13 @@
           </tbody>
         </table>
       </div>
+      <!-- Chart.js Trend Chart -->
+      <div id="panel-price-chart" style="display: none; margin-top: 20px; padding: 16px; background: #fafbfc; border: 1px solid var(--border); border-radius: 12px;">
+        <h4 id="price-chart-title" style="font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--teal-mid);"></h4>
+        <div style="position: relative; height: 200px; width: 100%;">
+          <canvas id="priceChart"></canvas>
+        </div>
+      </div>
     </div>
 
     <!-- Broadcast + Marketplace -->
@@ -759,6 +767,42 @@
             <span style="font-size:15px;color:var(--teal);font-600;" id="book-total-cost">Rs. 0</span>
           </div>
           <button type="submit" class="btn-sm btn-confirm" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;">Confirm Booking Request</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- TRANSPORT BOOKING MODAL -->
+    <div id="book-transport-modal" style="display:none;position:fixed;inset:0;background:rgba(20,29,43,0.7);backdrop-filter:blur(4px);z-index:2000;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:20px;padding:32px;max-width:400px;width:95%;box-shadow:0 20px 60px rgba(20,29,43,0.3);border:1px solid var(--border);position:relative;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <h3 style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--text)" id="book-trans-title" data-i18n="logistics-book-title">Book Transport Provider</h3>
+          <button onclick="closeTransportBookingModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted)">&times;</button>
+        </div>
+        <form id="book-transport-form" onsubmit="submitTransportBooking(event)">
+          <input type="hidden" id="book-trans-provider-id">
+          
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="logistics-label-commodity">Commodity Name</label>
+            <input class="form-input" type="text" id="book-trans-commodity" required placeholder="e.g. Tomatoes" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+          </div>
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="logistics-label-qty">Quantity (kg)</label>
+            <input class="form-input" type="number" id="book-trans-qty" required placeholder="e.g. 500" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+          </div>
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="logistics-label-pickup">Pickup Address</label>
+            <textarea id="book-trans-pickup" required placeholder="Pickup Location" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;font-family:inherit;font-size:13px;height:60px;resize:none;"></textarea>
+          </div>
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="logistics-label-delivery">Delivery Address</label>
+            <textarea id="book-trans-delivery" required placeholder="Delivery Location" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;font-family:inherit;font-size:13px;height:60px;resize:none;"></textarea>
+          </div>
+          <div style="margin-bottom:20px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="logistics-label-price">Offered Price (Rs.)</label>
+            <input class="form-input" type="number" id="book-trans-price" placeholder="e.g. 15000" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+          </div>
+          
+          <button type="submit" class="btn-sm btn-confirm" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;" data-i18n="logistics-btn-submit-booking">Confirm Booking Request</button>
         </form>
       </div>
     </div>
@@ -3365,6 +3409,111 @@ function loadWeather(district) {
     });
 }
 
+let priceChartInstance = null;
+
+function showCropChart(cropName, historyData) {
+  const panel = document.getElementById('panel-price-chart');
+  const title = document.getElementById('price-chart-title');
+  const ctx = document.getElementById('priceChart').getContext('2d');
+  
+  if (!panel || !ctx) return;
+  
+  panel.style.display = 'block';
+  
+  const currentLang = localStorage.getItem("agro_lang") || "en";
+  let titlePrefix = "7-Day Price Trend";
+  if (currentLang === "si") {
+    titlePrefix = "දින 7ක මිල ප්‍රවණතාවය";
+  } else if (currentLang === "ta") {
+    titlePrefix = "7-நாள் விலை போக்கு";
+  }
+  title.textContent = `${titlePrefix}: ${cropName}`;
+  
+  const labels = [];
+  for (let i = 6; i >= 0; i--) {
+    if (i === 0) {
+      labels.push(currentLang === "si" ? "අද" : (currentLang === "ta" ? "இன்று" : "Today"));
+    } else {
+      labels.push(currentLang === "si" ? `දින ${i} පෙර` : (currentLang === "ta" ? `${i} நாட்களுக்கு முன்` : `${i}d ago`));
+    }
+  }
+  
+  if (priceChartInstance) {
+    priceChartInstance.destroy();
+  }
+  
+  const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--teal-mid').trim() || '#1a4f72';
+  const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+  gradient.addColorStop(0, primaryColor + '40');
+  gradient.addColorStop(1, primaryColor + '00');
+  
+  priceChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: cropName,
+        data: historyData,
+        borderColor: primaryColor,
+        backgroundColor: gradient,
+        borderWidth: 2,
+        fill: true,
+        tension: 0.3,
+        pointBackgroundColor: primaryColor,
+        pointBorderColor: '#fff',
+        pointHoverRadius: 6,
+        pointHoverBackgroundColor: primaryColor,
+        pointHoverBorderColor: '#fff',
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false,
+          callbacks: {
+            label: function(context) {
+              return ` Rs. ${context.raw.toFixed(2)}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: {
+            display: false
+          },
+          ticks: {
+            font: {
+              family: 'DM Sans',
+              size: 10
+            }
+          }
+        },
+        y: {
+          grid: {
+            color: '#f0f0f0'
+          },
+          ticks: {
+            font: {
+              family: 'DM Sans',
+              size: 10
+            },
+            callback: function(value) {
+              return 'Rs.' + value;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
 function loadMarketPrices() {
   const tbody = document.getElementById('price-index-table-body');
   if (!tbody) return;
@@ -3380,11 +3529,15 @@ function loadMarketPrices() {
         const color = crop.change >= 0 ? 'var(--green)' : '#D95050';
         const row = document.createElement('tr');
         row.style.borderBottom = '1px solid var(--border)';
+        row.style.cursor = 'pointer';
         row.innerHTML = `
           <td style="padding:10px 4px; font-weight:500;">${crop.name}</td>
           <td style="padding:10px 4px; text-align:right; font-weight:600;">Rs. ${crop.avgPrice}</td>
           <td style="padding:10px 4px; text-align:right; color:${color}; font-weight:600;">${sign}${crop.change}%</td>
         `;
+        row.addEventListener('click', () => {
+          showCropChart(crop.name, crop.history || [180, 185, 175, 190, 182, 188, crop.avgPrice]);
+        });
         tbody.appendChild(row);
       });
     })
@@ -3400,20 +3553,26 @@ function toggleTransportTab(subtab) {
   currentTransportTab = subtab;
   const browseBtn = document.getElementById('transport-tab-browse-btn');
   const regBtn = document.getElementById('transport-tab-register-btn');
+  const bookBtn = document.getElementById('transport-tab-bookings-btn');
   const browsePanel = document.getElementById('transport-browse-panel');
   const regPanel = document.getElementById('transport-register-panel');
+  const bookingsPanel = document.getElementById('transport-bookings-panel');
   
   if (subtab === 'browse') {
     if (browseBtn) { browseBtn.style.background = '#fff'; browseBtn.style.color = '#155C35'; }
     if (regBtn) { regBtn.style.background = 'transparent'; regBtn.style.color = '#6B9B7A'; }
+    if (bookBtn) { bookBtn.style.background = 'transparent'; bookBtn.style.color = '#6B9B7A'; }
     if (browsePanel) browsePanel.style.display = 'block';
     if (regPanel) regPanel.style.display = 'none';
+    if (bookingsPanel) bookingsPanel.style.display = 'none';
     loadTransportDrivers();
-  } else {
+  } else if (subtab === 'register') {
     if (browseBtn) { browseBtn.style.background = 'transparent'; browseBtn.style.color = '#6B9B7A'; }
     if (regBtn) { regBtn.style.background = '#fff'; regBtn.style.color = '#155C35'; }
+    if (bookBtn) { bookBtn.style.background = 'transparent'; bookBtn.style.color = '#6B9B7A'; }
     if (browsePanel) browsePanel.style.display = 'none';
     if (regPanel) regPanel.style.display = 'block';
+    if (bookingsPanel) bookingsPanel.style.display = 'none';
     
     // Prefill details
     if (_user) {
@@ -3421,6 +3580,14 @@ function toggleTransportTab(subtab) {
       document.getElementById('trans-phone').value = _user.phone || '';
       document.getElementById('trans-district').value = _user.district || 'Colombo';
     }
+  } else if (subtab === 'bookings') {
+    if (browseBtn) { browseBtn.style.background = 'transparent'; browseBtn.style.color = '#6B9B7A'; }
+    if (regBtn) { regBtn.style.background = 'transparent'; regBtn.style.color = '#6B9B7A'; }
+    if (bookBtn) { bookBtn.style.background = '#fff'; bookBtn.style.color = '#155C35'; }
+    if (browsePanel) browsePanel.style.display = 'none';
+    if (regPanel) regPanel.style.display = 'none';
+    if (bookingsPanel) bookingsPanel.style.display = 'block';
+    loadTransportBookings();
   }
 }
 
@@ -3450,16 +3617,25 @@ function loadTransportDrivers() {
         item.style.justifyContent = 'space-between';
         item.style.alignItems = 'center';
         
+        const isOwner = _user && p.owner_id === _user.id;
+        const bookBtnHtml = isOwner 
+          ? `<span style="font-size: 11px; color: var(--muted); font-style: italic;">Your Vehicle</span>`
+          : `<button onclick="openTransportBookingModal(${p.id})" class="btn-sm btn-confirm" style="margin:0; height:auto; padding:6px 12px; font-size:11px;" data-i18n="logistics-btn-book">Book Transport</button>`;
+        
         item.innerHTML = `
           <div>
             <div style="font-weight:600; font-size:14.5px; color:var(--text);">${p.vehicle_type} — ${p.vehicle_no}</div>
             <div style="font-size:12px; color:var(--muted); margin-top:2px;">Owner: ${p.owner_name} | Capacity: ${p.capacity_kg} kg</div>
             <div style="font-size:11px; background:var(--teal-pale); color:var(--teal-mid); display:inline-block; padding:2px 8px; border-radius:4px; margin-top:6px;">📍 ${p.district}</div>
           </div>
-          <a href="tel:${p.phone}" class="broadcast-btn" style="text-decoration:none; padding:8px 14px; font-size:12px; height:auto; margin:0;" data-i18n="logistics-driver-call">📞 Call Driver</a>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <a href="tel:${p.phone}" class="broadcast-btn" style="text-decoration:none; padding:6px 12px; font-size:11px; height:auto; margin:0;" data-i18n="logistics-driver-call">📞 Call</a>
+            ${bookBtnHtml}
+          </div>
         `;
         listEl.appendChild(item);
       });
+      applyTranslations();
     })
     .catch(err => {
       listEl.innerHTML = `<div style="font-size:12px;color:var(--amber);text-align:center;padding:20px 0;">Error loading drivers: ${err.message}</div>`;
@@ -3495,6 +3671,178 @@ function submitTransportRegistration(e) {
         toggleTransportTab('browse');
       } else {
         showToast('Error', data.error || 'Failed to register vehicle', 'error');
+      }
+    })
+    .catch(err => {
+      showToast('Error', err.message, 'error');
+    });
+}
+
+function openTransportBookingModal(providerId) {
+  const modal = document.getElementById('book-transport-modal');
+  if (!modal) return;
+  document.getElementById('book-trans-provider-id').value = providerId;
+  document.getElementById('book-transport-form').reset();
+  modal.style.display = 'flex';
+}
+
+function closeTransportBookingModal() {
+  const modal = document.getElementById('book-transport-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+function submitTransportBooking(e) {
+  e.preventDefault();
+  const providerId = document.getElementById('book-trans-provider-id').value;
+  const commodity = document.getElementById('book-trans-commodity').value.trim();
+  const qty = document.getElementById('book-trans-qty').value;
+  const pickup = document.getElementById('book-trans-pickup').value.trim();
+  const delivery = document.getElementById('book-trans-delivery').value.trim();
+  const price = document.getElementById('book-trans-price').value;
+
+  fetch(API_URL + '/api/transport/bookings', {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      provider_id: parseInt(providerId),
+      commodity_name: commodity,
+      quantity_kg: parseFloat(qty),
+      pickup_address: pickup,
+      delivery_address: delivery,
+      price: price ? parseFloat(price) : null
+    })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        showToast('Success', 'Transport booking request sent! 🚛', 'success');
+        closeTransportBookingModal();
+        toggleTransportTab('bookings');
+      } else {
+        showToast('Error', data.error || 'Failed to request booking', 'error');
+      }
+    })
+    .catch(err => {
+      showToast('Error', err.message, 'error');
+    });
+}
+
+function loadTransportBookings() {
+  const listEl = document.getElementById('transport-bookings-list');
+  if (!listEl) return;
+
+  fetch(API_URL + '/api/transport/bookings', {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success) return;
+      listEl.innerHTML = '';
+      if (data.bookings.length === 0) {
+        listEl.innerHTML = `<div style="font-size:12.5px;color:var(--muted);text-align:center;padding:30px 0;" data-i18n="logistics-no-bookings">No transport bookings found.</div>`;
+        return;
+      }
+
+      data.bookings.forEach(b => {
+        const item = document.createElement('div');
+        item.className = 'booking-item';
+        item.style.padding = '16px';
+        item.style.background = '#fff';
+        item.style.border = '1px solid var(--border)';
+        item.style.borderRadius = '12px';
+        item.style.marginBottom = '12px';
+        item.style.boxShadow = '0 2px 8px rgba(0,0,0,0.02)';
+
+        let badgeColor = '';
+        let badgeBg = '';
+        let statusKey = `booking-status-${b.status}`;
+        switch(b.status) {
+          case 'pending':
+            badgeBg = '#FFF3CD'; badgeColor = '#856404'; break;
+          case 'confirmed':
+            badgeBg = '#D1ECF1'; badgeColor = '#0C5460'; break;
+          case 'in-transit':
+            badgeBg = '#E2E3E5'; badgeColor = '#383D41'; break;
+          case 'delivered':
+            badgeBg = '#D4EDDA'; badgeColor = '#155724'; break;
+          case 'cancelled':
+            badgeBg = '#F8D7DA'; badgeColor = '#721C24'; break;
+          default:
+            badgeBg = '#F4F6F8'; badgeColor = 'var(--text)';
+        }
+
+        let actionButtonsHtml = '';
+        const isRequester = b.requester_id === _user.id;
+        const isProviderOwner = b.provider_owner_id === _user.id;
+
+        if (isRequester && b.status === 'pending') {
+          actionButtonsHtml += `
+            <button onclick="updateTransportBookingStatus(${b.id}, 'cancelled')" class="btn-sm btn-reject" style="margin:0; height:auto; padding:6px 12px; font-size:11px;" data-i18n="booking-action-cancel">Cancel</button>
+          `;
+        }
+
+        if (isProviderOwner) {
+          if (b.status === 'pending') {
+            actionButtonsHtml += `
+              <button onclick="updateTransportBookingStatus(${b.id}, 'confirmed')" class="btn-sm btn-accept" style="margin:0; height:auto; padding:6px 12px; font-size:11px; background:var(--green); color:#fff; border:none;" data-i18n="booking-action-confirm">Confirm</button>
+              <button onclick="updateTransportBookingStatus(${b.id}, 'cancelled')" class="btn-sm btn-reject" style="margin:0 0 0 8px; height:auto; padding:6px 12px; font-size:11px;" data-i18n="booking-action-cancel">Cancel</button>
+            `;
+          } else if (b.status === 'confirmed') {
+            actionButtonsHtml += `
+              <button onclick="updateTransportBookingStatus(${b.id}, 'in-transit')" class="btn-sm btn-confirm" style="margin:0; height:auto; padding:6px 12px; font-size:11px;" data-i18n="booking-action-transit">Start Transit</button>
+            `;
+          } else if (b.status === 'in-transit') {
+            actionButtonsHtml += `
+              <button onclick="updateTransportBookingStatus(${b.id}, 'delivered')" class="btn-sm btn-accept" style="margin:0; height:auto; padding:6px 12px; font-size:11px; background:var(--green); color:#fff; border:none;" data-i18n="booking-action-delivered">Mark Delivered</button>
+            `;
+          }
+        }
+
+        let contactInfoHtml = '';
+        if (isRequester) {
+          contactInfoHtml = `<div style="font-size:12px; color:var(--muted); margin-top:4px;"><b>Driver:</b> ${b.provider_owner_name} (${b.provider_phone}) | ${b.vehicle_type} [${b.vehicle_no}]</div>`;
+        } else {
+          contactInfoHtml = `<div style="font-size:12px; color:var(--muted); margin-top:4px;"><b>Client:</b> ${b.requester_name}</div>`;
+        }
+
+        item.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+            <div>
+              <div style="font-weight:600; font-size:15px; color:var(--text);">${b.commodity_name} — ${b.quantity_kg} kg</div>
+              ${contactInfoHtml}
+              <div style="font-size:12px; color:var(--muted); margin-top:4px;"><b>Route:</b> ${b.pickup_address} ➔ ${b.delivery_address}</div>
+              <div style="font-size:12px; font-weight:600; color:var(--teal-mid); margin-top:4px;">Rs. ${b.price ? parseFloat(b.price).toLocaleString() : 'Negotiable'}</div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
+              <span style="font-size:11px; font-weight:600; text-transform:uppercase; padding:4px 10px; border-radius:6px; background:${badgeBg}; color:${badgeColor};" data-i18n="${statusKey}">${b.status}</span>
+              <div style="display:flex; margin-top:8px;">
+                ${actionButtonsHtml}
+              </div>
+            </div>
+          </div>
+        `;
+        listEl.appendChild(item);
+      });
+      applyTranslations();
+    })
+    .catch(err => {
+      listEl.innerHTML = `<div style="font-size:12px;color:var(--amber);text-align:center;padding:20px 0;">Error loading bookings: ${err.message}</div>`;
+    });
+}
+
+function updateTransportBookingStatus(bookingId, status) {
+  fetch(API_URL + `/api/transport/bookings/${bookingId}/status`, {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ status })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        showToast('Success', `Booking updated to ${status}! 🚛`, 'success');
+        loadTransportBookings();
+      } else {
+        showToast('Error', data.error || 'Failed to update booking status', 'error');
       }
     })
     .catch(err => {
