@@ -358,8 +358,60 @@
     }
   }
 
+  /* Quick Actions Hub */
+  .quick-actions-hub {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .quick-action-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .quick-action-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-light);
+  }
+  .quick-action-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--primary-pale);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .quick-action-info {
+    flex: 1;
+  }
+  .quick-action-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+  }
+  .quick-action-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+
   @media (max-width: 480px) {
     .stats-row {
+      grid-template-columns: 1fr !important;
+    }
+    .quick-actions-hub {
       grid-template-columns: 1fr !important;
     }
     .topbar {
@@ -408,17 +460,17 @@
     </div>
     <div class="nav-item" onclick="switchTab('listings')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h18v4H3z"/><path d="M3 10h18v11H3z"/></svg>
-      <span data-i18n="nav-marketplace">My Listings</span>
+      <span data-i18n="nav-seller-listings">My Listings</span>
       <span class="nav-badge" id="sidebar-listings-count">0</span>
     </div>
     <div class="nav-item" onclick="switchTab('requests')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-      <span data-i18n="nav-requests">Buyer Requests</span>
+      <span data-i18n="nav-seller-requests">Buyer Requests</span>
       <span class="nav-badge" id="sidebar-requests-count">0</span>
     </div>
     <div class="nav-item" onclick="switchTab('equipment')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 3H8v4h8V3z"/></svg>
-      <span data-i18n="nav-bookings">Equipment Rentals</span>
+      <span data-i18n="nav-seller-equipment">Equipment Rentals</span>
       <span class="nav-badge" id="sidebar-equipment-count" style="display:none;background:var(--amber);">0</span>
     </div>
     <div class="nav-item" onclick="switchTab('transport')">
@@ -505,6 +557,24 @@
         <div class="stat-val" id="stat-completed-rentals">—</div>
         <div class="stat-label">Completed Rentals</div>
         <div class="stat-delta up">↑ 4 this month</div>
+      </div>
+    </div>
+
+    <!-- Quick Actions Hub -->
+    <div id="section-quick-actions" class="quick-actions-hub content-section">
+      <div class="quick-action-card" onclick="switchTab('listings')">
+        <div class="quick-action-icon">🌾</div>
+        <div class="quick-action-info">
+          <div class="quick-action-title" data-i18n="qa-add-listing-title">Add Crop Listing</div>
+          <div class="quick-action-desc" data-i18n="qa-add-listing-desc">Publish your crop stock to marketplace</div>
+        </div>
+      </div>
+      <div class="quick-action-card" onclick="switchTab('requests')">
+        <div class="quick-action-icon">📩</div>
+        <div class="quick-action-info">
+          <div class="quick-action-title" data-i18n="qa-view-requests-title">View Buyer Requests</div>
+          <div class="quick-action-desc" data-i18n="qa-view-requests-desc">See recent crop demands from corporate buyers</div>
+        </div>
       </div>
     </div>
 
@@ -1373,6 +1443,7 @@ function switchTab(tab) {
   });
 
   const sectionStats = document.getElementById('section-stats');
+  const sectionQuickActions = document.getElementById('section-quick-actions');
   const sectionListingsRequests = document.getElementById('section-listings-requests');
   const sectionLedgerRep = document.getElementById('section-ledger-rep');
   const sectionEquipment = document.getElementById('section-equipment');
@@ -1387,6 +1458,7 @@ function switchTab(tab) {
 
   // Hide all sections first
   sectionStats.style.display = 'none';
+  if (sectionQuickActions) sectionQuickActions.style.display = 'none';
   sectionListingsRequests.style.display = 'none';
   sectionLedgerRep.style.display = 'none';
   sectionEquipment.style.display = 'none';
@@ -1398,6 +1470,7 @@ function switchTab(tab) {
 
   if (tab === 'dashboard') {
     sectionStats.style.display = 'grid';
+    if (sectionQuickActions) sectionQuickActions.style.display = 'grid';
     if (sectionAnalytics) sectionAnalytics.style.display = 'grid';
     sectionListingsRequests.style.display = 'grid';
     panelCrops.style.display = 'block';

@@ -72,7 +72,18 @@ const TRANSLATIONS = {
     "logistics-label-district": "Operating District",
     "logistics-btn-register": "Publish Transport Listing",
     "logistics-driver-call": "Call Driver",
-    "logistics-no-drivers": "No transport providers registered in your district yet."
+    "logistics-no-drivers": "No transport providers registered in your district yet.",
+    "qa-broadcast-title": "Broadcast a Request",
+    "qa-broadcast-desc": "Publish buying request to all local farmers",
+    "qa-browse-title": "Browse Marketplace",
+    "qa-browse-desc": "Search crop stock list and view map",
+    "qa-add-listing-title": "Add Crop Listing",
+    "qa-add-listing-desc": "Publish your crop stock to marketplace",
+    "qa-view-requests-title": "View Buyer Requests",
+    "qa-view-requests-desc": "See recent crop demands from corporate buyers",
+    "nav-seller-listings": "My Listings",
+    "nav-seller-requests": "Buyer Requests",
+    "nav-seller-equipment": "Equipment Rentals"
   },
   si: {
     // Nav & General
@@ -146,7 +157,18 @@ const TRANSLATIONS = {
     "logistics-label-district": "ක්‍රියාත්මක වන දිස්ත්‍රික්කය",
     "logistics-btn-register": "ප්‍රවාහන දැන්වීම පළ කරන්න",
     "logistics-driver-call": "රියදුරු අමතන්න",
-    "logistics-no-drivers": "ඔබේ දිස්ත්‍රික්කය සඳහා තවමත් ප්‍රවාහන සපයන්නන් ලියාපදිංචි වී නොමැත."
+    "logistics-no-drivers": "ඔබේ දිස්ත්‍රික්කය සඳහා තවමත් ප්‍රවාහන සපයන්නන් ලියාපදිංචි වී නොමැත.",
+    "qa-broadcast-title": "මිලදී ගැනීමේ ඉල්ලීමක් පළ කරන්න",
+    "qa-broadcast-desc": "ප්‍රදේශයේ සියලුම ගොවීන් වෙත මිලදී ගැනීමේ ලංසුවක් යවන්න",
+    "qa-browse-title": "අලෙවිසැලේ බෝග සොයන්න",
+    "qa-browse-desc": "පවතින බෝග තොග සහ සිතියම පරීක්ෂා කරන්න",
+    "qa-add-listing-title": "අලුත් බෝග දැන්වීමක් පළ කරන්න",
+    "qa-add-listing-desc": "වෙළඳපොළට ඔබේ බෝග අස්වැන්න විස්තර එකතු කරන්න",
+    "qa-view-requests-title": "ගැනුම්කරුවන්ගේ ඉල්ලීම් බලන්න",
+    "qa-view-requests-desc": "ආයතනික ගැනුම්කරුවන්ගේ නවතම බෝග ඉල්ලීම් සොයාගන්න",
+    "nav-seller-listings": "මගේ දැන්වීම්",
+    "nav-seller-requests": "ගැනුම්කරුවන්ගේ ඉල්ලීම්",
+    "nav-seller-equipment": "යන්ත්‍රෝපකරණ කුලියට දීම"
   },
   ta: {
     // Nav & General
@@ -220,7 +242,18 @@ const TRANSLATIONS = {
     "logistics-label-district": "இயங்கும் மாவட்டம்",
     "logistics-btn-register": "போக்குவரத்து விளம்பரத்தை வெளியிடவும்",
     "logistics-driver-call": "ஓட்டுநரை அழைக்கவும்",
-    "logistics-no-drivers": "உங்கள் மாவட்டத்தில் இன்னும் போக்குவரத்து வழங்குநர்கள் யாரும் பதிவு செய்யப்படவில்லை."
+    "logistics-no-drivers": "உங்கள் மாவட்டத்தில் இன்னும் போக்குவரத்து வழங்குநர்கள் யாரும் பதிவு செய்யப்படவில்லை.",
+    "qa-broadcast-title": "கொள்முதல் கோரிக்கையை வெளியிடுக",
+    "qa-broadcast-desc": "உள்ளூர் விவசாயிகளுக்கு கொள்முதல் கோரிக்கையை அனுப்புங்கள்",
+    "qa-browse-title": "சந்தையை ஆராயுங்கள்",
+    "qa-browse-desc": "பயிர் இருப்புகளை வரைபடத்துடன் சரிபார்க்கவும்",
+    "qa-add-listing-title": "பயிர் விளம்பரம் சேர்",
+    "qa-add-listing-desc": "உங்கள் பயிர் விளைச்சலை சந்தையில் வெளியிடுங்கள்",
+    "qa-view-requests-title": "கொள்முதல் கோரிக்கைகளை பார்க்க",
+    "qa-view-requests-desc": "வாங்குபவர்களின் சமீபத்திய பயிர் கோரிக்கைகளை கண்டறியவும்",
+    "nav-seller-listings": "எனது விளம்பரங்கள்",
+    "nav-seller-requests": "கொள்முதல் கோரிக்கைகள்",
+    "nav-seller-equipment": "இயந்திர வாடகை"
   }
 };
 
