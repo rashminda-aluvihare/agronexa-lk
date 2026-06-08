@@ -244,7 +244,11 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
       <div class="field">
         <div class="fl-row">
           <span class="fl-label">Password</span>
-          <button class="fl-link" type="button" onclick="sw('forgot')">Forgot password?</button>
+          <div style="display:flex; gap:12px;">
+            <button class="fl-link" type="button" onclick="sw('forgot-email')">Forgot email?</button>
+            <span style="color:#B8CEC3;">|</span>
+            <button class="fl-link" type="button" onclick="sw('forgot')">Forgot password?</button>
+          </div>
         </div>
         <div class="iw">
           <svg class="ii" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2.5" y="7" width="11" height="7.5" rx="1.5"/><path d="M5 7V5.5a3 3 0 016 0V7"/></svg>
@@ -461,6 +465,28 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
       <div class="ff">Remembered your password? <button class="sw-link" onclick="sw('login')">Sign in</button></div>
     </div>
 
+    <!-- FORGOT EMAIL -->
+    <div id="panel-forgot-email" style="display:none">
+      <div class="fh">
+        <div class="fh-super">Account Recovery</div>
+        <div class="fh-title">Forgot email</div>
+        <div class="fh-sub">Enter your phone number to receive your registered email and a recovery link</div>
+      </div>
+      <div class="field">
+        <div class="fl-row"><span class="fl-label">Phone Number</span></div>
+        <div class="iw">
+          <svg class="ii" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4.5" y="1" width="7" height="14" rx="2"/><circle cx="8" cy="12" r=".8" fill="currentColor"/></svg>
+          <input class="inp" id="fep" type="tel" placeholder="07X XXX XXXX" oninput="vPhone('fep','fepe')" maxlength="10"/>
+        </div>
+        <div class="err" id="fepe">Enter a valid 10-digit Sri Lankan number.</div>
+      </div>
+      <button class="btn" id="btn-forgot-email" onclick="sendForgotEmail()" type="button" style="margin-top: 10px;">
+        Send Recovery Email
+        <svg class="arr" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>
+      </button>
+      <div class="ff">Remembered your email? <button class="sw-link" onclick="sw('login')">Sign in</button></div>
+    </div>
+
     <!-- RESET PASSWORD -->
     <div id="panel-reset" style="display:none">
       <div class="fh">
@@ -532,13 +558,15 @@ function sw(t) {
   var L = t === 'login';
   var R = t === 'register';
   var F = t === 'forgot';
+  var FE = t === 'forgot-email';
   var P = t === 'reset';
   document.getElementById('panel-login').style.display = L ? 'block' : 'none';
   document.getElementById('panel-register').style.display = R ? 'block' : 'none';
   document.getElementById('panel-forgot').style.display = F ? 'block' : 'none';
+  document.getElementById('panel-forgot-email').style.display = FE ? 'block' : 'none';
   document.getElementById('panel-reset').style.display = P ? 'block' : 'none';
   
-  document.getElementById('tab-login').classList.toggle('on', L || F || P);
+  document.getElementById('tab-login').classList.toggle('on', L || F || FE || P);
   document.getElementById('tab-register').classList.toggle('on', R);
   if (R) selRole('farmer');
 }
@@ -985,6 +1013,70 @@ async function submitResetPassword() {
     alert("❌ Connection failed");
   } finally {
     btn.textContent = "Reset Password";
+    btn.disabled = false;
+  }
+}
+
+async function sendForgotEmail() {
+  const phoneInput = document.getElementById('fep');
+  let phone = phoneInput.value.trim().replace(/\D/g, '');
+  
+  if (phone.length !== 10) {
+    alert("Please enter a valid 10-digit phone number");
+    return;
+  }
+
+  // Format phone E.164: strip leading '0'
+  let formattedPhone = phone;
+  if (formattedPhone.startsWith('0')) {
+    formattedPhone = formattedPhone.slice(1);
+  }
+  const fullPhone = "+94" + formattedPhone;
+  const btn = document.getElementById('btn-forgot-email');
+  btn.textContent = "Sending...";
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(API_URL + '/api/auth/forgot-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: fullPhone })
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert("✅ Recovery email simulated/sent! Please check the box displayed below for your simulated email containing the login details and reset link.");
+      
+      // Clean up any existing demo hint box
+      let existingHint = document.getElementById('demo-email-hint');
+      if (existingHint) existingHint.remove();
+
+      // Show the simulated link/email directly in a helpful box on UI
+      const hintDiv = document.createElement('div');
+      hintDiv.id = 'demo-email-hint';
+      hintDiv.style.marginTop = '15px';
+      hintDiv.style.padding = '14px';
+      hintDiv.style.background = '#e0f2fe';
+      hintDiv.style.border = '1px solid #38bdf8';
+      hintDiv.style.borderRadius = '10px';
+      hintDiv.style.fontSize = '12px';
+      hintDiv.style.color = '#0369a1';
+      hintDiv.style.wordBreak = 'break-all';
+      
+      hintDiv.innerHTML = `
+        <strong>📧 Simulated Email Sent to ${data.email}</strong><br>
+        <span style="font-size:11px;color:#0c4a6e;">Hello, you requested account recovery.</span><br>
+        <strong>Registered Email:</strong> <span style="font-weight:600;color:#0284c7;">${data.email}</span><br><br>
+        <strong>Recovery Reset Link:</strong><br>
+        <a href="${data.resetLinkSimulated}" style="color:#0284c7;font-weight:600;text-decoration:underline;">${data.resetLinkSimulated}</a>
+      `;
+      document.getElementById('panel-forgot-email').appendChild(hintDiv);
+    } else {
+      alert("❌ " + data.error);
+    }
+  } catch(e) {
+    alert("❌ Connection failed");
+  } finally {
+    btn.textContent = "Send Recovery Email";
     btn.disabled = false;
   }
 }

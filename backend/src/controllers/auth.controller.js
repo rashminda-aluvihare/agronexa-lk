@@ -322,8 +322,15 @@ async function resetPassword(req, res, next) {
  * PUT /api/profile/:id
  */
 async function updateProfile(req, res, next) {
-  const { first_name, last_name, district, address, phone } = req.body;
+  let { first_name, last_name, district, address, phone } = req.body;
   try {
+    if (phone) {
+      const e164 = twilioService.normalizePhoneToE164(phone);
+      if (!e164) {
+        return res.status(400).json({ success: false, error: 'Invalid phone format.' });
+      }
+      phone = e164;
+    }
     const result = await db.query(
       `UPDATE users SET
          first_name = COALESCE($1, first_name),
@@ -341,6 +348,9 @@ async function updateProfile(req, res, next) {
     }
     return res.json({ success: true, user: result.rows[0] });
   } catch (err) {
+    if (err.code === '23505') {
+      return res.status(409).json({ success: false, error: 'This phone number is already registered by another user.' });
+    }
     next(err);
   }
 }
@@ -429,6 +439,56 @@ async function resetPasswordLink(req, res, next) {
   }
 }
 
+/**
+ * POST /api/auth/forgot-email
+ */
+async function forgotEmail(req, res, next) {
+  const { phone } = req.body;
+  if (!phone) {
+    return res.status(400).json({ success: false, error: 'Phone number is required.' });
+  }
+
+  try {
+    const e164 = twilioService.normalizePhoneToE164(phone);
+    if (!e164) {
+      return res.status(400).json({ success: false, error: 'Invalid phone format.' });
+    }
+
+    const userCheck = await db.query('SELECT id, first_name, email FROM users WHERE phone = $1', [e164]);
+    if (userCheck.rows.length === 0) {
+      return res.status(404).json({ success: false, error: 'User with this phone number not found.' });
+    }
+
+    const user = userCheck.rows[0];
+    const crypto = require("crypto");
+    const token = crypto.randomBytes(32).toString("hex");
+    const expires = new Date(Date.now() + 15 * 60000); // 15 minutes
+
+    await db.query(
+      "UPDATE users SET reset_token = $1, reset_token_expires = $2 WHERE id = $3",
+      [token, expires, user.id]
+    );
+
+    // Simulate sending recovery email
+    const resetLink = `${req.protocol}://${req.get("host")}/index.html?reset_token=${token}`;
+    console.log(`\n📧 [SIMULATED EMAIL TO ${user.email}]`);
+    console.log(`Hello ${user.first_name},`);
+    console.log(`You requested email and account recovery for your phone number ${phone}.`);
+    console.log(`Your registered email address is: ${user.email}`);
+    console.log(`Please click the link below if you need to reset your password (valid for 15 minutes):`);
+    console.log(`${resetLink}\n`);
+
+    return res.json({
+      success: true,
+      message: 'A recovery email has been simulated/sent to your registered address.',
+      email: user.email,
+      resetLinkSimulated: resetLink
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   sendOtp,
   verifyOtp,
@@ -440,4 +500,5 @@ module.exports = {
   resetPassword,
   forgotPasswordLink,
   resetPasswordLink,
+  forgotEmail,
 };
