@@ -26,6 +26,7 @@ async function query(text, params) {
 async function initDatabase() {
   const client = await pool.connect();
   try {
+    await client.query("SET client_encoding TO 'UTF8'");
     await client.query('BEGIN');
     console.log('🔄 Running database migrations...');
 
@@ -264,6 +265,34 @@ async function initDatabase() {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       );
     `);
+
+    // 13. Market Prices Table (daily crop price index)
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS market_prices (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(120) UNIQUE NOT NULL,
+        category VARCHAR(60),
+        avg_price NUMERIC(10,2) NOT NULL,
+        change NUMERIC(5,2) DEFAULT 0.0,
+        history NUMERIC(10,2)[] DEFAULT '{}',
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+
+    // Seed initial crop prices if empty
+    const checkPrices = await client.query('SELECT COUNT(*) FROM market_prices');
+    if (parseInt(checkPrices.rows[0].count, 10) === 0) {
+      await client.query(`
+        INSERT INTO market_prices (name, category, avg_price, change, history) VALUES
+        ('Tomatoes', 'Vegetables', 180, -2.4, '{192, 188, 185, 181, 184, 182, 180}'),
+        ('Carrots', 'Vegetables', 240, 4.8, '{225, 228, 230, 235, 232, 238, 240}'),
+        ('Potatoes', 'Grains/Tubers', 155, 1.2, '{151, 153, 152, 155, 154, 153, 155}'),
+        ('Green Chilies', 'Spices', 320, -1.5, '{335, 330, 328, 322, 325, 324, 320}'),
+        ('Leeks', 'Vegetables', 140, 0.5, '{138, 142, 139, 141, 140, 139, 140}'),
+        ('Red Onion', 'Spices', 280, 2.1, '{272, 275, 274, 278, 275, 279, 280}'),
+        ('Beans', 'Vegetables', 210, -0.8, '{218, 215, 212, 214, 210, 212, 210}')
+      `);
+    }
 
     await client.query('COMMIT');
     console.log('✅ Database migration completed successfully.');

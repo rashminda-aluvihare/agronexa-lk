@@ -6,10 +6,23 @@ const { Server } = require('socket.io');
 const { createApp } = require('./app');
 const { attachSocket } = require('./socket');
 const { initDatabase } = require('./config/db');
+const { updateMarketPrices } = require('./services/scraper.service');
 
 async function start() {
   // Run database migrations on start
   await initDatabase();
+
+  // Run scraper to seed/update prices on startup
+  updateMarketPrices().catch((err) => {
+    console.error('❌ Failed to run daily crop prices scraper on startup:', err.message);
+  });
+
+  // Schedule daily crop prices scraper (every 24 hours)
+  setInterval(() => {
+    updateMarketPrices().catch((err) => {
+      console.error('❌ Scheduled daily crop prices scraper update failed:', err.message);
+    });
+  }, 24 * 60 * 60 * 1000);
 
   const app = createApp();
   const server = http.createServer(app);
