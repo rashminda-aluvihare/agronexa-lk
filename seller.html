@@ -1948,8 +1948,9 @@ function submitNewEquipment(e) {
     });
 }
 
-function deactivateEquipment(id) {
-  if (!confirm(getTranslation('confirm-deactivate-equip', 'Are you sure you want to deactivate this equipment listing?'))) return;
+async function deactivateEquipment(id) {
+  const ok = await showConfirmDialog(getTranslation('confirm-deactivate-equip', 'Are you sure you want to deactivate this equipment listing?'));
+  if (!ok) return;
   fetch(API_URL + '/api/seller/equipment/' + id, {
     method: 'DELETE',
     headers: getAuthHeaders(),
@@ -1967,8 +1968,9 @@ function deactivateEquipment(id) {
     });
 }
 
-function confirmBooking(id) {
-  if (!confirm(getTranslation('confirm-booking-request', 'Are you sure you want to confirm this booking request? This will write to the blockchain ledger.'))) return;
+async function confirmBooking(id) {
+  const ok = await showConfirmDialog(getTranslation('confirm-booking-request', 'Are you sure you want to confirm this booking request? This will write to the blockchain ledger.'));
+  if (!ok) return;
   fetch(API_URL + `/api/seller/bookings/${id}/confirm`, {
     method: 'POST',
     headers: getAuthHeaders(),
@@ -2208,8 +2210,9 @@ function submitNewCrop(e) {
     });
 }
 
-function deactivateListing(id) {
-  if (!confirm(getTranslation('confirm-deactivate-crop', 'Are you sure you want to deactivate this listing?'))) return;
+async function deactivateListing(id) {
+  const ok = await showConfirmDialog(getTranslation('confirm-deactivate-crop', 'Are you sure you want to deactivate this listing?'));
+  if (!ok) return;
   fetch(API_URL + '/api/seller/crops/' + id, {
     method: 'DELETE',
     headers: getAuthHeaders(),
@@ -2278,8 +2281,9 @@ function loadCropOrders() {
     });
 }
 
-function confirmCropOrder(id) {
-  if (!confirm(getTranslation('confirm-crop-purchase', 'Are you sure you want to confirm this crop purchase? This will deduct listing stock and write to the blockchain ledger.'))) return;
+async function confirmCropOrder(id) {
+  const ok = await showConfirmDialog(getTranslation('confirm-crop-purchase', 'Are you sure you want to confirm this crop purchase? This will deduct listing stock and write to the blockchain ledger.'));
+  if (!ok) return;
   fetch(API_URL + `/api/seller/crop-orders/${id}/confirm`, {
     method: 'POST',
     headers: getAuthHeaders(),
@@ -2298,8 +2302,9 @@ function confirmCropOrder(id) {
     });
 }
 
-function rejectCropOrder(id) {
-  if (!confirm(getTranslation('confirm-reject-crop-order', 'Are you sure you want to reject this crop order request?'))) return;
+async function rejectCropOrder(id) {
+  const ok = await showConfirmDialog(getTranslation('confirm-reject-crop-order', 'Are you sure you want to reject this crop order request?'));
+  if (!ok) return;
   fetch(API_URL + `/api/seller/crop-orders/${id}/reject`, {
     method: 'POST',
     headers: getAuthHeaders(),
@@ -2410,13 +2415,15 @@ function loadBuyerRequests() {
     });
 }
 
-function acceptRequest(requestId, budget) {
-  if (!confirm(getTranslation('confirm-accept-request', 'Are you sure you want to accept this request?'))) return;
+async function acceptRequest(requestId, budget) {
+  const ok = await showConfirmDialog(getTranslation('confirm-accept-request', 'Are you sure you want to accept this request?'));
+  if (!ok) return;
   respondToRequest(requestId, 'accept', budget, null, 'I can supply this commodity as requested.');
 }
 
-function declineRequest(requestId) {
-  if (!confirm(getTranslation('confirm-decline-request', 'Are you sure you want to decline this request?'))) return;
+async function declineRequest(requestId) {
+  const ok = await showConfirmDialog(getTranslation('confirm-decline-request', 'Are you sure you want to decline this request?'));
+  if (!ok) return;
   respondToRequest(requestId, 'reject', null, null, 'Declined.');
 }
 
@@ -3828,6 +3835,150 @@ function toggleSidebar() {
   if (sidebar) {
     sidebar.classList.toggle('active');
   }
+}
+
+function showConfirmDialog(message) {
+  return new Promise((resolve) => {
+    // overlay
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.inset = '0';
+    overlay.style.background = 'rgba(0, 0, 0, 0.6)';
+    overlay.style.backdropFilter = 'blur(4px)';
+    overlay.style.zIndex = '99999';
+    overlay.style.display = 'flex';
+    overlay.style.alignItems = 'center';
+    overlay.style.justifyContent = 'center';
+    overlay.style.padding = '20px';
+    
+    // card
+    const card = document.createElement('div');
+    card.style.background = 'var(--bg-card)';
+    card.style.border = '1px solid var(--border-color)';
+    card.style.borderRadius = 'var(--radius-lg)';
+    card.style.padding = '24px';
+    card.style.maxWidth = '420px';
+    card.style.width = '100%';
+    card.style.boxShadow = 'var(--shadow-lg)';
+    card.style.fontFamily = 'var(--font-body)';
+    card.style.color = 'var(--text-main)';
+    card.style.display = 'flex';
+    card.style.flexDirection = 'column';
+    card.style.gap = '16px';
+    card.style.animation = 'confirmPopIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)';
+    
+    // Add keyframe animation dynamically if not present
+    if (!document.getElementById('confirm-anim-styles')) {
+      const styles = document.createElement('style');
+      styles.id = 'confirm-anim-styles';
+      styles.textContent = `
+        @keyframes confirmPopIn {
+          from { transform: scale(0.92); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+        @keyframes confirmPopOut {
+          from { transform: scale(1); opacity: 1; }
+          to { transform: scale(0.92); opacity: 0; }
+        }
+      `;
+      document.head.appendChild(styles);
+    }
+    
+    // Header (Title & Warning Icon)
+    const header = document.createElement('div');
+    header.style.display = 'flex';
+    header.style.alignItems = 'center';
+    header.style.gap = '12px';
+    
+    const iconWrap = document.createElement('div');
+    iconWrap.style.width = '40px';
+    iconWrap.style.height = '40px';
+    iconWrap.style.borderRadius = '50%';
+    iconWrap.style.background = 'var(--accent-pale)';
+    iconWrap.style.display = 'flex';
+    iconWrap.style.alignItems = 'center';
+    iconWrap.style.justifyContent = 'center';
+    iconWrap.style.flexShrink = '0';
+    iconWrap.innerHTML = \`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>\`;
+    
+    const title = document.createElement('h4');
+    title.style.fontFamily = 'var(--font-heading)';
+    title.style.fontSize = '18px';
+    title.style.color = 'var(--text-main)';
+    title.style.fontWeight = 'bold';
+    
+    // Get translations for Title
+    const titleText = getTranslation('js-confirm-title', 'Are you sure?');
+    title.textContent = titleText;
+    
+    header.appendChild(iconWrap);
+    header.appendChild(title);
+    card.appendChild(header);
+    
+    // Message body
+    const msg = document.createElement('p');
+    msg.style.fontSize = '14px';
+    msg.style.color = 'var(--text-muted)';
+    msg.style.lineHeight = '1.5';
+    msg.textContent = message;
+    card.appendChild(msg);
+    
+    // Buttons row
+    const btnRow = document.createElement('div');
+    btnRow.style.display = 'flex';
+    btnRow.style.gap = '10px';
+    btnRow.style.justifyContent = 'flex-end';
+    btnRow.style.marginTop = '8px';
+    
+    const btnCancel = document.createElement('button');
+    btnCancel.style.padding = '8px 16px';
+    btnCancel.style.borderRadius = 'var(--radius-sm)';
+    btnCancel.style.border = '1px solid var(--border-color)';
+    btnCancel.style.background = 'transparent';
+    btnCancel.style.color = 'var(--text-muted)';
+    btnCancel.style.fontSize = '13px';
+    btnCancel.style.fontWeight = '600';
+    btnCancel.style.cursor = 'pointer';
+    btnCancel.style.transition = 'all 0.2s';
+    btnCancel.textContent = getTranslation('btn-cancel', 'Cancel');
+    btnCancel.onmouseover = () => { btnCancel.style.background = 'var(--primary-pale)'; };
+    btnCancel.onmouseout = () => { btnCancel.style.background = 'transparent'; };
+    
+    const btnOk = document.createElement('button');
+    btnOk.style.padding = '8px 16px';
+    btnOk.style.borderRadius = 'var(--radius-sm)';
+    btnOk.style.border = 'none';
+    btnOk.style.background = 'var(--primary-light)';
+    btnOk.style.color = '#fff';
+    btnOk.style.fontSize = '13px';
+    btnOk.style.fontWeight = '600';
+    btnOk.style.cursor = 'pointer';
+    btnOk.style.transition = 'all 0.2s';
+    btnOk.textContent = getTranslation('btn-ok', 'Confirm');
+    btnOk.onmouseover = () => { btnOk.style.background = 'var(--primary)'; };
+    btnOk.onmouseout = () => { btnOk.style.background = 'var(--primary-light)'; };
+    
+    const cleanup = (val) => {
+      overlay.style.animation = 'confirmFadeOut 0.2s ease-in forwards';
+      card.style.animation = 'confirmPopOut 0.2s ease-in forwards';
+      setTimeout(() => {
+        document.body.removeChild(overlay);
+        resolve(val);
+      }, 200);
+    };
+    
+    btnCancel.onclick = () => cleanup(false);
+    btnOk.onclick = () => cleanup(true);
+    
+    btnRow.appendChild(btnCancel);
+    btnRow.appendChild(btnOk);
+    card.appendChild(btnRow);
+    
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
+    
+    btnOk.focus();
+  });
 }
 </script>
 </body>

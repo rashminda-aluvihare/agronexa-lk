@@ -1983,8 +1983,9 @@ function submitBroadcast(e) {
     });
 }
 
-function acceptSellerResponse(broadcastId, responseId) {
-  if (!confirm(getTranslation('confirm-accept-offer', 'Are you sure you want to accept this offer? This will close the broadcast.'))) return;
+async function acceptSellerResponse(broadcastId, responseId) {
+  const ok = await showConfirmDialog(getTranslation('confirm-accept-offer', 'Are you sure you want to accept this offer? This will close the broadcast.'));
+  if (!ok) return;
   
   fetch(API_URL + `/api/buyer/broadcasts/${broadcastId}/accept-response`, {
     method: 'POST',
@@ -2642,8 +2643,9 @@ async function downloadBookingSlip(bookingId, listingName, ownerName, start, end
   }
 }
 
-function closeRequest(id) {
-  if (!confirm(getTranslation('confirm-close-request', 'Are you sure you want to close this request? No more sellers will be able to respond.'))) return;
+async function closeRequest(id) {
+  const ok = await showConfirmDialog(getTranslation('confirm-close-request', 'Are you sure you want to close this request? No more sellers will be able to respond.'));
+  if (!ok) return;
   
   fetch(API_URL + '/api/buyer/broadcasts/' + id, {
     method: 'DELETE',
@@ -2717,8 +2719,9 @@ function loadBookings() {
     });
 }
 
-function cancelBooking(id) {
-  if (!confirm(getTranslation('confirm-cancel-booking', 'Are you sure you want to cancel this booking request?'))) return;
+async function cancelBooking(id) {
+  const ok = await showConfirmDialog(getTranslation('confirm-cancel-booking', 'Are you sure you want to cancel this booking request?'));
+  if (!ok) return;
   fetch(API_URL + '/api/buyer/bookings/' + id, {
     method: 'DELETE',
     headers: getAuthHeaders(),
@@ -3868,6 +3871,150 @@ function toggleSidebar() {
   if (sidebar) {
     sidebar.classList.toggle('active');
   }
+}
+
+function showConfirmDialog(message) {
+  return new Promise((resolve) => {
+    // overlay
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.inset = '0';
+    overlay.style.background = 'rgba(0, 0, 0, 0.6)';
+    overlay.style.backdropFilter = 'blur(4px)';
+    overlay.style.zIndex = '99999';
+    overlay.style.display = 'flex';
+    overlay.style.alignItems = 'center';
+    overlay.style.justifyContent = 'center';
+    overlay.style.padding = '20px';
+    
+    // card
+    const card = document.createElement('div');
+    card.style.background = 'var(--surface)';
+    card.style.border = '1px solid var(--border)';
+    card.style.borderRadius = 'var(--radius-lg, 16px)';
+    card.style.padding = '24px';
+    card.style.maxWidth = '420px';
+    card.style.width = '100%';
+    card.style.boxShadow = 'var(--shadow-lg)';
+    card.style.fontFamily = 'var(--font-body, sans-serif)';
+    card.style.color = 'var(--text)';
+    card.style.display = 'flex';
+    card.style.flexDirection = 'column';
+    card.style.gap = '16px';
+    card.style.animation = 'confirmPopIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)';
+    
+    // Add keyframe animation dynamically if not present
+    if (!document.getElementById('confirm-anim-styles')) {
+      const styles = document.createElement('style');
+      styles.id = 'confirm-anim-styles';
+      styles.textContent = `
+        @keyframes confirmPopIn {
+          from { transform: scale(0.92); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+        @keyframes confirmPopOut {
+          from { transform: scale(1); opacity: 1; }
+          to { transform: scale(0.92); opacity: 0; }
+        }
+      `;
+      document.head.appendChild(styles);
+    }
+    
+    // Header (Title & Warning Icon)
+    const header = document.createElement('div');
+    header.style.display = 'flex';
+    header.style.alignItems = 'center';
+    header.style.gap = '12px';
+    
+    const iconWrap = document.createElement('div');
+    iconWrap.style.width = '40px';
+    iconWrap.style.height = '40px';
+    iconWrap.style.borderRadius = '50%';
+    iconWrap.style.background = 'var(--accent-pale, rgba(234, 88, 12, 0.1))';
+    iconWrap.style.display = 'flex';
+    iconWrap.style.alignItems = 'center';
+    iconWrap.style.justifyContent = 'center';
+    iconWrap.style.flexShrink = '0';
+    iconWrap.innerHTML = \`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent, #ea580c)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>\`;
+    
+    const title = document.createElement('h4');
+    title.style.fontFamily = 'var(--font-heading, serif)';
+    title.style.fontSize = '18px';
+    title.style.color = 'var(--text)';
+    title.style.fontWeight = 'bold';
+    
+    // Get translations for Title
+    const titleText = getTranslation('js-confirm-title', 'Are you sure?');
+    title.textContent = titleText;
+    
+    header.appendChild(iconWrap);
+    header.appendChild(title);
+    card.appendChild(header);
+    
+    // Message body
+    const msg = document.createElement('p');
+    msg.style.fontSize = '14px';
+    msg.style.color = 'var(--muted)';
+    msg.style.lineHeight = '1.5';
+    msg.textContent = message;
+    card.appendChild(msg);
+    
+    // Buttons row
+    const btnRow = document.createElement('div');
+    btnRow.style.display = 'flex';
+    btnRow.style.gap = '10px';
+    btnRow.style.justifyContent = 'flex-end';
+    btnRow.style.marginTop = '8px';
+    
+    const btnCancel = document.createElement('button');
+    btnCancel.style.padding = '8px 16px';
+    btnCancel.style.borderRadius = 'var(--radius-sm, 8px)';
+    btnCancel.style.border = '1px solid var(--border)';
+    btnCancel.style.background = 'transparent';
+    btnCancel.style.color = 'var(--muted)';
+    btnCancel.style.fontSize = '13px';
+    btnCancel.style.fontWeight = '600';
+    btnCancel.style.cursor = 'pointer';
+    btnCancel.style.transition = 'all 0.2s';
+    btnCancel.textContent = getTranslation('btn-cancel', 'Cancel');
+    btnCancel.onmouseover = () => { btnCancel.style.background = 'var(--surface-hover, rgba(0,0,0,0.05))'; };
+    btnCancel.onmouseout = () => { btnCancel.style.background = 'transparent'; };
+    
+    const btnOk = document.createElement('button');
+    btnOk.style.padding = '8px 16px';
+    btnOk.style.borderRadius = 'var(--radius-sm, 8px)';
+    btnOk.style.border = 'none';
+    btnOk.style.background = 'var(--teal-mid, #0d9488)';
+    btnOk.style.color = '#fff';
+    btnOk.style.fontSize = '13px';
+    btnOk.style.fontWeight = '600';
+    btnOk.style.cursor = 'pointer';
+    btnOk.style.transition = 'all 0.2s';
+    btnOk.textContent = getTranslation('btn-ok', 'Confirm');
+    btnOk.onmouseover = () => { btnOk.style.background = 'var(--teal, #0f766e)'; };
+    btnOk.onmouseout = () => { btnOk.style.background = 'var(--teal-mid, #0d9488)'; };
+    
+    const cleanup = (val) => {
+      overlay.style.animation = 'confirmFadeOut 0.2s ease-in forwards';
+      card.style.animation = 'confirmPopOut 0.2s ease-in forwards';
+      setTimeout(() => {
+        document.body.removeChild(overlay);
+        resolve(val);
+      }, 200);
+    };
+    
+    btnCancel.onclick = () => cleanup(false);
+    btnOk.onclick = () => cleanup(true);
+    
+    btnRow.appendChild(btnCancel);
+    btnRow.appendChild(btnOk);
+    card.appendChild(btnRow);
+    
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
+    
+    btnOk.focus();
+  });
 }
 </script>
 </body>
