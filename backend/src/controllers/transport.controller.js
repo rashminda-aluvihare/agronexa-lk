@@ -28,15 +28,16 @@ async function getProviders(req, res, next) {
  * POST /api/transport
  */
 async function createOrUpdateProvider(req, res, next) {
-  const { owner_name, vehicle_type, vehicle_no, capacity_kg, district, phone } = req.body;
+  const { owner_name, vehicle_type, vehicle_no, capacity_kg, district, phone, rate_per_km } = req.body;
   if (!owner_name || !vehicle_type || !vehicle_no || !district || !phone) {
     return res.status(400).json({ error: 'Missing required transport listing fields' });
   }
   const owner_id = req.auth ? req.auth.id : null;
+  const rate = rate_per_km ? parseFloat(rate_per_km) : 150.00;
   try {
     const result = await db.query(
-      `INSERT INTO transport_providers (owner_name, vehicle_type, vehicle_no, capacity_kg, district, phone, owner_id)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `INSERT INTO transport_providers (owner_name, vehicle_type, vehicle_no, capacity_kg, district, phone, owner_id, rate_per_km)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        ON CONFLICT (vehicle_no) DO UPDATE SET
          owner_name = EXCLUDED.owner_name,
          vehicle_type = EXCLUDED.vehicle_type,
@@ -44,9 +45,10 @@ async function createOrUpdateProvider(req, res, next) {
          district = EXCLUDED.district,
          phone = EXCLUDED.phone,
          owner_id = EXCLUDED.owner_id,
+         rate_per_km = EXCLUDED.rate_per_km,
          status = 'available'
        RETURNING *`,
-      [owner_name, vehicle_type, vehicle_no, capacity_kg ? parseFloat(capacity_kg) : null, district, phone, owner_id]
+      [owner_name, vehicle_type, vehicle_no, capacity_kg ? parseFloat(capacity_kg) : null, district, phone, owner_id, rate]
     );
     return res.status(201).json({ success: true, provider: result.rows[0] });
   } catch (err) {
@@ -137,7 +139,7 @@ async function getBookings(req, res, next) {
   const userId = req.auth.id;
   try {
     const result = await db.query(
-      `SELECT tb.*, tp.owner_name as provider_owner_name, tp.vehicle_type, tp.vehicle_no, tp.phone as provider_phone, tp.owner_id as provider_owner_id
+      `SELECT tb.*, tp.owner_name as provider_owner_name, tp.vehicle_type, tp.vehicle_no, tp.phone as provider_phone, tp.owner_id as provider_owner_id, tp.rate_per_km
        FROM transport_bookings tb
        JOIN transport_providers tp ON tb.provider_id = tp.id
        WHERE tb.requester_id = $1 OR tp.owner_id = $1

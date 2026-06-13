@@ -810,6 +810,11 @@
             <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="logistics-label-delivery">Delivery Address</label>
             <textarea id="book-trans-delivery" required placeholder="Delivery Location" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;font-family:inherit;font-size:13px;height:60px;resize:none;"></textarea>
           </div>
+          <input type="hidden" id="book-trans-rate-per-km" value="150.00">
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Estimated Distance (km)</label>
+            <input class="form-input" type="number" id="book-trans-distance" placeholder="e.g. 50" oninput="calculateEstimatedTransportPrice()" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+          </div>
           <div style="margin-bottom:20px;display:flex;flex-direction:column;gap:5px;">
             <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="logistics-label-price">Offered Price (Rs.)</label>
             <input class="form-input" type="number" id="book-trans-price" placeholder="e.g. 15000" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
@@ -920,6 +925,13 @@
                 <option value="Trincomalee" data-i18n="district-trincomalee">Trincomalee</option>
               </select>
             </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <div class="form-label">Rate per km (Rs.)</div>
+              <input class="form-input" id="trans-rate" required type="number" step="0.01" value="150.00" placeholder="e.g. 150">
+            </div>
+            <div class="form-field"></div>
           </div>
           <button type="submit" class="broadcast-btn" style="margin-top:10px;" data-i18n="logistics-btn-register">Publish Transport Listing</button>
         </form>
@@ -4091,7 +4103,7 @@ function loadTransportDrivers() {
         const isOwner = _user && p.owner_id === _user.id;
         const bookBtnHtml = isOwner 
           ? `<span style="font-size: 11px; color: var(--muted); font-style: italic;">${getTranslation('js-your-vehicle', 'Your Vehicle')}</span>`
-          : `<button onclick="openTransportBookingModal(${p.id})" class="btn-sm btn-confirm" style="margin:0; height:auto; padding:6px 12px; font-size:11px;" data-i18n="logistics-btn-book">Book Transport</button>`;
+          : `<button onclick="openTransportBookingModal(${p.id}, ${p.rate_per_km || 150.00})" class="btn-sm btn-confirm" style="margin:0; height:auto; padding:6px 12px; font-size:11px;" data-i18n="logistics-btn-book">Book Transport</button>`;
         
         let typeKey = '';
         if (p.vehicle_type === 'Lorry (Light)') typeKey = 'logistics-type-light-lorry';
@@ -4106,7 +4118,7 @@ function loadTransportDrivers() {
         item.innerHTML = `
           <div>
             <div style="font-weight:600; font-size:14.5px; color:var(--text);">${vehicleTypeTranslated} — ${p.vehicle_no}</div>
-            <div style="font-size:12px; color:var(--muted); margin-top:2px;">${getTranslation('js-owner', 'Owner')}: ${p.owner_name} | ${getTranslation('js-capacity', 'Capacity')}: ${p.capacity_kg} kg</div>
+            <div style="font-size:12px; color:var(--muted); margin-top:2px;">${getTranslation('js-owner', 'Owner')}: ${p.owner_name} | ${getTranslation('js-capacity', 'Capacity')}: ${p.capacity_kg} kg | Rate: Rs. ${parseFloat(p.rate_per_km || 150.00).toFixed(2)}/km</div>
             <div style="font-size:11px; background:var(--teal-pale); color:var(--teal-mid); display:inline-block; padding:2px 8px; border-radius:4px; margin-top:6px;">📍 ${districtTranslated}</div>
           </div>
           <div style="display:flex; align-items:center; gap:8px;">
@@ -4131,6 +4143,7 @@ function submitTransportRegistration(e) {
   const capacity = document.getElementById('trans-capacity').value.trim();
   const phone = document.getElementById('trans-phone').value.trim();
   const district = document.getElementById('trans-district').value;
+  const rate = document.getElementById('trans-rate').value.trim();
   
   fetch(API_URL + '/api/transport', {
     method: 'POST',
@@ -4141,7 +4154,8 @@ function submitTransportRegistration(e) {
       vehicle_no: number,
       capacity_kg: parseInt(capacity),
       district: district,
-      phone: phone
+      phone: phone,
+      rate_per_km: parseFloat(rate)
     })
   })
     .then(r => r.json())
@@ -4159,12 +4173,281 @@ function submitTransportRegistration(e) {
     });
 }
 
-function openTransportBookingModal(providerId) {
+function openTransportBookingModal(providerId, ratePerKm) {
   const modal = document.getElementById('book-transport-modal');
   if (!modal) return;
   document.getElementById('book-trans-provider-id').value = providerId;
+  document.getElementById('book-trans-rate-per-km').value = ratePerKm || 150.00;
   document.getElementById('book-transport-form').reset();
   modal.style.display = 'flex';
+}
+
+function calculateEstimatedTransportPrice() {
+  const distance = parseFloat(document.getElementById('book-trans-distance').value) || 0;
+  const rate = parseFloat(document.getElementById('book-trans-rate-per-km').value) || 150.00;
+  const total = distance * rate;
+  document.getElementById('book-trans-price').value = total > 0 ? Math.round(total) : '';
+}
+
+function printTransportInvoice(bookingId) {
+  const bookings = window.transportBookings || [];
+  const b = bookings.find(item => item.id === bookingId);
+  if (!b) return alert('Booking details not found');
+
+  const estDistance = Math.round(parseFloat(b.price) / parseFloat(b.rate_per_km || 150.00)) || 'N/A';
+  const rateText = b.rate_per_km ? `Rs. ${parseFloat(b.rate_per_km).toFixed(2)}` : 'N/A';
+
+  const invoiceHtml = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Transport Invoice - #${b.id}</title>
+      <style>
+        body { font-family: 'DM Sans', Arial, sans-serif; color: #1a251e; padding: 40px; line-height: 1.5; background: #fff; }
+        .header { display: flex; justify-content: space-between; border-bottom: 3px solid #114227; padding-bottom: 20px; margin-bottom: 30px; }
+        .logo-section h1 { color: #114227; margin: 0; font-size: 28px; font-weight: 800; }
+        .logo-section p { margin: 5px 0 0 0; font-size: 11px; color: #666; letter-spacing: 1.5px; text-transform: uppercase; }
+        .title-section { text-align: right; }
+        .title-section h2 { margin: 0; color: #1a251e; font-size: 24px; font-weight: 700; }
+        .title-section p { margin: 5px 0 0 0; font-size: 13px; color: #666; }
+        .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px; }
+        .details-box { border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px; background: #f8fafc; }
+        .details-box h3 { margin-top: 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; color: #114227; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .details-box p { margin: 8px 0; font-size: 13.5px; color: #334155; }
+        .details-box strong { color: #0f172a; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+        th { background-color: #114227; color: #fff; text-align: left; padding: 12px 16px; font-size: 13px; text-transform: uppercase; }
+        td { padding: 14px 16px; border-bottom: 1px solid #e2e8f0; font-size: 13.5px; color: #334155; }
+        .text-right { text-align: right; }
+        .totals-section { float: right; width: 320px; margin-bottom: 40px; }
+        .totals-line { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; color: #475569; }
+        .totals-line.grand-total { border-top: 2px double #114227; font-size: 18px; font-weight: bold; color: #114227; padding-top: 12px; }
+        .signatures { margin-top: 100px; display: flex; justify-content: space-between; page-break-inside: avoid; }
+        .signature-line { width: 220px; border-top: 1px solid #475569; text-align: center; padding-top: 8px; font-size: 12.5px; color: #475569; }
+        .footer { margin-top: 80px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px; clear: both; }
+        @media print {
+          body { padding: 10px; }
+          .no-print { display: none; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <div class="logo-section">
+          <h1>AgroNexa LK</h1>
+          <p>Smart Agriculture Ecosystem</p>
+        </div>
+        <div class="title-section">
+          <h2>TRANSPORT INVOICE</h2>
+          <p>Invoice #: INV-TR-${b.id}</p>
+          <p>Date: ${new Date(b.created_at || Date.now()).toLocaleDateString()}</p>
+        </div>
+      </div>
+
+      <div class="details-grid">
+        <div class="details-box">
+          <h3>Carrier/Transporter (ප්‍රවාහකයා)</h3>
+          <p><strong>Owner:</strong> ${b.provider_owner_name}</p>
+          <p><strong>Vehicle:</strong> ${b.vehicle_type} (${b.vehicle_no})</p>
+          <p><strong>Phone:</strong> ${b.provider_phone || 'N/A'}</p>
+        </div>
+        <div class="details-box">
+          <h3>Customer (ගැනුම්කරු/ගොවියා)</h3>
+          <p><strong>Name:</strong> ${b.requester_name || 'AgroNexa User'}</p>
+          <p><strong>Pickup Address:</strong> ${b.pickup_address}</p>
+          <p><strong>Delivery Address:</strong> ${b.delivery_address}</p>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Description (විස්තරය)</th>
+            <th class="text-right">Rate / km (කි.මී. මිල)</th>
+            <th class="text-right">Est. Distance (දුර)</th>
+            <th class="text-right">Total Price (මුළු මිල)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Transport of <strong>${b.commodity_name}</strong> (${b.quantity_kg} kg)<br><span style="font-size: 11px; color: #64748b;">Route: ${b.pickup_address.split(',')[0]} &rarr; ${b.delivery_address.split(',')[0]}</span></td>
+            <td class="text-right">${rateText}</td>
+            <td class="text-right">${estDistance} km</td>
+            <td class="text-right">Rs. ${parseFloat(b.price).toLocaleString()}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="totals-section">
+        <div class="totals-line">
+          <span>Subtotal</span>
+          <span>Rs. ${parseFloat(b.price).toLocaleString()}</span>
+        </div>
+        <div class="totals-line grand-total">
+          <span>Total Payable (ගෙවිය යුතු මුළු මුදල)</span>
+          <span>Rs. ${parseFloat(b.price).toLocaleString()}</span>
+        </div>
+      </div>
+
+      <div class="signatures">
+        <div class="signature-line">
+          <p>Customer's Signature</p>
+          <p style="font-size: 10px; color:#94a3b8;">(ගැනුම්කරුගේ අත්සන)</p>
+        </div>
+        <div class="signature-line">
+          <p>Carrier's Signature</p>
+          <p style="font-size: 10px; color:#94a3b8;">(ප්‍රවාහකයාගේ අත්සන)</p>
+        </div>
+      </div>
+
+      <div class="footer">
+        <p>This is a computer-generated document. Thank you for using AgroNexa LK!</p>
+        <p>AgroNexa LK &copy; 2026 - Empowering Sri Lankan Farmers</p>
+      </div>
+
+      <script>
+        window.onload = function() {
+          window.print();
+        };
+      <\/script>
+    </body>
+    </html>
+  `;
+
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(invoiceHtml);
+  printWindow.document.close();
+}
+
+function printTransportReceipt(bookingId) {
+  const bookings = window.transportBookings || [];
+  const b = bookings.find(item => item.id === bookingId);
+  if (!b) return alert('Booking details not found');
+
+  const estDistance = Math.round(parseFloat(b.price) / parseFloat(b.rate_per_km || 150.00)) || 'N/A';
+  const rateText = b.rate_per_km ? `Rs. ${parseFloat(b.rate_per_km).toFixed(2)}` : 'N/A';
+  const deliveredDate = b.updated_at ? new Date(b.updated_at).toLocaleString() : 'N/A';
+
+  const receiptHtml = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Transport Receipt - #${b.id}</title>
+      <style>
+        body { font-family: 'DM Sans', Arial, sans-serif; color: #1a251e; padding: 40px; line-height: 1.5; background: #fff; }
+        .header { display: flex; justify-content: space-between; border-bottom: 3px solid #114227; padding-bottom: 20px; margin-bottom: 30px; }
+        .logo-section h1 { color: #114227; margin: 0; font-size: 28px; font-weight: 800; }
+        .logo-section p { margin: 5px 0 0 0; font-size: 11px; color: #666; letter-spacing: 1.5px; text-transform: uppercase; }
+        .title-section { text-align: right; }
+        .title-section h2 { margin: 0; color: #1a251e; font-size: 24px; font-weight: 700; }
+        .title-section p { margin: 5px 0 0 0; font-size: 13px; color: #666; }
+        .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px; }
+        .details-box { border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px; background: #f8fafc; }
+        .details-box h3 { margin-top: 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; color: #114227; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .details-box p { margin: 8px 0; font-size: 13.5px; color: #334155; }
+        .details-box strong { color: #0f172a; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        th { background-color: #114227; color: #fff; text-align: left; padding: 12px 16px; font-size: 13px; text-transform: uppercase; }
+        td { padding: 14px 16px; border-bottom: 1px solid #e2e8f0; font-size: 13.5px; color: #334155; }
+        .text-right { text-align: right; }
+        .totals-section { float: right; width: 320px; margin-bottom: 40px; }
+        .totals-line { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; color: #475569; }
+        .totals-line.grand-total { border-top: 2px double #114227; font-size: 18px; font-weight: bold; color: #114227; padding-top: 12px; }
+        .signatures { margin-top: 80px; display: flex; justify-content: space-between; page-break-inside: avoid; }
+        .signature-line { width: 220px; border-top: 1px solid #475569; text-align: center; padding-top: 8px; font-size: 12.5px; color: #475569; }
+        .footer { margin-top: 80px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px; clear: both; }
+        @media print {
+          body { padding: 10px; }
+          .no-print { display: none; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <div class="logo-section">
+          <h1>AgroNexa LK</h1>
+          <p>Smart Agriculture Ecosystem</p>
+        </div>
+        <div class="title-section">
+          <h2>DELIVERY RECEIPT</h2>
+          <p>Receipt #: REC-TR-${b.id}</p>
+          <p>Delivered Date: ${deliveredDate}</p>
+        </div>
+      </div>
+
+      <div class="details-grid">
+        <div class="details-box">
+          <h3>Carrier/Transporter (ප්‍රවාහකයා)</h3>
+          <p><strong>Owner:</strong> ${b.provider_owner_name}</p>
+          <p><strong>Vehicle:</strong> ${b.vehicle_type} (${b.vehicle_no})</p>
+          <p><strong>Phone:</strong> ${b.provider_phone || 'N/A'}</p>
+        </div>
+        <div class="details-box">
+          <h3>Customer (ගැනුම්කරු/ගොවියා)</h3>
+          <p><strong>Name:</strong> ${b.requester_name || 'AgroNexa User'}</p>
+          <p><strong>Pickup Address:</strong> ${b.pickup_address}</p>
+          <p><strong>Delivery Address:</strong> ${b.delivery_address}</p>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Description (විස්තරය)</th>
+            <th class="text-right">Rate / km</th>
+            <th class="text-right">Est. Distance</th>
+            <th class="text-right">Total Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Transport of <strong>${b.commodity_name}</strong> (${b.quantity_kg} kg)<br><span style="font-size: 11px; color: #64748b;">Status: DELIVERED</span></td>
+            <td class="text-right">${rateText}</td>
+            <td class="text-right">${estDistance} km</td>
+            <td class="text-right">Rs. ${parseFloat(b.price).toLocaleString()}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="totals-section">
+        <div class="totals-line">
+          <span>Transport Fee</span>
+          <span>Rs. ${parseFloat(b.price).toLocaleString()}</span>
+        </div>
+        <div class="totals-line grand-total">
+          <span>Total Paid (මුළු මුදල)</span>
+          <span>Rs. ${parseFloat(b.price).toLocaleString()}</span>
+        </div>
+      </div>
+
+      <div class="signatures">
+        <div class="signature-line">
+          <p>Recipient's Signature</p>
+          <p style="font-size: 10px; color:#94a3b8;">(භාරගන්නාගේ අත්සන)</p>
+        </div>
+        <div class="signature-line">
+          <p>Carrier's Signature</p>
+          <p style="font-size: 10px; color:#94a3b8;">(ප්‍රවාහකයාගේ අත්සන)</p>
+        </div>
+      </div>
+
+      <div class="footer">
+        <p>This document confirms that the transport delivery was completed successfully.</p>
+        <p>AgroNexa LK &copy; 2026 - Empowering Sri Lankan Farmers</p>
+      </div>
+
+      <script>
+        window.onload = function() {
+          window.print();
+        };
+      <\/script>
+    </body>
+    </html>
+  `;
+
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(receiptHtml);
+  printWindow.document.close();
 }
 
 function closeTransportBookingModal() {
@@ -4219,6 +4502,7 @@ function loadTransportBookings() {
     .then(data => {
       if (!data.success) return;
       listEl.innerHTML = '';
+      window.transportBookings = data.bookings;
       if (data.bookings.length === 0) {
         listEl.innerHTML = `<div style="font-size:12.5px;color:var(--muted);text-align:center;padding:30px 0;" data-i18n="logistics-no-bookings">No transport bookings found.</div>`;
         return;
@@ -4293,6 +4577,15 @@ function loadTransportBookings() {
           contactInfoHtml = `<div style="font-size:12px; color:var(--muted); margin-top:4px;"><b>${getTranslation('js-client', 'Client')}:</b> ${b.requester_name}</div>`;
         }
 
+        let invoiceBtnHtml = '';
+        if (b.status === 'confirmed' || b.status === 'in-transit' || b.status === 'delivered') {
+          invoiceBtnHtml = `<button onclick="printTransportInvoice(${b.id})" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:flex; align-items:center; gap:2px; margin-top:4px;">📄 Invoice</button>`;
+        }
+        let receiptBtnHtml = '';
+        if (b.status === 'delivered') {
+          receiptBtnHtml = `<button onclick="printTransportReceipt(${b.id})" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:flex; align-items:center; gap:2px; margin-top:4px;">🧾 Receipt</button>`;
+        }
+
         item.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
             <div>
@@ -4303,8 +4596,10 @@ function loadTransportBookings() {
             </div>
             <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
               <span style="font-size:11px; font-weight:600; text-transform:uppercase; padding:4px 10px; border-radius:6px; background:${badgeBg}; color:${badgeColor};" data-i18n="${statusKey}">${getTranslation(statusKey, b.status).toUpperCase()}</span>
-              <div style="display:flex; margin-top:8px;">
+              <div style="display:flex; flex-direction:column; align-items:flex-end; margin-top:4px; gap:4px;">
                 ${actionButtonsHtml}
+                ${invoiceBtnHtml}
+                ${receiptBtnHtml}
               </div>
             </div>
           </div>
