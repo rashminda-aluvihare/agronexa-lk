@@ -260,6 +260,7 @@ async function initDatabase() {
     // Ensure owner_id column exists on transport_providers table
     await client.query("ALTER TABLE transport_providers ADD COLUMN IF NOT EXISTS owner_id INTEGER REFERENCES users(id);");
     await client.query("ALTER TABLE transport_providers ADD COLUMN IF NOT EXISTS rate_per_km NUMERIC(10,2) DEFAULT 150.00;");
+    await client.query("ALTER TABLE transport_bookings ADD COLUMN IF NOT EXISTS distance NUMERIC(10,2);");
 
     // 12. Transport Bookings Table
     await client.query(`
@@ -273,6 +274,7 @@ async function initDatabase() {
         pickup_address TEXT NOT NULL,
         delivery_address TEXT NOT NULL,
         price NUMERIC(10,2),
+        distance NUMERIC(10,2),
         status VARCHAR(20) DEFAULT 'pending',
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()

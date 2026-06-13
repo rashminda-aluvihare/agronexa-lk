@@ -4194,7 +4194,7 @@ function printTransportInvoice(bookingId) {
   const b = bookings.find(item => item.id === bookingId);
   if (!b) return alert('Booking details not found');
 
-  const estDistance = Math.round(parseFloat(b.price) / parseFloat(b.rate_per_km || 150.00)) || 'N/A';
+  const estDistance = b.distance ? Math.round(parseFloat(b.distance)) : (Math.round(parseFloat(b.price) / parseFloat(b.rate_per_km || 150.00)) || 'N/A');
   const rateText = b.rate_per_km ? `Rs. ${parseFloat(b.rate_per_km).toFixed(2)}` : 'N/A';
 
   const invoiceHtml = `
@@ -4324,7 +4324,7 @@ function printTransportReceipt(bookingId) {
   const b = bookings.find(item => item.id === bookingId);
   if (!b) return alert('Booking details not found');
 
-  const estDistance = Math.round(parseFloat(b.price) / parseFloat(b.rate_per_km || 150.00)) || 'N/A';
+  const estDistance = b.distance ? Math.round(parseFloat(b.distance)) : (Math.round(parseFloat(b.price) / parseFloat(b.rate_per_km || 150.00)) || 'N/A');
   const rateText = b.rate_per_km ? `Rs. ${parseFloat(b.rate_per_km).toFixed(2)}` : 'N/A';
   const deliveredDate = b.updated_at ? new Date(b.updated_at).toLocaleString() : 'N/A';
 
@@ -4463,6 +4463,7 @@ function submitTransportBooking(e) {
   const pickup = document.getElementById('book-trans-pickup').value.trim();
   const delivery = document.getElementById('book-trans-delivery').value.trim();
   const price = document.getElementById('book-trans-price').value;
+  const distance = document.getElementById('book-trans-distance').value;
 
   fetch(API_URL + '/api/transport/bookings', {
     method: 'POST',
@@ -4473,7 +4474,8 @@ function submitTransportBooking(e) {
       quantity_kg: parseFloat(qty),
       pickup_address: pickup,
       delivery_address: delivery,
-      price: price ? parseFloat(price) : null
+      price: price ? parseFloat(price) : null,
+      distance: distance ? parseFloat(distance) : null
     })
   })
     .then(r => r.json())

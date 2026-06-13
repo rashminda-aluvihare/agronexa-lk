@@ -89,7 +89,7 @@ async function deactivateProvider(req, res, next) {
  * POST /api/transport/bookings
  */
 async function createBooking(req, res, next) {
-  const { provider_id, commodity_name, quantity_kg, pickup_address, delivery_address, price } = req.body;
+  const { provider_id, commodity_name, quantity_kg, pickup_address, delivery_address, price, distance } = req.body;
   if (!provider_id || !commodity_name || !quantity_kg || !pickup_address || !delivery_address) {
     return res.status(400).json({ error: 'Missing required booking fields' });
   }
@@ -108,10 +108,20 @@ async function createBooking(req, res, next) {
 
     // 3. Create the booking
     const result = await db.query(
-      `INSERT INTO transport_bookings (provider_id, requester_id, requester_name, commodity_name, quantity_kg, pickup_address, delivery_address, price, status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'pending')
+      `INSERT INTO transport_bookings (provider_id, requester_id, requester_name, commodity_name, quantity_kg, pickup_address, delivery_address, price, distance, status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'pending')
        RETURNING *`,
-      [provider_id, requester_id, requester_name, commodity_name, parseFloat(quantity_kg), pickup_address, delivery_address, price ? parseFloat(price) : null]
+      [
+        provider_id,
+        requester_id,
+        requester_name,
+        commodity_name,
+        parseFloat(quantity_kg),
+        pickup_address,
+        delivery_address,
+        price ? parseFloat(price) : null,
+        distance ? parseFloat(distance) : null
+      ]
     );
 
     const booking = result.rows[0];
