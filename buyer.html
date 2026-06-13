@@ -1617,7 +1617,10 @@ function updateVoiceProgress(msgId) {
   const timeDisplay = document.getElementById(`voice-time-${msgId}`);
   if (!audio || !slider) return;
 
-  const pct = (audio.currentTime / (audio.duration || 1)) * 100;
+  let pct = 0;
+  if (isFinite(audio.duration) && audio.duration > 0) {
+    pct = (audio.currentTime / audio.duration) * 100;
+  }
   slider.value = pct;
 
   // Update time display
@@ -1629,9 +1632,10 @@ function updateVoiceProgress(msgId) {
   if (isFinite(audio.duration)) {
     totalMin = Math.floor(audio.duration / 60);
     totalSec = Math.floor(audio.duration % 60).toString().padStart(2, '0');
+    timeDisplay.textContent = `${currentMin}:${currentSec} / ${totalMin}:${totalSec}`;
+  } else {
+    timeDisplay.textContent = `${currentMin}:${currentSec}`;
   }
-  
-  timeDisplay.textContent = `${currentMin}:${currentSec} / ${totalMin}:${totalSec}`;
 }
 
 function initVoiceDuration(msgId) {
@@ -1770,13 +1774,35 @@ async function toggleVoiceRecording() {
   if (!isRecording) {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorder = new MediaRecorder(stream);
+      
+      let options = {};
+      let extension = 'webm';
+      let mimeType = 'audio/webm';
+      
+      if (typeof MediaRecorder.isTypeSupported === 'function') {
+        if (MediaRecorder.isTypeSupported('audio/webm')) {
+          options = { mimeType: 'audio/webm' };
+          mimeType = 'audio/webm';
+          extension = 'webm';
+        } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+          options = { mimeType: 'audio/mp4' };
+          mimeType = 'audio/mp4';
+          extension = 'm4a';
+        } else if (MediaRecorder.isTypeSupported('audio/ogg')) {
+          options = { mimeType: 'audio/ogg' };
+          mimeType = 'audio/ogg';
+          extension = 'ogg';
+        }
+      }
+      
+      mediaRecorder = new MediaRecorder(stream, options);
       audioChunks = [];
       mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
       mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-        const file = new File([audioBlob], `voice_note_${Date.now()}.webm`, { type: 'audio/webm' });
-        stageAttachmentForUpload(file, 'voice_note.webm', 'audio');
+        const recordedMimeType = mediaRecorder.mimeType || mimeType;
+        const audioBlob = new Blob(audioChunks, { type: recordedMimeType });
+        const file = new File([audioBlob], `voice_note_${Date.now()}.${extension}`, { type: recordedMimeType });
+        stageAttachmentForUpload(file, `voice_note.${extension}`, 'audio');
         stream.getTracks().forEach(track => track.stop());
       };
       mediaRecorder.start();
