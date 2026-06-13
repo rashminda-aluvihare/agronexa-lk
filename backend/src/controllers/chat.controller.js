@@ -119,9 +119,15 @@ async function uploadAttachment(req, res, next) {
     const fileUrl = `/uploads/chat/${req.file.filename}`;
     let attachmentType = 'file';
 
-    if (req.file.mimetype.startsWith('image/')) {
+    const originalName = req.file.originalname || '';
+    const isImage = req.file.mimetype.startsWith('image/') || /\.(jpg|jpeg|png|gif|webp)$/i.test(originalName);
+    const isAudio = req.file.mimetype.startsWith('audio/') || 
+                    req.file.mimetype === 'video/webm' || 
+                    /\.(mp3|wav|ogg|webm|m4a|aac|amr|opus)$/i.test(originalName);
+
+    if (isImage) {
       attachmentType = 'image';
-    } else if (req.file.mimetype.startsWith('audio/')) {
+    } else if (isAudio) {
       attachmentType = 'audio';
     }
 

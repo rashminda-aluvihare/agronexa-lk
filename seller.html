@@ -259,6 +259,98 @@
   .chat-bubble.sent { background: var(--primary); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
   .chat-bubble.received { background: var(--bg-card); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--border-color); }
   .chat-bubble-time { font-size: 9px; color: inherit; opacity: 0.65; margin-top: 5px; text-align: right; }
+  
+  /* WhatsApp-style Voice Player */
+  .whatsapp-voice-player {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 4px;
+    min-width: 250px;
+    max-width: 100%;
+    user-select: none;
+    color: inherit;
+  }
+  .voice-play-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    outline: none;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .chat-bubble.received .voice-play-btn {
+    background: var(--primary);
+    color: #fff;
+  }
+  .voice-play-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+  }
+  .chat-bubble.received .voice-play-btn:hover {
+    background: var(--primary-light);
+  }
+  .voice-play-btn:active {
+    transform: scale(0.95);
+  }
+  .voice-progress-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .voice-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.3);
+    outline: none;
+    cursor: pointer;
+    margin: 0;
+  }
+  .chat-bubble.received .voice-slider {
+    background: var(--border-color);
+  }
+  .voice-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+  .chat-bubble.received .voice-slider::-webkit-slider-thumb {
+    background: var(--primary);
+  }
+  .voice-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+  }
+  .voice-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    opacity: 0.8;
+  }
+  .voice-mic-status {
+    font-size: 12px;
+    color: #38bdf8; /* WhatsApp-like active blue */
+  }
+  .chat-bubble.received .voice-mic-status {
+    color: var(--primary);
+  }
   .chat-input-area { padding: 16px 24px; border-top: 1px solid var(--border-color); display: flex; gap: 12px; align-items: center; background: var(--bg-card); }
   .chat-input { flex: 1; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 12px 16px; outline: none; font-size: 13.5px; background: var(--bg-app); color: var(--text-main); transition: all 0.2s; font-family: inherit; }
   .chat-input:focus { border-color: var(--primary-light); background: var(--bg-card); box-shadow: 0 0 0 3px var(--primary-glow); }
@@ -3684,7 +3776,23 @@ function formatMessageContent(msg) {
     if (msg.attachment_type === 'image') {
       html += `<div style="margin-top:6px;"><img src="${API_URL}${msg.attachment_url}" style="max-width:200px; max-height:200px; border-radius:8px; cursor:pointer;" onclick="window.open('${API_URL}${msg.attachment_url}', '_blank')"></div>`;
     } else if (msg.attachment_type === 'audio') {
-      html += `<div style="margin-top:6px;"><audio controls src="${API_URL}${msg.attachment_url}" style="max-width:100%; height:32px; outline:none;"></audio></div>`;
+      html += `
+        <div style="margin-top:6px;">
+          <div class="whatsapp-voice-player" id="voice-player-${msg.id}">
+            <audio id="audio-el-${msg.id}" src="${API_URL}${msg.attachment_url}" preload="metadata" ontimeupdate="updateVoiceProgress(${msg.id})" onloadedmetadata="initVoiceDuration(${msg.id})" onended="resetVoicePlayer(${msg.id})"></audio>
+            <button type="button" class="voice-play-btn" onclick="toggleVoicePlay(${msg.id})">
+              <span id="play-icon-${msg.id}">▶</span>
+            </button>
+            <div class="voice-progress-container">
+              <input type="range" class="voice-slider" id="voice-slider-${msg.id}" value="0" min="0" max="100" oninput="seekVoice(${msg.id}, this.value)">
+              <div class="voice-meta">
+                <span class="voice-time" id="voice-time-${msg.id}">0:00</span>
+                <span class="voice-mic-status" id="voice-mic-${msg.id}">🎙️</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
     } else {
       const parts = msg.attachment_url.split('/');
       const filename = parts[parts.length - 1];
@@ -3886,6 +3994,82 @@ async function sendChatMessage(e) {
 function startChatWithUser(userId, userName, userRole) {
   switchTab('messages');
   openDirectChat(userId, userName, userRole);
+}
+
+// ── CUSTOM VOICE PLAYER UTILS ──
+function toggleVoicePlay(msgId) {
+  const audio = document.getElementById(`audio-el-${msgId}`);
+  const btn = document.getElementById(`play-icon-${msgId}`);
+  if (!audio) return;
+  
+  // Pause any other playing voice note
+  document.querySelectorAll('audio[id^="audio-el-"]').forEach(el => {
+    if (el.id !== `audio-el-${msgId}` && !el.paused) {
+      el.pause();
+      const otherId = el.id.replace('audio-el-', '');
+      const otherBtn = document.getElementById(`play-icon-${otherId}`);
+      if (otherBtn) otherBtn.textContent = '▶';
+    }
+  });
+
+  if (audio.paused) {
+    audio.play().then(() => {
+      btn.textContent = '⏸';
+    }).catch(err => {
+      console.error("Audio play failed:", err);
+    });
+  } else {
+    audio.pause();
+    btn.textContent = '▶';
+  }
+}
+
+function updateVoiceProgress(msgId) {
+  const audio = document.getElementById(`audio-el-${msgId}`);
+  const slider = document.getElementById(`voice-slider-${msgId}`);
+  const timeDisplay = document.getElementById(`voice-time-${msgId}`);
+  if (!audio || !slider) return;
+
+  const pct = (audio.currentTime / (audio.duration || 1)) * 100;
+  slider.value = pct;
+
+  // Update time display
+  const currentMin = Math.floor(audio.currentTime / 60);
+  const currentSec = Math.floor(audio.currentTime % 60).toString().padStart(2, '0');
+  
+  let totalMin = 0;
+  let totalSec = '00';
+  if (isFinite(audio.duration)) {
+    totalMin = Math.floor(audio.duration / 60);
+    totalSec = Math.floor(audio.duration % 60).toString().padStart(2, '0');
+  }
+  
+  timeDisplay.textContent = `${currentMin}:${currentSec} / ${totalMin}:${totalSec}`;
+}
+
+function initVoiceDuration(msgId) {
+  const audio = document.getElementById(`audio-el-${msgId}`);
+  const timeDisplay = document.getElementById(`voice-time-${msgId}`);
+  if (!audio || !timeDisplay) return;
+  
+  if (isFinite(audio.duration)) {
+    const totalMin = Math.floor(audio.duration / 60);
+    const totalSec = Math.floor(audio.duration % 60).toString().padStart(2, '0');
+    timeDisplay.textContent = `0:00 / ${totalMin}:${totalSec}`;
+  }
+}
+
+function seekVoice(msgId, value) {
+  const audio = document.getElementById(`audio-el-${msgId}`);
+  if (!audio || !isFinite(audio.duration)) return;
+  audio.currentTime = (value / 100) * audio.duration;
+}
+
+function resetVoicePlayer(msgId) {
+  const btn = document.getElementById(`play-icon-${msgId}`);
+  const slider = document.getElementById(`voice-slider-${msgId}`);
+  if (btn) btn.textContent = '▶';
+  if (slider) slider.value = 0;
 }
 
 function doLogout(){
