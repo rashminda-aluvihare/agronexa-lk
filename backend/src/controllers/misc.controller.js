@@ -7,7 +7,30 @@ const nameMapping = {
   'Green Chilies': 'Green Chilies (අමු මිරිස්)',
   'Leeks': 'Leeks (ලීක්ස්)',
   'Red Onion': 'Red Onion (රතු ළූණු)',
-  'Beans': 'Beans (බෝංචි)'
+  'Beans': 'Beans (බෝංචි)',
+  'Cabbage': 'Cabbage (ගෝවා)',
+  'Pumpkin': 'Pumpkin (වට්ටක්කා)',
+  'Brinjal': 'Brinjal (වම්බටු)',
+  'Ladies Finger': 'Ladies Finger (බණ්ඩක්කා)',
+  'Bitter Gourd': 'Bitter Gourd (කරවිල)',
+  'Snake Gourd': 'Snake Gourd (පතෝල)',
+  'Luffa': 'Luffa (වැටකොළු)',
+  'Cucumber': 'Cucumber (පිපිඤ්ඤා)',
+  'Beetroot': 'Beetroot (බීට්රූට්)',
+  'Radish': 'Radish (රාබු)',
+  'Knolkhol': 'Knolkhol (නෝකෝල්)',
+  'Capsicum': 'Capsicum (මාළු මිරිස්)',
+  'Samba Rice': 'Samba Rice (සම්බා සහල්)',
+  'Nadu Rice': 'Nadu Rice (නාඩු සහල්)',
+  'Red Rice': 'Red Rice (රතු සහල්)',
+  'Coconut': 'Coconut (පොල්)',
+  'Sweet Potato': 'Sweet Potato (බතල)',
+  'Manioc': 'Manioc (ඤෙඤ්ඤොක්කා)',
+  'Garlic': 'Garlic (සුදු ළූණු)',
+  'Ginger': 'Ginger (ඉඟුරු)',
+  'Lime': 'Lime (දෙහි)',
+  'Dried Chilies': 'Dried Chilies (වියළි මිරිස්)',
+  'Banana': 'Banana (කෙසෙල්)'
 };
 
 /**

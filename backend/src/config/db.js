@@ -283,9 +283,10 @@ async function initDatabase() {
       );
     `);
 
-    // Seed initial crop prices if empty
+    // Seed initial crop prices if empty or count is less than 30
     const checkPrices = await client.query('SELECT COUNT(*) FROM market_prices');
-    if (parseInt(checkPrices.rows[0].count, 10) === 0) {
+    if (parseInt(checkPrices.rows[0].count, 10) < 30) {
+      await client.query('DELETE FROM market_prices');
       await client.query(`
         INSERT INTO market_prices (name, category, avg_price, change, history) VALUES
         ('Tomatoes', 'Vegetables', 180, -2.4, '{192, 188, 185, 181, 184, 182, 180}'),
@@ -294,7 +295,30 @@ async function initDatabase() {
         ('Green Chilies', 'Spices', 320, -1.5, '{335, 330, 328, 322, 325, 324, 320}'),
         ('Leeks', 'Vegetables', 140, 0.5, '{138, 142, 139, 141, 140, 139, 140}'),
         ('Red Onion', 'Spices', 280, 2.1, '{272, 275, 274, 278, 275, 279, 280}'),
-        ('Beans', 'Vegetables', 210, -0.8, '{218, 215, 212, 214, 210, 212, 210}')
+        ('Beans', 'Vegetables', 210, -0.8, '{218, 215, 212, 214, 210, 212, 210}'),
+        ('Cabbage', 'Vegetables', 120, 1.5, '{115, 118, 117, 122, 119, 118, 120}'),
+        ('Pumpkin', 'Vegetables', 90, -3.1, '{98, 95, 93, 91, 94, 92, 90}'),
+        ('Brinjal', 'Vegetables', 160, 0.0, '{165, 162, 160, 158, 161, 160, 160}'),
+        ('Ladies Finger', 'Vegetables', 110, 2.3, '{105, 108, 107, 109, 112, 108, 110}'),
+        ('Bitter Gourd', 'Vegetables', 180, -1.2, '{185, 188, 184, 182, 183, 181, 180}'),
+        ('Snake Gourd', 'Vegetables', 130, 0.8, '{128, 132, 129, 131, 130, 129, 130}'),
+        ('Luffa', 'Vegetables', 140, -2.1, '{148, 145, 142, 144, 141, 143, 140}'),
+        ('Cucumber', 'Vegetables', 85, 4.2, '{80, 82, 81, 85, 83, 84, 85}'),
+        ('Beetroot', 'Vegetables', 220, -0.5, '{225, 228, 222, 224, 221, 222, 220}'),
+        ('Radish', 'Vegetables', 95, 1.1, '{92, 94, 93, 96, 95, 94, 95}'),
+        ('Knolkhol', 'Vegetables', 115, -1.3, '{120, 118, 116, 119, 117, 116, 115}'),
+        ('Capsicum', 'Spices', 290, 3.4, '{275, 280, 282, 288, 285, 289, 290}'),
+        ('Samba Rice', 'Grains/Tubers', 230, 0.0, '{230, 230, 230, 230, 230, 230, 230}'),
+        ('Nadu Rice', 'Grains/Tubers', 220, 0.0, '{220, 220, 220, 220, 220, 220, 220}'),
+        ('Red Rice', 'Grains/Tubers', 210, 0.5, '{208, 210, 210, 209, 211, 210, 210}'),
+        ('Coconut', 'Grains/Tubers', 110, -0.9, '{112, 115, 113, 111, 114, 112, 110}'),
+        ('Sweet Potato', 'Grains/Tubers', 145, 1.8, '{138, 142, 140, 143, 141, 144, 145}'),
+        ('Manioc', 'Grains/Tubers', 120, -1.0, '{125, 122, 121, 124, 120, 122, 120}'),
+        ('Garlic', 'Spices', 480, 0.8, '{472, 475, 478, 482, 480, 479, 480}'),
+        ('Ginger', 'Spices', 650, -2.5, '{680, 675, 668, 662, 658, 655, 650}'),
+        ('Lime', 'Spices', 350, 5.4, '{320, 328, 335, 342, 338, 345, 350}'),
+        ('Dried Chilies', 'Spices', 980, 0.0, '{980, 980, 980, 980, 980, 980, 980}'),
+        ('Banana', 'Grains/Tubers', 190, 2.1, '{182, 185, 188, 184, 189, 186, 190}')
       `);
     }
 

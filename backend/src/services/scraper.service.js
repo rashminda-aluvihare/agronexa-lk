@@ -10,7 +10,30 @@ const CROP_MAPPING = {
   'Green Chilies': ['Green Chillie', 'Green Chilies', 'අමු මිරිස්'],
   'Leeks': ['Leeks', 'ලීක්ස්'],
   'Red Onion': ['Red Onion', 'Red Onion (Local)', 'රතු ළූණු'],
-  'Beans': ['Beans', 'බෝංචි']
+  'Beans': ['Beans', 'බෝංචි'],
+  'Cabbage': ['Cabbage', 'ගෝවා'],
+  'Pumpkin': ['Pumpkin', 'වට්ටක්කා'],
+  'Brinjal': ['Brinjal', 'Eggplant', 'වම්බටු'],
+  'Ladies Finger': ['Ladies Finger', 'Okra', 'බණ්ඩක්කා'],
+  'Bitter Gourd': ['Bitter Gourd', 'කරවිල'],
+  'Snake Gourd': ['Snake Gourd', 'පතෝල'],
+  'Luffa': ['Luffa', 'Ridge Gourd', 'වැටකොළු'],
+  'Cucumber': ['Cucumber', 'පිපිඤ්ඤා'],
+  'Beetroot': ['Beetroot', 'බීට්රූට්'],
+  'Radish': ['Radish', 'රාබု'],
+  'Knolkhol': ['Knolkhol', 'නෝකෝල්'],
+  'Capsicum': ['Capsicum', 'මාළු මිරිස්'],
+  'Samba Rice': ['Samba Rice', 'Samba', 'සම්බා සහල්'],
+  'Nadu Rice': ['Nadu Rice', 'Nadu', 'නාඩු සහල්'],
+  'Red Rice': ['Red Rice', 'රතු සහල්'],
+  'Coconut': ['Coconut', 'පොල්'],
+  'Sweet Potato': ['Sweet Potato', 'බතල'],
+  'Manioc': ['Manioc', 'Cassava', 'ඤෙඤ්ඤොක්කා'],
+  'Garlic': ['Garlic', 'සුදු ළූණු'],
+  'Ginger': ['Ginger', 'ඉඟුරු'],
+  'Lime': ['Lime', 'දෙහි'],
+  'Dried Chilies': ['Dried Chillie', 'Dried Chilies', 'වියළි මිරිස්'],
+  'Banana': ['Banana', 'කෙසෙල්']
 };
 
 /**

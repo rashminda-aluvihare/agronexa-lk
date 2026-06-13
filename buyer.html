@@ -613,8 +613,11 @@
 
     <!-- Price Index Section -->
     <div class="panel" id="section-price-index" style="display: none; margin-top: 20px; margin-bottom: 20px;">
-      <div class="panel-head">
+      <div class="panel-head" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
         <div class="panel-title" data-i18n="price-index-title">📊 Daily Crop Market Price Index (Sri Lanka)</div>
+        <button onclick="downloadPriceSummaryPDF()" class="btn-sm btn-accept" style="margin: 0; padding: 6px 12px; font-size: 11px; display: flex; align-items: center; gap: 4px; background: var(--teal-mid); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+          📥 <span data-i18n="btn-download-summary">Download Summary (PDF)</span>
+        </button>
       </div>
       <p style="font-size:12px; color:var(--muted); margin-bottom: 12px;" data-i18n="price-index-sub">Average market rates per kg from dedicated economic centres.</p>
       <div style="max-height: 400px; overflow-y: auto;">
@@ -635,7 +638,17 @@
       </div>
       <!-- Chart.js Trend Chart -->
       <div id="panel-price-chart" style="display: none; margin-top: 20px; padding: 16px; background: #fafbfc; border: 1px solid var(--border); border-radius: 12px;">
-        <h4 id="price-chart-title" style="font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--teal-mid);"></h4>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h4 id="price-chart-title" style="font-size: 14px; font-weight: 600; margin: 0; color: var(--teal-mid);"></h4>
+          <div style="display: flex; gap: 8px;">
+            <button onclick="downloadChartAsPNG()" style="font-size: 11px; padding: 4px 8px; background: #fff; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 4px; color: var(--text-color);">
+              📥 <span data-i18n="btn-download-chart-img">Download Image</span>
+            </button>
+            <button onclick="downloadChartAsPDF()" style="font-size: 11px; padding: 4px 8px; background: var(--teal-mid); border: none; border-radius: 4px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 4px; color: #fff;">
+              📄 <span data-i18n="btn-download-chart-pdf">Download PDF</span>
+            </button>
+          </div>
+        </div>
         <div style="position: relative; height: 200px; width: 100%;">
           <canvas id="priceChart"></canvas>
         </div>
@@ -3543,6 +3556,140 @@ function loadMarketPrices() {
     .catch(err => {
       tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:20px; color:var(--amber);">${getTranslation('js-err-failed-load-crop-prices', 'Failed to load crop prices')}: ${err.message}</td></tr>`;
     });
+}
+
+function downloadChartAsPNG() {
+  if (!priceChartInstance) return;
+  const url = priceChartInstance.toBase64Image();
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${document.getElementById('price-chart-title').textContent.replace(/[^a-zA-Z0-9 Sri Lanka]/g, '_')}.png`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function downloadChartAsPDF() {
+  if (!priceChartInstance) return;
+  const chartImg = priceChartInstance.toBase64Image();
+  const titleText = document.getElementById('price-chart-title').textContent;
+  
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(`
+    <html>
+    <head>
+      <title>${titleText}</title>
+      <style>
+        body { font-family: 'DM Sans', Arial, sans-serif; padding: 40px; color: #333; line-height: 1.6; }
+        .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #2d6a4f; padding-bottom: 20px; margin-bottom: 30px; }
+        .logo { font-size: 24px; font-weight: bold; color: #2d6a4f; }
+        .date { font-size: 14px; color: #666; }
+        .title { font-size: 20px; font-weight: bold; margin-bottom: 20px; color: #111; }
+        .chart-container { text-align: center; border: 1px solid #ddd; padding: 20px; border-radius: 8px; background: #fafafa; }
+        .chart-img { max-width: 100%; height: auto; }
+        .footer { margin-top: 50px; font-size: 12px; color: #888; text-align: center; border-top: 1px solid #eee; padding-top: 15px; }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <div class="logo">AgroNexa LK</div>
+        <div class="date">${new Date().toLocaleDateString('si-LK', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
+      </div>
+      <div class="title">${titleText}</div>
+      <div class="chart-container">
+        <img class="chart-img" src="${chartImg}" />
+      </div>
+      <div class="footer">© 2026 AgroNexa LK. All rights reserved. Generated automatically for presentation.</div>
+      <script>
+        window.onload = function() {
+          window.print();
+          setTimeout(function() { window.close(); }, 500);
+        };
+      </script>
+    </body>
+    </html>
+  `);
+  printWindow.document.close();
+}
+
+function downloadPriceSummaryPDF() {
+  const tbody = document.getElementById('price-index-table-body');
+  if (!tbody) return;
+  
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  if (rows.length === 0 || rows[0].innerText.includes('Loading') || rows[0].innerText.includes('Failed')) {
+    alert('Please wait for prices to load before generating a report.');
+    return;
+  }
+  
+  let tableRowsHtml = '';
+  rows.forEach(row => {
+    const cells = row.querySelectorAll('td');
+    if (cells.length >= 3) {
+      const name = cells[0].innerText;
+      const price = cells[1].innerText;
+      const change = cells[2].innerText;
+      const changeColor = change.includes('-') ? '#D95050' : '#2d6a4f';
+      
+      tableRowsHtml += `
+        <tr style="border-bottom: 1px solid #eee;">
+          <td style="padding: 10px; font-weight: 500;">${name}</td>
+          <td style="padding: 10px; text-align: right; font-weight: 600;">${price}</td>
+          <td style="padding: 10px; text-align: right; color: ${changeColor}; font-weight: 600;">${change}</td>
+        </tr>
+      `;
+    }
+  });
+
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(`
+    <html>
+    <head>
+      <title>Daily Crop Market Price Index - AgroNexa LK</title>
+      <style>
+        body { font-family: 'DM Sans', Arial, sans-serif; padding: 40px; color: #333; line-height: 1.6; }
+        .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #2d6a4f; padding-bottom: 20px; margin-bottom: 30px; }
+        .logo { font-size: 24px; font-weight: bold; color: #2d6a4f; }
+        .date { font-size: 14px; color: #666; }
+        .title { font-size: 22px; font-weight: bold; margin-bottom: 10px; color: #111; }
+        .subtitle { font-size: 14px; color: #666; margin-bottom: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+        th { background: #f4f6f5; padding: 12px 10px; font-weight: 600; text-transform: uppercase; font-size: 11px; color: #555; border-bottom: 2px solid #2d6a4f; }
+        .footer { margin-top: 50px; font-size: 12px; color: #888; text-align: center; border-top: 1px solid #eee; padding-top: 15px; }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <div class="logo">AgroNexa LK</div>
+        <div class="date">${new Date().toLocaleDateString('si-LK', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
+      </div>
+      <div class="title">Daily Crop Market Price Index (Sri Lanka)</div>
+      <div class="subtitle">Average wholesale market rates per kg from dedicated economic centres.</div>
+      
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align: left;">Crop Name</th>
+            <th style="text-align: right;">Average Price</th>
+            <th style="text-align: right;">Daily Change (%)</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${tableRowsHtml}
+        </tbody>
+      </table>
+      
+      <div class="footer">© 2026 AgroNexa LK. All rights reserved. Generated automatically for presentation.</div>
+      <script>
+        window.onload = function() {
+          window.print();
+          setTimeout(function() { window.close(); }, 500);
+        };
+      </script>
+    </body>
+    </html>
+  `);
+  printWindow.document.close();
 }
 
 // ── TRANSPORT / LOGISTICS MATCHING FUNCTIONS ──
