@@ -334,7 +334,7 @@ async function getBuyerBookings(req, res, next) {
     const result = await db.query(
       `SELECT eb.*, el.name AS listing_name, el.rental_rate, el.district,
               u.first_name || ' ' || u.last_name AS owner_name,
-              u.phone AS owner_phone
+              u.phone AS owner_phone, u.email AS owner_email
        FROM equipment_bookings eb
        JOIN equipment_listings el ON el.id = eb.listing_id
        JOIN users u ON u.id = eb.owner_id
@@ -534,6 +534,61 @@ async function rejectBooking(req, res, next) {
   }
 }
 
+/**
+ * POST /api/seller/bookings/:id/complete (owner marks returned)
+ */
+async function completeBooking(req, res, next) {
+  const { id } = req.params;
+  const { extra_charges, return_notes } = req.body;
+  const owner_id = req.body.owner_id || req.auth.id;
+
+  if (!owner_id) {
+    return res.status(400).json({ error: 'owner_id is required' });
+  }
+
+  try {
+    const booking = await db.query(
+      `UPDATE equipment_bookings 
+       SET status = 'completed', 
+           extra_charges = $1, 
+           return_notes = $2, 
+           returned_at = NOW()
+       WHERE id = $3 AND owner_id = $4 AND status = 'confirmed'
+       RETURNING *`,
+      [extra_charges ? parseFloat(extra_charges) : 0.0, return_notes || null, id, owner_id]
+    );
+
+    if (booking.rows.length === 0) {
+      return res.status(404).json({ error: 'Booking not found, unauthorized, or not in confirmed status' });
+    }
+
+    const b = booking.rows[0];
+
+    // Release the listing back to 'available'
+    await db.query(
+      `UPDATE equipment_listings 
+       SET status = 'available', updated_at = NOW() 
+       WHERE id = $1`,
+      [b.listing_id]
+    );
+
+    // Notify renter
+    await notificationService.pushNotification(
+      b.renter_id,
+      'booking',
+      'Equipment Rental Completed 🚜',
+      `Your rental booking has been marked as completed/returned by the owner. Final Receipt is now available.`
+    );
+
+    // Audit log
+    await auditService.logAction(owner_id, 'COMPLETE_BOOKING', req.ip, { id, extra_charges });
+
+    return res.json({ success: true, booking: b });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getOwnerEquipment,
   createEquipmentListing,
@@ -547,4 +602,5 @@ module.exports = {
   getSellerBookings,
   confirmBooking,
   rejectBooking,
+  completeBooking,
 };

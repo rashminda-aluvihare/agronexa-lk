@@ -115,10 +115,18 @@ async function initDatabase() {
         start_date DATE NOT NULL,
         end_date DATE NOT NULL,
         total_amount NUMERIC(10,2),
+        extra_charges NUMERIC(10,2) DEFAULT 0.0,
+        return_notes TEXT,
+        returned_at TIMESTAMPTZ,
         status VARCHAR(20) DEFAULT 'pending',
         created_at TIMESTAMPTZ DEFAULT NOW()
       );
     `);
+
+    // Ensure columns exist on equipment_bookings table for migration
+    await client.query("ALTER TABLE equipment_bookings ADD COLUMN IF NOT EXISTS extra_charges NUMERIC(10,2) DEFAULT 0.0;");
+    await client.query("ALTER TABLE equipment_bookings ADD COLUMN IF NOT EXISTS return_notes TEXT;");
+    await client.query("ALTER TABLE equipment_bookings ADD COLUMN IF NOT EXISTS returned_at TIMESTAMPTZ;");
 
     // 5. Buyer Requests Table
     await client.query(`

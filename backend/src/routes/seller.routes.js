@@ -46,6 +46,7 @@ router.delete('/equipment/:id', sellerRoleCheck, equipmentController.deleteEquip
 router.get('/bookings', sellerRoleCheck, equipmentController.getSellerBookings);
 router.post('/bookings/:id/confirm', sellerRoleCheck, equipmentController.confirmBooking);
 router.post('/bookings/:id/reject', sellerRoleCheck, equipmentController.rejectBooking);
+router.post('/bookings/:id/complete', sellerRoleCheck, equipmentController.completeBooking);
 
 // Buyer Requests
 router.get('/requests', sellerRoleCheck, requestController.getSellerMatchingRequests);

@@ -2679,7 +2679,6 @@ async function closeRequest(id) {
 }
 
 
-// ── BOOKINGS FUNCTIONS ──
 function loadBookings() {
   fetch(API_URL + '/api/buyer/bookings?buyer_id=' + _user.id, {
     headers: getAuthHeaders()
@@ -2692,6 +2691,7 @@ function loadBookings() {
         return;
       }
 
+      window.buyerBookings = data.bookings;
       let html = '';
       data.bookings.forEach(item => {
         const start = new Date(item.start_date).toLocaleDateString();
@@ -2704,9 +2704,20 @@ function loadBookings() {
 
         const isPending = item.status === 'pending';
         const cancelBtn = isPending ? `<button onclick="cancelBooking(${item.id})" style="background:none;border:none;color:var(--amber);font-size:11.5px;cursor:pointer;margin-top:4px;font-weight:500;">${getTranslation('js-cancel-request', 'Cancel Request')}</button>` : '';
-        let pdfBtn = '';
+        let actionBtnsHtml = '';
         if (item.status === 'confirmed') {
-          pdfBtn = `<button onclick="downloadBookingSlip(${item.id}, '${item.listing_name.replace(/'/g, "\\'")}', '${item.owner_name.replace(/'/g, "\\'")}', '${start}', '${end}', ${item.total_amount})" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; margin-top:4px; display:flex; align-items:center; gap:2px;">📥 PDF</button>`;
+          actionBtnsHtml = `
+            <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-end; margin-top:4px;">
+              <button onclick="printRentalInvoice(${item.id})" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:2px; padding:0;">📄 Invoice</button>
+            </div>
+          `;
+        } else if (item.status === 'completed') {
+          actionBtnsHtml = `
+            <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-end; margin-top:4px;">
+              <button onclick="printRentalInvoice(${item.id})" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:2px; padding:0;">📄 Invoice</button>
+              <button onclick="printReturnReceipt(${item.id})" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:2px; padding:0;">🧾 Return Receipt</button>
+            </div>
+          `;
         }
 
         html += `
@@ -2723,13 +2734,327 @@ function loadBookings() {
             <div style="display:flex;flex-direction:column;align-items:flex-end;">
               <span class="booking-status ${item.status}">${getTranslation('booking-status-' + item.status, item.status).toUpperCase()}</span>
               ${cancelBtn}
-              ${pdfBtn}
+              ${actionBtnsHtml}
             </div>
           </div>
         `;
       });
       container.innerHTML = html;
     });
+}
+
+function printRentalInvoice(bookingId) {
+  const bookings = window.ownerBookings || window.buyerBookings || [];
+  const b = bookings.find(item => item.id === bookingId);
+  if (!b) return alert('Booking details not found');
+
+  const isOwner = !!window.ownerBookings;
+  
+  const ownerName = isOwner ? (_user.first_name + ' ' + _user.last_name) : b.owner_name;
+  const ownerPhone = isOwner ? (_user.phone || 'N/A') : (b.owner_phone || 'N/A');
+  const ownerEmail = isOwner ? (_user.email || 'N/A') : (b.owner_email || 'N/A');
+  
+  const renterName = isOwner ? b.renter_name : (_user.first_name + ' ' + _user.last_name);
+  const renterPhone = isOwner ? (b.renter_phone || 'N/A') : (_user.phone || 'N/A');
+  const renterEmail = isOwner ? (b.renter_email || 'N/A') : (_user.email || 'N/A');
+
+  const startDate = new Date(b.start_date).toLocaleDateString();
+  const endDate = new Date(b.end_date).toLocaleDateString();
+  const diffTime = Math.abs(new Date(b.end_date) - new Date(b.start_date));
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+  const invoiceHtml = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Rental Invoice - #${b.id}</title>
+      <style>
+        body { font-family: 'DM Sans', Arial, sans-serif; color: #1a251e; padding: 40px; line-height: 1.5; background: #fff; }
+        .header { display: flex; justify-content: space-between; border-bottom: 3px solid #114227; padding-bottom: 20px; margin-bottom: 30px; }
+        .logo-section h1 { color: #114227; margin: 0; font-size: 28px; font-weight: 800; }
+        .logo-section p { margin: 5px 0 0 0; font-size: 11px; color: #666; letter-spacing: 1.5px; text-transform: uppercase; }
+        .title-section { text-align: right; }
+        .title-section h2 { margin: 0; color: #1a251e; font-size: 24px; font-weight: 700; }
+        .title-section p { margin: 5px 0 0 0; font-size: 13px; color: #666; }
+        .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px; }
+        .details-box { border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px; background: #f8fafc; }
+        .details-box h3 { margin-top: 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; color: #114227; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .details-box p { margin: 8px 0; font-size: 13.5px; color: #334155; }
+        .details-box strong { color: #0f172a; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+        th { background-color: #114227; color: #fff; text-align: left; padding: 12px 16px; font-size: 13px; text-transform: uppercase; }
+        td { padding: 14px 16px; border-bottom: 1px solid #e2e8f0; font-size: 13.5px; color: #334155; }
+        .text-right { text-align: right; }
+        .totals-section { float: right; width: 320px; margin-bottom: 40px; }
+        .totals-line { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; color: #475569; }
+        .totals-line.grand-total { border-top: 2px double #114227; font-size: 18px; font-weight: bold; color: #114227; padding-top: 12px; }
+        .signatures { margin-top: 100px; display: flex; justify-content: space-between; page-break-inside: avoid; }
+        .signature-line { width: 220px; border-top: 1px solid #475569; text-align: center; padding-top: 8px; font-size: 12.5px; color: #475569; }
+        .footer { margin-top: 80px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px; clear: both; }
+        @media print {
+          body { padding: 10px; }
+          .no-print { display: none; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <div class="logo-section">
+          <h1>AgroNexa LK</h1>
+          <p>Smart Agriculture Ecosystem</p>
+        </div>
+        <div class="title-section">
+          <h2>RENTAL INVOICE</h2>
+          <p>Invoice #: INV-EQ-${b.id}</p>
+          <p>Date: ${new Date(b.created_at || Date.now()).toLocaleDateString()}</p>
+        </div>
+      </div>
+
+      <div class="details-grid">
+        <div class="details-box">
+          <h3>Owner (කුලියට දෙන්නා)</h3>
+          <p><strong>Name:</strong> ${ownerName}</p>
+          <p><strong>Phone:</strong> ${ownerPhone}</p>
+          <p><strong>Email:</strong> ${ownerEmail}</p>
+        </div>
+        <div class="details-box">
+          <h3>Renter (කුලියට ගන්නා)</h3>
+          <p><strong>Name:</strong> ${renterName}</p>
+          <p><strong>Phone:</strong> ${renterPhone}</p>
+          <p><strong>Email:</strong> ${renterEmail}</p>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Description (විස්තරය)</th>
+            <th class="text-right">Rate / Day (දිනකට මිල)</th>
+            <th class="text-right">Days (දින ගණන)</th>
+            <th class="text-right">Total Amount (මුළු මුදල)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Rental of <strong>${b.listing_name}</strong><br><span style="font-size: 11px; color: #64748b;">Period: ${startDate} to ${endDate}</span></td>
+            <td class="text-right">Rs. ${parseFloat(b.rental_rate).toLocaleString()}</td>
+            <td class="text-right">${diffDays}</td>
+            <td class="text-right">Rs. ${parseFloat(b.total_amount).toLocaleString()}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="totals-section">
+        <div class="totals-line">
+          <span>Subtotal (උප එකතුව)</span>
+          <span>Rs. ${parseFloat(b.total_amount).toLocaleString()}</span>
+        </div>
+        <div class="totals-line grand-total">
+          <span>Total Payable (ගෙවිය යුතු මුළු මුදල)</span>
+          <span>Rs. ${parseFloat(b.total_amount).toLocaleString()}</span>
+        </div>
+      </div>
+
+      <div class="signatures">
+        <div class="signature-line">
+          <p>Renter's Signature</p>
+          <p style="font-size: 10px; color:#94a3b8;">(කුලියට ගන්නාගේ අත්සන)</p>
+        </div>
+        <div class="signature-line">
+          <p>Owner's Signature</p>
+          <p style="font-size: 10px; color:#94a3b8;">(කුලියට දෙන්නාගේ අත්සන)</p>
+        </div>
+      </div>
+
+      <div class="footer">
+        <p>This is a computer-generated document. Thank you for using AgroNexa LK!</p>
+        <p>AgroNexa LK &copy; 2026 - Empowering Sri Lankan Farmers</p>
+      </div>
+
+      <script>
+        window.onload = function() {
+          window.print();
+        };
+      <\/script>
+    </body>
+    </html>
+  `;
+
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(invoiceHtml);
+  printWindow.document.close();
+}
+
+function printReturnReceipt(bookingId) {
+  const bookings = window.ownerBookings || window.buyerBookings || [];
+  const b = bookings.find(item => item.id === bookingId);
+  if (!b) return alert('Booking details not found');
+
+  const isOwner = !!window.ownerBookings;
+  
+  const ownerName = isOwner ? (_user.first_name + ' ' + _user.last_name) : b.owner_name;
+  const ownerPhone = isOwner ? (_user.phone || 'N/A') : (b.owner_phone || 'N/A');
+  const ownerEmail = isOwner ? (_user.email || 'N/A') : (b.owner_email || 'N/A');
+  
+  const renterName = isOwner ? b.renter_name : (_user.first_name + ' ' + _user.last_name);
+  const renterPhone = isOwner ? (b.renter_phone || 'N/A') : (_user.phone || 'N/A');
+  const renterEmail = isOwner ? (b.renter_email || 'N/A') : (_user.email || 'N/A');
+
+  const startDate = new Date(b.start_date).toLocaleDateString();
+  const endDate = new Date(b.end_date).toLocaleDateString();
+  const returnedDate = b.returned_at ? new Date(b.returned_at).toLocaleString() : 'N/A';
+  
+  const baseAmount = parseFloat(b.total_amount);
+  const extraCharges = parseFloat(b.extra_charges || 0);
+  const grandTotal = baseAmount + extraCharges;
+
+  const diffTime = Math.abs(new Date(b.end_date) - new Date(b.start_date));
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+  const receiptHtml = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Rental Return Receipt - #${b.id}</title>
+      <style>
+        body { font-family: 'DM Sans', Arial, sans-serif; color: #1a251e; padding: 40px; line-height: 1.5; background: #fff; }
+        .header { display: flex; justify-content: space-between; border-bottom: 3px solid #114227; padding-bottom: 20px; margin-bottom: 30px; }
+        .logo-section h1 { color: #114227; margin: 0; font-size: 28px; font-weight: 800; }
+        .logo-section p { margin: 5px 0 0 0; font-size: 11px; color: #666; letter-spacing: 1.5px; text-transform: uppercase; }
+        .title-section { text-align: right; }
+        .title-section h2 { margin: 0; color: #1a251e; font-size: 24px; font-weight: 700; }
+        .title-section p { margin: 5px 0 0 0; font-size: 13px; color: #666; }
+        .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px; }
+        .details-box { border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px; background: #f8fafc; }
+        .details-box h3 { margin-top: 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; color: #114227; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .details-box p { margin: 8px 0; font-size: 13.5px; color: #334155; }
+        .details-box strong { color: #0f172a; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        th { background-color: #114227; color: #fff; text-align: left; padding: 12px 16px; font-size: 13px; text-transform: uppercase; }
+        td { padding: 14px 16px; border-bottom: 1px solid #e2e8f0; font-size: 13.5px; color: #334155; }
+        .text-right { text-align: right; }
+        .totals-section { float: right; width: 320px; margin-bottom: 40px; }
+        .totals-line { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; color: #475569; }
+        .totals-line.grand-total { border-top: 2px double #114227; font-size: 18px; font-weight: bold; color: #114227; padding-top: 12px; }
+        .notes-section { clear: both; margin-top: 30px; border-left: 4px solid #f59e0b; padding: 15px; background: #fffbeb; border-radius: 4px; }
+        .notes-section h4 { margin: 0 0 5px 0; color: #b45309; font-size: 14px; text-transform: uppercase; }
+        .notes-section p { margin: 0; font-size: 13.5px; color: #78350f; }
+        .signatures { margin-top: 80px; display: flex; justify-content: space-between; page-break-inside: avoid; }
+        .signature-line { width: 220px; border-top: 1px solid #475569; text-align: center; padding-top: 8px; font-size: 12.5px; color: #475569; }
+        .footer { margin-top: 80px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px; clear: both; }
+        @media print {
+          body { padding: 10px; }
+          .no-print { display: none; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <div class="logo-section">
+          <h1>AgroNexa LK</h1>
+          <p>Smart Agriculture Ecosystem</p>
+        </div>
+        <div class="title-section">
+          <h2>RETURN RECEIPT</h2>
+          <p>Receipt #: REC-EQ-${b.id}</p>
+          <p>Return Date: ${returnedDate}</p>
+        </div>
+      </div>
+
+      <div class="details-grid">
+        <div class="details-box">
+          <h3>Owner (කුලියට දෙන්නා)</h3>
+          <p><strong>Name:</strong> ${ownerName}</p>
+          <p><strong>Phone:</strong> ${ownerPhone}</p>
+          <p><strong>Email:</strong> ${ownerEmail}</p>
+        </div>
+        <div class="details-box">
+          <h3>Renter (කුලියට ගන්නා)</h3>
+          <p><strong>Name:</strong> ${renterName}</p>
+          <p><strong>Phone:</strong> ${renterPhone}</p>
+          <p><strong>Email:</strong> ${renterEmail}</p>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Item Details (විස්තරය)</th>
+            <th class="text-right">Rate / Day</th>
+            <th class="text-right">Days</th>
+            <th class="text-right">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Rental of <strong>${b.listing_name}</strong><br><span style="font-size: 11px; color: #64748b;">Period: ${startDate} to ${endDate}</span></td>
+            <td class="text-right">Rs. ${parseFloat(b.rental_rate).toLocaleString()}</td>
+            <td class="text-right">${diffDays}</td>
+            <td class="text-right">Rs. ${baseAmount.toLocaleString()}</td>
+          </tr>
+          ${extraCharges > 0 ? `
+          <tr>
+            <td><strong>Extra Charges / Damage Fees</strong><br><span style="font-size: 11px; color: #64748b;">As assessed by owner upon return</span></td>
+            <td class="text-right">-</td>
+            <td class="text-right">-</td>
+            <td class="text-right">Rs. ${extraCharges.toLocaleString()}</td>
+          </tr>
+          ` : ''}
+        </tbody>
+      </table>
+
+      ${b.return_notes ? `
+      <div class="notes-section">
+        <h4>Return & Condition Notes (භාරගැනීමේ සටහන්)</h4>
+        <p>${b.return_notes}</p>
+      </div>
+      ` : ''}
+
+      <div class="totals-section">
+        <div class="totals-line">
+          <span>Base Rent Subtotal</span>
+          <span>Rs. ${baseAmount.toLocaleString()}</span>
+        </div>
+        ${extraCharges > 0 ? `
+        <div class="totals-line">
+          <span>Extra Charges</span>
+          <span>Rs. ${extraCharges.toLocaleString()}</span>
+        </div>
+        ` : ''}
+        <div class="totals-line grand-total">
+          <span>Final Total Paid (මුළු මුදල)</span>
+          <span>Rs. ${grandTotal.toLocaleString()}</span>
+        </div>
+      </div>
+
+      <div class="signatures">
+        <div class="signature-line">
+          <p>Renter's Signature</p>
+          <p style="font-size: 10px; color:#94a3b8;">(කුලියට ගන්නාගේ අත්සන)</p>
+        </div>
+        <div class="signature-line">
+          <p>Owner's Signature</p>
+          <p style="font-size: 10px; color:#94a3b8;">(කුලියට දෙන්නාගේ අත්සන)</p>
+        </div>
+      </div>
+
+      <div class="footer">
+        <p>This return receipt confirms that the rented equipment has been returned and all transactions settled.</p>
+        <p>AgroNexa LK &copy; 2026 - Empowering Sri Lankan Farmers</p>
+      </div>
+
+      <script>
+        window.onload = function() {
+          window.print();
+        };
+      <\/script>
+    </body>
+    </html>
+  `;
+
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(receiptHtml);
+  printWindow.document.close();
 }
 
 async function cancelBooking(id) {
