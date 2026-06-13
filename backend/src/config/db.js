@@ -26,7 +26,11 @@ async function query(text, params) {
 async function initDatabase() {
   const client = await pool.connect();
   try {
-    await client.query("SET client_encoding TO 'UTF8'");
+    try {
+      await client.query("SET client_encoding TO 'UTF8'");
+    } catch (encErr) {
+      console.warn('⚠️ Warning: Failed to set client_encoding to UTF8 (possibly pgBouncer/transaction pooling):', encErr.message);
+    }
     await client.query('BEGIN');
     console.log('🔄 Running database migrations...');
 
