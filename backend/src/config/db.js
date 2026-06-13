@@ -236,11 +236,18 @@ async function initDatabase() {
         id SERIAL PRIMARY KEY,
         sender_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         receiver_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-        message TEXT NOT NULL,
+        message TEXT,
+        attachment_url TEXT,
+        attachment_type VARCHAR(50),
         is_read BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMPTZ DEFAULT NOW()
       );
     `);
+
+    // Ensure columns exist on legacy direct_messages table
+    await client.query("ALTER TABLE direct_messages ADD COLUMN IF NOT EXISTS attachment_url TEXT;");
+    await client.query("ALTER TABLE direct_messages ADD COLUMN IF NOT EXISTS attachment_type VARCHAR(50);");
+    await client.query("ALTER TABLE direct_messages ALTER COLUMN message DROP NOT NULL;");
 
     // 11. Transport Providers Table
     await client.query(`

@@ -80,17 +80,21 @@ async function getChatMessages(req, res, next) {
  */
 async function sendChatMessage(req, res, next) {
   const senderId = req.body.seller_id || req.body.buyer_id || req.body.user_id || (req.auth && req.auth.id);
-  const { receiver_id, message } = req.body;
+  const { receiver_id, message, attachment_url, attachment_type } = req.body;
 
-  if (!senderId || !receiver_id || !message) {
-    return res.status(400).json({ error: 'sender identity, receiver_id, and message are required' });
+  if (!senderId || !receiver_id) {
+    return res.status(400).json({ error: 'sender identity and receiver_id are required' });
+  }
+
+  if (!message && !attachment_url) {
+    return res.status(400).json({ error: 'Either message or attachment_url must be provided' });
   }
 
   try {
     const result = await db.query(
-      `INSERT INTO direct_messages (sender_id, receiver_id, message)
-       VALUES ($1, $2, $3) RETURNING *`,
-      [senderId, receiver_id, message]
+      `INSERT INTO direct_messages (sender_id, receiver_id, message, attachment_url, attachment_type)
+       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      [senderId, receiver_id, message || null, attachment_url || null, attachment_type || null]
     );
     const row = result.rows[0];
 
@@ -106,8 +110,35 @@ async function sendChatMessage(req, res, next) {
   }
 }
 
+async function uploadAttachment(req, res, next) {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+
+  try {
+    const fileUrl = `/uploads/chat/${req.file.filename}`;
+    let attachmentType = 'file';
+
+    if (req.file.mimetype.startsWith('image/')) {
+      attachmentType = 'image';
+    } else if (req.file.mimetype.startsWith('audio/')) {
+      attachmentType = 'audio';
+    }
+
+    return res.json({
+      success: true,
+      url: fileUrl,
+      type: attachmentType,
+      originalName: req.file.originalname
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getUserChats,
   getChatMessages,
   sendChatMessage,
+  uploadAttachment,
 };

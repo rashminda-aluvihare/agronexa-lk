@@ -1041,8 +1041,15 @@
             <div class="chat-messages-container" id="chat-messages-box">
               <!-- Messages bubbles will populate here -->
             </div>
+            <div id="chat-attachment-preview" style="display:none; padding:10px 16px; background:rgba(0,0,0,0.03); border-top:1px solid var(--border-color); font-size:12px; display:flex; align-items:center; justify-content:space-between; width:100%;">
+              <span id="chat-preview-filename" style="font-weight:600; font-style:italic;"></span>
+              <button type="button" onclick="clearSelectedAttachment()" style="background:none; border:none; font-size:16px; font-weight:bold; cursor:pointer; color:#c53030;">&times;</button>
+            </div>
             <form class="chat-input-area" onsubmit="sendChatMessage(event)">
-              <input type="text" class="chat-input" id="chat-message-input" data-i18n-placeholder="placeholder-chat-type" placeholder="Type a message..." required autocomplete="off">
+              <input type="file" id="chat-file-input" style="display:none;" onchange="handleChatFileSelected(event)">
+              <button type="button" class="chat-attach-btn" onclick="document.getElementById('chat-file-input').click()" style="background:none; border:none; font-size:18px; cursor:pointer; color:var(--text-muted); padding:4px;" title="Attach File/Image">📎</button>
+              <button type="button" id="chat-voice-btn" onclick="toggleVoiceRecording()" style="background:none; border:none; font-size:18px; cursor:pointer; color:var(--text-muted); padding:4px;" title="Record Voice Message">🎤</button>
+              <input type="text" class="chat-input" id="chat-message-input" data-i18n-placeholder="placeholder-chat-type" placeholder="Type a message..." autocomplete="off">
               <button type="submit" class="chat-send-btn" data-i18n="btn-chat-send">Send</button>
             </form>
           </div>
@@ -1606,7 +1613,7 @@ function initSocket() {
       const bubble = document.createElement('div');
       bubble.className = 'chat-bubble received';
       bubble.innerHTML = `
-        <div>${data.message}</div>
+        ${formatMessageContent(data)}
         <div class="chat-bubble-time">${timeStr}</div>
       `;
       box.appendChild(bubble);
@@ -3661,6 +3668,91 @@ function loadChatsList() {
     });
 }
 
+let stagedAttachmentFile = null;
+let stagedAttachmentType = null;
+let stagedAttachmentName = null;
+let mediaRecorder = null;
+let audioChunks = [];
+let isRecording = false;
+
+function formatMessageContent(msg) {
+  let html = '';
+  if (msg.message) {
+    html += `<div>${msg.message}</div>`;
+  }
+  if (msg.attachment_url) {
+    if (msg.attachment_type === 'image') {
+      html += `<div style="margin-top:6px;"><img src="${API_URL}${msg.attachment_url}" style="max-width:200px; max-height:200px; border-radius:8px; cursor:pointer;" onclick="window.open('${API_URL}${msg.attachment_url}', '_blank')"></div>`;
+    } else if (msg.attachment_type === 'audio') {
+      html += `<div style="margin-top:6px;"><audio controls src="${API_URL}${msg.attachment_url}" style="max-width:100%; height:32px; outline:none;"></audio></div>`;
+    } else {
+      const parts = msg.attachment_url.split('/');
+      const filename = parts[parts.length - 1];
+      html += `<div style="margin-top:6px;"><a href="${API_URL}${msg.attachment_url}" target="_blank" style="color:inherit; font-weight:600; display:inline-flex; align-items:center; gap:4px; text-decoration:underline;">📎 Download Attachment</a></div>`;
+    }
+  }
+  return html;
+}
+
+function stageAttachmentForUpload(file, name, defaultType = 'file') {
+  stagedAttachmentFile = file;
+  stagedAttachmentName = name;
+  let type = defaultType;
+  if (file.type.startsWith('image/')) type = 'image';
+  else if (file.type.startsWith('audio/')) type = 'audio';
+  stagedAttachmentType = type;
+  
+  document.getElementById('chat-attachment-preview').style.display = 'flex';
+  document.getElementById('chat-preview-filename').textContent = `Attachment staged: ${name} (${type})`;
+  document.getElementById('chat-message-input').required = false;
+}
+
+function clearSelectedAttachment() {
+  stagedAttachmentFile = null;
+  stagedAttachmentType = null;
+  stagedAttachmentName = null;
+  document.getElementById('chat-attachment-preview').style.display = 'none';
+  document.getElementById('chat-message-input').required = true;
+  document.getElementById('chat-file-input').value = '';
+}
+
+function handleChatFileSelected(event) {
+  const file = event.target.files[0];
+  if (file) {
+    stageAttachmentForUpload(file, file.name);
+  }
+}
+
+async function toggleVoiceRecording() {
+  const btn = document.getElementById('chat-voice-btn');
+  if (!isRecording) {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks = [];
+      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        const file = new File([audioBlob], `voice_note_${Date.now()}.webm`, { type: 'audio/webm' });
+        stageAttachmentForUpload(file, 'voice_note.webm', 'audio');
+        stream.getTracks().forEach(track => track.stop());
+      };
+      mediaRecorder.start();
+      isRecording = true;
+      btn.innerHTML = '⏹️';
+      btn.style.color = '#c53030';
+      showToast(getTranslation('toast-recording-started', 'Recording'), getTranslation('toast-recording-mic-active', 'Microphone is recording... Speak now.'));
+    } catch (err) {
+      alert('Microphone access denied: ' + err.message);
+    }
+  } else {
+    mediaRecorder.stop();
+    isRecording = false;
+    btn.innerHTML = '🎤';
+    btn.style.color = 'var(--text-muted)';
+  }
+}
+
 function openDirectChat(buyerId, buyerName, buyerRole) {
   activeChatUserId = buyerId;
   document.getElementById('chat-window-empty').style.display = 'none';
@@ -3673,6 +3765,7 @@ function openDirectChat(buyerId, buyerName, buyerRole) {
   items.forEach(item => item.classList.remove('active'));
   // Reload chat list to update unread badge
   loadChatsList();
+  clearSelectedAttachment();
   
   // Fetch message history
   fetch(API_URL + `/api/seller/messages?seller_id=${_user.id}&chat_user_id=${buyerId}`, {
@@ -3693,7 +3786,7 @@ function openDirectChat(buyerId, buyerName, buyerRole) {
         const ticks = isSent ? (msg.is_read ? '<span style="font-size:10px; margin-left:4px; color:#cbe3db;">✔️✔️</span>' : '<span style="font-size:10px; margin-left:4px; color:#cbe3db;">✔️</span>') : '';
         html += `
           <div class="chat-bubble ${bubbleClass}">
-            <div>${msg.message}</div>
+            ${formatMessageContent(msg)}
             <div class="chat-bubble-time">${timeStr}${ticks}</div>
           </div>
         `;
@@ -3703,12 +3796,42 @@ function openDirectChat(buyerId, buyerName, buyerRole) {
     });
 }
 
-function sendChatMessage(e) {
+async function sendChatMessage(e) {
   e.preventDefault();
   const input = document.getElementById('chat-message-input');
   const msgText = input.value.trim();
-  if (!msgText || !activeChatUserId) return;
+  if (!msgText && !stagedAttachmentFile) return;
+  if (!activeChatUserId) return;
   
+  let attachmentUrl = null;
+  let attachmentType = null;
+  
+  if (stagedAttachmentFile) {
+    const formData = new FormData();
+    formData.append('attachment', stagedAttachmentFile);
+    
+    try {
+      const uploadRes = await fetch(API_URL + '/api/chat/upload', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + sessionStorage.getItem('agro_token')
+        },
+        body: formData
+      });
+      const uploadData = await uploadRes.json();
+      if (uploadData.success) {
+        attachmentUrl = uploadData.url;
+        attachmentType = uploadData.type;
+      } else {
+        alert('Upload failed: ' + uploadData.error);
+        return;
+      }
+    } catch (err) {
+      alert('Upload error: ' + err.message);
+      return;
+    }
+  }
+
   // Send via HTTP POST
   fetch(API_URL + '/api/seller/messages/send', {
     method: 'POST',
@@ -3716,7 +3839,9 @@ function sendChatMessage(e) {
     body: JSON.stringify({
       seller_id: _user.id,
       receiver_id: activeChatUserId,
-      message: msgText
+      message: msgText,
+      attachment_url: attachmentUrl,
+      attachment_type: attachmentType
     })
   })
     .then(r => r.json())
@@ -3724,6 +3849,7 @@ function sendChatMessage(e) {
       if (data.success) {
         const msg = data.message;
         input.value = '';
+        clearSelectedAttachment();
         
         // Append bubble locally
         const box = document.getElementById('chat-messages-box');
@@ -3731,7 +3857,7 @@ function sendChatMessage(e) {
         const bubble = document.createElement('div');
         bubble.className = 'chat-bubble sent';
         bubble.innerHTML = `
-          <div>${msg.message}</div>
+          ${formatMessageContent(msg)}
           <div class="chat-bubble-time">${timeStr}<span style="font-size:10px; margin-left:4px; color:#cbe3db;">✔️</span></div>
         `;
         box.appendChild(bubble);
@@ -3744,6 +3870,8 @@ function sendChatMessage(e) {
             sender_id: _user.id,
             receiver_id: activeChatUserId,
             message: msgText,
+            attachment_url: attachmentUrl,
+            attachment_type: attachmentType,
             created_at: msg.created_at
           });
         }

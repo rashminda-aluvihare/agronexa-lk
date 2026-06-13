@@ -9,6 +9,7 @@ const buyerRoutes = require('./buyer.routes');
 const adminRoutes = require('./admin.routes');
 const profileRoutes = require('./profile.routes');
 const transportRoutes = require('./transport.routes');
+const chatRoutes = require('./chat.routes');
 
 const apiRouter = express.Router();
 
@@ -22,6 +23,7 @@ apiRouter.use('/buyer', buyerRoutes);
 apiRouter.use('/admin', adminRoutes);
 apiRouter.use('/profile', profileRoutes);
 apiRouter.use('/transport', transportRoutes);
+apiRouter.use('/chat', chatRoutes);
 
 // Misc routes
 apiRouter.get('/market-prices', miscController.getMarketPrices);
