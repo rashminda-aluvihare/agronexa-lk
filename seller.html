@@ -2361,17 +2361,24 @@ function loadBuyerRequests() {
         // Format date
         const dateStr = item.needed_by ? new Date(item.needed_by).toLocaleDateString() : getTranslation('js-immediate', 'Immediate');
         
-        // Check if we have already responded to this request
-        const myResponse = item.responses && item.responses.find(r => r.seller_id === _user.id);
-        const hasResponded = !!myResponse;
+        // Check if we have already responded to this request (final accept/reject)
+        const myFinalResponse = item.responses && item.responses.find(r => r.seller_id === _user.id && (r.type === 'accept' || r.type === 'reject'));
+        const hasFinalResponded = !!myFinalResponse;
+        
+        // Check if we have sent a counter offer
+        const myCounter = item.responses && item.responses.find(r => r.seller_id === _user.id && r.type === 'counter');
+        const hasCountered = !!myCounter;
         
         let actionsHtml = '';
-        if (hasResponded) {
-          actionsHtml = `<span style="font-size:12px;color:var(--green);font-weight:500;margin-right:8px;">✔ ${getTranslation('js-responded', 'Responded')} (${myResponse.type})</span>`;
+        if (hasFinalResponded) {
+          actionsHtml = `<span style="font-size:12px;color:var(--green);font-weight:500;margin-right:8px;">✔ ${getTranslation('js-responded', 'Responded')} (${myFinalResponse.type})</span>`;
         } else {
-          actionsHtml = `
+          if (hasCountered) {
+            actionsHtml = `<span style="font-size:12px;color:var(--gold);font-weight:500;margin-right:8px;">✔ ${getTranslation('js-responded', 'Responded')} (counter)</span>`;
+          }
+          actionsHtml += `
             <button class="btn-sm btn-accept" onclick="acceptRequest(${item.id}, ${parseFloat(item.budget || 0)})">${getTranslation('js-accept-offer', 'Accept Offer')}</button>
-            <button class="btn-sm btn-counter" onclick="openCounterModal(${item.id})">${getTranslation('js-counter-offer', 'Counter')}</button>
+            ${!hasCountered ? `<button class="btn-sm btn-counter" onclick="openCounterModal(${item.id})">${getTranslation('js-counter-offer', 'Counter')}</button>` : ''}
             <button class="btn-sm btn-reject" onclick="declineRequest(${item.id})">${getTranslation('js-decline', 'Decline')}</button>
           `;
         }
@@ -2446,6 +2453,7 @@ function respondToRequest(requestId, type, price, qty, message) {
       message: message
     })
   })
+    .then(r => r.json())
     .then(data => {
       if (data.success) {
         showToast(getTranslation('toast-response-sent-title', 'Response Sent!'), getTranslation('toast-response-sent-body', 'Your response was submitted successfully 🤝'), 'success');
