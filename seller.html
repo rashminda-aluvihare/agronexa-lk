@@ -437,7 +437,7 @@
     <div>
       <div class="logo-leaf"></div>
       <div class="logo-name">AgroNexa LK</div>
-      <div class="logo-tag">Smart Farming Platform</div>
+      <div class="logo-tag" data-i18n="logo-tag">Smart Farming Platform</div>
     </div>
     <button class="sidebar-close-btn" onclick="toggleSidebar()" style="display:none; background:none; border:none; color:#fff; font-size:28px; cursor:pointer; line-height:1;">&times;</button>
   </div>
@@ -447,14 +447,14 @@
     <div>
       <div class="user-name" id="user-name">Loading...</div>
       <div class="user-role" id="user-district">Loading...</div>
-      <div class="role-badge">Seller / Farmer</div>
+      <div class="role-badge" data-i18n="role-farmer">Seller / Farmer</div>
       <div id="user-status-badge" style="margin-top: 4px;"></div>
       <div id="member-since" style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:4px;"></div>
     </div>
   </div>
 
   <nav>
-    <div class="nav-section">Main</div>
+    <div class="nav-section" data-i18n="sidebar-main">Main</div>
     <div class="nav-item active" onclick="switchTab('dashboard')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       <span data-i18n="nav-dashboard">Dashboard</span>
@@ -486,7 +486,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       <span data-i18n="nav-price-index">Daily Price Index</span>
     </div>
-    <div class="nav-section">Account</div>
+    <div class="nav-section" data-i18n="sidebar-account">Account</div>
     <div class="nav-item" onclick="switchTab('ledger')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
       <span data-i18n="nav-ledger">Ledger History</span>
@@ -509,7 +509,7 @@
   <div class="sidebar-bottom">
     <div class="logout-btn" onclick="doLogout()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      Sign out
+      <span data-i18n="nav-signout">Sign out</span>
     </div>
   </div>
 </aside>
@@ -522,7 +522,7 @@
     </button>
     <div class="page-title" id="page-greeting">Seller Dashboard</div>
     <div class="topbar-right">
-      <span id="socket-status" class="socket-status"><span class="dot"></span>Connecting...</span>
+      <span id="socket-status" class="socket-status"><span class="dot"></span><span data-i18n="status-connecting">Connecting...</span></span>
       <div class="notif-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         <div class="notif-dot"></div>
@@ -540,32 +540,32 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2z"/><path d="M12 6v6l4 2"/></svg>
         </div>
         <div class="stat-val" id="stat-active-listings">—</div>
-        <div class="stat-label">Active Listings</div>
-        <div class="stat-delta up">↑ 2 this week</div>
+        <div class="stat-label" data-i18n="card-active-listings">Active Listings</div>
+        <div class="stat-delta up" data-i18n="card-active-listings-sub">Active in marketplace</div>
       </div>
       <div class="stat-card amber">
         <div class="stat-icon amber">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
         </div>
         <div class="stat-val" id="stat-pending-requests">—</div>
-        <div class="stat-label">Pending Buyer Requests</div>
-        <div class="stat-delta down">Needs response</div>
+        <div class="stat-label" data-i18n="card-pending-requests">Pending Buyer Requests</div>
+        <div class="stat-delta down" data-i18n="card-pending-requests-sub">Needs response</div>
       </div>
       <div class="stat-card gold">
         <div class="stat-icon gold">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
         </div>
         <div class="stat-val" id="stat-revenue">—</div>
-        <div class="stat-label">Earnings this month</div>
-        <div class="stat-delta up">↑ 18% vs last month</div>
+        <div class="stat-label" data-i18n="card-monthly-earnings">Earnings this month</div>
+        <div class="stat-delta up" data-i18n="js-earned-this-month">earned this month</div>
       </div>
       <div class="stat-card blue">
         <div class="stat-icon blue">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
         </div>
         <div class="stat-val" id="stat-completed-rentals">—</div>
-        <div class="stat-label">Completed Rentals</div>
-        <div class="stat-delta up">↑ 4 this month</div>
+        <div class="stat-label" data-i18n="card-completed-rentals">Completed Rentals</div>
+        <div class="stat-delta up" data-i18n="card-completed-rentals-sub">Successful rentals</div>
       </div>
     </div>
 
@@ -620,7 +620,7 @@
           </thead>
           <tbody id="price-index-table-body">
             <tr>
-              <td colspan="3" style="text-align:center; padding:20px; color:var(--text-muted);">Loading prices...</td>
+              <td colspan="3" style="text-align:center; padding:20px; color:var(--text-muted);" data-i18n="js-loading">Loading prices...</td>
             </tr>
           </tbody>
         </table>
@@ -638,54 +638,69 @@
     <div class="grid-2 content-section" id="section-listings-requests" style="display: none;">
       <div class="panel" id="panel-crop-listings">
         <div class="panel-head">
-          <div class="panel-title">My Crop Listings</div>
+          <div class="panel-title" data-i18n="panel-seller-listings">My Crop Listings</div>
         </div>
         
         <!-- Prominent Add Crop Listing CTA Banner -->
         <div style="background: linear-gradient(135deg, rgba(82, 183, 136, 0.12) 0%, rgba(45, 106, 79, 0.05) 100%); border: 1px dashed var(--primary-light); border-radius: 12px; padding: 18px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px;">
           <div>
-            <h4 style="font-size: 13.5px; font-weight: 600; color: var(--primary); margin-bottom: 3px;">🥬 Ready to Sell Your Harvest?</h4>
-            <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4; margin: 0;">Publish a new crop listing with photos. AgroNexa will SMS-broadcast it to buyers in your district instantly!</p>
+            <h4 style="font-size: 13.5px; font-weight: 600; color: var(--primary); margin-bottom: 3px;" data-i18n="seller-cta-crop-title">🥬 Ready to Sell Your Harvest?</h4>
+            <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4; margin: 0;" data-i18n="seller-cta-crop-desc">Publish a new crop listing with photos. AgroNexa will SMS-broadcast it to buyers in your district instantly!</p>
           </div>
-          <button class="btn-sm btn-accept" onclick="openAddCropModal()" style="margin: 0; padding: 10px 18px; font-size: 12.5px; font-weight: 600; background: var(--primary); color: #fff; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap;">➕ List New Produce</button>
+          <button class="btn-sm btn-accept" onclick="openAddCropModal()" style="margin: 0; padding: 10px 18px; font-size: 12.5px; font-weight: 600; background: var(--primary); color: #fff; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap;"><span data-i18n="btn-list-new-produce">➕ List New Produce</span></button>
         </div>
 
         <div id="crop-listings-list">
-          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">Loading listings...</div>
+          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;" data-i18n="js-loading">Loading listings...</div>
         </div>
       </div>
 
       <!-- Incoming Crop Orders Panel -->
       <div class="panel" id="panel-crop-orders" style="margin-top: 20px;">
         <div class="panel-head">
-          <div class="panel-title">Incoming Crop Orders</div>
+          <div class="panel-title" data-i18n="panel-incoming-crop-orders">Incoming Crop Orders</div>
           <span style="font-size:11px;color:var(--primary-light);font-weight:500" id="crop-orders-count">0 pending</span>
         </div>
         <div id="crop-orders-list" style="max-height: 300px; overflow-y: auto;">
-          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">No incoming crop orders.</div>
+          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;" data-i18n="js-no-incoming-crop-orders">No incoming crop orders.</div>
         </div>
       </div>
 
       <div class="panel" id="panel-buyer-requests">
         <div class="panel-head">
-          <div class="panel-title">Incoming Buyer Requests</div>
+          <div class="panel-title" data-i18n="card-pending-requests">Incoming Buyer Requests</div>
           <span style="font-size:11px;color:var(--accent);font-weight:500" id="buyer-requests-count">0 new</span>
         </div>
         <!-- Search and Filter Controls -->
         <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; background:var(--bg-app); padding:10px; border-radius:8px; border:1px solid var(--border-color);">
-          <input type="text" id="requests-search" placeholder="Search crop..." style="flex:1; min-width:150px; border:1px solid var(--border-color); padding:8px 12px; border-radius:8px; font-size:12.5px; outline:none;" oninput="loadBuyerRequests()">
+          <input type="text" id="requests-search" data-i18n-placeholder="placeholder-search-crop" placeholder="Search crop..." style="flex:1; min-width:150px; border:1px solid var(--border-color); padding:8px 12px; border-radius:8px; font-size:12.5px; outline:none;" oninput="loadBuyerRequests()">
           <select id="requests-district-filter" style="border:1px solid var(--border-color); padding:8px 12px; border-radius:8px; font-size:12.5px; outline:none; background:var(--bg-card); color:var(--text-main);" onchange="loadBuyerRequests()">
-            <option value="">All Districts</option>
-            <option>Ampara</option><option>Anuradhapura</option><option>Badulla</option><option>Batticaloa</option>
-            <option>Colombo</option><option>Galle</option><option>Gampaha</option><option>Hambantota</option>
-            <option>Jaffna</option><option>Kalutara</option><option>Kandy</option><option>Kegalle</option>
-            <option>Kurunegala</option><option>Matale</option><option>Matara</option><option>Negombo</option>
-            <option>Nuwara Eliya</option><option>Polonnaruwa</option><option>Puttalam</option>
-            <option>Ratnapura</option><option>Trincomalee</option>
+            <option value="" data-i18n="district-all">All Districts</option>
+            <option value="Ampara" data-i18n="district-ampara">Ampara</option>
+            <option value="Anuradhapura" data-i18n="district-anuradhapura">Anuradhapura</option>
+            <option value="Badulla" data-i18n="district-badulla">Badulla</option>
+            <option value="Batticaloa" data-i18n="district-batticaloa">Batticaloa</option>
+            <option value="Colombo" data-i18n="district-colombo">Colombo</option>
+            <option value="Galle" data-i18n="district-galle">Galle</option>
+            <option value="Gampaha" data-i18n="district-gampaha">Gampaha</option>
+            <option value="Hambantota" data-i18n="district-hambantota">Hambantota</option>
+            <option value="Jaffna" data-i18n="district-jaffna">Jaffna</option>
+            <option value="Kalutara" data-i18n="district-kalutara">Kalutara</option>
+            <option value="Kandy" data-i18n="district-kandy">Kandy</option>
+            <option value="Kegalle" data-i18n="district-kegalle">Kegalle</option>
+            <option value="Kurunegala" data-i18n="district-kurunegala">Kurunegala</option>
+            <option value="Matale" data-i18n="district-matale">Matale</option>
+            <option value="Matara" data-i18n="district-matara">Matara</option>
+            <option value="Negombo" data-i18n="district-negombo">Negombo</option>
+            <option value="Nuwara Eliya" data-i18n="district-nuwaraeliya">Nuwara Eliya</option>
+            <option value="Polonnaruwa" data-i18n="district-polonnaruwa">Polonnaruwa</option>
+            <option value="Puttalam" data-i18n="district-puttalam">Puttalam</option>
+            <option value="Ratnapura" data-i18n="district-ratnapura">Ratnapura</option>
+            <option value="Trincomalee" data-i18n="district-trincomalee">Trincomalee</option>
           </select>
         </div>
         <div id="buyer-requests-list">
-          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">Loading incoming requests...</div>
+          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;" data-i18n="js-loading">Loading incoming requests...</div>
         </div>
       </div>
     </div>
@@ -694,14 +709,14 @@
     <div class="grid-3 content-section" id="section-ledger-rep" style="display: none;">
       <div class="panel" id="panel-ledger">
         <div class="panel-head">
-          <div class="panel-title">Blockchain Ledger — Recent Rentals</div>
-          <div class="panel-action" onclick="verifyLedger()" style="cursor:pointer">Verify Chain</div>
+          <div class="panel-title" data-i18n="panel-blockchain-ledger">Blockchain Ledger — Recent Rentals</div>
+          <div class="panel-action" onclick="verifyLedger()" style="cursor:pointer" data-i18n="btn-verify-chain">Verify Chain</div>
         </div>
         <div id="ledger-list">
-          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Loading ledger records...</div>
+          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;" data-i18n="js-loading-ledger">Loading ledger records...</div>
         </div>
         <div id="ledger-verification-status" style="margin-top:16px;background:#f5f8fb;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;border:1px solid var(--border);">
-          <span style="font-size:12px;color:var(--muted);font-weight:500" id="ledger-status-text">Integrity status unknown</span>
+          <span style="font-size:12px;color:var(--muted);font-weight:500" id="ledger-status-text" data-i18n="ledger-status-unknown">Integrity status unknown</span>
         </div>
       </div>
 
@@ -709,35 +724,35 @@
         <!-- Reputation -->
         <div class="panel" style="flex:1">
           <div class="panel-head">
-            <div class="panel-title">Seller Reputation</div>
+            <div class="panel-title" data-i18n="js-reputation">Seller Reputation</div>
           </div>
           <div class="rep-score" id="rep-score-value">0.0</div>
           <div class="rep-label" id="rep-rentals-count">Based on 0 verified rentals</div>
           <div class="rep-bars">
             <div class="rep-row">
-              <div class="rep-row-label">Reliability</div>
+              <div class="rep-row-label" data-i18n="js-rating-reliability">Reliability</div>
               <div class="bar-bg"><div class="bar-fill" id="rep-bar-reliability" style="width:0%"></div></div>
               <div class="rep-row-val" id="rep-val-reliability">0</div>
             </div>
             <div class="rep-row">
-              <div class="rep-row-label">Timeliness</div>
+              <div class="rep-row-label" data-i18n="js-rating-timeliness">Timeliness</div>
               <div class="bar-bg"><div class="bar-fill" id="rep-bar-timeliness" style="width:0%"></div></div>
               <div class="rep-row-val" id="rep-val-timeliness">0</div>
             </div>
             <div class="rep-row">
-              <div class="rep-row-label">Accuracy</div>
+              <div class="rep-row-label" data-i18n="js-rating-accuracy">Accuracy</div>
               <div class="bar-bg"><div class="bar-fill" id="rep-bar-accuracy" style="width:0%"></div></div>
               <div class="rep-row-val" id="rep-val-accuracy">0</div>
             </div>
           </div>
-          <div style="margin-top: 16px; font-size:11px; color:var(--muted); background:var(--green-pale); border-radius:8px; padding:8px 12px; border:1px solid rgba(82,183,136,0.2); line-height:1.4;">
+          <div style="margin-top: 16px; font-size:11px; color:var(--muted); background:var(--green-pale); border-radius:8px; padding:8px 12px; border:1px solid rgba(82,183,136,0.2); line-height:1.4;" data-i18n="seller-rep-disclaimer">
             🛡️ <strong>Trust Score:</strong> Your reputation is automatically computed from completed rentals on the AgroNexa blockchain ledger. Verified reviews maintain buyer confidence!
           </div>
         </div>
         <!-- Earnings mini chart -->
         <div class="panel" style="flex:1">
           <div class="panel-head">
-            <div class="panel-title">Monthly Earnings</div>
+            <div class="panel-title" data-i18n="card-monthly-earnings">Monthly Earnings</div>
           </div>
           <div class="chart-placeholder">
             <div class="bar-col"><div class="bar-rect" style="height:50px"></div><div class="bar-month">Jan</div></div>
@@ -756,22 +771,22 @@
       <!-- Equipment Listings -->
       <div class="panel" id="panel-equipment-listings">
         <div class="panel-head">
-          <div class="panel-title">🚜 My Equipment Listings</div>
-          <div class="panel-action" onclick="openAddEquipmentModal()" style="cursor:pointer">+ Add New</div>
+          <div class="panel-title">🚜 <span data-i18n="tab-my-equipment-listings">My Equipment Listings</span></div>
+          <div class="panel-action" onclick="openAddEquipmentModal()" style="cursor:pointer" data-i18n="btn-add-new">➕ Add New</div>
         </div>
         <div id="equipment-listings-list" style="max-height: 400px; overflow-y: auto;">
-          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">Loading equipment...</div>
+          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;" data-i18n="js-loading">Loading equipment...</div>
         </div>
       </div>
 
       <!-- Equipment Booking Requests -->
       <div class="panel" id="panel-equipment-bookings">
         <div class="panel-head">
-          <div class="panel-title">📥 Incoming Booking Requests</div>
+          <div class="panel-title">📥 <span data-i18n="tab-tool-rental-bookings">Tool Rental Bookings</span></div>
           <span style="font-size:11px;color:var(--accent);font-weight:500" id="equipment-bookings-count">0 pending</span>
         </div>
         <div id="equipment-bookings-list" style="max-height: 400px; overflow-y: auto;">
-          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">Loading booking requests...</div>
+          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;" data-i18n="js-loading">Loading booking requests...</div>
         </div>
       </div>
     </div>
@@ -794,7 +809,7 @@
       <!-- Browse Drivers Panel -->
       <div id="transport-browse-panel">
         <div id="transport-drivers-list" style="display:flex; flex-direction:column; gap:12px;">
-          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">Loading transport providers...</div>
+          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;" data-i18n="js-loading">Loading transport providers...</div>
         </div>
       </div>
  
@@ -804,42 +819,57 @@
           <div class="form-row">
             <div class="form-field">
               <div class="form-label" data-i18n="logistics-label-owner">Owner Name</div>
-              <input class="form-input" id="trans-owner" required type="text" placeholder="Sunil Perera">
+              <input class="form-input" id="trans-owner" required type="text" data-i18n-placeholder="placeholder-owner-name" placeholder="Sunil Perera">
             </div>
             <div class="form-field">
               <div class="form-label" data-i18n="logistics-label-type">Vehicle Type</div>
               <select class="form-input" id="trans-type" required style="background:#fff; color:#000;">
-                <option value="Lorry (Light)">Lorry (Light)</option>
-                <option value="Lorry (Heavy)">Lorry (Heavy)</option>
-                <option value="Tractor / Trailer">Tractor / Trailer</option>
-                <option value="Refrigerated Truck">Refrigerated Truck</option>
+                <option value="Lorry (Light)" data-i18n="logistics-type-light-lorry">Lorry (Light)</option>
+                <option value="Lorry (Heavy)" data-i18n="logistics-type-heavy-lorry">Lorry (Heavy)</option>
+                <option value="Tractor / Trailer" data-i18n="logistics-type-tractor-trailer">Tractor / Trailer</option>
+                <option value="Refrigerated Truck" data-i18n="logistics-type-refrigerated-truck">Refrigerated Truck</option>
               </select>
             </div>
           </div>
           <div class="form-row">
             <div class="form-field">
               <div class="form-label" data-i18n="logistics-label-no">Plate Number</div>
-              <input class="form-input" id="trans-number" required type="text" placeholder="WP LY-1234">
+              <input class="form-input" id="trans-number" required type="text" data-i18n-placeholder="placeholder-plate" placeholder="WP LY-1234">
             </div>
             <div class="form-field">
               <div class="form-label" data-i18n="logistics-label-capacity">Capacity (kg)</div>
-              <input class="form-input" id="trans-capacity" required type="number" placeholder="1500">
+              <input class="form-input" id="trans-capacity" required type="number" data-i18n-placeholder="placeholder-capacity-eg" placeholder="1500">
             </div>
           </div>
           <div class="form-row">
             <div class="form-field">
               <div class="form-label" data-i18n="logistics-label-phone">Contact Phone</div>
-              <input class="form-input" id="trans-phone" required type="tel" placeholder="07X XXX XXXX" maxlength="10">
+              <input class="form-input" id="trans-phone" required type="tel" data-i18n-placeholder="placeholder-phone" placeholder="07X XXX XXXX" maxlength="10">
             </div>
             <div class="form-field">
               <div class="form-label" data-i18n="logistics-label-district">Operating District</div>
               <select class="form-input" id="trans-district" required style="background:#fff; color:#000;">
-                <option>Ampara</option><option>Anuradhapura</option><option>Badulla</option><option>Batticaloa</option>
-                <option>Colombo</option><option>Galle</option><option>Gampaha</option><option>Hambantota</option>
-                <option>Jaffna</option><option>Kalutara</option><option>Kandy</option><option>Kegalle</option>
-                <option>Kurunegala</option><option>Matale</option><option>Matara</option><option>Negombo</option>
-                <option>Nuwara Eliya</option><option>Polonnaruwa</option><option>Puttalam</option>
-                <option>Ratnapura</option><option>Trincomalee</option>
+                <option value="Ampara" data-i18n="district-ampara">Ampara</option>
+                <option value="Anuradhapura" data-i18n="district-anuradhapura">Anuradhapura</option>
+                <option value="Badulla" data-i18n="district-badulla">Badulla</option>
+                <option value="Batticaloa" data-i18n="district-batticaloa">Batticaloa</option>
+                <option value="Colombo" data-i18n="district-colombo">Colombo</option>
+                <option value="Galle" data-i18n="district-galle">Galle</option>
+                <option value="Gampaha" data-i18n="district-gampaha">Gampaha</option>
+                <option value="Hambantota" data-i18n="district-hambantota">Hambantota</option>
+                <option value="Jaffna" data-i18n="district-jaffna">Jaffna</option>
+                <option value="Kalutara" data-i18n="district-kalutara">Kalutara</option>
+                <option value="Kandy" data-i18n="district-kandy">Kandy</option>
+                <option value="Kegalle" data-i18n="district-kegalle">Kegalle</option>
+                <option value="Kurunegala" data-i18n="district-kurunegala">Kurunegala</option>
+                <option value="Matale" data-i18n="district-matale">Matale</option>
+                <option value="Matara" data-i18n="district-matara">Matara</option>
+                <option value="Negombo" data-i18n="district-negombo">Negombo</option>
+                <option value="Nuwara Eliya" data-i18n="district-nuwaraeliya">Nuwara Eliya</option>
+                <option value="Polonnaruwa" data-i18n="district-polonnaruwa">Polonnaruwa</option>
+                <option value="Puttalam" data-i18n="district-puttalam">Puttalam</option>
+                <option value="Ratnapura" data-i18n="district-ratnapura">Ratnapura</option>
+                <option value="Trincomalee" data-i18n="district-trincomalee">Trincomalee</option>
               </select>
             </div>
           </div>
@@ -850,7 +880,7 @@
       <!-- My Bookings Panel -->
       <div id="transport-bookings-panel" style="display:none;">
         <div id="transport-bookings-list" style="display:flex; flex-direction:column; gap:12px;">
-          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;" data-i18n="logistics-no-bookings">Loading transport bookings...</div>
+          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;" data-i18n="js-loading">Loading transport bookings...</div>
         </div>
       </div>
     </div>
@@ -858,58 +888,73 @@
     <!-- Profile Section -->
     <div class="panel content-section" id="section-profile" style="display:none;">
       <div class="panel-head">
-        <div class="panel-title">👤 My Profile Details</div>
+        <div class="panel-title">👤 <span data-i18n="panel-profile-details">My Profile Details</span></div>
       </div>
       <form id="profile-form" onsubmit="saveProfile(event)">
         <div class="form-row">
           <div class="form-field">
-            <div class="form-label">First Name</div>
+            <div class="form-label" data-i18n="profile-lbl-fname">First Name</div>
             <input class="form-input" id="profile-fname" required type="text">
           </div>
           <div class="form-field">
-            <div class="form-label">Last Name</div>
+            <div class="form-label" data-i18n="profile-lbl-lname">Last Name</div>
             <input class="form-input" id="profile-lname" required type="text">
           </div>
         </div>
         <div class="form-row">
           <div class="form-field">
-            <div class="form-label">Email Address (Read-only)</div>
+            <div class="form-label" data-i18n="profile-lbl-email">Email Address (Read-only)</div>
             <input class="form-input" id="profile-email" readonly type="email" style="background:rgba(200,200,200,0.1);cursor:not-allowed;">
           </div>
           <div class="form-field">
-            <div class="form-label">Phone Number</div>
+            <div class="form-label" data-i18n="profile-lbl-phone">Phone Number</div>
             <input class="form-input" id="profile-phone" required type="text">
           </div>
         </div>
         <div class="form-row">
           <div class="form-field">
-            <div class="form-label">District</div>
+            <div class="form-label" data-i18n="profile-lbl-district">District</div>
             <select class="form-input" id="profile-district" required style="background:var(--bg-card); color:var(--text-main);">
-              <option>Ampara</option><option>Anuradhapura</option><option>Badulla</option><option>Batticaloa</option>
-              <option>Colombo</option><option>Galle</option><option>Gampaha</option><option>Hambantota</option>
-              <option>Jaffna</option><option>Kalutara</option><option>Kandy</option><option>Kegalle</option>
-              <option>Kurunegala</option><option>Matale</option><option>Matara</option><option>Negombo</option>
-              <option>Nuwara Eliya</option><option>Polonnaruwa</option><option>Puttalam</option>
-              <option>Ratnapura</option><option>Trincomalee</option>
+              <option value="Ampara" data-i18n="district-ampara">Ampara</option>
+              <option value="Anuradhapura" data-i18n="district-anuradhapura">Anuradhapura</option>
+              <option value="Badulla" data-i18n="district-badulla">Badulla</option>
+              <option value="Batticaloa" data-i18n="district-batticaloa">Batticaloa</option>
+              <option value="Colombo" data-i18n="district-colombo">Colombo</option>
+              <option value="Galle" data-i18n="district-galle">Galle</option>
+              <option value="Gampaha" data-i18n="district-gampaha">Gampaha</option>
+              <option value="Hambantota" data-i18n="district-hambantota">Hambantota</option>
+              <option value="Jaffna" data-i18n="district-jaffna">Jaffna</option>
+              <option value="Kalutara" data-i18n="district-kalutara">Kalutara</option>
+              <option value="Kandy" data-i18n="district-kandy">Kandy</option>
+              <option value="Kegalle" data-i18n="district-kegalle">Kegalle</option>
+              <option value="Kurunegala" data-i18n="district-kurunegala">Kurunegala</option>
+              <option value="Matale" data-i18n="district-matale">Matale</option>
+              <option value="Matara" data-i18n="district-matara">Matara</option>
+              <option value="Negombo" data-i18n="district-negombo">Negombo</option>
+              <option value="Nuwara Eliya" data-i18n="district-nuwaraeliya">Nuwara Eliya</option>
+              <option value="Polonnaruwa" data-i18n="district-polonnaruwa">Polonnaruwa</option>
+              <option value="Puttalam" data-i18n="district-puttalam">Puttalam</option>
+              <option value="Ratnapura" data-i18n="district-ratnapura">Ratnapura</option>
+              <option value="Trincomalee" data-i18n="district-trincomalee">Trincomalee</option>
             </select>
           </div>
           <div class="form-field">
-            <div class="form-label">Address</div>
+            <div class="form-label" data-i18n="profile-lbl-address">Address</div>
             <input class="form-input" id="profile-address" type="text">
           </div>
         </div>
         <div class="form-row">
           <div class="form-field">
-            <div class="form-label">Role</div>
+            <div class="form-label" data-i18n="profile-lbl-role">Role</div>
             <input class="form-input" id="profile-role" readonly type="text" style="background:rgba(200,200,200,0.1);cursor:not-allowed;">
           </div>
           <div class="form-field">
-            <div class="form-label">Status</div>
+            <div class="form-label" data-i18n="profile-lbl-status">Status</div>
             <input class="form-input" id="profile-status" readonly type="text" style="background:rgba(200,200,200,0.1);cursor:not-allowed;">
           </div>
         </div>
         <button type="submit" class="btn-sm btn-accept" style="margin-top:16px;">
-          💾 Save Changes
+          <span data-i18n="profile-btn-save">💾 Save Changes</span>
         </button>
       </form>
     </div>
@@ -917,29 +962,29 @@
     <!-- Settings Section -->
     <div class="panel content-section" id="section-settings" style="display:none; max-width: 600px;">
       <div class="panel-head">
-        <div class="panel-title">⚙️ App Settings</div>
+        <div class="panel-title">⚙️ <span data-i18n="panel-app-settings">App Settings</span></div>
       </div>
       <div style="display:flex; flex-direction:column; gap:20px;">
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:15px;">
           <div>
-            <div style="font-size:14px; font-weight:500; color:var(--text-main);">Visual Theme</div>
-            <div style="font-size:12px; color:var(--text-muted);">Switch between light and dark modes</div>
+            <div style="font-size:14px; font-weight:500; color:var(--text-main);" data-i18n="settings-lbl-visual-theme">Visual Theme</div>
+            <div style="font-size:12px; color:var(--text-muted);" data-i18n="settings-desc-visual-theme">Switch between light and dark modes</div>
           </div>
-          <button class="btn-sm btn-counter" id="dark-mode-btn" onclick="toggleDarkModeSetting()" style="width:140px; margin-top:0; border:1px solid var(--border-color); height:38px; cursor:pointer;">Toggle Dark Mode</button>
+          <button class="btn-sm btn-counter" id="dark-mode-btn" onclick="toggleDarkModeSetting()" style="width:140px; margin-top:0; border:1px solid var(--border-color); height:38px; cursor:pointer;" data-i18n="settings-btn-toggle-theme">Toggle Dark Mode</button>
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:15px;">
           <div>
-            <div style="font-size:14px; font-weight:500; color:var(--text-main);">Websocket Diagnostic</div>
-            <div style="font-size:12px; color:var(--text-muted);">Check real-time network connection latency</div>
+            <div style="font-size:14px; font-weight:500; color:var(--text-main);" data-i18n="settings-lbl-ws">Websocket Diagnostic</div>
+            <div style="font-size:12px; color:var(--text-muted);" data-i18n="settings-desc-ws">Check real-time network connection latency</div>
           </div>
-          <button class="btn-sm btn-accept" onclick="checkWebsocketPing()" style="width:140px; margin-top:0; height:38px; cursor:pointer; background:var(--primary); color:#fff;">Ping Latency</button>
+          <button class="btn-sm btn-accept" onclick="checkWebsocketPing()" style="width:140px; margin-top:0; height:38px; cursor:pointer; background:var(--primary); color:#fff;" data-i18n="settings-btn-ping">Ping Latency</button>
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <div>
-            <div style="font-size:14px; font-weight:500; color:var(--text-main);">Security</div>
-            <div style="font-size:12px; color:var(--text-muted);">Standard JWT encryption is active for your session.</div>
+            <div style="font-size:14px; font-weight:500; color:var(--text-main);" data-i18n="settings-lbl-security">Security</div>
+            <div style="font-size:12px; color:var(--text-muted);" data-i18n="settings-desc-security">Standard JWT encryption is active for your session.</div>
           </div>
-          <span style="font-size:11px; color:var(--primary-light); font-weight:600; background:var(--primary-pale); border:1px solid var(--primary-light); padding:4px 8px; border-radius:4px;">ACTIVE (JWT)</span>
+          <span style="font-size:11px; color:var(--primary-light); font-weight:600; background:var(--primary-pale); border:1px solid var(--primary-light); padding:4px 8px; border-radius:4px;" data-i18n="settings-badge-active">ACTIVE (JWT)</span>
         </div>
       </div>
     </div>
@@ -950,34 +995,34 @@
         <div class="chat-layout">
           <!-- Chat Sidebar (Active Conversations) -->
           <div class="chat-sidebar">
-            <div class="chat-sidebar-header">
+            <div class="chat-sidebar-header" data-i18n="panel-active-chats">
               💬 Active Chats
             </div>
             <div class="chat-list" id="chat-conversations-list">
-              <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">No active chats.</div>
+              <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;" data-i18n="js-no-chats">No active chats.</div>
             </div>
           </div>
           <!-- Chat Main Window -->
           <div class="chat-main" id="chat-window-empty">
             <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; background:var(--bg-app); color:var(--text-muted);">
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-              <div style="font-size:14px; font-weight:500;">Select a contact to start messaging</div>
+              <div style="font-size:14px; font-weight:500;" data-i18n="placeholder-chat-select">Select a contact to start messaging</div>
             </div>
           </div>
           <div class="chat-main" id="chat-window-active" style="display:none;">
             <div class="chat-main-header">
               <div>
                 <div class="chat-main-title" id="chat-active-name" style="cursor:pointer; text-decoration:underline;" onclick="showUserProfileModal(activeChatUserId)">Buyer Name</div>
-                <div style="font-size:11px; color:var(--text-muted); margin-top:2px;" id="chat-active-role">Buyer</div>
+                <div style="font-size:11px; color:var(--text-muted); margin-top:2px;" id="chat-active-role" data-i18n="js-buyer-role">Buyer</div>
               </div>
-              <div class="verified-badge">Verified Partner</div>
+              <div class="verified-badge" data-i18n="js-verified-partner">Verified Partner</div>
             </div>
             <div class="chat-messages-container" id="chat-messages-box">
               <!-- Messages bubbles will populate here -->
             </div>
             <form class="chat-input-area" onsubmit="sendChatMessage(event)">
-              <input type="text" class="chat-input" id="chat-message-input" placeholder="Type a message..." required autocomplete="off">
-              <button type="submit" class="chat-send-btn">Send</button>
+              <input type="text" class="chat-input" id="chat-message-input" data-i18n-placeholder="placeholder-chat-type" placeholder="Type a message..." required autocomplete="off">
+              <button type="submit" class="chat-send-btn" data-i18n="btn-chat-send">Send</button>
             </form>
           </div>
         </div>
@@ -986,11 +1031,11 @@
       <!-- System Notifications -->
       <div class="panel" style="margin-top:20px;">
         <div class="panel-head">
-          <div class="panel-title">🔔 System Notifications & Alerts</div>
-          <div class="panel-action" onclick="markAllNotificationsRead()" style="cursor:pointer">Mark all as read</div>
+          <div class="panel-title" data-i18n="panel-notifications-alerts">🔔 System Notifications & Alerts</div>
+          <div class="panel-action" onclick="markAllNotificationsRead()" style="cursor:pointer" data-i18n="btn-mark-all-read">Mark all as read</div>
         </div>
         <div id="notifications-inbox-list" style="display:flex; flex-direction:column; gap:12px; max-height:250px; overflow-y:auto; padding-right:5px;">
-          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">No messages or notifications.</div>
+          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;" data-i18n="js-no-notifications">No messages or notifications.</div>
         </div>
       </div>
     </div>
@@ -1007,23 +1052,23 @@
           
           <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
             <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="logistics-label-commodity">Commodity Name</label>
-            <input class="form-input" type="text" id="book-trans-commodity" required placeholder="e.g. Tomatoes" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+            <input class="form-input" type="text" id="book-trans-commodity" required data-i18n-placeholder="broadcast-ph-commodity" placeholder="e.g. Tomatoes" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
           </div>
           <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
             <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="logistics-label-qty">Quantity (kg)</label>
-            <input class="form-input" type="number" id="book-trans-qty" required placeholder="e.g. 500" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+            <input class="form-input" type="number" id="book-trans-qty" required data-i18n-placeholder="broadcast-ph-qty" placeholder="e.g. 500" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
           </div>
           <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
             <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="logistics-label-pickup">Pickup Address</label>
-            <textarea id="book-trans-pickup" required placeholder="Pickup Location" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;font-family:inherit;font-size:13px;height:60px;resize:none;"></textarea>
+            <textarea id="book-trans-pickup" required data-i18n-placeholder="logistics-label-pickup" placeholder="Pickup Location" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;font-family:inherit;font-size:13px;height:60px;resize:none;"></textarea>
           </div>
           <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
             <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="logistics-label-delivery">Delivery Address</label>
-            <textarea id="book-trans-delivery" required placeholder="Delivery Location" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;font-family:inherit;font-size:13px;height:60px;resize:none;"></textarea>
+            <textarea id="book-trans-delivery" required data-i18n-placeholder="logistics-label-delivery" placeholder="Delivery Location" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;font-family:inherit;font-size:13px;height:60px;resize:none;"></textarea>
           </div>
           <div style="margin-bottom:20px;display:flex;flex-direction:column;gap:5px;">
             <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="logistics-label-price">Offered Price (Rs.)</label>
-            <input class="form-input" type="number" id="book-trans-price" placeholder="e.g. 15000" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+            <input class="form-input" type="number" id="book-trans-price" data-i18n-placeholder="broadcast-ph-price" placeholder="e.g. 15000" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
           </div>
           
           <button type="submit" class="btn-sm btn-accept" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;" data-i18n="logistics-btn-submit-booking">Confirm Booking Request</button>
@@ -1035,49 +1080,49 @@
     <div id="add-equipment-modal" style="display:none;position:fixed;inset:0;background:rgba(26,46,26,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
       <div style="background:#fff;border-radius:20px;padding:32px;max-width:500px;width:95%;box-shadow:0 20px 60px rgba(26,46,26,0.3);border:1px solid var(--border);max-height:90vh;overflow-y:auto;position:relative;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-          <h3 style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--text)">Add Equipment Listing</h3>
+          <h3 style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--text)" data-i18n="tab-list-tool-rent">Add Equipment Listing</h3>
           <button onclick="closeAddEquipmentModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted)">&times;</button>
         </div>
         <form id="add-equipment-form" onsubmit="submitNewEquipment(event)">
           <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
-            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Equipment Name</label>
-            <input class="form-input" id="equip-name" required placeholder="e.g. Massey Ferguson Tractor, Water Pump" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="form-lbl-tool-name">Equipment Name</label>
+            <input class="form-input" id="equip-name" required data-i18n-placeholder="form-ph-tool-name" placeholder="e.g. Massey Ferguson Tractor, Water Pump" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
             <div style="display:flex;flex-direction:column;gap:5px;">
-              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Type</label>
+              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="logistics-label-type">Type</label>
               <select id="equip-type" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;background:#fff;color:#000;outline:none;">
-                <option value="tractor">Tractor</option>
-                <option value="pump">Water Pump</option>
-                <option value="harvester">Harvester</option>
-                <option value="transport">Transport Lorry</option>
-                <option value="other">Other Machinery</option>
+                <option value="tractor" data-i18n="logistics-type-tractor">Tractor</option>
+                <option value="pump" data-i18n="logistics-type-pump">Water Pump</option>
+                <option value="harvester" data-i18n="logistics-type-harvester">Harvester</option>
+                <option value="transport" data-i18n="logistics-type-transport">Transport Lorry</option>
+                <option value="other" data-i18n="logistics-type-other">Other Machinery</option>
               </select>
             </div>
             <div style="display:flex;flex-direction:column;gap:5px;">
-              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Condition</label>
+              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="form-lbl-condition">Condition</label>
               <select id="equip-condition" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;background:#fff;color:#000;outline:none;">
-                <option value="Excellent">Excellent</option>
-                <option value="Good">Good</option>
-                <option value="Fair">Fair</option>
+                <option value="Excellent" data-i18n="cond-excellent">Excellent</option>
+                <option value="Good" data-i18n="cond-good">Good</option>
+                <option value="Fair" data-i18n="cond-fair">Fair</option>
               </select>
             </div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
             <div style="display:flex;flex-direction:column;gap:5px;">
-              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Daily Rental Rate (Rs.)</label>
-              <input class="form-input" type="number" step="0.01" id="equip-rate" required placeholder="e.g. 5000" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="form-lbl-daily-rate">Daily Rental Rate (Rs.)</label>
+              <input class="form-input" type="number" step="0.01" id="equip-rate" required data-i18n-placeholder="form-ph-daily-rate" placeholder="e.g. 5000" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
             </div>
             <div style="display:flex;flex-direction:column;gap:5px;">
-              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">District</label>
-              <input class="form-input" id="equip-district" required placeholder="e.g. Kurunegala" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="label-district">District</label>
+              <input class="form-input" id="equip-district" required data-i18n-placeholder="placeholder-district-eg" placeholder="e.g. Kurunegala" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
             </div>
           </div>
           <div style="margin-bottom:20px;display:flex;flex-direction:column;gap:5px;">
-            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Description</label>
-            <textarea id="equip-desc" rows="3" placeholder="Specify terms, driver availability..." style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;font-family:inherit;font-size:13px;outline:none;"></textarea>
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="form-lbl-desc">Description</label>
+            <textarea id="equip-desc" rows="3" data-i18n-placeholder="form-ph-desc" placeholder="Specify terms, driver availability..." style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;font-family:inherit;font-size:13px;outline:none;"></textarea>
           </div>
-          <button type="submit" class="btn-sm btn-accept" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;background:var(--green);color:#fff;">Publish Equipment Listing</button>
+          <button type="submit" class="btn-sm btn-accept" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;background:var(--green);color:#fff;" data-i18n="btn-publish-tool">Publish Equipment Listing</button>
         </form>
       </div>
     </div>
@@ -1086,55 +1131,55 @@
     <div id="add-crop-modal" style="display:none;position:fixed;inset:0;background:rgba(26,46,26,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
       <div style="background:#fff;border-radius:20px;padding:32px;max-width:500px;width:95%;box-shadow:0 20px 60px rgba(26,46,26,0.3);border:1px solid var(--border);max-height:90vh;overflow-y:auto;position:relative;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-          <h3 style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--text)">Add Crop Listing</h3>
+          <h3 style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--text)" data-i18n="qa-add-listing-title">Add Crop Listing</h3>
           <button onclick="closeAddCropModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted)">&times;</button>
         </div>
         <form id="add-crop-form" onsubmit="submitNewCrop(event)">
           <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
-            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Crop Name</label>
-            <input class="form-input" id="crop-name" required placeholder="e.g. Red Chilies, Tomatoes" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="form-lbl-crop-name">Crop Name</label>
+            <input class="form-input" id="crop-name" required data-i18n-placeholder="form-ph-crop-name" placeholder="e.g. Red Chilies, Tomatoes" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
             <div style="display:flex;flex-direction:column;gap:5px;">
-              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Category</label>
+              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="form-lbl-category">Category</label>
               <select id="crop-category" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;background:#fff;outline:none;">
-                <option value="Vegetables">Vegetables</option>
-                <option value="Fruits">Fruits</option>
-                <option value="Spices">Spices</option>
-                <option value="Grains">Grains</option>
-                <option value="Other">Other</option>
+                <option value="Vegetables" data-i18n="cat-vegetables">Vegetables</option>
+                <option value="Fruits" data-i18n="cat-fruits">Fruits</option>
+                <option value="Spices" data-i18n="cat-spices">Spices</option>
+                <option value="Grains" data-i18n="cat-grains">Grains</option>
+                <option value="Other" data-i18n="cat-other">Other</option>
               </select>
             </div>
             <div style="display:flex;flex-direction:column;gap:5px;">
-              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Quantity (kg)</label>
-              <input class="form-input" type="number" step="0.01" id="crop-qty" required placeholder="e.g. 100" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="logistics-label-qty">Quantity (kg)</label>
+              <input class="form-input" type="number" step="0.01" id="crop-qty" required data-i18n-placeholder="broadcast-ph-qty" placeholder="e.g. 100" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
             </div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
             <div style="display:flex;flex-direction:column;gap:5px;">
-              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Price per kg (Rs.)</label>
-              <input class="form-input" type="number" step="0.01" id="crop-price" required placeholder="e.g. 250" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="form-lbl-price-kg">Price per kg (Rs.)</label>
+              <input class="form-input" type="number" step="0.01" id="crop-price" required data-i18n-placeholder="form-ph-price-kg" placeholder="e.g. 250" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
             </div>
             <div style="display:flex;flex-direction:column;gap:5px;">
-              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">District</label>
-              <input class="form-input" id="crop-district" required placeholder="e.g. Kandy" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="label-district">District</label>
+              <input class="form-input" id="crop-district" required data-i18n-placeholder="placeholder-district-eg" placeholder="e.g. Kandy" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
             </div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
             <div style="display:flex;flex-direction:column;gap:5px;">
-              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Available Date</label>
+              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="form-lbl-available-date">Available Date</label>
               <input class="form-input" type="date" id="crop-date" required style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
             </div>
             <div style="display:flex;flex-direction:column;gap:5px;">
-              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Photos (optional)</label>
+              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="form-lbl-photos">Photos (optional)</label>
               <input type="file" id="crop-photos" multiple accept="image/*" style="width:100%;font-size:12px;padding:8px;">
             </div>
           </div>
           <div style="margin-bottom:20px;display:flex;flex-direction:column;gap:5px;">
-            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Description</label>
-            <textarea id="crop-desc" rows="3" placeholder="Additional details..." style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;font-family:inherit;font-size:13px;outline:none;"></textarea>
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="form-lbl-desc">Description</label>
+            <textarea id="crop-desc" rows="3" data-i18n-placeholder="form-ph-desc" placeholder="Additional details..." style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;font-family:inherit;font-size:13px;outline:none;"></textarea>
           </div>
-          <button type="submit" class="btn-sm btn-accept" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;">Publish Listing</button>
+          <button type="submit" class="btn-sm btn-accept" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;" data-i18n="btn-publish-listing">Publish Listing</button>
         </form>
       </div>
     </div>
@@ -1143,24 +1188,24 @@
     <div id="counter-offer-modal" style="display:none;position:fixed;inset:0;background:rgba(26,46,26,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
       <div style="background:#fff;border-radius:20px;padding:32px;max-width:400px;width:95%;box-shadow:0 20px 60px rgba(26,46,26,0.3);border:1px solid var(--border);position:relative;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-          <h3 style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--text)">Make Counter Offer</h3>
+          <h3 style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--text)" data-i18n="js-make-counter-offer">Make Counter Offer</h3>
           <button onclick="closeCounterModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted)">&times;</button>
         </div>
         <form id="counter-offer-form" onsubmit="submitCounterOffer(event)">
           <input type="hidden" id="counter-request-id">
           <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
-            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Counter Price (Rs./kg)</label>
-            <input class="form-input" type="number" step="0.01" id="counter-price" required placeholder="e.g. 275" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="form-lbl-counter-price">Counter Price (Rs./kg)</label>
+            <input class="form-input" type="number" step="0.01" id="counter-price" required data-i18n-placeholder="form-ph-offered-price" placeholder="e.g. 275" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
           </div>
           <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
-            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Quantity (kg)</label>
-            <input class="form-input" type="number" step="0.01" id="counter-qty" required placeholder="e.g. 80" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="logistics-label-qty">Quantity (kg)</label>
+            <input class="form-input" type="number" step="0.01" id="counter-qty" required data-i18n-placeholder="broadcast-ph-qty" placeholder="e.g. 80" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
           </div>
           <div style="margin-bottom:20px;display:flex;flex-direction:column;gap:5px;">
-            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Message to Buyer</label>
-            <textarea id="counter-msg" rows="2" placeholder="e.g. Can supply top quality organic produce." style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;font-family:inherit;font-size:13px;outline:none;"></textarea>
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="form-lbl-message-quality">Message to Buyer</label>
+            <textarea id="counter-msg" rows="2" data-i18n-placeholder="form-ph-message-quality" placeholder="e.g. Can supply top quality organic produce." style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;font-family:inherit;font-size:13px;outline:none;"></textarea>
           </div>
-          <button type="submit" class="btn-sm btn-accept" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;">Send Counter Offer</button>
+          <button type="submit" class="btn-sm btn-accept" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;" data-i18n="btn-submit-proposal">Send Counter Offer</button>
         </form>
       </div>
     </div>
@@ -1169,20 +1214,20 @@
     <div id="edit-crop-modal" style="display:none;position:fixed;inset:0;background:rgba(26,46,26,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
       <div style="background:var(--bg-card);border-radius:20px;padding:32px;max-width:400px;width:95%;box-shadow:var(--shadow-lg);border:1px solid var(--border-color);position:relative;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-          <h3 style="font-family:var(--font-heading);font-size:1.4rem;color:var(--text-main)" id="edit-crop-title">Edit Crop Stock</h3>
+          <h3 style="font-family:var(--font-heading);font-size:1.4rem;color:var(--text-main)" id="edit-crop-title" data-i18n="js-edit-crop-stock">Edit Crop Stock</h3>
           <button onclick="closeEditCropModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-hint)">&times;</button>
         </div>
         <form id="edit-crop-form" onsubmit="submitEditCrop(event)">
           <input type="hidden" id="edit-crop-id">
           <div style="margin-bottom:14px;display:flex;flex-direction:column;gap:5px;">
-            <label class="form-label">Quantity (kg)</label>
+            <label class="form-label" data-i18n="logistics-label-qty">Quantity (kg)</label>
             <input class="form-input" type="number" step="0.01" id="edit-crop-qty" required placeholder="e.g. 100">
           </div>
           <div style="margin-bottom:20px;display:flex;flex-direction:column;gap:5px;">
-            <label class="form-label">Price per kg (Rs.)</label>
+            <label class="form-label" data-i18n="form-lbl-price-kg">Price per kg (Rs.)</label>
             <input class="form-input" type="number" step="0.01" id="edit-crop-price" required placeholder="e.g. 250">
           </div>
-          <button type="submit" class="btn-sm btn-accept" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;background:var(--primary);color:#fff;">Save Stock Changes</button>
+          <button type="submit" class="btn-sm btn-accept" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;background:var(--primary);color:#fff;" data-i18n="btn-save">Save Stock Changes</button>
         </form>
       </div>
     </div>
@@ -1191,24 +1236,24 @@
     <div id="edit-equipment-modal" style="display:none;position:fixed;inset:0;background:rgba(26,46,26,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
       <div style="background:var(--bg-card);border-radius:20px;padding:32px;max-width:400px;width:95%;box-shadow:var(--shadow-lg);border:1px solid var(--border-color);position:relative;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-          <h3 style="font-family:var(--font-heading);font-size:1.4rem;color:var(--text-main)">Edit Equipment Listing</h3>
+          <h3 style="font-family:var(--font-heading);font-size:1.4rem;color:var(--text-main)" data-i18n="js-edit-equip">Edit Equipment Listing</h3>
           <button onclick="closeEditEquipmentModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-hint)">&times;</button>
         </div>
         <form id="edit-equipment-form" onsubmit="submitEditEquipment(event)">
           <input type="hidden" id="edit-equip-id">
           <div style="margin-bottom:14px;display:flex;flex-direction:column;gap:5px;">
-            <label class="form-label">Rental Rate (Rs. / day)</label>
+            <label class="form-label" data-i18n="form-lbl-daily-rate">Rental Rate (Rs. / day)</label>
             <input class="form-input" type="number" step="0.01" id="edit-equip-rate" required placeholder="e.g. 5000">
           </div>
           <div style="margin-bottom:20px;display:flex;flex-direction:column;gap:5px;">
-            <label class="form-label">Condition</label>
+            <label class="form-label" data-i18n="form-lbl-condition">Condition</label>
             <select class="form-input" id="edit-equip-condition" required style="width:100%; border:1px solid var(--border-color); padding:10px; border-radius:10px; outline:none; background:var(--bg-card); color:var(--text-main);">
-              <option value="Excellent">Excellent</option>
-              <option value="Good">Good</option>
-              <option value="Fair">Fair</option>
+              <option value="Excellent" data-i18n="cond-excellent">Excellent</option>
+              <option value="Good" data-i18n="cond-good">Good</option>
+              <option value="Fair" data-i18n="cond-fair">Fair</option>
             </select>
           </div>
-          <button type="submit" class="btn-sm btn-accept" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;background:var(--primary);color:#fff;">Save Listing Changes</button>
+          <button type="submit" class="btn-sm btn-accept" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;background:var(--primary);color:#fff;" data-i18n="btn-save">Save Listing Changes</button>
         </form>
       </div>
     </div>
@@ -1217,7 +1262,7 @@
     <div id="user-profile-modal" style="display:none;position:fixed;inset:0;background:rgba(26,46,26,0.7);backdrop-filter:blur(4px);z-index:1001;align-items:center;justify-content:center;">
       <div style="background:var(--bg-card);border-radius:20px;padding:32px;max-width:420px;width:95%;box-shadow:var(--shadow-lg);border:1px solid var(--border-color);position:relative;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-          <h3 style="font-family:var(--font-heading);font-size:1.4rem;color:var(--text-main)">User Profile</h3>
+          <h3 style="font-family:var(--font-heading);font-size:1.4rem;color:var(--text-main)" data-i18n="nav-profile">User Profile</h3>
           <button onclick="closeUserProfileModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-hint)">&times;</button>
         </div>
         <div style="display:flex;flex-direction:column;gap:16px;">
@@ -1230,28 +1275,28 @@
           </div>
           
           <div style="border-top:1px solid var(--border-color);padding-top:16px;display:flex;flex-direction:column;gap:10px;font-size:13.5px;">
-            <div>🛡️ <strong>Verification Status:</strong> <span id="profile-modal-status" style="font-weight:600;">Pending</span></div>
-            <div>📍 <strong>District:</strong> <span id="profile-modal-district">Unknown</span></div>
-            <div>📞 <strong>Phone:</strong> <span id="profile-modal-phone">N/A</span></div>
-            <div>📧 <strong>Email:</strong> <span id="profile-modal-email">N/A</span></div>
+            <div>🛡️ <strong data-i18n="profile-lbl-status">Verification Status:</strong> <span id="profile-modal-status" style="font-weight:600;">Pending</span></div>
+            <div>📍 <strong data-i18n="profile-lbl-district">District:</strong> <span id="profile-modal-district">Unknown</span></div>
+            <div>📞 <strong data-i18n="profile-lbl-phone">Phone:</strong> <span id="profile-modal-phone">N/A</span></div>
+            <div>📧 <strong data-i18n="profile-lbl-email">Email:</strong> <span id="profile-modal-email">N/A</span></div>
           </div>
 
           <div style="background:var(--primary-pale);border:1px solid var(--border-color);border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
             <div>
-              <div style="font-size:12px;color:var(--text-hint);text-transform:uppercase;font-weight:600;letter-spacing:0.5px;">Trust Rating</div>
+              <div style="font-size:12px;color:var(--text-hint);text-transform:uppercase;font-weight:600;letter-spacing:0.5px;" data-i18n="js-reputation">Trust Rating</div>
               <div style="font-size:20px;font-weight:700;color:var(--primary);margin-top:2px;" id="profile-modal-rating">5.0 / 5.0</div>
             </div>
             <div style="text-align:right;">
-              <div style="font-size:12px;color:var(--text-hint);text-transform:uppercase;font-weight:600;letter-spacing:0.5px;">Ledger Deals</div>
+              <div style="font-size:12px;color:var(--text-hint);text-transform:uppercase;font-weight:600;letter-spacing:0.5px;" data-i18n="js-ledger-deals">Ledger Deals</div>
               <div style="font-size:20px;font-weight:700;color:var(--text-main);margin-top:2px;" id="profile-modal-deals">0 completed</div>
             </div>
           </div>
 
           <div style="display:flex;gap:10px;margin-top:12px;">
             <button id="profile-modal-chat-btn" class="btn-sm btn-accept" style="flex:1;height:40px;border-radius:10px;border:none;cursor:pointer;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;">
-              💬 Start Chat
+              <span data-i18n="js-start-chat">💬 Start Chat</span>
             </button>
-            <button onclick="closeUserProfileModal()" class="btn-sm" style="flex:1;height:40px;border-radius:10px;border:1px solid var(--border-color);background:transparent;color:var(--text-muted);cursor:pointer;">
+            <button onclick="closeUserProfileModal()" class="btn-sm" style="flex:1;height:40px;border-radius:10px;border:1px solid var(--border-color);background:transparent;color:var(--text-muted);cursor:pointer;" data-i18n="btn-close">
               Close
             </button>
           </div>
@@ -1302,10 +1347,10 @@ function formatTimeAgo(date) {
   var diffMin = Math.floor(diffSec / 60);
   var diffHr = Math.floor(diffMin / 60);
   var diffDay = Math.floor(diffHr / 24);
-  if (diffSec < 60) return 'Just now';
-  if (diffMin < 60) return diffMin + 'm ago';
-  if (diffHr < 24) return diffHr + 'h ago';
-  if (diffDay < 7) return diffDay + 'd ago';
+  if (diffSec < 60) return getTranslation('js-time-just-now', 'Just now');
+  if (diffMin < 60) return diffMin + getTranslation('js-time-m-ago', 'm ago');
+  if (diffHr < 24) return diffHr + getTranslation('js-time-h-ago', 'h ago');
+  if (diffDay < 7) return diffDay + getTranslation('js-time-d-ago', 'd ago');
   return date.toLocaleDateString();
 }
 
@@ -1331,13 +1376,63 @@ var pingStart = 0;
     dateChip.textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   }
 
+  // Dynamic Profile Display function
+  let currentFirstName = '';
+  let currentDistrict = '';
+  let currentCreatedAt = null;
+  let currentStatus = '';
+
+  function updateProfileDisplay() {
+    const name = _user.name || _user.email;
+    const firstName = currentFirstName || name.split(' ')[0];
+    document.getElementById('page-greeting').textContent = getTranslation('js-welcome', 'Welcome back') + ', ' + firstName + ' 👋';
+    
+    if (currentDistrict) {
+      const distKey = 'district-' + currentDistrict.toLowerCase().replace(/[^a-z]/g, '');
+      document.getElementById('user-district').textContent = getTranslation(distKey, currentDistrict) + ' ' + getTranslation('js-district-suffix', 'District');
+    }
+    
+    if (currentCreatedAt) {
+      const d = new Date(currentCreatedAt);
+      const lang = localStorage.getItem("agro_lang") || "en";
+      const locale = lang === 'si' ? 'si-LK' : (lang === 'ta' ? 'ta-LK' : 'en-US');
+      const formattedDate = d.toLocaleDateString(locale, { month: 'short', year: 'numeric' });
+      document.getElementById('member-since').textContent = getTranslation('js-member-since', 'Member since') + ' ' + formattedDate;
+    }
+
+    const statusBadgeEl = document.getElementById('user-status-badge');
+    if (statusBadgeEl && currentStatus) {
+      if (currentStatus === 'approved') {
+        statusBadgeEl.innerHTML = `
+          <span class="status-pill active" style="font-size:9.5px; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 3px; background: var(--green-pale); color: var(--green); border: 1px solid var(--green-light); font-weight:600;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="width:10px;height:10px;color:var(--green);"><polyline points="20 6 9 17 4 12"/></svg> ${getTranslation('js-verified-seller', 'Verified Seller')}
+          </span>
+        `;
+      } else if (currentStatus === 'pending') {
+        statusBadgeEl.innerHTML = `
+          <span class="status-pill pending" style="font-size:9.5px; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 3px; background: var(--gold-pale); color: #b5621a; border: 1px solid var(--gold); font-weight:600;">
+            ⏳ ${getTranslation('js-verification-pending', 'Verification Pending')}
+          </span>
+        `;
+      } else {
+        statusBadgeEl.innerHTML = `
+          <span class="status-pill rejected" style="font-size:9.5px; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 3px; background: var(--amber-pale); color: var(--amber); border: 1px solid var(--amber); font-weight:600;">
+            ❌ ${getTranslation('js-verification-rejected', 'Verification Rejected')}
+          </span>
+        `;
+      }
+    }
+  }
+
+  document.addEventListener('languageChanged', updateProfileDisplay);
+
   // Immediately show what we have from session
   var name = _user.name || _user.email;
   var initials = name.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
   const avatarEl = document.querySelector('.avatar');
   if (avatarEl) avatarEl.textContent = initials;
   document.getElementById('user-name').textContent = name;
-  document.getElementById('page-greeting').textContent = 'Welcome back, ' + name.split(' ')[0] + ' 👋';
+  updateProfileDisplay();
 
   // Fetch full profile from server
   if (_user.id) {
@@ -1353,42 +1448,12 @@ var pingStart = 0;
         var ini = fullName.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
         if (avatarEl) avatarEl.textContent = ini;
         document.getElementById('user-name').textContent = fullName;
-        document.getElementById('page-greeting').textContent = 'Welcome back, ' + p.first_name + ' 👋';
-
-        if (p.district) document.getElementById('user-district').textContent = p.district + ' District';
-
-        if (p.created_at) {
-          var d = new Date(p.created_at);
-          var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-          document.getElementById('member-since').textContent = 'Member since ' + months[d.getMonth()] + ' ' + d.getFullYear();
-        }
-
-        // Render verification badge on sidebar
-        const statusBadgeEl = document.getElementById('user-status-badge');
-        if (statusBadgeEl) {
-          if (p.status === 'approved') {
-            statusBadgeEl.innerHTML = `
-              <span class="status-pill active" style="font-size:9.5px; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 3px; background: var(--green-pale); color: var(--green); border: 1px solid var(--green-light); font-weight:600;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="width:10px;height:10px;color:var(--green);"><polyline points="20 6 9 17 4 12"/></svg> Verified Seller
-              </span>
-            `;
-          } else if (p.status === 'pending') {
-            statusBadgeEl.innerHTML = `
-              <span class="status-pill pending" style="font-size:9.5px; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 3px; background: var(--gold-pale); color: #b5621a; border: 1px solid var(--gold); font-weight:600;">
-                ⏳ Verification Pending
-              </span>
-            `;
-          } else {
-            statusBadgeEl.innerHTML = `
-              <span class="status-pill rejected" style="font-size:9.5px; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 3px; background: var(--amber-pale); color: var(--amber); border: 1px solid var(--amber); font-weight:600;">
-                ❌ Verification Rejected
-              </span>
-            `;
-          }
-        }
-
-        // Update topbar greeting
-        document.getElementById('page-greeting').textContent = 'Welcome back, ' + p.first_name + ' 👋';
+        
+        currentFirstName = p.first_name;
+        currentDistrict = p.district;
+        currentCreatedAt = p.created_at;
+        currentStatus = p.status;
+        updateProfileDisplay();
 
         // Store enriched user data
         _user = {
@@ -1429,7 +1494,7 @@ function initSocket() {
 
   socket.on('pong_latency', function(data) {
     const lat = Date.now() - pingStart;
-    showToast('Network Latency', '⚡ ' + lat + 'ms', 'info', 3000);
+    showToast(getTranslation('toast-latency-title', 'Network Latency'), '⚡ ' + lat + 'ms', 'info', 3000);
   });
 
   socket.on('connect', function() {
@@ -1630,7 +1695,7 @@ function saveProfile(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Profile Updated!', 'Your profile has been saved 💾', 'success');
+        showToast(getTranslation('toast-profile-saved-title', 'Profile Updated!'), getTranslation('toast-profile-saved-body', 'Your profile has been saved 💾'), 'success');
         const p = data.user;
         const fullName = (p.first_name + ' ' + p.last_name).trim();
         const initials = fullName.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
@@ -1638,7 +1703,8 @@ function saveProfile(e) {
         const avatarEl = document.querySelector('.avatar');
         if (avatarEl) avatarEl.textContent = initials;
         document.getElementById('user-name').textContent = fullName;
-        document.getElementById('user-district').textContent = p.district + ' District';
+        const distKey = 'district-' + p.district.toLowerCase().replace(/[^a-z]/g, '');
+        document.getElementById('user-district').textContent = getTranslation(distKey, p.district) + ' ' + getTranslation('js-district-suffix', 'District');
         
         _user = {
           id: p.id, email: p.email, role: p.role,
@@ -1648,7 +1714,7 @@ function saveProfile(e) {
         sessionStorage.setItem('agro_user', JSON.stringify(_user));
         loadProfileDetails();
       } else {
-        showToast('Error', data.error || 'Failed to update profile', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('err-failed-update-profile', 'Failed to update profile'), 'error');
       }
     });
 }
@@ -1727,7 +1793,7 @@ function loadEquipmentData() {
       const container = document.getElementById('equipment-listings-list');
       const badge = document.getElementById('sidebar-equipment-count');
       if (!data.success || !data.listings || !data.listings.length) {
-        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No equipment listed. Click "+ Add New" to list.</div>';
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">' + getTranslation('js-no-equipment-listed', 'No equipment listed. Click "+ Add New" to list.') + '</div>';
         if (badge) badge.style.display = 'none';
         return;
       }
@@ -1747,28 +1813,34 @@ function loadEquipmentData() {
         if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) icon = '🌿';
 
         const isBooked = item.status === 'booked';
-        const statusLabel = isBooked ? '● Rented' : '● Available';
+        const statusLabel = isBooked ? '● ' + getTranslation('js-rented', 'Rented') : '● ' + getTranslation('js-available', 'Available');
         const statusClass = isBooked ? 'pending' : 'active';
+
+        const distKey = 'district-' + (item.district || _user.district || 'kurunegala').toLowerCase().replace(/[^a-z]/g, '');
+        const districtTranslated = getTranslation(distKey, item.district || _user.district || 'Kurunegala');
+        const condTranslated = getTranslation('cond-' + item.condition.toLowerCase(), item.condition);
+        const conditionLabel = getTranslation('form-lbl-condition', 'condition').toLowerCase();
 
         html += `
           <div class="listing-item">
             <div class="listing-img">${icon}</div>
             <div class="listing-info">
               <div class="listing-name">${item.name}</div>
-              <div class="listing-meta">${item.district || _user.district || 'Kurunegala'} · ${item.condition} condition</div>
+              <div class="listing-meta">${districtTranslated} · ${condTranslated} ${conditionLabel}</div>
             </div>
             <div style="display:flex;flex-direction:column;align-items:flex-end;">
-              <div class="listing-price">Rs. ${parseFloat(item.rental_rate).toLocaleString()}/day</div>
+              <div class="listing-price">Rs. ${parseFloat(item.rental_rate).toLocaleString()}${getTranslation('js-per-day', '/day')}</div>
               <div style="display:flex;gap:8px;margin-top:4px;align-items:center;">
                 <span class="status-pill ${statusClass}">${statusLabel}</span>
-                <button onclick="openEditEquipmentModal(${item.id}, ${item.rental_rate}, '${item.condition}')" style="background:none;border:none;color:var(--primary-light);font-size:11px;cursor:pointer;font-weight:600;">Edit</button>
-                <button onclick="deactivateEquipment(${item.id})" style="background:none;border:none;color:var(--amber);font-size:11px;cursor:pointer;font-weight:500;">Deactivate</button>
+                <button onclick="openEditEquipmentModal(${item.id}, ${item.rental_rate}, '${item.condition}')" style="background:none;border:none;color:var(--primary-light);font-size:11px;cursor:pointer;font-weight:600;">${getTranslation('js-edit', 'Edit')}</button>
+                <button onclick="deactivateEquipment(${item.id})" style="background:none;border:none;color:var(--amber);font-size:11px;cursor:pointer;font-weight:500;">${getTranslation('js-deactivate', 'Deactivate')}</button>
               </div>
             </div>
           </div>
         `;
       });
-      container.innerHTML = html || '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No active equipment listings.</div>';
+      container.innerHTML = html || '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">' + getTranslation('js-no-active-listings', 'No active listings.') + '</div>';
+      applyTranslations();
     });
 
   // 2. Load booking requests
@@ -1780,13 +1852,13 @@ function loadEquipmentData() {
       const container = document.getElementById('equipment-bookings-list');
       const countHeader = document.getElementById('equipment-bookings-count');
       if (!data.success || !data.bookings || !data.bookings.length) {
-        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No incoming booking requests.</div>';
-        countHeader.textContent = '0 pending';
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">' + getTranslation('js-no-incoming-bookings', 'No incoming booking requests.') + '</div>';
+        countHeader.textContent = '0 ' + getTranslation('js-pending-suffix', 'pending');
         return;
       }
 
       const pending = data.bookings.filter(b => b.status === 'pending');
-      countHeader.textContent = pending.length + ' pending';
+      countHeader.textContent = pending.length + ' ' + getTranslation('js-pending-suffix', 'pending');
 
       let html = '';
       data.bookings.forEach(item => {
@@ -1797,8 +1869,8 @@ function loadEquipmentData() {
         if (isPending) {
           actionButtons = `
             <div style="display:flex; gap:6px; margin-top:8px;">
-              <button class="btn-sm btn-accept" onclick="confirmBooking(${item.id})" style="background:var(--green); color:#fff; cursor:pointer;">Confirm</button>
-              <button class="btn-sm btn-reject" onclick="rejectBooking(${item.id})" style="cursor:pointer;">Reject</button>
+              <button class="btn-sm btn-accept" onclick="confirmBooking(${item.id})" style="background:var(--green); color:#fff; cursor:pointer;">${getTranslation('btn-confirm', 'Confirm')}</button>
+              <button class="btn-sm btn-reject" onclick="rejectBooking(${item.id})" style="cursor:pointer;">${getTranslation('btn-reject', 'Reject')}</button>
             </div>
           `;
         } else {
@@ -1807,7 +1879,7 @@ function loadEquipmentData() {
             pdfBtn = `<button onclick="downloadBookingSlip(${item.id}, '${item.listing_name.replace(/'/g, "\\'")}', '${item.renter_name.replace(/'/g, "\\'")}', '${start}', '${end}', ${item.total_amount})" style="background:none; border:none; color:var(--primary-light); font-size:11px; cursor:pointer; font-weight:600; margin-top:4px; display:flex; align-items:center; gap:2px;">📥 PDF</button>`;
           }
           actionButtons = `
-            <span style="font-size:12px; font-weight:500; margin-top:4px; color:${item.status === 'confirmed' ? 'var(--green)' : 'var(--amber)'}">${item.status.toUpperCase()}</span>
+            <span style="font-size:12px; font-weight:500; margin-top:4px; color:${item.status === 'confirmed' ? 'var(--green)' : 'var(--amber)'}">${getTranslation('booking-status-' + item.status, item.status).toUpperCase()}</span>
             ${pdfBtn}
           `;
         }
@@ -1816,7 +1888,7 @@ function loadEquipmentData() {
           <div class="booking-item" style="display:flex; justify-content:space-between; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--border);">
             <div>
               <div style="font-size:13.5px; font-weight:500; color:var(--text);">${item.listing_name}</div>
-              <div style="font-size:12px; color:var(--muted); margin-top:2px;">Renter: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--primary);" onclick="showUserProfileModal(${item.renter_id})">${item.renter_name}</span> · 📞 ${item.renter_phone || 'N/A'}</div>
+              <div style="font-size:12px; color:var(--muted); margin-top:2px;">${getTranslation('js-renter', 'Renter')}: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--primary);" onclick="showUserProfileModal(${item.renter_id})">${item.renter_name}</span> · 📞 ${item.renter_phone || 'N/A'}</div>
               <div style="font-size:11.5px; color:var(--muted); margin-top:4px;">📅 ${start} – ${end}</div>
             </div>
             <div style="display:flex; flex-direction:column; align-items:flex-end;">
@@ -1827,6 +1899,7 @@ function loadEquipmentData() {
         `;
       });
       container.innerHTML = html;
+      applyTranslations();
     });
 }
 
@@ -1865,18 +1938,18 @@ function submitNewEquipment(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Equipment Listed!', 'Equipment listing published successfully 🚜', 'success');
+        showToast(getTranslation('toast-equip-listed-title', 'Equipment Listed!'), getTranslation('toast-equip-listed-body', 'Equipment listing published successfully 🚜'), 'success');
         closeAddEquipmentModal();
         loadEquipmentData();
         loadDashboardData();
       } else {
-        showToast('Error', data.error || 'Failed to list equipment', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('toast-failed-list-equip', 'Failed to list equipment'), 'error');
       }
     });
 }
 
 function deactivateEquipment(id) {
-  if (!confirm('Are you sure you want to deactivate this equipment listing?')) return;
+  if (!confirm(getTranslation('confirm-deactivate-equip', 'Are you sure you want to deactivate this equipment listing?'))) return;
   fetch(API_URL + '/api/seller/equipment/' + id, {
     method: 'DELETE',
     headers: getAuthHeaders(),
@@ -1885,17 +1958,17 @@ function deactivateEquipment(id) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Equipment Deactivated', 'Listing removed from marketplace', 'warning');
+        showToast(getTranslation('toast-equip-deactivated-title', 'Equipment Deactivated'), getTranslation('toast-equip-deactivated-body', 'Listing removed from marketplace'), 'warning');
         loadEquipmentData();
         loadDashboardData();
       } else {
-        showToast('Error', data.error || 'Failed to deactivate', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('toast-failed-deactivate', 'Failed to deactivate'), 'error');
       }
     });
 }
 
 function confirmBooking(id) {
-  if (!confirm('Are you sure you want to confirm this booking request? This will write to the blockchain ledger.')) return;
+  if (!confirm(getTranslation('confirm-booking-request', 'Are you sure you want to confirm this booking request? This will write to the blockchain ledger.'))) return;
   fetch(API_URL + `/api/seller/bookings/${id}/confirm`, {
     method: 'POST',
     headers: getAuthHeaders(),
@@ -1904,17 +1977,17 @@ function confirmBooking(id) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Booking Confirmed!', 'Ledger TX: ' + (data.ledger_tx ? data.ledger_tx.slice(0, 16) + '...' : 'N/A'), 'success');
+        showToast(getTranslation('toast-booking-confirmed-title', 'Booking Confirmed!'), getTranslation('toast-ledger-tx-prefix', 'Ledger TX') + ': ' + (data.ledger_tx ? data.ledger_tx.slice(0, 16) + '...' : 'N/A'), 'success');
         loadEquipmentData();
         loadDashboardData();
       } else {
-        showToast('Error', data.error || 'Failed to confirm booking', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('toast-failed-confirm-booking', 'Failed to confirm booking'), 'error');
       }
     });
 }
 
 function rejectBooking(id) {
-  const reason = prompt('Please enter a reason for rejection (optional):');
+  const reason = prompt(getTranslation('prompt-reject-reason', 'Please enter a reason for rejection (optional):'));
   if (reason === null) return;
   
   fetch(API_URL + `/api/seller/bookings/${id}/reject`, {
@@ -1925,11 +1998,11 @@ function rejectBooking(id) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        alert('Booking request rejected.');
+        alert(getTranslation('alert-booking-rejected', 'Booking request rejected.'));
         loadEquipmentData();
         loadDashboardData();
       } else {
-        alert('❌ Error: ' + data.error);
+        alert('❌ ' + getTranslation('toast-error-title', 'Error') + ': ' + (data.error ? getTranslation(data.error, data.error) : ''));
       }
     });
 }
@@ -1958,7 +2031,18 @@ function loadDashboardData() {
       document.getElementById('stat-active-listings').textContent = a.crop_listings.active || 0;
       document.getElementById('stat-completed-rentals').textContent = a.bookings.confirmed || 0;
       document.getElementById('stat-revenue').textContent = 'Rs. ' + (a.ledger.total_revenue || 0).toLocaleString();
-      document.getElementById('earnings-current-label').textContent = 'Rs. ' + (a.ledger.total_revenue || 0).toLocaleString() + ' earned in May';
+      const lang = localStorage.getItem("agro_lang") || "en";
+      const locale = lang === 'si' ? 'si-LK' : (lang === 'ta' ? 'ta-LK' : 'en-US');
+      const monthName = new Date().toLocaleDateString(locale, { month: 'long' });
+      let earnedText = '';
+      if (lang === 'si') {
+        earnedText = monthName + ' මාසයේ ' + getTranslation('js-earned-in', 'ලැබූ ආදායම');
+      } else if (lang === 'ta') {
+        earnedText = monthName + ' மாதத்தில் ' + getTranslation('js-earned-in', 'ஈட்டப்பட்டது');
+      } else {
+        earnedText = getTranslation('js-earned-in', 'earned in') + ' ' + monthName;
+      }
+      document.getElementById('earnings-current-label').textContent = 'Rs. ' + (a.ledger.total_revenue || 0).toLocaleString() + ' ' + earnedText;
       
       // Update simple mini chart height
       const currentBar = document.getElementById('earnings-current-bar');
@@ -2015,7 +2099,7 @@ function loadCropListings() {
     .then(data => {
       const container = document.getElementById('crop-listings-list');
       if (!data.success || !data.listings || !data.listings.length) {
-        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No active listings. Click "+ Add New" to sell.</div>';
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">' + getTranslation('js-no-active-listings-click-add', 'No active listings. Click "+ Add New" to sell.') + '</div>';
         const sbCount = document.getElementById('sidebar-listings-count');
         if(sbCount) sbCount.textContent = '0';
         return;
@@ -2033,28 +2117,32 @@ function loadCropListings() {
         }
         const dateStr = item.available_date ? new Date(item.available_date).toLocaleDateString() : 'N/A';
         const isPending = item.status === 'pending';
-        const statusLabel = isPending ? '⏳ Pending' : '● Active';
+        const statusLabel = isPending ? '⏳ ' + getTranslation('booking-status-pending', 'Pending') : '● ' + getTranslation('booking-status-active', 'Active');
         const statusClass = isPending ? 'pending' : 'active';
+
+        const distKey = 'district-' + (item.district || _user.district || 'kandy').toLowerCase().replace(/[^a-z]/g, '');
+        const districtTranslated = getTranslation(distKey, item.district || _user.district || 'Kandy');
 
         html += `
           <div class="listing-item">
             <div class="listing-img">${img}</div>
             <div class="listing-info">
               <div class="listing-name">${item.name}</div>
-              <div class="listing-meta">${item.district || _user.district || 'Kandy'} · ${item.quantity_kg} kg · Avail: ${dateStr}</div>
+              <div class="listing-meta">${districtTranslated} · ${item.quantity_kg} kg · ${getTranslation('js-avail', 'Avail')}: ${dateStr}</div>
             </div>
             <div style="display:flex;flex-direction:column;align-items:flex-end;">
               <div class="listing-price">Rs. ${parseFloat(item.price_per_kg).toFixed(0)}/kg</div>
               <div style="display:flex;gap:8px;margin-top:4px;align-items:center;">
                 <span class="status-pill ${statusClass}">${statusLabel}</span>
-                <button onclick="openEditCropModal(${item.id}, ${item.quantity_kg}, ${item.price_per_kg}, '${item.name.replace(/'/g, "\\'")}')" style="background:none;border:none;color:var(--primary-light);font-size:11px;cursor:pointer;font-weight:600;">Edit</button>
-                <button onclick="deactivateListing(${item.id})" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;font-weight:500;">Deactivate</button>
+                <button onclick="openEditCropModal(${item.id}, ${item.quantity_kg}, ${item.price_per_kg}, '${item.name.replace(/'/g, "\\'")}')" style="background:none;border:none;color:var(--primary-light);font-size:11px;cursor:pointer;font-weight:600;">${getTranslation('js-edit', 'Edit')}</button>
+                <button onclick="deactivateListing(${item.id})" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;font-weight:500;">${getTranslation('js-deactivate', 'Deactivate')}</button>
               </div>
             </div>
           </div>
         `;
       });
-      container.innerHTML = html || '<div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">No active listings.</div>';
+      container.innerHTML = html || '<div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">' + getTranslation('js-no-active-listings', 'No active listings.') + '</div>';
+      applyTranslations();
     });
 }
 
@@ -2108,20 +2196,20 @@ function submitNewCrop(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Listing Published!', 'Your crop listing is now live 🌱', 'success');
+        showToast(getTranslation('toast-crop-published-title', 'Listing Published!'), getTranslation('toast-crop-published-body', 'Your crop listing is now live 🌱'), 'success');
         closeAddCropModal();
         loadDashboardData();
       } else {
-        showToast('Error', data.error || 'Failed to publish listing', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('toast-failed-publish-crop', 'Failed to publish listing'), 'error');
       }
     })
     .catch(() => {
-      showToast('Server Error', 'Could not publish listing. Check your connection.', 'error');
+      showToast(getTranslation('toast-server-error-title', 'Server Error'), getTranslation('toast-failed-publish-connection', 'Could not publish listing. Check your connection.'), 'error');
     });
 }
 
 function deactivateListing(id) {
-  if (!confirm('Are you sure you want to deactivate this listing?')) return;
+  if (!confirm(getTranslation('confirm-deactivate-crop', 'Are you sure you want to deactivate this listing?'))) return;
   fetch(API_URL + '/api/seller/crops/' + id, {
     method: 'DELETE',
     headers: getAuthHeaders(),
@@ -2130,10 +2218,10 @@ function deactivateListing(id) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Listing Deactivated', 'Crop listing removed from marketplace', 'warning');
+        showToast(getTranslation('toast-crop-deactivated-title', 'Listing Deactivated'), getTranslation('toast-crop-deactivated-body', 'Crop listing removed from marketplace'), 'warning');
         loadDashboardData();
       } else {
-        showToast('Error', data.error || 'Failed to deactivate', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('toast-failed-deactivate', 'Failed to deactivate'), 'error');
       }
     });
 }
@@ -2148,13 +2236,13 @@ function loadCropOrders() {
       const container = document.getElementById('crop-orders-list');
       const badge = document.getElementById('crop-orders-count');
       if (!data.success || !data.orders || !data.orders.length) {
-        container.innerHTML = '<div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">No incoming crop orders.</div>';
-        if (badge) badge.textContent = '0 pending';
+        container.innerHTML = '<div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">' + getTranslation('js-no-incoming-crop-orders', 'No incoming crop orders.') + '</div>';
+        if (badge) badge.textContent = '0 ' + getTranslation('js-pending-suffix', 'pending');
         return;
       }
 
       const pending = data.orders.filter(o => o.status === 'pending');
-      if (badge) badge.textContent = pending.length + ' pending';
+      if (badge) badge.textContent = pending.length + ' ' + getTranslation('js-pending-suffix', 'pending');
 
       let html = '';
       data.orders.forEach(item => {
@@ -2163,20 +2251,20 @@ function loadCropOrders() {
         if (isPending) {
           actionButtons = `
             <div style="display:flex; gap:6px; margin-top:8px;">
-              <button class="btn-sm btn-accept" onclick="confirmCropOrder(${item.id})" style="background:var(--green); color:#fff; cursor:pointer; padding:6px 12px; font-size:11px;">Confirm</button>
-              <button class="btn-sm btn-reject" onclick="rejectCropOrder(${item.id})" style="cursor:pointer; padding:6px 12px; font-size:11px;">Reject</button>
+              <button class="btn-sm btn-accept" onclick="confirmCropOrder(${item.id})" style="background:var(--green); color:#fff; cursor:pointer; padding:6px 12px; font-size:11px;">${getTranslation('btn-confirm', 'Confirm')}</button>
+              <button class="btn-sm btn-reject" onclick="rejectCropOrder(${item.id})" style="cursor:pointer; padding:6px 12px; font-size:11px;">${getTranslation('btn-reject', 'Reject')}</button>
             </div>
           `;
         } else {
-          actionButtons = `<span style="font-size:12px; font-weight:600; margin-top:4px; color:${item.status === 'confirmed' ? 'var(--green)' : 'var(--accent)'}">${item.status.toUpperCase()}</span>`;
+          actionButtons = `<span style="font-size:12px; font-weight:600; margin-top:4px; color:${item.status === 'confirmed' ? 'var(--green)' : 'var(--accent)'}">${getTranslation('booking-status-' + item.status, item.status).toUpperCase()}</span>`;
         }
 
         html += `
           <div class="booking-item" style="display:flex; justify-content:space-between; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--border-color);">
             <div>
               <div style="font-size:13.5px; font-weight:500; color:var(--text-main);">${item.crop_name}</div>
-              <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Buyer: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--primary);" onclick="showUserProfileModal(${item.buyer_id})">${item.buyer_name || 'Buyer'}</span> · 📞 ${item.buyer_phone || 'N/A'}</div>
-              <div style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">Qty: <strong>${item.quantity_kg} kg</strong> · Deliv: ${item.delivery_date ? new Date(item.delivery_date).toLocaleDateString() : 'N/A'}</div>
+              <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">${getTranslation('js-buyer-role', 'Buyer')}: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--primary);" onclick="showUserProfileModal(${item.buyer_id})">${item.buyer_name || 'Buyer'}</span> · 📞 ${item.buyer_phone || 'N/A'}</div>
+              <div style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">${getTranslation('js-qty', 'Qty')}: <strong>${item.quantity_kg} kg</strong> · ${getTranslation('js-deliv', 'Deliv')}: ${item.delivery_date ? new Date(item.delivery_date).toLocaleDateString() : 'N/A'}</div>
             </div>
             <div style="display:flex; flex-direction:column; align-items:flex-end;">
               <div style="font-size:13.5px; font-weight:600; color:var(--green);">Rs. ${parseFloat(item.total_amount).toLocaleString()}</div>
@@ -2186,11 +2274,12 @@ function loadCropOrders() {
         `;
       });
       container.innerHTML = html;
+      applyTranslations();
     });
 }
 
 function confirmCropOrder(id) {
-  if (!confirm('Are you sure you want to confirm this crop purchase? This will deduct listing stock and write to the blockchain ledger.')) return;
+  if (!confirm(getTranslation('confirm-crop-purchase', 'Are you sure you want to confirm this crop purchase? This will deduct listing stock and write to the blockchain ledger.'))) return;
   fetch(API_URL + `/api/seller/crop-orders/${id}/confirm`, {
     method: 'POST',
     headers: getAuthHeaders(),
@@ -2199,18 +2288,18 @@ function confirmCropOrder(id) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Order Confirmed!', 'Ledger TX: ' + (data.ledger_tx ? data.ledger_tx.slice(0, 16) + '...' : 'N/A'), 'success');
+        showToast(getTranslation('toast-order-confirmed-title', 'Order Confirmed!'), getTranslation('toast-ledger-tx-prefix', 'Ledger TX') + ': ' + (data.ledger_tx ? data.ledger_tx.slice(0, 16) + '...' : 'N/A'), 'success');
         loadCropOrders();
         loadCropListings();
         loadDashboardData();
       } else {
-        showToast('Error', data.error || 'Failed to confirm crop order', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('toast-failed-confirm-order', 'Failed to confirm crop order'), 'error');
       }
     });
 }
 
 function rejectCropOrder(id) {
-  if (!confirm('Are you sure you want to reject this crop order request?')) return;
+  if (!confirm(getTranslation('confirm-reject-crop-order', 'Are you sure you want to reject this crop order request?'))) return;
   fetch(API_URL + `/api/seller/crop-orders/${id}/reject`, {
     method: 'POST',
     headers: getAuthHeaders(),
@@ -2219,11 +2308,11 @@ function rejectCropOrder(id) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Order Rejected', 'Crop purchase request rejected', 'warning');
+        showToast(getTranslation('toast-order-rejected-title', 'Order Rejected'), getTranslation('toast-order-rejected-body', 'The buyer request has been declined.'), 'warning');
         loadCropOrders();
         loadDashboardData();
       } else {
-        showToast('Error', data.error || 'Failed to reject order', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('err-failed-reject-order', 'Failed to reject order'), 'error');
       }
     });
 }
@@ -2256,21 +2345,21 @@ function loadBuyerRequests() {
       const sidebarBadge = document.getElementById('sidebar-requests-count');
 
       if (!data.success || !data.requests || !data.requests.length) {
-        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No incoming buyer requests in your area.</div>';
-        countBadge.textContent = '0 new';
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">' + getTranslation('js-no-incoming-buyer-requests', 'No incoming buyer requests in your area.') + '</div>';
+        countBadge.textContent = '0 ' + getTranslation('js-new-suffix', 'new');
         if(sidebarBadge) sidebarBadge.textContent = '0';
         document.getElementById('stat-pending-requests').textContent = '0';
         return;
       }
 
-      countBadge.textContent = data.requests.length + ' new';
+      countBadge.textContent = data.requests.length + ' ' + getTranslation('js-new-suffix', 'new');
       if(sidebarBadge) sidebarBadge.textContent = data.requests.length;
       document.getElementById('stat-pending-requests').textContent = data.requests.length;
 
       let html = '';
       data.requests.forEach(item => {
         // Format date
-        const dateStr = item.needed_by ? new Date(item.needed_by).toLocaleDateString() : 'Immediate';
+        const dateStr = item.needed_by ? new Date(item.needed_by).toLocaleDateString() : getTranslation('js-immediate', 'Immediate');
         
         // Check if we have already responded to this request
         const myResponse = item.responses && item.responses.find(r => r.seller_id === _user.id);
@@ -2278,28 +2367,30 @@ function loadBuyerRequests() {
         
         let actionsHtml = '';
         if (hasResponded) {
-          actionsHtml = `<span style="font-size:12px;color:var(--green);font-weight:500;margin-right:8px;">✓ Responded (${myResponse.type})</span>`;
+          actionsHtml = `<span style="font-size:12px;color:var(--green);font-weight:500;margin-right:8px;">✔ ${getTranslation('js-responded', 'Responded')} (${myResponse.type})</span>`;
         } else {
           actionsHtml = `
-            <button class="btn-sm btn-accept" onclick="acceptRequest(${item.id}, ${parseFloat(item.budget || 0)})">Accept Offer</button>
-            <button class="btn-sm btn-counter" onclick="openCounterModal(${item.id})">Counter</button>
-            <button class="btn-sm btn-reject" onclick="declineRequest(${item.id})">Decline</button>
+            <button class="btn-sm btn-accept" onclick="acceptRequest(${item.id}, ${parseFloat(item.budget || 0)})">${getTranslation('js-accept-offer', 'Accept Offer')}</button>
+            <button class="btn-sm btn-counter" onclick="openCounterModal(${item.id})">${getTranslation('js-counter-offer', 'Counter')}</button>
+            <button class="btn-sm btn-reject" onclick="declineRequest(${item.id})">${getTranslation('js-decline', 'Decline')}</button>
           `;
         }
-        actionsHtml += `<button class="btn-sm btn-reject" style="background:var(--primary-pale); color:var(--primary-light); border-color:var(--primary-light);" onclick="startChatWithUser(${item.buyer_id}, '${item.buyer_name.replace(/'/g, "\\'")}', 'buyer')">💬 Chat</button>`;
+        actionsHtml += `<button class="btn-sm btn-reject" style="background:var(--primary-pale); color:var(--primary-light); border-color:var(--primary-light);" onclick="startChatWithUser(${item.buyer_id}, '${item.buyer_name.replace(/'/g, "\\'")}', 'buyer')">💬 ${getTranslation('js-chat', 'Chat')}</button>`;
+
+        const urgencyLabel = getTranslation('urgency-' + (item.urgency || 'Normal').toLowerCase(), item.urgency || 'Normal');
 
         html += `
           <div class="request-item">
             <div class="request-top">
               <div>
-                <div class="request-commodity">${item.crop} – ${item.quantity} ${item.unit || 'kg'}</div>
-                <div class="request-buyer">Buyer: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--primary);" onclick="showUserProfileModal(${item.buyer_id})">${item.buyer_name || 'Buyer'}</span> · ${item.district}</div>
+                <div class="request-commodity">${item.crop} - ${item.quantity} ${item.unit || 'kg'}</div>
+                <div class="request-buyer">${getTranslation('js-buyer-role', 'Buyer')}: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--primary);" onclick="showUserProfileModal(${item.buyer_id})">${item.buyer_name || 'Buyer'}</span> · ${getTranslation('district-' + (item.district || '').toLowerCase().replace(/[^a-z]/g, ''), item.district)}</div>
               </div>
-              <span class="status-pill pending">${item.urgency || 'Normal'}</span>
+              <span class="status-pill pending">${urgencyLabel}</span>
             </div>
             <div class="request-details">
-              <span>📅 Needed: ${dateStr}</span>
-              <span>💰 Budget: ${item.budget ? 'Rs. ' + item.budget : 'Open'}</span>
+              <span>📅 ${getTranslation('js-needed', 'Needed')}: ${dateStr}</span>
+              <span>💰 ${getTranslation('js-budget', 'Budget')}: ${item.budget ? 'Rs. ' + item.budget : getTranslation('js-budget-open', 'Open')}</span>
             </div>
             <div class="request-actions">
               ${actionsHtml}
@@ -2308,16 +2399,17 @@ function loadBuyerRequests() {
         `;
       });
       container.innerHTML = html;
+      applyTranslations();
     });
 }
 
 function acceptRequest(requestId, budget) {
-  if (!confirm('Are you sure you want to accept this request?')) return;
+  if (!confirm(getTranslation('confirm-accept-request', 'Are you sure you want to accept this request?'))) return;
   respondToRequest(requestId, 'accept', budget, null, 'I can supply this commodity as requested.');
 }
 
 function declineRequest(requestId) {
-  if (!confirm('Are you sure you want to decline this request?')) return;
+  if (!confirm(getTranslation('confirm-decline-request', 'Are you sure you want to decline this request?'))) return;
   respondToRequest(requestId, 'reject', null, null, 'Declined.');
 }
 
@@ -2354,17 +2446,16 @@ function respondToRequest(requestId, type, price, qty, message) {
       message: message
     })
   })
-    .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Response Sent!', 'Your response was submitted successfully 🤝', 'success');
+        showToast(getTranslation('toast-response-sent-title', 'Response Sent!'), getTranslation('toast-response-sent-body', 'Your response was submitted successfully 🤝'), 'success');
         loadDashboardData();
       } else {
-        showToast('Error', data.error || 'Failed to send response', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('toast-failed-send-response', 'Failed to send response'), 'error');
       }
     })
     .catch(() => {
-      showToast('Server Error', 'Could not send response. Check your connection.', 'error');
+      showToast(getTranslation('toast-server-error-title', 'Server Error'), getTranslation('toast-failed-send-connection', 'Could not send response. Check your connection.'), 'error');
     });
 }
 
@@ -2377,30 +2468,34 @@ function loadLedger() {
     .then(data => {
       const container = document.getElementById('ledger-list');
       if (!data.success || !data.ledger || !data.ledger.length) {
-        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No ledger records found.</div>';
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">' + getTranslation('js-no-ledger-records', 'No ledger records found.') + '</div>';
         return;
       }
 
       let html = '';
       data.ledger.forEach(item => {
+        const listingNameTranslated = item.listing_name || getTranslation('ledger-type-equipment', 'Equipment');
+        const renterNameTranslated = item.renter_name || getTranslation('js-buyer-role', 'Buyer');
+
         html += `
           <div class="ledger-item">
             <div class="hash-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
             </div>
             <div style="flex:1">
-              <div class="ledger-label">${item.listing_name || 'Equipment'} · Rented to <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--primary);" onclick="showUserProfileModal(${item.renter_id})">${item.renter_name || 'Buyer'}</span> (${item.duration_days} days)</div>
-              <div class="ledger-hash">block_hash: ${item.block_hash.slice(0,18)}…</div>
+              <div class="ledger-label">${listingNameTranslated} · ${getTranslation('js-rented-to', 'Rented to')} <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--primary);" onclick="showUserProfileModal(${item.renter_id})">${renterNameTranslated}</span> (${item.duration_days} ${getTranslation('js-days', 'days')})</div>
+              <div class="ledger-hash">block_hash: ${item.block_hash.slice(0,18)}.</div>
             </div>
             <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
               <div class="ledger-amt">Rs. ${parseFloat(item.amount).toLocaleString()}</div>
-              <button onclick="downloadLedgerReceipt('${item.tx_id}', '${(item.listing_name || 'Equipment').replace(/'/g, "\\'")}', '${(item.renter_name || 'Buyer').replace(/'/g, "\\'")}', ${item.amount}, ${item.duration_days}, '${item.block_hash}', '${item.prev_hash}')" style="background:none; border:none; color:var(--primary-light); font-size:11px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:2px;">📥 PDF</button>
+              <button onclick="downloadLedgerReceipt('${item.tx_id}', '${listingNameTranslated.replace(/'/g, "\\'")}', '${renterNameTranslated.replace(/'/g, "\\'")}', ${item.amount}, ${item.duration_days}, '${item.block_hash}', '${item.prev_hash}')" style="background:none; border:none; color:var(--primary-light); font-size:11px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:2px;">📥 PDF</button>
             </div>
           </div>
         `;
       });
       container.innerHTML = html;
       verifyLedger(); // auto verify on load
+      applyTranslations();
     });
 }
 
@@ -2408,7 +2503,7 @@ function verifyLedger() {
   const statusText = document.getElementById('ledger-status-text');
   const statusBox = document.getElementById('ledger-verification-status');
   
-  statusText.textContent = 'Verifying blockchain integrity...';
+  statusText.textContent = getTranslation('js-ledger-verifying', 'Verifying blockchain integrity...');
   
   fetch(API_URL + '/api/seller/ledger/verify', {
     headers: getAuthHeaders()
@@ -2416,19 +2511,19 @@ function verifyLedger() {
     .then(r => r.json())
     .then(data => {
       if (data.success && data.valid) {
-        statusText.textContent = 'Chain verified · No tampering detected';
+        statusText.textContent = getTranslation('js-ledger-verified-clean', 'Chain verified · No tampering detected');
         statusBox.style.background = 'var(--green-pale)';
         statusBox.style.borderColor = 'var(--green-light)';
         statusText.style.color = 'var(--green)';
       } else {
-        statusText.textContent = '⚠️ WARNING: Blockchain validation failed! Tampering detected!';
+        statusText.textContent = '⚠️ ' + getTranslation('ledger-status-failed', 'WARNING: Chain tampering detected!');
         statusBox.style.background = 'var(--amber-pale)';
         statusBox.style.borderColor = 'var(--amber)';
         statusText.style.color = 'var(--amber)';
       }
     })
     .catch(() => {
-      statusText.textContent = 'Verification server offline';
+      statusText.textContent = getTranslation('js-verification-server-offline', 'Verification server offline');
     });
 }
 
@@ -2443,7 +2538,9 @@ function loadReputation() {
       
       const score = parseFloat(data.score || 0);
       document.getElementById('rep-score-value').textContent = score > 0 ? score.toFixed(1) : '0.0';
-      document.getElementById('rep-rentals-count').textContent = `Based on ${data.completed_rentals || 0} verified rentals`;
+      
+      const count = data.completed_rentals || 0;
+      document.getElementById('rep-rentals-count').textContent = getTranslation('js-based-on-rentals-prefix', 'Based on') + ' ' + count + ' ' + getTranslation('js-based-on-rentals-suffix', 'verified rentals');
 
       // Set sliders based on reputation (mock details from average)
       const reliability = score > 0 ? Math.min(100, Math.round((score / 5) * 100)) : 0;
@@ -2458,6 +2555,7 @@ function loadReputation() {
 
       document.getElementById('rep-bar-accuracy').style.width = accuracy + '%';
       document.getElementById('rep-val-accuracy').textContent = accuracy;
+      applyTranslations();
     });
 }
 
@@ -2466,7 +2564,7 @@ function openEditCropModal(id, qty, price, name) {
   document.getElementById('edit-crop-id').value = id;
   document.getElementById('edit-crop-qty').value = qty;
   document.getElementById('edit-crop-price').value = price;
-  document.getElementById('edit-crop-title').textContent = 'Edit ' + name;
+  document.getElementById('edit-crop-title').textContent = getTranslation('js-edit', 'Edit') + ' ' + name;
   document.getElementById('edit-crop-modal').style.display = 'flex';
 }
 
@@ -2493,15 +2591,15 @@ function submitEditCrop(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Stock Updated!', 'Crop listing updated 🥬', 'success');
+        showToast(getTranslation('toast-stock-updated-title', 'Stock Updated!'), getTranslation('toast-stock-updated-body', 'Crop listing updated 🥬'), 'success');
         closeEditCropModal();
         loadDashboardData();
       } else {
-        showToast('Error', data.error || 'Failed to update stock', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('toast-failed-update-stock', 'Failed to update stock'), 'error');
       }
     })
     .catch(() => {
-      showToast('Server Error', 'Could not save stock changes.', 'error');
+      showToast(getTranslation('toast-server-error-title', 'Server Error'), getTranslation('toast-failed-save-stock-connection', 'Could not save stock changes.'), 'error');
     });
 }
 
@@ -2536,15 +2634,15 @@ function submitEditEquipment(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Listing Updated!', 'Equipment changes saved 🚜', 'success');
+        showToast(getTranslation('toast-equip-updated-title', 'Listing Updated!'), getTranslation('toast-equip-updated-body', 'Equipment changes saved 🚜'), 'success');
         closeEditEquipmentModal();
         loadDashboardData();
       } else {
-        showToast('Error', data.error || 'Failed to update equipment', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('toast-failed-update-equip', 'Failed to update equipment'), 'error');
       }
     })
     .catch(() => {
-      showToast('Server Error', 'Could not save equipment changes.', 'error');
+      showToast(getTranslation('toast-server-error-title', 'Server Error'), getTranslation('toast-failed-save-equip-connection', 'Could not save equipment changes.'), 'error');
     });
 }
 
@@ -2557,7 +2655,7 @@ function showUserProfileModal(userId) {
     .then(r => r.json())
     .then(data => {
       if (!data.success || !data.user) {
-        showToast('Error', 'Failed to retrieve user profile', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), getTranslation('toast-failed-get-profile', 'Failed to retrieve user profile'), 'error');
         return;
       }
       const u = data.user;
@@ -2566,19 +2664,24 @@ function showUserProfileModal(userId) {
       document.getElementById('profile-modal-name').textContent = u.first_name + ' ' + (u.last_name || '');
       document.getElementById('profile-modal-role').textContent = u.role.toUpperCase();
       
-      const statusText = u.status === 'approved' ? '🛡️ Verified Partner' : (u.status === 'rejected' ? '❌ Verification Rejected' : '⏳ Pending Verification');
+      const statusText = u.status === 'approved' 
+        ? '🛡️ ' + getTranslation('js-verified-partner', 'Verified Partner') 
+        : (u.status === 'rejected' 
+            ? '❌ ' + getTranslation('js-verification-rejected', 'Verification Rejected') 
+            : '⏳ ' + getTranslation('js-verification-pending', 'Pending Verification'));
       const statusColor = u.status === 'approved' ? 'var(--primary-light)' : (u.status === 'rejected' ? '#D95050' : 'var(--accent)');
       
       const statusEl = document.getElementById('profile-modal-status');
       statusEl.textContent = statusText;
       statusEl.style.color = statusColor;
       
-      document.getElementById('profile-modal-district').textContent = u.district || 'N/A';
-      document.getElementById('profile-modal-phone').textContent = u.phone || 'N/A';
-      document.getElementById('profile-modal-email').textContent = u.email || 'N/A';
+      const distKey = 'district-' + (u.district || '').toLowerCase().replace(/[^a-z]/g, '');
+      document.getElementById('profile-modal-district').textContent = u.district ? getTranslation(distKey, u.district) : getTranslation('js-na', 'N/A');
+      document.getElementById('profile-modal-phone').textContent = u.phone || getTranslation('js-na', 'N/A');
+      document.getElementById('profile-modal-email').textContent = u.email || getTranslation('js-na', 'N/A');
       
       document.getElementById('profile-modal-rating').textContent = u.trust_score ? u.trust_score.toFixed(1) + ' / 5.0' : '5.0 / 5.0';
-      document.getElementById('profile-modal-deals').textContent = (u.completed_rentals || 0) + ' completed';
+      document.getElementById('profile-modal-deals').textContent = (u.completed_rentals || 0) + getTranslation('js-completed-suffix', ' completed');
       
       // Update chat button link
       const chatBtn = document.getElementById('profile-modal-chat-btn');
@@ -2590,7 +2693,7 @@ function showUserProfileModal(userId) {
       document.getElementById('user-profile-modal').style.display = 'flex';
     })
     .catch(() => {
-      showToast('Error', 'Could not load user profile details.', 'error');
+      showToast(getTranslation('toast-error-title', 'Error'), getTranslation('toast-failed-load-profile', 'Could not load user profile details.'), 'error');
     });
 }
 
@@ -2845,10 +2948,10 @@ async function downloadLedgerReceipt(txId, listingName, buyerName, amount, durat
     doc.rect(10, 192, 128, 4, 'F');
 
     doc.save(`AgroNexa_Receipt_${txId.slice(0, 8)}.pdf`);
-    showToast('PDF Generated!', 'Receipt downloaded successfully 📄', 'success');
+    showToast(getTranslation('toast-pdf-generated-title', 'PDF Generated!'), getTranslation('toast-receipt-downloaded-body', 'Receipt downloaded successfully 📄'), 'success');
   } catch (err) {
     console.error(err);
-    showToast('PDF Error', 'Failed to generate PDF receipt', 'error');
+    showToast(getTranslation('toast-pdf-error-title', 'PDF Error'), getTranslation('toast-failed-generate-receipt', 'Failed to generate PDF receipt'), 'error');
   }
 }
 
@@ -2998,17 +3101,17 @@ async function downloadBookingSlip(bookingId, listingName, renterName, start, en
     doc.rect(10, 180, 128, 6, 'F');
 
     doc.save(`AgroNexa_Booking_${bookingId}.pdf`);
-    showToast('PDF Generated!', 'Booking slip downloaded successfully 📄', 'success');
+    showToast(getTranslation('toast-pdf-generated-title', 'PDF Generated!'), getTranslation('toast-booking-downloaded-body', 'Booking slip downloaded successfully 📄'), 'success');
   } catch (err) {
     console.error(err);
-    showToast('PDF Error', 'Failed to generate booking slip PDF', 'error');
+    showToast(getTranslation('toast-pdf-error-title', 'PDF Error'), getTranslation('toast-failed-generate-booking', 'Failed to generate booking slip PDF'), 'error');
   }
 }
 
 // ── WEBSOCKET LATENCY CHECK ──
 function checkWebsocketPing() {
   if (!socket) {
-    showToast('Not Connected', 'Websocket is not connected', 'warning');
+    showToast(getTranslation('toast-ws-not-connected-title', 'Not Connected'), getTranslation('toast-ws-not-connected-body', 'Websocket is not connected'), 'warning');
     return;
   }
   pingStart = Date.now();
@@ -3182,13 +3285,16 @@ const DISTRICT_COORDS = {
 
 function loadWeather(district) {
   const displayDistrict = document.getElementById('weather-district-display');
-  if (displayDistrict) displayDistrict.textContent = district || 'Unknown';
+  if (displayDistrict) {
+    const districtKey = 'district-' + (district || '').toLowerCase().replace(/[^a-z]/g, '');
+    displayDistrict.textContent = getTranslation(districtKey, district || getTranslation('js-weather-unknown', 'Unknown'));
+  }
   
   const contentEl = document.getElementById('weather-widget-content');
   const advisoryEl = document.getElementById('weather-advisory-content');
   
   if (!district || !DISTRICT_COORDS[district]) {
-    if (contentEl) contentEl.innerHTML = `<div style="font-size:12px; color:var(--text-muted);">Select/save your district in Profile to load weather.</div>`;
+    if (contentEl) contentEl.innerHTML = `<div style="font-size:12px; color:var(--text-muted);">${getTranslation('js-weather-select-profile', 'Select/save your district in Profile to load weather. ')}</div>`;
     return;
   }
   
@@ -3202,30 +3308,30 @@ function loadWeather(district) {
       const humidity = data.current.relative_humidity_2m;
       const code = data.current.weather_code;
       
-      let statusText = 'Normal';
+      let statusText = getTranslation('js-weather-status-normal', 'Normal');
       let icon = '☀️';
-      let advice = 'Good weather conditions for farming activities.';
+      let advice = getTranslation('js-weather-advice-farming', 'Good weather conditions for farming activities.');
       
       if (code === 0) {
-        statusText = 'Clear Sky';
+        statusText = getTranslation('js-weather-status-clear', 'Clear Sky');
         icon = '☀️';
-        advice = 'Optimal weather for harvesting and drying crops. Good time to broadcast requests.';
+        advice = getTranslation('js-weather-advice-harvesting', 'Optimal weather for harvesting and drying crops. Good time to broadcast requests.');
       } else if (code >= 1 && code <= 3) {
-        statusText = 'Partly Cloudy';
+        statusText = getTranslation('js-weather-status-partly-cloudy', 'Partly Cloudy');
         icon = '⛅';
-        advice = 'Favorable conditions for transport and outdoor storage.';
+        advice = getTranslation('js-weather-advice-transport', 'Favorable conditions for transport and outdoor storage.');
       } else if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) {
-        statusText = 'Rainy / Showers';
+        statusText = getTranslation('js-weather-status-rainy', 'Rainy / Showers');
         icon = '🌧️';
-        advice = 'Rain forecast. Ensure stored crops are well-covered. Avoid wet-field harvest.';
+        advice = getTranslation('js-weather-advice-rain', 'Rain forecast. Ensure stored crops are well-covered. Avoid wet-field harvest.');
       } else if (code >= 95) {
-        statusText = 'Thunderstorm';
+        statusText = getTranslation('js-weather-status-thunderstorm', 'Thunderstorm');
         icon = '⛈️';
-        advice = '⚠️ Thunderstorms detected. Keep transport vehicles sheltered and secure outdoor produce immediately.';
+        advice = getTranslation('js-weather-advice-thunderstorm', '⚠️ Thunderstorms detected. Keep transport vehicles sheltered and secure outdoor produce immediately.');
       } else {
-        statusText = 'Cloudy';
+        statusText = getTranslation('js-weather-status-cloudy', 'Cloudy');
         icon = '☁️';
-        advice = 'Favorable agricultural conditions. Keep crops protected from damp air.';
+        advice = getTranslation('js-weather-advice-cloudy', 'Favorable agricultural conditions. Keep crops protected from damp air.');
       }
       
       if (contentEl) {
@@ -3234,7 +3340,7 @@ function loadWeather(district) {
             <span style="font-size:32px;">${icon}</span>
             <div>
               <div style="font-size:16px; font-weight:600; color:var(--text-main);">${statusText}</div>
-              <div style="font-size:12px; color:var(--text-muted);">${temp}°C | Humidity: ${humidity}%</div>
+              <div style="font-size:12px; color:var(--text-muted);">${temp}°C | ${getTranslation('js-weather-humidity', 'Humidity')}: ${humidity}%</div>
             </div>
           </div>
         `;
@@ -3242,7 +3348,7 @@ function loadWeather(district) {
       if (advisoryEl) advisoryEl.textContent = advice;
     })
     .catch(err => {
-      if (contentEl) contentEl.innerHTML = `<div style="font-size:12px; color:var(--accent);">Unable to load weather data: ${err.message}</div>`;
+      if (contentEl) contentEl.innerHTML = `<div style="font-size:12px; color:var(--accent);">${getTranslation('js-weather-unable-load', 'Unable to load weather data')}: ${err.message}</div>`;
     });
 }
 
@@ -3461,14 +3567,24 @@ function loadTransportDrivers() {
         
         const isOwner = _user && p.owner_id === _user.id;
         const bookBtnHtml = isOwner 
-          ? `<span style="font-size: 11px; color: var(--text-muted); font-style: italic;">Your Vehicle</span>`
+          ? `<span style="font-size: 11px; color: var(--text-muted); font-style: italic;">${getTranslation('js-your-vehicle', 'Your Vehicle')}</span>`
           : `<button onclick="openTransportBookingModal(${p.id})" class="btn-sm btn-accept" style="margin:0; height:auto; padding:6px 12px; font-size:11px;" data-i18n="logistics-btn-book">Book Transport</button>`;
         
+        let typeKey = '';
+        if (p.vehicle_type === 'Lorry (Light)') typeKey = 'logistics-type-light-lorry';
+        else if (p.vehicle_type === 'Lorry (Heavy)') typeKey = 'logistics-type-heavy-lorry';
+        else if (p.vehicle_type === 'Tractor / Trailer') typeKey = 'logistics-type-tractor-trailer';
+        else if (p.vehicle_type === 'Refrigerated Truck') typeKey = 'logistics-type-refrigerated-truck';
+        const vehicleTypeTranslated = typeKey ? getTranslation(typeKey, p.vehicle_type) : p.vehicle_type;
+
+        const distKey = 'district-' + (p.district || '').toLowerCase().replace(/[^a-z]/g, '');
+        const districtTranslated = getTranslation(distKey, p.district);
+
         item.innerHTML = `
           <div>
-            <div style="font-weight:600; font-size:14.5px; color:var(--text-main);">${p.vehicle_type} — ${p.vehicle_no}</div>
-            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Owner: ${p.owner_name} | Capacity: ${p.capacity_kg} kg</div>
-            <div style="font-size:11px; background:var(--primary-pale); color:var(--primary); display:inline-block; padding:2px 8px; border-radius:4px; margin-top:6px;">📍 ${p.district}</div>
+            <div style="font-weight:600; font-size:14.5px; color:var(--text-main);">${vehicleTypeTranslated} — ${p.vehicle_no}</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">${getTranslation('js-owner', 'Owner')}: ${p.owner_name} | ${getTranslation('js-capacity', 'Capacity')}: ${p.capacity_kg} kg</div>
+            <div style="font-size:11px; background:var(--primary-pale); color:var(--primary); display:inline-block; padding:2px 8px; border-radius:4px; margin-top:6px;">📍 ${districtTranslated}</div>
           </div>
           <div style="display:flex; align-items:center; gap:8px;">
             <a href="tel:${p.phone}" class="btn-sm btn-accept" style="text-decoration:none; padding:6px 12px; font-size:11px; height:auto; margin:0; display:inline-flex; align-items:center;" data-i18n="logistics-driver-call">📞 Call</a>
@@ -3480,7 +3596,7 @@ function loadTransportDrivers() {
       applyTranslations();
     })
     .catch(err => {
-      listEl.innerHTML = `<div style="font-size:12px;color:var(--accent);text-align:center;padding:20px 0;">Error loading drivers: ${err.message}</div>`;
+      listEl.innerHTML = `<div style="font-size:12px;color:var(--accent);text-align:center;padding:20px 0;">${getTranslation('js-error-loading-drivers', 'Error loading drivers')}: ${err.message}</div>`;
     });
 }
 
@@ -3508,15 +3624,15 @@ function submitTransportRegistration(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Success', 'Transport listing published successfully! 🚛', 'success');
+        showToast(getTranslation('toast-success-title', 'Success'), getTranslation('toast-transport-registered-body', 'Transport listing published successfully! 🚛'), 'success');
         document.getElementById('transport-register-form').reset();
         toggleTransportTab('browse');
       } else {
-        showToast('Error', data.error || 'Failed to register vehicle', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('toast-failed-register-vehicle', 'Failed to register vehicle'), 'error');
       }
     })
     .catch(err => {
-      showToast('Error', err.message, 'error');
+      showToast(getTranslation('toast-error-title', 'Error'), err.message, 'error');
     });
 }
 
@@ -3557,15 +3673,15 @@ function submitTransportBooking(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Success', 'Transport booking request sent! 🚛', 'success');
+        showToast(getTranslation('toast-success-title', 'Success'), getTranslation('toast-transport-booking-sent-body', 'Transport booking request sent! 🚛'), 'success');
         closeTransportBookingModal();
         toggleTransportTab('bookings');
       } else {
-        showToast('Error', data.error || 'Failed to request booking', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('toast-failed-request-booking', 'Failed to request booking'), 'error');
       }
     })
     .catch(err => {
-      showToast('Error', err.message, 'error');
+      showToast(getTranslation('toast-error-title', 'Error'), err.message, 'error');
     });
 }
 
@@ -3642,9 +3758,16 @@ function loadTransportBookings() {
 
         let contactInfoHtml = '';
         if (isRequester) {
-          contactInfoHtml = `<div style="font-size:12px; color:var(--text-muted); margin-top:4px;"><b>Driver:</b> ${b.provider_owner_name} (${b.provider_phone}) | ${b.vehicle_type} [${b.vehicle_no}]</div>`;
+          let typeKey = '';
+          if (b.vehicle_type === 'Lorry (Light)') typeKey = 'logistics-type-light-lorry';
+          else if (b.vehicle_type === 'Lorry (Heavy)') typeKey = 'logistics-type-heavy-lorry';
+          else if (b.vehicle_type === 'Tractor / Trailer') typeKey = 'logistics-type-tractor-trailer';
+          else if (b.vehicle_type === 'Refrigerated Truck') typeKey = 'logistics-type-refrigerated-truck';
+          const vehicleTypeTranslated = typeKey ? getTranslation(typeKey, b.vehicle_type) : b.vehicle_type;
+
+          contactInfoHtml = `<div style="font-size:12px; color:var(--text-muted); margin-top:4px;"><b>${getTranslation('js-driver', 'Driver')}:</b> ${b.provider_owner_name} (${b.provider_phone}) | ${vehicleTypeTranslated} [${b.vehicle_no}]</div>`;
         } else {
-          contactInfoHtml = `<div style="font-size:12px; color:var(--text-muted); margin-top:4px;"><b>Client:</b> ${b.requester_name}</div>`;
+          contactInfoHtml = `<div style="font-size:12px; color:var(--text-muted); margin-top:4px;"><b>${getTranslation('js-client', 'Client')}:</b> ${b.requester_name}</div>`;
         }
 
         item.innerHTML = `
@@ -3652,11 +3775,11 @@ function loadTransportBookings() {
             <div>
               <div style="font-weight:600; font-size:15px; color:var(--text-main);">${b.commodity_name} — ${b.quantity_kg} kg</div>
               ${contactInfoHtml}
-              <div style="font-size:12px; color:var(--text-muted); margin-top:4px;"><b>Route:</b> ${b.pickup_address} ➔ ${b.delivery_address}</div>
-              <div style="font-size:12px; font-weight:600; color:var(--primary); margin-top:4px;">Rs. ${b.price ? parseFloat(b.price).toLocaleString() : 'Negotiable'}</div>
+              <div style="font-size:12px; color:var(--text-muted); margin-top:4px;"><b>${getTranslation('js-route', 'Route')}:</b> ${b.pickup_address} ➔ ${b.delivery_address}</div>
+              <div style="font-size:12px; font-weight:600; color:var(--primary); margin-top:4px;">Rs. ${b.price ? parseFloat(b.price).toLocaleString() : getTranslation('js-negotiable', 'Negotiable')}</div>
             </div>
             <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
-              <span style="font-size:11px; font-weight:600; text-transform:uppercase; padding:4px 10px; border-radius:6px; background:${badgeBg}; color:${badgeColor};" data-i18n="${statusKey}">${b.status}</span>
+              <span style="font-size:11px; font-weight:600; text-transform:uppercase; padding:4px 10px; border-radius:6px; background:${badgeBg}; color:${badgeColor};" data-i18n="${statusKey}">${getTranslation(statusKey, b.status).toUpperCase()}</span>
               <div style="display:flex; margin-top:8px;">
                 ${actionButtonsHtml}
               </div>
@@ -3668,7 +3791,7 @@ function loadTransportBookings() {
       applyTranslations();
     })
     .catch(err => {
-      listEl.innerHTML = `<div style="font-size:12px;color:var(--accent);text-align:center;padding:20px 0;">Error loading bookings: ${err.message}</div>`;
+      listEl.innerHTML = `<div style="font-size:12px;color:var(--accent);text-align:center;padding:20px 0;">${getTranslation('js-error-loading-bookings', 'Error loading bookings')}: ${err.message}</div>`;
     });
 }
 
@@ -3681,14 +3804,14 @@ function updateTransportBookingStatus(bookingId, status) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Success', `Booking updated to ${status}! 🚛`, 'success');
+        showToast(getTranslation('toast-success-title', 'Success'), getTranslation('toast-booking-updated-prefix', 'Booking updated to') + ' ' + getTranslation('booking-status-' + status, status) + '! 🚛', 'success');
         loadTransportBookings();
       } else {
-        showToast('Error', data.error || 'Failed to update booking status', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('toast-failed-update-booking-status', 'Failed to update booking status'), 'error');
       }
     })
     .catch(err => {
-      showToast('Error', err.message, 'error');
+      showToast(getTranslation('toast-error-title', 'Error'), err.message, 'error');
     });
 }
 

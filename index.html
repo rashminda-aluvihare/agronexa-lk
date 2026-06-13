@@ -187,23 +187,23 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
       </div>
     </div>
     <div class="hero-text">
-      <div class="ht-label">Sri Lanka's Agri-Platform</div>
+      <div class="ht-label" data-i18n="hero-label">Sri Lanka's Agri-Platform</div>
       <h1 class="ht-h1" data-i18n="landing-title">Smart Farming,<br/><em>Direct Links.</em></h1>
       <p class="ht-p" data-i18n="landing-sub">Connecting farmers to buyers with full transparency, blockchain verification, and fair market prices.</p>
     </div>
     <div class="features">
-      <div class="feat"><div class="feat-dot"></div><span class="feat-txt">Direct Marketplace</span><span class="feat-badge">Live</span></div>
-      <div class="feat"><div class="feat-dot"></div><span class="feat-txt">Blockchain-Verified Records</span><span class="feat-badge">Secure</span></div>
-      <div class="feat"><div class="feat-dot"></div><span class="feat-txt">Real-Time SMS Alerts</span><span class="feat-badge">Active</span></div>
+      <div class="feat"><div class="feat-dot"></div><span class="feat-txt" data-i18n="feat-marketplace">Direct Marketplace</span><span class="feat-badge" data-i18n="feat-live">Live</span></div>
+      <div class="feat"><div class="feat-dot"></div><span class="feat-txt" data-i18n="feat-blockchain">Blockchain-Verified Records</span><span class="feat-badge" data-i18n="feat-secure">Secure</span></div>
+      <div class="feat"><div class="feat-dot"></div><span class="feat-txt" data-i18n="feat-sms">Real-Time SMS Alerts</span><span class="feat-badge" data-i18n="feat-active">Active</span></div>
     </div>
     <div class="stats">
-      <div class="stat"><div class="stat-n">10K+</div><div class="stat-l">Farmers</div></div>
-      <div class="stat"><div class="stat-n">25</div><div class="stat-l">Districts</div></div>
-      <div class="stat"><div class="stat-n">98%</div><div class="stat-l">Uptime</div></div>
+      <div class="stat"><div class="stat-n">10K+</div><div class="stat-l" data-i18n="stat-farmers">Farmers</div></div>
+      <div class="stat"><div class="stat-n">25</div><div class="stat-l" data-i18n="stat-districts">Districts</div></div>
+      <div class="stat"><div class="stat-n">98%</div><div class="stat-l" data-i18n="stat-uptime">Uptime</div></div>
     </div>
     <div class="L-foot">
       <span class="lf-left">&copy; 2026 AgroNexa LK</span>
-      <div class="lf-pill"><div class="pulse"></div><span class="lf-txt">Platform Live</span></div>
+      <div class="lf-pill"><div class="pulse"></div><span class="lf-txt" data-i18n="footer-platform-live">Platform Live</span></div>
     </div>
   </div>
 </div>
@@ -222,57 +222,57 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
     </div>
 
     <div class="tabs">
-      <button class="tab on" id="tab-login" onclick="sw('login')">Sign in</button>
-      <button class="tab" id="tab-register" onclick="sw('register')">Create account</button>
+      <button class="tab on" id="tab-login" onclick="sw('login')" data-i18n="tab-signin">Sign in</button>
+      <button class="tab" id="tab-register" onclick="sw('register')" data-i18n="tab-create-account">Create account</button>
     </div>
 
     <!-- LOGIN -->
     <div id="panel-login">
       <div class="fh">
-        <div class="fh-super">Secure Access</div>
-        <div class="fh-title">Welcome back</div>
-        <div class="fh-sub">Sign in to your AgroNexa LK account</div>
+        <div class="fh-super" data-i18n="login-secure-access">Secure Access</div>
+        <div class="fh-title" data-i18n="login-welcome-back">Welcome back</div>
+        <div class="fh-sub" data-i18n="login-sub">Sign in to your AgroNexa LK account</div>
       </div>
       <div class="field">
-        <div class="fl-row"><span class="fl-label">Email address</span></div>
+        <div class="fl-row"><span class="fl-label" data-i18n="label-email">Email address</span></div>
         <div class="iw">
           <svg class="ii" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="3.5" width="13" height="9" rx="1.5"/><path d="M1.5 5.5l6.5 4.5 6.5-4.5"/></svg>
-          <input class="inp" id="le" type="email" placeholder="you@example.com" oninput="vEmail('le','lee')"/>
+          <input class="inp" id="le" type="email" placeholder="you@example.com" oninput="vEmail('le','lee')" data-i18n-placeholder="placeholder-email"/>
         </div>
-        <div class="err" id="lee">Please enter a valid email address.</div>
+        <div class="err" id="lee" data-i18n="err-email">Please enter a valid email address.</div>
       </div>
       <div class="field">
         <div class="fl-row">
-          <span class="fl-label">Password</span>
+          <span class="fl-label" data-i18n="label-password">Password</span>
           <div style="display:flex; gap:12px;">
-            <button class="fl-link" type="button" onclick="sw('forgot-email')">Forgot email?</button>
+            <button class="fl-link" type="button" onclick="sw('forgot-email')" data-i18n="link-forgot-email">Forgot email?</button>
             <span style="color:#B8CEC3;">|</span>
-            <button class="fl-link" type="button" onclick="sw('forgot')">Forgot password?</button>
+            <button class="fl-link" type="button" onclick="sw('forgot')" data-i18n="link-forgot-password">Forgot password?</button>
           </div>
         </div>
         <div class="iw">
           <svg class="ii" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2.5" y="7" width="11" height="7.5" rx="1.5"/><path d="M5 7V5.5a3 3 0 016 0V7"/></svg>
-          <input class="inp" id="lp" type="password" placeholder="Enter your password"/>
-          <button class="it" onclick="tp('lp',this)" type="button">Show</button>
+          <input class="inp" id="lp" type="password" placeholder="Enter your password" data-i18n-placeholder="placeholder-password"/>
+          <button class="it" onclick="tp('lp',this)" type="button" data-i18n="btn-show">Show</button>
         </div>
       </div>
       <div class="mem" onclick="tc2('ck-rem')">
         <div class="ck" id="ck-rem"><svg width="9" height="7" viewBox="0 0 9 7" fill="none" stroke="#fff" stroke-width="1.8"><polyline points="1 3.5 3.2 5.8 8 1"/></svg></div>
-        <span class="mem-lbl">Remember me for 30 days</span>
+        <span class="mem-lbl" data-i18n="label-remember-me">Remember me for 30 days</span>
       </div>
       <button class="btn" id="btn-login" type="button">
         <span data-i18n="landing-btn-login">Sign in to AgroNexa</span>
         <svg class="arr" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>
       </button>
-      <div class="ff">New to AgroNexa? <button class="sw-link" onclick="sw('register')">Create a free account</button></div>
+      <div class="ff"><span data-i18n="login-new-to-platform">New to AgroNexa?</span> <button class="sw-link" onclick="sw('register')" data-i18n="login-create-free">Create a free account</button></div>
     </div>
 
     <!-- REGISTER -->
     <div id="panel-register" style="display:none">
       <div class="fh">
-        <div class="fh-super">Free to Join</div>
-        <div class="fh-title">Join AgroNexa LK</div>
-        <div class="fh-sub">Choose your role to get started</div>
+        <div class="fh-super" data-i18n="register-free-join">Free to Join</div>
+        <div class="fh-title" data-i18n="register-join-title">Join AgroNexa LK</div>
+        <div class="fh-sub" data-i18n="register-sub">Choose your role to get started</div>
       </div>
 
       <div class="rgrid">
@@ -288,49 +288,49 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
 
       <div class="tc">
         <div class="field">
-          <div class="fl-row"><span class="fl-label">First name</span></div>
+          <div class="fl-row"><span class="fl-label" data-i18n="label-first-name">First name</span></div>
           <div class="iw">
             <svg class="ii" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="5.5" r="3"/><path d="M2 14.5c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
-            <input class="inp" id="r-fname" type="text" placeholder="Rashminda"/>
+            <input class="inp" id="r-fname" type="text" placeholder="Rashminda" data-i18n-placeholder="placeholder-first-name"/>
           </div>
         </div>
         <div class="field">
-          <div class="fl-row"><span class="fl-label">Last name</span></div>
+          <div class="fl-row"><span class="fl-label" data-i18n="label-last-name">Last name</span></div>
           <div class="iw">
             <svg class="ii" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="5.5" r="3"/><path d="M2 14.5c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
-            <input class="inp" id="r-lname" type="text" placeholder="Aluvihare"/>
+            <input class="inp" id="r-lname" type="text" placeholder="Aluvihare" data-i18n-placeholder="placeholder-last-name"/>
           </div>
         </div>
       </div>
 
       <div class="field">
-        <div class="fl-row"><span class="fl-label">Email address</span></div>
+        <div class="fl-row"><span class="fl-label" data-i18n="label-email">Email address</span></div>
         <div class="iw">
           <svg class="ii" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="3.5" width="13" height="9" rx="1.5"/><path d="M1.5 5.5l6.5 4.5 6.5-4.5"/></svg>
-          <input class="inp" id="re" type="email" placeholder="you@example.com" oninput="vEmail('re','ree')"/>
+          <input class="inp" id="re" type="email" placeholder="you@example.com" oninput="vEmail('re','ree')" data-i18n-placeholder="placeholder-email"/>
         </div>
-        <div class="err" id="ree">Please enter a valid email address.</div>
+        <div class="err" id="ree" data-i18n="err-email">Please enter a valid email address.</div>
       </div>
 
       <div class="field">
-        <div class="fl-row"><span class="fl-label">Phone (SMS alerts)</span></div>
+        <div class="fl-row"><span class="fl-label" data-i18n="label-phone">Phone (SMS alerts)</span></div>
         <div class="iw">
           <svg class="ii" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4.5" y="1" width="7" height="14" rx="2"/><circle cx="8" cy="12" r=".8" fill="currentColor"/></svg>
-          <input class="inp" id="rp" type="tel" placeholder="07X XXX XXXX" oninput="vPhone('rp','rpe')" maxlength="10"/>
+          <input class="inp" id="rp" type="tel" placeholder="07X XXX XXXX" oninput="vPhone('rp','rpe')" maxlength="10" data-i18n-placeholder="placeholder-phone"/>
         </div>
-        <div class="err" id="rpe">Enter a valid 10-digit Sri Lankan number.</div>
+        <div class="err" id="rpe" data-i18n="err-phone">Enter a valid 10-digit Sri Lankan number.</div>
       </div>
 
       <!-- OTP VERIFICATION -->
       <div class="field" id="otp-section">
-        <button id="send-otp-btn" onclick="sendOTP()" style="width:100%;height:42px;background:#155C35;color:white;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;">
+        <button id="send-otp-btn" onclick="sendOTP()" style="width:100%;height:42px;background:#155C35;color:white;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;" data-i18n="btn-send-otp">
           📱 Send OTP to verify phone
         </button>
         <div id="otp-input-group" style="display:none;margin-top:12px;">
-          <div class="fl-row"><span class="fl-label">Enter OTP</span></div>
+          <div class="fl-row"><span class="fl-label" data-i18n="label-enter-otp">Enter OTP</span></div>
           <div style="display:flex;gap:8px;">
-            <input class="inp" id="otp-code" type="text" maxlength="6" placeholder="123456" style="flex:1;letter-spacing:4px;text-align:center;"/>
-            <button onclick="verifyOTP()" style="width:110px;background:#28A060;color:white;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;">
+            <input class="inp" id="otp-code" type="text" maxlength="6" placeholder="123456" style="flex:1;letter-spacing:4px;text-align:center;" data-i18n-placeholder="placeholder-otp"/>
+            <button onclick="verifyOTP()" style="width:110px;background:#28A060;color:white;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;" data-i18n="btn-verify">
               Verify
             </button>
           </div>
@@ -339,17 +339,32 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
       </div>
 
       <div class="field">
-        <div class="fl-row"><span class="fl-label">District</span></div>
+        <div class="fl-row"><span class="fl-label" data-i18n="label-district">District</span></div>
         <div class="iw" style="position:relative;">
           <svg class="ii" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 1.5C5.5 1.5 3.5 3.5 3.5 6c0 3.5 4.5 8.5 4.5 8.5S12.5 9.5 12.5 6c0-2.5-2-4.5-4.5-4.5z"/><circle cx="8" cy="6" r="1.5"/></svg>
           <select class="isel" id="r-district">
-            <option value="" disabled selected>Select your district</option>
-            <option>Ampara</option><option>Anuradhapura</option><option>Badulla</option><option>Batticaloa</option>
-            <option>Colombo</option><option>Galle</option><option>Gampaha</option><option>Hambantota</option>
-            <option>Jaffna</option><option>Kalutara</option><option>Kandy</option><option>Kegalle</option>
-            <option>Kurunegala</option><option>Matale</option><option>Matara</option><option>Negombo</option>
-            <option>Nuwara Eliya</option><option>Polonnaruwa</option><option>Puttalam</option>
-            <option>Ratnapura</option><option>Trincomalee</option>
+            <option value="" disabled selected data-i18n="placeholder-district">Select your district</option>
+            <option value="Ampara" data-i18n="district-ampara">Ampara</option>
+            <option value="Anuradhapura" data-i18n="district-anuradhapura">Anuradhapura</option>
+            <option value="Badulla" data-i18n="district-badulla">Badulla</option>
+            <option value="Batticaloa" data-i18n="district-batticaloa">Batticaloa</option>
+            <option value="Colombo" data-i18n="district-colombo">Colombo</option>
+            <option value="Galle" data-i18n="district-galle">Galle</option>
+            <option value="Gampaha" data-i18n="district-gampaha">Gampaha</option>
+            <option value="Hambantota" data-i18n="district-hambantota">Hambantota</option>
+            <option value="Jaffna" data-i18n="district-jaffna">Jaffna</option>
+            <option value="Kalutara" data-i18n="district-kalutara">Kalutara</option>
+            <option value="Kandy" data-i18n="district-kandy">Kandy</option>
+            <option value="Kegalle" data-i18n="district-kegalle">Kegalle</option>
+            <option value="Kurunegala" data-i18n="district-kurunegala">Kurunegala</option>
+            <option value="Matale" data-i18n="district-matale">Matale</option>
+            <option value="Matara" data-i18n="district-matara">Matara</option>
+            <option value="Negombo" data-i18n="district-negombo">Negombo</option>
+            <option value="Nuwara Eliya" data-i18n="district-nuwaraeliya">Nuwara Eliya</option>
+            <option value="Polonnaruwa" data-i18n="district-polonnaruwa">Polonnaruwa</option>
+            <option value="Puttalam" data-i18n="district-puttalam">Puttalam</option>
+            <option value="Ratnapura" data-i18n="district-ratnapura">Ratnapura</option>
+            <option value="Trincomalee" data-i18n="district-trincomalee">Trincomalee</option>
           </select>
           <svg style="position:absolute;right:14px;pointer-events:none;" width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="#A8C4B5" stroke-width="1.6"><polyline points="2 4 6 8 10 4"/></svg>
         </div>
@@ -361,12 +376,12 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
       <div id="nic-section" style="display:none;">
         <div class="sec-div">
           <div class="sec-div-line"></div>
-          <span class="sec-div-lbl">NIC Verification</span>
+          <span class="sec-div-lbl" data-i18n="sec-nic-verification">NIC Verification</span>
           <div class="sec-div-line"></div>
         </div>
         <div class="nic-header">
-          <span class="nic-title-lbl">NIC Upload both sides</span>
-          <span class="nic-req">Required</span>
+          <span class="nic-title-lbl" data-i18n="label-nic-upload">NIC Upload both sides</span>
+          <span class="nic-req" data-i18n="label-required">Required</span>
         </div>
         <div class="nic-grid">
           <!-- FRONT -->
@@ -378,8 +393,8 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
             <div class="nic-icon-box" id="ibox-front">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E7A47" stroke-width="1.4"><rect x="2" y="5" width="20" height="15" rx="2.5"/><circle cx="8" cy="10.5" r="2.2"/><path d="M2 17l5-4 3.5 3 4.5-5 7 6"/><path d="M15 5V2M13 2h4"/></svg>
             </div>
-            <div class="nic-side-name">Front side</div>
-            <div class="nic-upload-hint">Drag &amp; drop or tap<br/>JPG, PNG or PDF</div>
+            <div class="nic-side-name" data-i18n="label-nic-front">Front side</div>
+            <div class="nic-upload-hint" data-i18n="label-nic-drag-drop">Drag &amp; drop or tap<br/>JPG, PNG or PDF</div>
             <div class="nic-file-preview" id="fprev-front">
               <img class="nic-img" id="img-front" src="" alt="NIC front"/>
               <div class="nic-pdf-icon" id="pdf-icon-front" style="display:none;">
@@ -398,8 +413,8 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
             <div class="nic-icon-box" id="ibox-back">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E7A47" stroke-width="1.4"><rect x="2" y="5" width="20" height="15" rx="2.5"/><path d="M5 10h8M5 13.5h6M5 17h4"/><rect x="15" y="9" width="5" height="6" rx="1.2"/></svg>
             </div>
-            <div class="nic-side-name">Back side</div>
-            <div class="nic-upload-hint">Drag &amp; drop or tap<br/>JPG, PNG or PDF</div>
+            <div class="nic-side-name" data-i18n="label-nic-back">Back side</div>
+            <div class="nic-upload-hint" data-i18n="label-nic-drag-drop">Drag &amp; drop or tap<br/>JPG, PNG or PDF</div>
             <div class="nic-file-preview" id="fprev-back">
               <img class="nic-img" id="img-back" src="" alt="NIC back"/>
               <div class="nic-pdf-icon" id="pdf-icon-back" style="display:none;">
@@ -412,18 +427,18 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
         </div>
         <div class="nic-status-bar" id="nic-status">
           <div class="nic-status-dot"></div>
-          <span class="nic-status-msg" id="nic-msg">Upload both sides to verify your identity</span>
+          <span class="nic-status-msg" id="nic-msg" data-i18n="msg-nic-verify">Upload both sides to verify your identity</span>
         </div>
       </div>
 
   
 
       <div class="field" style="margin-top:18px;">
-        <div class="fl-row"><span class="fl-label">Password</span></div>
+        <div class="fl-row"><span class="fl-label" data-i18n="label-password">Password</span></div>
         <div class="iw">
           <svg class="ii" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2.5" y="7" width="11" height="7.5" rx="1.5"/><path d="M5 7V5.5a3 3 0 016 0V7"/></svg>
-          <input class="inp" id="rpw" type="password" placeholder="Minimum 8 characters" oninput="cks(this.value)"/>
-          <button class="it" onclick="tp('rpw',this)" type="button">Show</button>
+          <input class="inp" id="rpw" type="password" placeholder="Minimum 8 characters" oninput="cks(this.value)" data-i18n-placeholder="placeholder-password-strength"/>
+          <button class="it" onclick="tp('rpw',this)" type="button" data-i18n="btn-show">Show</button>
         </div>
         <div class="sbars"><div class="sb" id="sb1"></div><div class="sb" id="sb2"></div><div class="sb" id="sb3"></div><div class="sb" id="sb4"></div></div>
         <div class="slbl" id="slbl"></div>
@@ -433,90 +448,90 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
         <div class="ck" id="ck-terms" onclick="tc2('ck-terms')" style="margin-top:3px;cursor:pointer;flex-shrink:0;">
           <svg width="9" height="7" viewBox="0 0 9 7" fill="none" stroke="#fff" stroke-width="1.8"><polyline points="1 3.5 3.2 5.8 8 1"/></svg>
         </div>
-        <div class="ttxt">I agree to AgroNexa LK's <span class="tlink">Terms of Service</span> and <span class="tlink">Privacy Policy</span></div>
+        <div class="ttxt" data-i18n="label-agree-terms">I agree to AgroNexa LK's Terms of Service and Privacy Policy</div>
       </div>
 
       <button class="btn" id="btn-register" type="button">
-        Create my account
+        <span data-i18n="btn-create-account">Create my account</span>
         <svg class="arr" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>
       </button>
-      <div class="ff">Already have an account? <button class="sw-link" onclick="sw('login')">Sign in</button></div>
+      <div class="ff"><span data-i18n="label-already-account">Already have an account?</span> <button class="sw-link" onclick="sw('login')" data-i18n="tab-signin">Sign in</button></div>
     </div>
 
     <!-- FORGOT PASSWORD -->
     <div id="panel-forgot" style="display:none">
       <div class="fh">
-        <div class="fh-super">Account Recovery</div>
-        <div class="fh-title">Forgot password</div>
-        <div class="fh-sub">Enter your email and we'll send you a password reset link</div>
+        <div class="fh-super" data-i18n="forgot-title">Account Recovery</div>
+        <div class="fh-title" data-i18n="forgot-title">Forgot password</div>
+        <div class="fh-sub" data-i18n="forgot-sub">Enter your email and we'll send you a password reset link</div>
       </div>
       <div class="field">
-        <div class="fl-row"><span class="fl-label">Email address</span></div>
+        <div class="fl-row"><span class="fl-label" data-i18n="label-email">Email address</span></div>
         <div class="iw">
           <svg class="ii" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="3.5" width="13" height="9" rx="1.5"/><path d="M1.5 5.5l6.5 4.5 6.5-4.5"/></svg>
-          <input class="inp" id="fe" type="email" placeholder="you@example.com" oninput="vEmail('fe','fee')"/>
+          <input class="inp" id="fe" type="email" placeholder="you@example.com" oninput="vEmail('fe','fee')" data-i18n-placeholder="placeholder-email"/>
         </div>
-        <div class="err" id="fee">Please enter a valid email address.</div>
+        <div class="err" id="fee" data-i18n="err-email">Please enter a valid email address.</div>
       </div>
       <button class="btn" id="btn-forgot" onclick="sendResetLink()" type="button" style="margin-top: 10px;">
-        Send Reset Link
+        <span data-i18n="btn-send-reset">Send Reset Link</span>
         <svg class="arr" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>
       </button>
-      <div class="ff">Remembered your password? <button class="sw-link" onclick="sw('login')">Sign in</button></div>
+      <div class="ff"><span data-i18n="label-remembered-password">Remembered your password?</span> <button class="sw-link" onclick="sw('login')" data-i18n="tab-signin">Sign in</button></div>
     </div>
 
     <!-- FORGOT EMAIL -->
     <div id="panel-forgot-email" style="display:none">
       <div class="fh">
-        <div class="fh-super">Account Recovery</div>
-        <div class="fh-title">Forgot email</div>
-        <div class="fh-sub">Enter your phone number to receive your registered email and a recovery link</div>
+        <div class="fh-super" data-i18n="forgot-title">Account Recovery</div>
+        <div class="fh-title" data-i18n="forgot-email-title">Forgot email</div>
+        <div class="fh-sub" data-i18n="forgot-email-sub">Enter your phone number to receive your registered email and a recovery link</div>
       </div>
       <div class="field">
-        <div class="fl-row"><span class="fl-label">Phone Number</span></div>
+        <div class="fl-row"><span class="fl-label" data-i18n="profile-lbl-phone">Phone Number</span></div>
         <div class="iw">
           <svg class="ii" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4.5" y="1" width="7" height="14" rx="2"/><circle cx="8" cy="12" r=".8" fill="currentColor"/></svg>
-          <input class="inp" id="fep" type="tel" placeholder="07X XXX XXXX" oninput="vPhone('fep','fepe')" maxlength="10"/>
+          <input class="inp" id="fep" type="tel" placeholder="07X XXX XXXX" oninput="vPhone('fep','fepe')" maxlength="10" data-i18n-placeholder="placeholder-phone"/>
         </div>
-        <div class="err" id="fepe">Enter a valid 10-digit Sri Lankan number.</div>
+        <div class="err" id="fepe" data-i18n="err-phone">Enter a valid 10-digit Sri Lankan number.</div>
       </div>
       <button class="btn" id="btn-forgot-email" onclick="sendForgotEmail()" type="button" style="margin-top: 10px;">
-        Send Recovery Email
+        <span data-i18n="btn-send-recovery-email">Send Recovery Email</span>
         <svg class="arr" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>
       </button>
-      <div class="ff">Remembered your email? <button class="sw-link" onclick="sw('login')">Sign in</button></div>
+      <div class="ff"><span data-i18n="label-remembered-email">Remembered your email?</span> <button class="sw-link" onclick="sw('login')" data-i18n="tab-signin">Sign in</button></div>
     </div>
 
     <!-- RESET PASSWORD -->
     <div id="panel-reset" style="display:none">
       <div class="fh">
-        <div class="fh-super">Account Recovery</div>
-        <div class="fh-title">Reset password</div>
-        <div class="fh-sub">Choose a strong new password for your account</div>
+        <div class="fh-super" data-i18n="forgot-title">Account Recovery</div>
+        <div class="fh-title" data-i18n="reset-title">Reset password</div>
+        <div class="fh-sub" data-i18n="reset-sub">Choose a strong new password for your account</div>
       </div>
       <div class="field">
-        <div class="fl-row"><span class="fl-label">New Password</span></div>
+        <div class="fl-row"><span class="fl-label" data-i18n="label-new-password">New Password</span></div>
         <div class="iw">
           <svg class="ii" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2.5" y="7" width="11" height="7.5" rx="1.5"/><path d="M5 7V5.5a3 3 0 016 0V7"/></svg>
-          <input class="inp" id="reset-pw" type="password" placeholder="Minimum 8 characters" oninput="cksReset(this.value)"/>
-          <button class="it" onclick="tp('reset-pw',this)" type="button">Show</button>
+          <input class="inp" id="reset-pw" type="password" placeholder="Minimum 8 characters" oninput="cksReset(this.value)" data-i18n-placeholder="placeholder-password-strength"/>
+          <button class="it" onclick="tp('reset-pw',this)" type="button" data-i18n="btn-show">Show</button>
         </div>
         <div class="sbars"><div class="sb" id="rsb1"></div><div class="sb" id="rsb2"></div><div class="sb" id="rsb3"></div><div class="sb" id="rsb4"></div></div>
         <div class="slbl" id="rslbl"></div>
       </div>
       <div class="field">
-        <div class="fl-row"><span class="fl-label">Confirm New Password</span></div>
+        <div class="fl-row"><span class="fl-label" data-i18n="label-confirm-new-password">Confirm New Password</span></div>
         <div class="iw">
           <svg class="ii" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2.5" y="7" width="11" height="7.5" rx="1.5"/><path d="M5 7V5.5a3 3 0 016 0V7"/></svg>
-          <input class="inp" id="reset-pw-confirm" type="password" placeholder="Re-enter new password"/>
-          <button class="it" onclick="tp('reset-pw-confirm',this)" type="button">Show</button>
+          <input class="inp" id="reset-pw-confirm" type="password" placeholder="Re-enter new password" data-i18n-placeholder="placeholder-confirm-password"/>
+          <button class="it" onclick="tp('reset-pw-confirm',this)" type="button" data-i18n="btn-show">Show</button>
         </div>
       </div>
       <button class="btn" id="btn-reset" onclick="submitResetPassword()" type="button" style="margin-top: 10px;">
-        Reset Password
+        <span data-i18n="btn-reset-password">Reset Password</span>
         <svg class="arr" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>
       </button>
-      <div class="ff">Back to <button class="sw-link" onclick="sw('login')">Sign in</button></div>
+      <div class="ff"><span data-i18n="link-back-to-signin">Back to</span> <button class="sw-link" onclick="sw('login')" data-i18n="tab-signin">Sign in</button></div>
     </div>
 
   </div>
@@ -530,8 +545,8 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
       <div style="width:56px;height:56px;border-radius:16px;background:#EDF5EF;border:1px solid rgba(30,122,71,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1E7A47" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </div>
-      <div style="font-family:'Playfair Display',serif;font-size:1.3rem;color:#050F07;margin-bottom:4px;">Confirm Your Details</div>
-      <div style="font-size:12px;color:#8BA897;">Please review before creating your account</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.3rem;color:#050F07;margin-bottom:4px;" data-i18n="confirm-details-title">Confirm Your Details</div>
+      <div style="font-size:12px;color:#8BA897;" data-i18n="confirm-details-sub">Please review before creating your account</div>
     </div>
     <div id="confirm-body" style="background:#F5F9F3;border-radius:12px;padding:16px;margin-bottom:20px;display:flex;flex-direction:column;gap:10px;"></div>
     <div id="confirm-nic" style="background:#EDF5EF;border:1px solid rgba(30,122,71,0.18);border-radius:10px;padding:10px 14px;margin-bottom:16px;align-items:center;gap:10px;display:none;">
@@ -539,8 +554,8 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
       <span id="confirm-nic-msg" style="font-size:12px;color:#155C35;font-weight:500;"></span>
     </div>
     <div style="display:flex;gap:10px;">
-      <button onclick="closeConfirm()" style="flex:1;height:44px;background:#fff;border:1.5px solid #DDE9E2;border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:#6B9B7A;cursor:pointer;">✏️ Edit Details</button>
-      <button id="btn-confirm" onclick="submitRegister(event)" style="flex:1;height:44px;background:linear-gradient(135deg,#155C35,#1E7A47);border:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#fff;cursor:pointer;box-shadow:0 2px 12px rgba(21,92,53,0.25);">✅ Confirm & Join</button>
+      <button onclick="closeConfirm()" style="flex:1;height:44px;background:#fff;border:1.5px solid #DDE9E2;border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:#6B9B7A;cursor:pointer;" data-i18n="btn-edit-details">✏️ Edit Details</button>
+      <button id="btn-confirm" onclick="submitRegister(event)" style="flex:1;height:44px;background:linear-gradient(135deg,#155C35,#1E7A47);border:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#fff;cursor:pointer;box-shadow:0 2px 12px rgba(21,92,53,0.25);" data-i18n="btn-confirm-join">✅ Confirm & Join</button>
     </div>
   </div>
 </div>
@@ -583,13 +598,13 @@ function selRole(r) {
   var c = document.getElementById('extra-fields');
   c.innerHTML = '';
   var a = document.createElement('div'); a.className = 'field';
-  a.innerHTML = '<div class="fl-row"><span class="fl-label">Address</span></div>'
+  a.innerHTML = '<div class="fl-row"><span class="fl-label" data-i18n="label-address">' + getTranslation('label-address', 'Address') + '</span></div>'
     + '<div class="iw"><svg class="ii" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2 6h12"/></svg>'
-    + '<input class="inp" id="r-address" type="text" placeholder="123 Main Road, Village, Sri Lanka"/></div>';
+    + '<input class="inp" id="r-address" type="text" placeholder="' + getTranslation('placeholder-address', '123 Main Road, Village, Sri Lanka') + '" data-i18n-placeholder="placeholder-address"/></div>';
   var n = document.createElement('div'); n.className = 'field';
-  n.innerHTML = '<div class="fl-row"><span class="fl-label">NIC Number</span></div>'
+  n.innerHTML = '<div class="fl-row"><span class="fl-label" data-i18n="label-nic-number">' + getTranslation('label-nic-number', 'NIC Number') + '</span></div>'
     + '<div class="iw"><svg class="ii" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="3" width="13" height="10" rx="1.5"/><path d="M4 7h3M4 9.5h5"/><circle cx="11.5" cy="8" r="1.5"/></svg>'
-    + '<input class="inp" id="r-nic" type="text" placeholder="198512345678 or 851234567V" maxlength="12"/></div>';
+    + '<input class="inp" id="r-nic" type="text" placeholder="' + getTranslation('placeholder-nic', '198512345678 or 851234567V') + '" maxlength="12" data-i18n-placeholder="placeholder-nic"/></div>';
   c.appendChild(a); c.appendChild(n);
   document.getElementById('nic-section').style.display = r === 'farmer' ? 'block' : 'none';
 }
@@ -611,7 +626,7 @@ function cks(v) {
   var s = 0;
   if (v.length >= 8) s++; if (/[A-Z]/.test(v)) s++; if (/[0-9]/.test(v)) s++; if (/[^A-Za-z0-9]/.test(v)) s++;
   var cols = ['#E4EDE7', '#D95050', '#D95050', '#C88C00', '#28A060'];
-  var lbls = ['', 'Weak — add uppercase & numbers', 'Fair — add a symbol', 'Strong', 'Very strong'];
+  var lbls = ['', getTranslation('js-password-weak', 'Weak — add uppercase & numbers'), getTranslation('js-password-fair', 'Fair — add a symbol'), getTranslation('js-password-strong', 'Strong'), getTranslation('js-password-very-strong', 'Very strong')];
   for (var i = 1; i <= 4; i++) document.getElementById('sb' + i).style.background = i <= s ? cols[s] : '#E4EDE7';
   var el = document.getElementById('slbl');
   el.textContent = v.length > 0 ? lbls[s] : '';
@@ -658,9 +673,12 @@ function syncStatus() {
   var msg = document.getElementById('nic-msg');
   var both = nicUploaded.front && nicUploaded.back;
   var one = (nicUploaded.front || nicUploaded.back) && !both;
-  if (both) { bar.classList.add('done'); msg.textContent = 'Both sides uploaded — identity ready for verification'; }
-  else if (one) { bar.classList.remove('done'); msg.textContent = 'Upload the ' + (nicUploaded.front ? 'back' : 'front') + ' side to complete'; }
-  else { bar.classList.remove('done'); msg.textContent = 'Upload both sides to verify your identity'; }
+  if (both) { bar.classList.add('done'); msg.textContent = getTranslation('msg-nic-both-done', 'Both sides uploaded — identity ready for verification'); }
+  else if (one) { 
+    bar.classList.remove('done'); 
+    msg.textContent = nicUploaded.front ? getTranslation('msg-nic-upload-back', 'Upload the back side to complete') : getTranslation('msg-nic-upload-front', 'Upload the front side to complete'); 
+  }
+  else { bar.classList.remove('done'); msg.textContent = getTranslation('msg-nic-verify', 'Upload both sides to verify your identity'); }
 }
 function dov(e, id) { e.preventDefault(); document.getElementById(id).classList.add('drag-over'); }
 function dlv(id) { document.getElementById(id).classList.remove('drag-over'); }
@@ -681,13 +699,13 @@ document.getElementById('btn-register').addEventListener('click', function () {
   var address   = document.getElementById('r-address') ? document.getElementById('r-address').value.trim() : '';
   var nicNumber = document.getElementById('r-nic') ? document.getElementById('r-nic').value.trim() : '';
 
-  if (!firstName || !lastName) { alert('Please enter your full name.'); return; }
-  if (!email) { alert('Please enter your email.'); return; }
-  if (!phone || phone.replace(/\D/g, '').length !== 10) { alert('Please enter a valid 10-digit phone number.'); return; }
+  if (!firstName || !lastName) { alert(getTranslation('err-name-missing', 'Please enter your full name.')); return; }
+  if (!email) { alert(getTranslation('err-email-missing', 'Please enter your email.')); return; }
+  if (!phone || phone.replace(/\D/g, '').length !== 10) { alert(getTranslation('err-phone', 'Please enter a valid 10-digit phone number.')); return; }
   var otpCode = document.getElementById('otp-code').value.trim();
-  if (!otpCode || otpCode.length !== 6) { alert('Please enter the 6-digit OTP code sent to your phone.'); return; }
-  if (!district) { alert('Please select your district.'); return; }
-  if (!password || password.length < 8) { alert('Password must be at least 8 characters.'); return; }
+  if (!otpCode || otpCode.length !== 6) { alert(getTranslation('err-otp-missing', 'Please enter the 6-digit OTP code sent to your phone.')); return; }
+  if (!district) { alert(getTranslation('err-district-missing', 'Please select your district.')); return; }
+  if (!password || password.length < 8) { alert(getTranslation('err-password-short', 'Password must be at least 8 characters.')); return; }
 
 
   var frontFile = document.getElementById('file-front') ? document.getElementById('file-front').files[0] : null;
@@ -709,14 +727,14 @@ document.getElementById('btn-register').addEventListener('click', function () {
   var body = document.getElementById('confirm-body');
   body.innerHTML = '';
   var rows = [
-    ['Role',     role === 'farmer' ? '🌾 Farmer / Seller' : '🛒 Buyer'],
-    ['Name',     firstName + ' ' + lastName],
-    ['Email',    email],
-    ['Phone',    phone || '—'],
-    ['District', district || '—'],
-    ['Address',  address || '—'],
+    [getTranslation('confirm-role', 'Role'), role === 'farmer' ? '🌾 ' + getTranslation('role-farmer', 'Farmer / Seller') : '🛒 ' + getTranslation('role-buyer', 'Buyer')],
+    [getTranslation('confirm-name', 'Name'), firstName + ' ' + lastName],
+    [getTranslation('profile-lbl-email', 'Email'), email],
+    [getTranslation('profile-lbl-phone', 'Phone'), phone || '—'],
+    [getTranslation('profile-lbl-district', 'District'), getTranslation('district-' + district.toLowerCase().replace(/\s+/g, ''), district) || '—'],
+    [getTranslation('profile-lbl-address', 'Address'), address || '—'],
   ];
-  if (role === 'farmer') rows.push(['NIC Number', nicNumber || '—']);
+  if (role === 'farmer') rows.push([getTranslation('label-nic-number', 'NIC Number'), nicNumber || '—']);
   rows.forEach(function (r) {
     var div = document.createElement('div'); div.className = 'cd-row';
     div.innerHTML = '<span class="cd-label">' + r[0] + '</span><span class="cd-value">' + r[1] + '</span>';
@@ -728,13 +746,13 @@ document.getElementById('btn-register').addEventListener('click', function () {
   if (role === 'farmer') {
     nicBox.style.display = 'flex';
     if (frontFile && backFile) {
-      nicMsg.textContent = '✅ Both NIC sides uploaded';
+      nicMsg.textContent = '✅ ' + getTranslation('msg-nic-both-done', 'Both NIC sides uploaded');
       nicBox.style.background = '#EDF5EF'; nicBox.style.borderColor = 'rgba(30,122,71,0.18)';
     } else if (frontFile || backFile) {
-      nicMsg.textContent = '⚠️ Only one NIC side uploaded';
+      nicMsg.textContent = '⚠️ ' + (frontFile ? getTranslation('msg-nic-upload-back', 'Only one NIC side uploaded') : getTranslation('msg-nic-upload-front', 'Only one NIC side uploaded'));
       nicBox.style.background = '#FEF8EE'; nicBox.style.borderColor = 'rgba(200,140,0,0.2)';
     } else {
-      nicMsg.textContent = '⚠️ No NIC uploaded yet';
+      nicMsg.textContent = '⚠️ ' + getTranslation('msg-nic-verify', 'No NIC uploaded yet');
       nicBox.style.background = '#FEF8EE'; nicBox.style.borderColor = 'rgba(200,140,0,0.2)';
     }
   } else {
@@ -747,38 +765,30 @@ document.getElementById('btn-register').addEventListener('click', function () {
 function closeConfirm() {
   document.getElementById('confirm-overlay').style.display = 'none';
   var btn = document.getElementById('btn-confirm');
-  btn.textContent = '✅ Confirm & Join';
+  btn.innerHTML = getTranslation('btn-confirm-join', '✅ Confirm & Join');
   btn.disabled = false;
 }
 
 async function submitRegister(e) {
   if (!pendingFormData) return;
   var btn = document.getElementById('btn-confirm');
-  btn.textContent = '⏳ Creating...';
+  btn.textContent = '⏳ ' + getTranslation('js-creating-account', 'Creating...');
   btn.disabled = true;
   try {
-    // OTP must be verified before account creation.
-    // UI already verifies OTP via /api/auth/verify-otp; backend re-checks during creation.
-    // Ensure otpCode is available from OTP UI.
-
-    // If your OTP UI is not present on this page, this will fail and you should add otpCode field capture.
-    // (This project previously used /api/register directly.)
-
     var otpCode = null;
     if (document.getElementById('otpCode')) otpCode = document.getElementById('otpCode').value;
     if (document.getElementById('otp-code')) otpCode = document.getElementById('otp-code').value;
 
-    // Best effort: if otpCode input isn't present, backend will return 'Missing required fields'.
     pendingFormData.delete('otpCode');
     pendingFormData.append('otpCode', otpCode);
 
     var res  = await fetch(API_URL + '/api/auth/register-with-otp', { method: 'POST', body: pendingFormData });
     var data = await res.json();
     if (data.success) { showSuccess(data.user.first_name); }
-    else { closeConfirm(); alert('❌ ' + data.error); }
+    else { closeConfirm(); alert('❌ ' + (data.error ? getTranslation(data.error, data.error) : 'Registration failed')); }
   } catch (err) {
     closeConfirm();
-    alert('❌ Cannot connect to server. Check your Railway URL.');
+    alert('❌ ' + getTranslation('err-server-connection', 'Cannot connect to server. Check your Railway URL.'));
   }
 }
 
@@ -788,11 +798,11 @@ function showSuccess(name) {
       <div style="width:64px;height:64px;border-radius:50%;background:#EDF5EF;border:2px solid rgba(30,122,71,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
         <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1E7A47" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
-      <div style="font-family:'Playfair Display',serif;font-size:1.4rem;color:#050F07;margin-bottom:8px;">Welcome, ${name}! 🌱</div>
-      <div style="font-size:13px;color:#7BA090;line-height:1.7;margin-bottom:24px;">Your AgroNexa LK account has been<br/>created successfully!</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.4rem;color:#050F07;margin-bottom:8px;">${getTranslation('js-welcome', 'Welcome')}, ${name}! 🌱</div>
+      <div style="font-size:13px;color:#7BA090;line-height:1.7;margin-bottom:24px;">${getTranslation('js-account-created-success', 'Your AgroNexa LK account has been created successfully!')}</div>
       <button onclick="document.getElementById('confirm-overlay').style.display='none'; sw('login');"
         style="width:100%;height:44px;background:linear-gradient(135deg,#155C35,#1E7A47);border:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#fff;cursor:pointer;">
-        Go to Sign In →
+        ${getTranslation('js-go-to-signin', 'Go to Sign In')} →
       </button>
     </div>`;
 }
@@ -801,9 +811,9 @@ function showSuccess(name) {
 document.getElementById('btn-login').addEventListener('click', async function () {
   var email    = document.getElementById('le').value.trim();
   var password = document.getElementById('lp').value;
-  if (!email || !password) { alert('Please enter email and password.'); return; }
+  if (!email || !password) { alert(getTranslation('err-login-missing', 'Please enter email and password.')); return; }
   var btn = document.getElementById('btn-login');
-  btn.textContent = '⏳ Signing in...';
+  btn.textContent = '⏳ ' + getTranslation('js-signing-in', 'Signing in...');
   btn.disabled = true;
   try {
     var res  = await fetch(API_URL + '/api/login', {
@@ -825,14 +835,14 @@ document.getElementById('btn-login').addEventListener('click', async function ()
       } else if (role === 'buyer') {
         window.location.href = 'buyer.html';
       } else {
-        alert('✅ Welcome back, ' + data.user.name + '!');
+        alert('✅ ' + getTranslation('js-welcome', 'Welcome back') + ', ' + data.user.name + '!');
       }
     }
-    else { alert('❌ ' + data.error); }
+    else { alert('❌ ' + (data.error ? getTranslation(data.error, data.error) : 'Login failed')); }
   } catch (err) {
-    alert('❌ Cannot connect to server. Check your Railway URL.');
+    alert('❌ ' + getTranslation('err-server-connection', 'Cannot connect to server. Check your Railway URL.'));
   } finally {
-    btn.innerHTML = 'Sign in to AgroNexa <svg class="arr" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>';
+    btn.innerHTML = '<span data-i18n="landing-btn-login">' + getTranslation('landing-btn-login', 'Sign in to AgroNexa') + '</span> <svg class="arr" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>';
     btn.disabled = false;
   }
 });
@@ -851,7 +861,7 @@ async function sendOTP() {
   let phone = phoneInput.value.trim().replace(/\D/g, '');
   
   if (phone.length !== 10) {
-    alert("කරුණාකර නිවැරදි 10 අංක phone number එකක් ඇතුලත් කරන්න");
+    alert(getTranslation('err-phone', "කරුණාකර නිවැරදි 10 අංක phone number එකක් ඇතුලත් කරන්න"));
     return;
   }
 
@@ -863,7 +873,7 @@ async function sendOTP() {
   const fullPhone = "+94" + formattedPhone;
   const btn = document.getElementById('send-otp-btn');
   
-  btn.innerHTML = "Sending...";
+  btn.innerHTML = getTranslation('js-sending', "Sending...");
   btn.disabled = true;
 
   try {
@@ -878,15 +888,15 @@ async function sendOTP() {
       verifiedPhone = fullPhone;
       document.getElementById('otp-input-group').style.display = 'block';
       document.getElementById('otp-status').innerHTML = 
-        `<span style="color:#10b981;">✅ OTP sent to +94${formattedPhone}</span>`;
+        `<span style="color:#10b981;">✅ ${getTranslation('js-otp-sent-to', 'OTP sent to')} +94${formattedPhone}</span>`;
     } else {
-      alert("❌ " + (data.error || "Failed to send OTP"));
+      alert("❌ " + (data.error ? getTranslation(data.error, data.error) : "Failed to send OTP"));
     }
   } catch (e) {
-    alert("Cannot connect to server");
+    alert(getTranslation('err-server-connection', "Cannot connect to server"));
   }
 
-  btn.innerHTML = "Send OTP";
+  btn.innerHTML = getTranslation('js-sending-otp', "Send OTP");
   btn.disabled = false;
 }
 
@@ -896,11 +906,11 @@ async function verifyOTP() {
   const statusEl = document.getElementById('otp-status');
 
   if (code.length !== 6) {
-    statusEl.innerHTML = `<span style="color:#ef4444;">Enter 6 digit OTP</span>`;
+    statusEl.innerHTML = `<span style="color:#ef4444;">${getTranslation('js-enter-6-otp', 'Enter 6 digit OTP')}</span>`;
     return;
   }
 
-  statusEl.innerHTML = "Verifying...";
+  statusEl.innerHTML = getTranslation('js-verifying', "Verifying...");
 
   try {
     const res = await fetch(API_URL + '/api/auth/verify-otp', {
@@ -911,13 +921,12 @@ async function verifyOTP() {
     const data = await res.json();
 
     if (data.success) {
-      statusEl.innerHTML = `<span style="color:#10b981;">✅ Phone Verified Successfully!</span>`;
-      // Enable register button if needed
+      statusEl.innerHTML = `<span style="color:#10b981;">✅ ${getTranslation('js-phone-verified-success', 'Phone Verified Successfully!')}</span>`;
     } else {
-      statusEl.innerHTML = `<span style="color:#ef4444;">❌ Invalid or Expired OTP</span>`;
+      statusEl.innerHTML = `<span style="color:#ef4444;">❌ ${getTranslation('js-invalid-otp', 'Invalid or Expired OTP')}</span>`;
     }
   } catch (e) {
-    statusEl.innerHTML = `<span style="color:#ef4444;">Connection Error</span>`;
+    statusEl.innerHTML = `<span style="color:#ef4444;">${getTranslation('err-connection-failed', 'Connection Error')}</span>`;
   }
 }
 
@@ -926,7 +935,7 @@ function cksReset(v) {
   var s = 0;
   if (v.length >= 8) s++; if (/[A-Z]/.test(v)) s++; if (/[0-9]/.test(v)) s++; if (/[^A-Za-z0-9]/.test(v)) s++;
   var cols = ['#E4EDE7', '#D95050', '#D95050', '#C88C00', '#28A060'];
-  var lbls = ['', 'Weak — add uppercase & numbers', 'Fair — add a symbol', 'Strong', 'Very strong'];
+  var lbls = ['', getTranslation('js-password-weak', 'Weak — add uppercase & numbers'), getTranslation('js-password-fair', 'Fair — add a symbol'), getTranslation('js-password-strong', 'Strong'), getTranslation('js-password-very-strong', 'Very strong')];
   for (var i = 1; i <= 4; i++) document.getElementById('rsb' + i).style.background = i <= s ? cols[s] : '#E4EDE7';
   var el = document.getElementById('rslbl');
   el.textContent = v.length > 0 ? lbls[s] : '';
@@ -935,9 +944,9 @@ function cksReset(v) {
 
 async function sendResetLink() {
   const email = document.getElementById('fe').value.trim();
-  if (!email) { alert("Please enter email"); return; }
+  if (!email) { alert(getTranslation('err-email-missing', "Please enter email")); return; }
   const btn = document.getElementById('btn-forgot');
-  btn.textContent = "Sending...";
+  btn.textContent = getTranslation('js-sending', "Sending...");
   btn.disabled = true;
   try {
     const res = await fetch(API_URL + '/api/auth/forgot-password-link', {
@@ -947,10 +956,9 @@ async function sendResetLink() {
     });
     const data = await res.json();
     if (data.success) {
-      alert("✅ Link simulated/sent! Please check your console for the simulated email containing the reset link.");
+      alert("✅ " + getTranslation('js-link-sent', "Link simulated/sent! Please check your console for the simulated email containing the reset link."));
       if (data.resetLinkSimulated) {
         console.log("Simulated Reset Link:", data.resetLinkSimulated);
-        // Show the simulated link directly in a helpful notification area in case they cannot access console
         let existingHint = document.getElementById('demo-hint');
         if (existingHint) existingHint.remove();
         const hintDiv = document.createElement('div');
@@ -963,16 +971,16 @@ async function sendResetLink() {
         hintDiv.style.fontSize = '12px';
         hintDiv.style.color = '#78350f';
         hintDiv.style.wordBreak = 'break-all';
-        hintDiv.innerHTML = `<strong>Demonstration Reset Link:</strong><br><a href="${data.resetLinkSimulated}">${data.resetLinkSimulated}</a>`;
+        hintDiv.innerHTML = `<strong>${getTranslation('js-simulated-reset-link-lbl', 'Demonstration Reset Link:')}</strong><br><a href="${data.resetLinkSimulated}">${data.resetLinkSimulated}</a>`;
         document.getElementById('panel-forgot').appendChild(hintDiv);
       }
     } else {
-      alert("❌ " + data.error);
+      alert("❌ " + (data.error ? getTranslation(data.error, data.error) : "Failed to send reset link"));
     }
   } catch(e) {
-    alert("❌ Connection failed");
+    alert("❌ " + getTranslation('err-connection-failed', "Connection failed"));
   } finally {
-    btn.textContent = "Send Reset Link";
+    btn.textContent = getTranslation('btn-send-reset', "Send Reset Link");
     btn.disabled = false;
   }
 }
@@ -980,19 +988,19 @@ async function sendResetLink() {
 async function submitResetPassword() {
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get('reset_token');
-  if (!token) { alert("Invalid or missing reset token. Please request a new link."); return; }
+  if (!token) { alert(getTranslation('err-otp-incorrect', "Invalid or missing reset token. Please request a new link.")); return; }
 
   const newPassword = document.getElementById('reset-pw').value;
   const confirmPassword = document.getElementById('reset-pw-confirm').value;
 
-  if (newPassword !== confirmPassword) { alert("Passwords do not match"); return; }
+  if (newPassword !== confirmPassword) { alert(getTranslation('err-passwords-mismatch', "Passwords do not match")); return; }
   if (newPassword.length < 8 || !/[A-Z]/.test(newPassword) || !/[0-9]/.test(newPassword) || !/[^A-Za-z0-9]/.test(newPassword)) {
-    alert("Password must satisfy complexity rules (min 8 chars, 1 uppercase, 1 number, 1 special char)");
+    alert(getTranslation('err-password-complexity', "Password must satisfy complexity rules (min 8 chars, 1 uppercase, 1 number, 1 special char)"));
     return;
   }
 
   const btn = document.getElementById('btn-reset');
-  btn.textContent = "Resetting...";
+  btn.textContent = getTranslation('js-verifying', "Resetting...");
   btn.disabled = true;
 
   try {
@@ -1003,16 +1011,16 @@ async function submitResetPassword() {
     });
     const data = await res.json();
     if (data.success) {
-      alert("✅ Password reset successfully! You can now log in with your new password.");
+      alert("✅ " + getTranslation('js-pwd-reset-success', "Password reset successfully! You can now log in with your new password."));
       window.history.replaceState({}, document.title, window.location.pathname); // clear query parameters
       sw('login');
     } else {
-      alert("❌ " + data.error);
+      alert("❌ " + (data.error ? getTranslation(data.error, data.error) : "Reset failed"));
     }
   } catch(e) {
-    alert("❌ Connection failed");
+    alert("❌ " + getTranslation('err-connection-failed', "Connection failed"));
   } finally {
-    btn.textContent = "Reset Password";
+    btn.textContent = getTranslation('btn-reset-password', "Reset Password");
     btn.disabled = false;
   }
 }
@@ -1022,7 +1030,7 @@ async function sendForgotEmail() {
   let phone = phoneInput.value.trim().replace(/\D/g, '');
   
   if (phone.length !== 10) {
-    alert("Please enter a valid 10-digit phone number");
+    alert(getTranslation('err-phone', "Please enter a valid 10-digit phone number"));
     return;
   }
 
@@ -1033,7 +1041,7 @@ async function sendForgotEmail() {
   }
   const fullPhone = "+94" + formattedPhone;
   const btn = document.getElementById('btn-forgot-email');
-  btn.textContent = "Sending...";
+  btn.textContent = getTranslation('js-sending', "Sending...");
   btn.disabled = true;
 
   try {
@@ -1044,7 +1052,7 @@ async function sendForgotEmail() {
     });
     const data = await res.json();
     if (data.success) {
-      alert("✅ Recovery email simulated/sent! Please check the box displayed below for your simulated email containing the login details and reset link.");
+      alert("✅ " + getTranslation('js-recovery-email-sent', "Recovery email simulated/sent! Please check the box displayed below for your simulated email containing the login details and reset link."));
       
       // Clean up any existing demo hint box
       let existingHint = document.getElementById('demo-email-hint');
@@ -1063,20 +1071,20 @@ async function sendForgotEmail() {
       hintDiv.style.wordBreak = 'break-all';
       
       hintDiv.innerHTML = `
-        <strong>📧 Simulated Email Sent to ${data.email}</strong><br>
-        <span style="font-size:11px;color:#0c4a6e;">Hello, you requested account recovery.</span><br>
-        <strong>Registered Email:</strong> <span style="font-weight:600;color:#0284c7;">${data.email}</span><br><br>
-        <strong>Recovery Reset Link:</strong><br>
+        <strong>📧 ${getTranslation('js-simulated-email-sent-lbl', 'Simulated Email Sent to')} ${data.email}</strong><br>
+        <span style="font-size:11px;color:#0c4a6e;">${getTranslation('js-simulated-recovery-msg', 'Hello, you requested account recovery.')}</span><br>
+        <strong>${getTranslation('js-registered-email-lbl', 'Registered Email:')}</strong> <span style="font-weight:600;color:#0284c7;">${data.email}</span><br><br>
+        <strong>${getTranslation('js-recovery-reset-link-lbl', 'Recovery Reset Link:')}</strong><br>
         <a href="${data.resetLinkSimulated}" style="color:#0284c7;font-weight:600;text-decoration:underline;">${data.resetLinkSimulated}</a>
       `;
       document.getElementById('panel-forgot-email').appendChild(hintDiv);
     } else {
-      alert("❌ " + data.error);
+      alert("❌ " + (data.error ? getTranslation(data.error, data.error) : "Failed to recover email"));
     }
   } catch(e) {
-    alert("❌ Connection failed");
+    alert("❌ " + getTranslation('err-connection-failed', "Connection failed"));
   } finally {
-    btn.textContent = "Send Recovery Email";
+    btn.textContent = getTranslation('btn-send-recovery-email', "Send Recovery Email");
     btn.disabled = false;
   }
 }

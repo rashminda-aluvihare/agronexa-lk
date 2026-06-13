@@ -457,13 +457,13 @@
     <div>
       <div class="user-name" id="user-name">Loading...</div>
       <div class="user-role" id="user-district">Loading...</div>
-      <div class="role-badge">Buyer</div>
+      <div class="role-badge" data-i18n="js-buyer-role">Buyer</div>
       <div id="member-since" style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:4px;"></div>
     </div>
   </div>
 
   <nav>
-    <div class="nav-section">Main</div>
+    <div class="nav-section" data-i18n="sidebar-main">Main</div>
     <div class="nav-item active" onclick="switchTab('dashboard')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       <span data-i18n="nav-dashboard">Dashboard</span>
@@ -498,7 +498,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       <span data-i18n="nav-price-index">Daily Price Index</span>
     </div>
-    <div class="nav-section">Account</div>
+    <div class="nav-section" data-i18n="sidebar-account">Account</div>
     <div class="nav-item" onclick="switchTab('messages')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
       <span data-i18n="nav-messages">Messages</span>
@@ -517,7 +517,7 @@
   <div class="sidebar-bottom">
     <div class="logout-btn" onclick="doLogout()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      Sign out
+      <span data-i18n="nav-signout">Sign out</span>
     </div>
   </div>
 </aside>
@@ -528,9 +528,9 @@
     <button class="burger-menu-btn" onclick="toggleSidebar()" style="display:none; background:none; border:none; color:var(--text); cursor:pointer; padding:8px 8px 8px 0; margin-right:4px; line-height:1; align-items:center;">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
-    <div class="page-title" id="page-greeting">Buyer Dashboard</div>
+    <div class="page-title" id="page-greeting" data-i18n="title-buyer-dash">Buyer Dashboard</div>
     <div class="topbar-right">
-      <span id="socket-status" class="socket-status"><span class="dot"></span>Connecting...</span>
+      <span id="socket-status" class="socket-status"><span class="dot"></span><span data-i18n="status-connecting">Connecting...</span></span>
       <div class="notif-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         <div class="notif-dot"></div>
@@ -548,32 +548,32 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
         </div>
         <div class="stat-val" id="stat-active-requests">—</div>
-        <div class="stat-label">Active Requests</div>
-        <div class="stat-delta neutral">Awaiting seller response</div>
+        <div class="stat-label" data-i18n="card-active-requests">Active Requests</div>
+        <div class="stat-delta neutral" data-i18n="card-active-requests-sub">Awaiting seller response</div>
       </div>
       <div class="stat-card amber">
         <div class="stat-icon amber">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
         </div>
         <div class="stat-val" id="stat-unread-notif">—</div>
-        <div class="stat-label">New Responses</div>
-        <div class="stat-delta neutral">From sellers</div>
+        <div class="stat-label" data-i18n="card-unread-notif">New Responses</div>
+        <div class="stat-delta neutral" data-i18n="card-unread-notif-sub">From sellers</div>
       </div>
       <div class="stat-card green">
         <div class="stat-icon green">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         </div>
         <div class="stat-val" id="stat-confirmed-bookings">—</div>
-        <div class="stat-label">Confirmed Bookings</div>
-        <div class="stat-delta up" id="stat-bookings-delta">Active rentals</div>
+        <div class="stat-label" data-i18n="card-confirmed-bookings">Confirmed Bookings</div>
+        <div class="stat-delta up" id="stat-bookings-delta" data-i18n="card-confirmed-bookings-sub">Active rentals</div>
       </div>
       <div class="stat-card purple">
         <div class="stat-icon purple">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18l-2 13H5L3 3z"/><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
         </div>
         <div class="stat-val" id="stat-total-purchases">—</div>
-        <div class="stat-label">Total Bookings</div>
-        <div class="stat-delta up">Lifetime</div>
+        <div class="stat-label" data-i18n="card-total-bookings">Total Bookings</div>
+        <div class="stat-delta up" data-i18n="card-total-bookings-sub">Lifetime history</div>
       </div>
     </div>
 
@@ -646,62 +646,62 @@
     <div class="grid-3" id="section-broadcasts-responses" style="display: none;">
       <!-- Broadcast request -->
       <div class="broadcast-panel" id="panel-broadcast-form">
-        <div class="broadcast-title">📡 Broadcast a Buyer Request</div>
-        <div class="broadcast-sub">Your request will be SMS-broadcasted to all matching sellers instantly</div>
+        <div class="broadcast-title" data-i18n="broadcast-title-head">📡 Broadcast a Buyer Request</div>
+        <div class="broadcast-sub" data-i18n="broadcast-sub-head">Your request will be SMS-broadcasted to all matching sellers instantly</div>
         <form id="broadcast-form" onsubmit="submitBroadcast(event)">
           <div class="form-row">
             <div class="form-field">
-              <div class="form-label">Commodity</div>
-              <input class="form-input" id="broadcast-crop" required type="text" placeholder="e.g. Tomatoes, Carrots...">
+              <div class="form-label" data-i18n="broadcast-lbl-commodity">Commodity</div>
+              <input class="form-input" id="broadcast-crop" required type="text" placeholder="e.g. Tomatoes, Carrots..." data-i18n-placeholder="broadcast-ph-commodity">
             </div>
             <div class="form-field" style="max-width:120px">
-              <div class="form-label">Quantity (kg)</div>
-              <input class="form-input" id="broadcast-quantity" required type="number" placeholder="e.g. 50">
+              <div class="form-label" data-i18n="broadcast-lbl-qty">Quantity (kg)</div>
+              <input class="form-input" id="broadcast-quantity" required type="number" placeholder="e.g. 50" data-i18n-placeholder="broadcast-ph-qty">
             </div>
           </div>
           <div class="form-row">
             <div class="form-field">
-              <div class="form-label">Required By</div>
+              <div class="form-label" data-i18n="broadcast-lbl-required">Required By</div>
               <input class="form-input" id="broadcast-date" required type="date">
             </div>
             <div class="form-field">
-              <div class="form-label">Your Location</div>
-              <input class="form-input" id="broadcast-district" required type="text" placeholder="District">
+              <div class="form-label" data-i18n="broadcast-lbl-location">Your Location</div>
+              <input class="form-input" id="broadcast-district" required type="text" placeholder="District" data-i18n-placeholder="broadcast-ph-location">
             </div>
           </div>
           <div class="form-row">
             <div class="form-field">
-              <div class="form-label">Price Offer (Rs./kg) — optional</div>
-              <input class="form-input" id="broadcast-budget" type="number" placeholder="Leave blank for open offer">
+              <div class="form-label" data-i18n="broadcast-lbl-price">Price Offer (Rs./kg) — optional</div>
+              <input class="form-input" id="broadcast-budget" type="number" placeholder="Leave blank for open offer" data-i18n-placeholder="broadcast-ph-price">
             </div>
           </div>
           <button type="submit" class="broadcast-btn">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>
-            Broadcast to Sellers
+            <span data-i18n="broadcast-btn-send">Broadcast to Sellers</span>
           </button>
         </form>
-        <div class="broadcast-note">⚠️ Requests expire after 72 hours if no response is accepted</div>
+        <div class="broadcast-note" data-i18n="broadcast-note-expiry">⚠️ Requests expire after 72 hours if no response is accepted</div>
       </div>
 
       <!-- Seller responses -->
       <div class="panel" id="panel-responses">
         <div class="panel-head">
-          <div class="panel-title">Seller Responses</div>
+          <div class="panel-title" data-i18n="panel-seller-responses">Seller Responses</div>
           <span style="font-size:11px;color:var(--amber);font-weight:500" id="responses-header-count">0 new</span>
         </div>
         <div id="seller-responses-list" style="max-height: 350px; overflow-y: auto;">
-          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No active responses. Broadcast a request first!</div>
+          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;" data-i18n="js-no-active-responses">No active responses. Broadcast a request first!</div>
         </div>
       </div>
 
       <!-- My Active Requests (History & Edit) -->
       <div class="panel" id="panel-my-requests">
         <div class="panel-head">
-          <div class="panel-title">My Broadcast History</div>
+          <div class="panel-title" data-i18n="panel-broadcast-history">My Broadcast History</div>
           <span style="font-size:11px;color:var(--green);font-weight:500" id="my-requests-header-count">0 active</span>
         </div>
         <div id="my-requests-list" style="max-height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
-          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No history. Broadcast a request first!</div>
+          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;" data-i18n="js-no-broadcast-history">No history. Broadcast a request first!</div>
         </div>
       </div>
     </div>
@@ -710,33 +710,33 @@
     <div class="grid-2" id="section-bookings-market" style="display: none;">
       <div class="panel" id="panel-bookings">
         <div class="panel-head">
-          <div class="panel-title" id="bookings-panel-title">My Equipment Bookings</div>
-          <div class="panel-action" onclick="switchTab('bookings')" style="cursor:pointer">View all</div>
+          <div class="panel-title" id="bookings-panel-title" data-i18n="panel-equipment-bookings">My Equipment Bookings</div>
+          <div class="panel-action" onclick="switchTab('bookings')" style="cursor:pointer" data-i18n="btn-view-all">View all</div>
         </div>
         <div style="display:flex; background:var(--teal-pale); border-radius:10px; padding:4px; gap:4px; margin-bottom:15px;">
-          <button id="bookings-subtab-rentals" onclick="switchBookingSubtab('rentals')" style="flex:1; height:32px; border:none; border-radius:8px; font-size:12.5px; font-weight:500; cursor:pointer; background:#fff; color:var(--teal); transition: all 0.2s;">🚜 Tool Rentals</button>
-          <button id="bookings-subtab-purchases" onclick="switchBookingSubtab('purchases')" style="flex:1; height:32px; border:none; border-radius:8px; font-size:12.5px; font-weight:500; cursor:pointer; background:transparent; color:var(--muted); transition: all 0.2s;">🌾 Crop Orders</button>
+          <button id="bookings-subtab-rentals" onclick="switchBookingSubtab('rentals')" style="flex:1; height:32px; border:none; border-radius:8px; font-size:12.5px; font-weight:500; cursor:pointer; background:#fff; color:var(--teal); transition: all 0.2s;"><span data-i18n="js-sub-booking-rentals">🚜 Tool Rentals</span></button>
+          <button id="bookings-subtab-purchases" onclick="switchBookingSubtab('purchases')" style="flex:1; height:32px; border:none; border-radius:8px; font-size:12.5px; font-weight:500; cursor:pointer; background:transparent; color:var(--muted); transition: all 0.2s;"><span data-i18n="js-sub-booking-purchases">🌾 Crop Orders</span></button>
         </div>
         <div id="bookings-list" style="max-height: 400px; overflow-y: auto;">
-          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Loading bookings...</div>
+          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;" data-i18n="js-no-bookings">Loading bookings...</div>
         </div>
         <div id="crop-orders-list" style="max-height: 400px; overflow-y: auto; display:none;">
-          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Loading crop orders...</div>
+          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;" data-i18n="js-no-crop-orders">Loading crop orders...</div>
         </div>
       </div>
 
       <div class="panel" id="panel-marketplace">
         <div class="panel-head">
-          <div class="panel-title" id="market-title">Marketplace Crops</div>
-          <div class="panel-action" onclick="switchTab('marketplace')" style="cursor:pointer">View all listings</div>
+          <div class="panel-title" id="market-title" data-i18n="panel-marketplace-crops">Marketplace Crops</div>
+          <div class="panel-action" onclick="switchTab('marketplace')" style="cursor:pointer" data-i18n="btn-view-all-listings">View all listings</div>
         </div>
         <div class="search-bar">
-          <input class="search-input" id="market-search" type="text" placeholder="Search produce or equipment..." oninput="loadMarketplace()">
-          <button class="filter-btn" id="market-toggle-btn" onclick="toggleMarketType()" style="white-space:nowrap;">🚜 View Equipment</button>
+          <input class="search-input" id="market-search" type="text" placeholder="Search produce or equipment..." oninput="loadMarketplace()" data-i18n-placeholder="placeholder-search-produce">
+          <button class="filter-btn" id="market-toggle-btn" onclick="toggleMarketType()" style="white-space:nowrap;" data-i18n="btn-view-equipment">🚜 View Equipment</button>
         </div>
         <div id="market-map" style="height: 350px; border-radius: 12px; margin-bottom: 15px; display: none;"></div>
         <div id="marketplace-grid" class="market-grid" style="max-height: 350px; overflow-y: auto; padding-right: 5px;">
-          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Loading marketplace...</div>
+          <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;" data-i18n="js-loading-marketplace">Loading marketplace...</div>
         </div>
       </div>
     </div>
@@ -745,28 +745,28 @@
     <div id="book-equip-modal" style="display:none;position:fixed;inset:0;background:rgba(20,29,43,0.7);backdrop-filter:blur(4px);z-index:2000;align-items:center;justify-content:center;">
       <div style="background:#fff;border-radius:20px;padding:32px;max-width:400px;width:95%;box-shadow:0 20px 60px rgba(20,29,43,0.3);border:1px solid var(--border);position:relative;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-          <h3 style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--text)" id="book-equip-title">Book Equipment</h3>
+          <h3 style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--text)" id="book-equip-title" data-i18n="modal-book-equip-title">Book Equipment</h3>
           <button onclick="closeBookingModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted)">&times;</button>
         </div>
         <form id="book-equip-form" onsubmit="submitEquipmentBooking(event)">
           <input type="hidden" id="book-equip-id">
           <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
-            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Daily Rate</label>
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="modal-lbl-daily-rate">Daily Rate</label>
             <div id="book-equip-rate" style="font-size:15px;font-weight:600;color:var(--teal)">Rs. 0 / day</div>
           </div>
           <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
-            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Start Date</label>
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="modal-lbl-start-date">Start Date</label>
             <input class="form-input" type="date" id="book-start-date" required style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
           </div>
           <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
-            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">End Date</label>
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="modal-lbl-end-date">End Date</label>
             <input class="form-input" type="date" id="book-end-date" required style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
           </div>
           <div style="margin-bottom:20px;background:var(--teal-pale);padding:10px 14px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:12px;color:var(--teal);font-weight:500;">Estimated Cost</span>
+            <span style="font-size:12px;color:var(--teal);font-weight:500;" data-i18n="modal-lbl-est-cost">Estimated Cost</span>
             <span style="font-size:15px;color:var(--teal);font-600;" id="book-total-cost">Rs. 0</span>
           </div>
-          <button type="submit" class="btn-sm btn-confirm" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;">Confirm Booking Request</button>
+          <button type="submit" class="btn-sm btn-confirm" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;" data-i18n="modal-btn-confirm-booking">Confirm Booking Request</button>
         </form>
       </div>
     </div>
@@ -854,42 +854,57 @@
           <div class="form-row">
             <div class="form-field">
               <div class="form-label" data-i18n="logistics-label-owner">Owner Name</div>
-              <input class="form-input" id="trans-owner" required type="text" placeholder="Sunil Perera">
+              <input class="form-input" id="trans-owner" required type="text" placeholder="Sunil Perera" data-i18n-placeholder="placeholder-trans-owner">
             </div>
             <div class="form-field">
               <div class="form-label" data-i18n="logistics-label-type">Vehicle Type</div>
               <select class="form-input" id="trans-type" required style="background:#fff; color:#000;">
-                <option value="Lorry (Light)">Lorry (Light)</option>
-                <option value="Lorry (Heavy)">Lorry (Heavy)</option>
-                <option value="Tractor / Trailer">Tractor / Trailer</option>
-                <option value="Refrigerated Truck">Refrigerated Truck</option>
+                <option value="Lorry (Light)" data-i18n="logistics-type-light-lorry">Lorry (Light)</option>
+                <option value="Lorry (Heavy)" data-i18n="logistics-type-heavy-lorry">Lorry (Heavy)</option>
+                <option value="Tractor / Trailer" data-i18n="logistics-type-tractor-trailer">Tractor / Trailer</option>
+                <option value="Refrigerated Truck" data-i18n="logistics-type-refrigerated-truck">Refrigerated Truck</option>
               </select>
             </div>
           </div>
           <div class="form-row">
             <div class="form-field">
               <div class="form-label" data-i18n="logistics-label-no">Plate Number</div>
-              <input class="form-input" id="trans-number" required type="text" placeholder="WP LY-1234">
+              <input class="form-input" id="trans-number" required type="text" placeholder="WP LY-1234" data-i18n-placeholder="placeholder-trans-plate">
             </div>
             <div class="form-field">
               <div class="form-label" data-i18n="logistics-label-capacity">Capacity (kg)</div>
-              <input class="form-input" id="trans-capacity" required type="number" placeholder="1500">
+              <input class="form-input" id="trans-capacity" required type="number" placeholder="1500" data-i18n-placeholder="placeholder-trans-capacity">
             </div>
           </div>
           <div class="form-row">
             <div class="form-field">
               <div class="form-label" data-i18n="logistics-label-phone">Contact Phone</div>
-              <input class="form-input" id="trans-phone" required type="tel" placeholder="07X XXX XXXX" maxlength="10">
+              <input class="form-input" id="trans-phone" required type="tel" placeholder="07X XXX XXXX" maxlength="10" data-i18n-placeholder="placeholder-phone">
             </div>
             <div class="form-field">
               <div class="form-label" data-i18n="logistics-label-district">Operating District</div>
               <select class="form-input" id="trans-district" required style="background:#fff; color:#000;">
-                <option>Ampara</option><option>Anuradhapura</option><option>Badulla</option><option>Batticaloa</option>
-                <option>Colombo</option><option>Galle</option><option>Gampaha</option><option>Hambantota</option>
-                <option>Jaffna</option><option>Kalutara</option><option>Kandy</option><option>Kegalle</option>
-                <option>Kurunegala</option><option>Matale</option><option>Matara</option><option>Negombo</option>
-                <option>Nuwara Eliya</option><option>Polonnaruwa</option><option>Puttalam</option>
-                <option>Ratnapura</option><option>Trincomalee</option>
+                <option value="Ampara" data-i18n="district-ampara">Ampara</option>
+                <option value="Anuradhapura" data-i18n="district-anuradhapura">Anuradhapura</option>
+                <option value="Badulla" data-i18n="district-badulla">Badulla</option>
+                <option value="Batticaloa" data-i18n="district-batticaloa">Batticaloa</option>
+                <option value="Colombo" data-i18n="district-colombo">Colombo</option>
+                <option value="Galle" data-i18n="district-galle">Galle</option>
+                <option value="Gampaha" data-i18n="district-gampaha">Gampaha</option>
+                <option value="Hambantota" data-i18n="district-hambantota">Hambantota</option>
+                <option value="Jaffna" data-i18n="district-jaffna">Jaffna</option>
+                <option value="Kalutara" data-i18n="district-kalutara">Kalutara</option>
+                <option value="Kandy" data-i18n="district-kandy">Kandy</option>
+                <option value="Kegalle" data-i18n="district-kegalle">Kegalle</option>
+                <option value="Kurunegala" data-i18n="district-kurunegala">Kurunegala</option>
+                <option value="Matale" data-i18n="district-matale">Matale</option>
+                <option value="Matara" data-i18n="district-matara">Matara</option>
+                <option value="Negombo" data-i18n="district-negombo">Negombo</option>
+                <option value="Nuwara Eliya" data-i18n="district-nuwaraeliya">Nuwara Eliya</option>
+                <option value="Polonnaruwa" data-i18n="district-polonnaruwa">Polonnaruwa</option>
+                <option value="Puttalam" data-i18n="district-puttalam">Puttalam</option>
+                <option value="Ratnapura" data-i18n="district-ratnapura">Ratnapura</option>
+                <option value="Trincomalee" data-i18n="district-trincomalee">Trincomalee</option>
               </select>
             </div>
           </div>
@@ -901,57 +916,72 @@
     <!-- Profile Section -->
     <div class="panel" id="section-profile" style="display:none;">
       <div class="panel-head">
-        <div class="panel-title">👤 My Profile Details</div>
+        <div class="panel-title" data-i18n="panel-profile-details">👤 My Profile Details</div>
       </div>
       <form id="profile-form" onsubmit="saveProfile(event)">
         <div class="form-row">
           <div class="form-field">
-            <div class="form-label">First Name</div>
-            <input class="form-input" id="profile-fname" required type="text">
+            <div class="form-label" data-i18n="profile-lbl-fname">First Name</div>
+            <input class="form-input" id="profile-fname" required type="text" data-i18n-placeholder="placeholder-first-name">
           </div>
           <div class="form-field">
-            <div class="form-label">Last Name</div>
-            <input class="form-input" id="profile-lname" required type="text">
+            <div class="form-label" data-i18n="profile-lbl-lname">Last Name</div>
+            <input class="form-input" id="profile-lname" required type="text" data-i18n-placeholder="placeholder-last-name">
           </div>
         </div>
         <div class="form-row">
           <div class="form-field">
-            <div class="form-label">Email Address (Read-only)</div>
+            <div class="form-label" data-i18n="profile-lbl-email">Email Address (Read-only)</div>
             <input class="form-input" id="profile-email" readonly type="email" style="background:rgba(200,200,200,0.1);cursor:not-allowed;">
           </div>
           <div class="form-field">
-            <div class="form-label">Phone Number</div>
-            <input class="form-input" id="profile-phone" required type="text">
+            <div class="form-label" data-i18n="profile-lbl-phone">Phone Number</div>
+            <input class="form-input" id="profile-phone" required type="text" data-i18n-placeholder="placeholder-phone">
           </div>
         </div>
         <div class="form-row">
           <div class="form-field">
-            <div class="form-label">District</div>
+            <div class="form-label" data-i18n="profile-lbl-district">District</div>
             <select class="form-input" id="profile-district" required style="background:#fff; color:#000;">
-              <option>Ampara</option><option>Anuradhapura</option><option>Badulla</option><option>Batticaloa</option>
-              <option>Colombo</option><option>Galle</option><option>Gampaha</option><option>Hambantota</option>
-              <option>Jaffna</option><option>Kalutara</option><option>Kandy</option><option>Kegalle</option>
-              <option>Kurunegala</option><option>Matale</option><option>Matara</option><option>Negombo</option>
-              <option>Nuwara Eliya</option><option>Polonnaruwa</option><option>Puttalam</option>
-              <option>Ratnapura</option><option>Trincomalee</option>
+              <option value="Ampara" data-i18n="district-ampara">Ampara</option>
+              <option value="Anuradhapura" data-i18n="district-anuradhapura">Anuradhapura</option>
+              <option value="Badulla" data-i18n="district-badulla">Badulla</option>
+              <option value="Batticaloa" data-i18n="district-batticaloa">Batticaloa</option>
+              <option value="Colombo" data-i18n="district-colombo">Colombo</option>
+              <option value="Galle" data-i18n="district-galle">Galle</option>
+              <option value="Gampaha" data-i18n="district-gampaha">Gampaha</option>
+              <option value="Hambantota" data-i18n="district-hambantota">Hambantota</option>
+              <option value="Jaffna" data-i18n="district-jaffna">Jaffna</option>
+              <option value="Kalutara" data-i18n="district-kalutara">Kalutara</option>
+              <option value="Kandy" data-i18n="district-kandy">Kandy</option>
+              <option value="Kegalle" data-i18n="district-kegalle">Kegalle</option>
+              <option value="Kurunegala" data-i18n="district-kurunegala">Kurunegala</option>
+              <option value="Matale" data-i18n="district-matale">Matale</option>
+              <option value="Matara" data-i18n="district-matara">Matara</option>
+              <option value="Negombo" data-i18n="district-negombo">Negombo</option>
+              <option value="Nuwara Eliya" data-i18n="district-nuwaraeliya">Nuwara Eliya</option>
+              <option value="Polonnaruwa" data-i18n="district-polonnaruwa">Polonnaruwa</option>
+              <option value="Puttalam" data-i18n="district-puttalam">Puttalam</option>
+              <option value="Ratnapura" data-i18n="district-ratnapura">Ratnapura</option>
+              <option value="Trincomalee" data-i18n="district-trincomalee">Trincomalee</option>
             </select>
           </div>
           <div class="form-field">
-            <div class="form-label">Address</div>
-            <input class="form-input" id="profile-address" type="text">
+            <div class="form-label" data-i18n="profile-lbl-address">Address</div>
+            <input class="form-input" id="profile-address" type="text" data-i18n-placeholder="placeholder-address">
           </div>
         </div>
         <div class="form-row">
           <div class="form-field">
-            <div class="form-label">Role</div>
+            <div class="form-label" data-i18n="profile-lbl-role">Role</div>
             <input class="form-input" id="profile-role" readonly type="text" style="background:rgba(200,200,200,0.1);cursor:not-allowed;">
           </div>
           <div class="form-field">
-            <div class="form-label">Status</div>
+            <div class="form-label" data-i18n="profile-lbl-status">Status</div>
             <input class="form-input" id="profile-status" readonly type="text" style="background:rgba(200,200,200,0.1);cursor:not-allowed;">
           </div>
         </div>
-        <button type="submit" class="broadcast-btn" style="margin-top:16px;">
+        <button type="submit" class="broadcast-btn" style="margin-top:16px;" data-i18n="profile-btn-save">
           💾 Save Changes
         </button>
       </form>
@@ -960,29 +990,29 @@
     <!-- Settings Section -->
     <div class="panel" id="section-settings" style="display:none; max-width: 600px;">
       <div class="panel-head">
-        <div class="panel-title">⚙️ App Settings</div>
+        <div class="panel-title" data-i18n="panel-app-settings">⚙️ App Settings</div>
       </div>
       <div style="display:flex; flex-direction:column; gap:20px;">
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px;">
           <div>
-            <div style="font-size:14px; font-weight:500; color:var(--text);">Visual Theme</div>
-            <div style="font-size:12px; color:var(--muted);">Switch between light and dark modes</div>
+            <div style="font-size:14px; font-weight:500; color:var(--text);" data-i18n="settings-lbl-visual-theme">Visual Theme</div>
+            <div style="font-size:12px; color:var(--muted);" data-i18n="settings-desc-visual-theme">Switch between light and dark modes</div>
           </div>
-          <button class="interest-btn" id="dark-mode-btn" onclick="toggleDarkModeSetting()" style="width:140px; margin-top:0;">Toggle Dark Mode</button>
+          <button class="interest-btn" id="dark-mode-btn" onclick="toggleDarkModeSetting()" style="width:140px; margin-top:0;" data-i18n="settings-btn-toggle-theme">Toggle Dark Mode</button>
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px;">
           <div>
-            <div style="font-size:14px; font-weight:500; color:var(--text);">Websocket Diagnostic</div>
-            <div style="font-size:12px; color:var(--muted);">Check real-time network connection latency</div>
+            <div style="font-size:14px; font-weight:500; color:var(--text);" data-i18n="settings-lbl-ws">Websocket Diagnostic</div>
+            <div style="font-size:12px; color:var(--muted);" data-i18n="settings-desc-ws">Check real-time network connection latency</div>
           </div>
-          <button class="interest-btn" onclick="checkWebsocketPing()" style="width:140px; margin-top:0; height:38px; cursor:pointer; background:var(--teal); color:#fff;">Ping Latency</button>
+          <button class="interest-btn" onclick="checkWebsocketPing()" style="width:140px; margin-top:0; height:38px; cursor:pointer; background:var(--teal); color:#fff;" data-i18n="settings-btn-ping">Ping Latency</button>
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <div>
-            <div style="font-size:14px; font-weight:500; color:var(--text); margin-bottom:10px;">Security</div>
-            <div style="font-size:12px; color:var(--muted);">Standard JWT encryption is active for your session.</div>
+            <div style="font-size:14px; font-weight:500; color:var(--text); margin-bottom:10px;" data-i18n="settings-lbl-security">Security</div>
+            <div style="font-size:12px; color:var(--muted);" data-i18n="settings-desc-security">Standard JWT encryption is active for your session.</div>
           </div>
-          <span style="font-size:11px; color:var(--teal-light); font-weight:600; background:var(--teal-pale); border:1px solid var(--teal-light); padding:4px 8px; border-radius:4px;">ACTIVE (JWT)</span>
+          <span style="font-size:11px; color:var(--teal-light); font-weight:600; background:var(--teal-pale); border:1px solid var(--teal-light); padding:4px 8px; border-radius:4px;" data-i18n="settings-badge-active">ACTIVE (JWT)</span>
         </div>
       </div>
     </div>
@@ -1038,35 +1068,7 @@
       </div>
     </div>
 
-    <!-- EQUIPMENT BOOKING MODAL -->
-    <div id="book-equip-modal" style="display:none;position:fixed;inset:0;background:rgba(20,29,43,0.7);backdrop-filter:blur(4px);z-index:2000;align-items:center;justify-content:center;">
-      <div style="background:#fff;border-radius:20px;padding:32px;max-width:400px;width:95%;box-shadow:0 20px 60px rgba(20,29,43,0.3);border:1px solid var(--border);position:relative;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-          <h3 style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--text)" id="book-equip-title">Book Equipment</h3>
-          <button onclick="closeBookingModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted)">&times;</button>
-        </div>
-        <form id="book-equip-form" onsubmit="submitEquipmentBooking(event)">
-          <input type="hidden" id="book-equip-id">
-          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
-            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Daily Rate</label>
-            <div id="book-equip-rate" style="font-size:15px;font-weight:600;color:var(--teal)">Rs. 0 / day</div>
-          </div>
-          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
-            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">Start Date</label>
-            <input class="form-input" type="date" id="book-start-date" required style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
-          </div>
-          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
-            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;">End Date</label>
-            <input class="form-input" type="date" id="book-end-date" required style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
-          </div>
-          <div style="margin-bottom:20px;background:var(--teal-pale);padding:10px 14px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:12px;color:var(--teal);font-weight:500;">Estimated Cost</span>
-            <span style="font-size:15px;color:var(--teal);font-600;" id="book-total-cost">Rs. 0</span>
-          </div>
-          <button type="submit" class="btn-sm btn-confirm" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;">Confirm Booking Request</button>
-        </form>
-      </div>
-    </div>
+
 
     <!-- CROP PURCHASE ORDER MODAL -->
     <div id="book-crop-modal" style="display:none;position:fixed;inset:0;background:rgba(20,29,43,0.7);backdrop-filter:blur(4px);z-index:2000;align-items:center;justify-content:center;">
@@ -1264,10 +1266,10 @@ function formatTimeAgo(date) {
   var diffMin = Math.floor(diffSec / 60);
   var diffHr = Math.floor(diffMin / 60);
   var diffDay = Math.floor(diffHr / 24);
-  if (diffSec < 60) return 'Just now';
-  if (diffMin < 60) return diffMin + 'm ago';
-  if (diffHr < 24) return diffHr + 'h ago';
-  if (diffDay < 7) return diffDay + 'd ago';
+  if (diffSec < 60) return getTranslation('js-time-just-now', 'Just now');
+  if (diffMin < 60) return diffMin + getTranslation('js-time-m-ago', 'm ago');
+  if (diffHr < 24) return diffHr + getTranslation('js-time-h-ago', 'h ago');
+  if (diffDay < 7) return diffDay + getTranslation('js-time-d-ago', 'd ago');
   return date.toLocaleDateString();
 }
 
@@ -1291,18 +1293,19 @@ var marketMarkers = [];
 
   initSocket();
 
-  // Set current date chip dynamically
-  const dateChip = document.querySelector('.date-chip');
-  if (dateChip) {
-    dateChip.textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  }
-
   // Immediately show session data
   var name = _user.name || _user.email;
   var initials = name.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
   document.getElementById('user-avatar').textContent = initials;
   document.getElementById('user-name').textContent = name;
-  document.getElementById('page-greeting').textContent = 'Welcome back, ' + name.split(' ')[0] + ' 👋';
+  
+  function updateWelcomeGreeting() {
+    if (!_user) return;
+    var name = _user.name || _user.email;
+    document.getElementById('page-greeting').textContent = getTranslation('js-welcome', 'Welcome back') + ', ' + name.split(' ')[0] + ' 👋';
+  }
+  document.addEventListener('languageChanged', updateWelcomeGreeting);
+  updateWelcomeGreeting();
 
   if (_user.district) {
     document.getElementById('broadcast-district').value = _user.district;
@@ -1361,7 +1364,7 @@ function initSocket() {
   if (typeof io === 'undefined') {
     console.warn('⚠️ Socket.io is not loaded. Real-time updates will be disabled.');
     var el = document.getElementById('socket-status');
-    if (el) { el.className = 'socket-status disconnected'; el.innerHTML = '<span class="dot"></span>Offline'; }
+    if (el) { el.className = 'socket-status disconnected'; el.innerHTML = '<span class="dot"></span>' + getTranslation('status-offline', 'Offline'); }
     return;
   }
   socket = io(API_URL);
@@ -1389,25 +1392,25 @@ function initSocket() {
 
   socket.on('pong_latency', function(data) {
     const lat = Date.now() - pingStart;
-    showToast('Network Latency', '⚡ ' + lat + 'ms', 'info', 3000);
+    showToast(getTranslation('toast-latency-title', 'Network Latency'), '⚡ ' + lat + 'ms', 'info', 3000);
   });
 
   socket.on('connect', function() {
     var el = document.getElementById('socket-status');
-    if (el) { el.className = 'socket-status'; el.innerHTML = '<span class="dot"></span>Live'; }
+    if (el) { el.className = 'socket-status'; el.innerHTML = '<span class="dot"></span>' + getTranslation('status-live', 'Live'); }
     if (_user && _user.id) socket.emit('join', _user.id);
     console.log('✅ Buyer socket connected');
   });
 
   socket.on('disconnect', function() {
     var el = document.getElementById('socket-status');
-    if (el) { el.className = 'socket-status disconnected'; el.innerHTML = '<span class="dot"></span>Offline'; }
+    if (el) { el.className = 'socket-status disconnected'; el.innerHTML = '<span class="dot"></span>' + getTranslation('status-offline', 'Offline'); }
     console.log('❌ Buyer socket disconnected');
   });
 
   socket.on('connect_error', function() {
     var el = document.getElementById('socket-status');
-    if (el) { el.className = 'socket-status disconnected'; el.innerHTML = '<span class="dot"></span>Error'; }
+    if (el) { el.className = 'socket-status disconnected'; el.innerHTML = '<span class="dot"></span>' + getTranslation('toast-error-title', 'Error'); }
   });
 
   socket.on('receive_message', function(data) {
@@ -1740,14 +1743,14 @@ function saveProfile(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Profile Updated!', 'Your profile has been saved 💾', 'success');
+        showToast(getTranslation('toast-profile-saved-title', 'Profile Updated!'), getTranslation('toast-profile-saved-body', 'Your profile has been saved 💾'), 'success');
         const p = data.user;
         const fullName = (p.first_name + ' ' + p.last_name).trim();
         const initials = fullName.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
         
         document.getElementById('user-avatar').textContent = initials;
         document.getElementById('user-name').textContent = fullName;
-        document.getElementById('user-district').textContent = p.district + ' District';
+        document.getElementById('user-district').textContent = getTranslation('district-' + p.district.toLowerCase().replace(' ', ''), p.district);
         
         _user = {
           id: p.id, email: p.email, role: p.role,
@@ -1757,7 +1760,7 @@ function saveProfile(e) {
         sessionStorage.setItem('agro_user', JSON.stringify(_user));
         loadProfileDetails();
       } else {
-        showToast('Error', data.error || 'Failed to update profile', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('err-failed-update-profile', 'Failed to update profile'), 'error');
       }
     });
 }
@@ -1765,7 +1768,7 @@ function saveProfile(e) {
 // ── SETTINGS & THEME FUNCTIONS ──
 function loadSettingsDetails() {
   const isDark = document.body.classList.contains('dark');
-  document.getElementById('dark-mode-btn').textContent = isDark ? '🌞 Light Mode' : '🌙 Dark Mode';
+  document.getElementById('dark-mode-btn').textContent = isDark ? getTranslation('js-light-mode', '🌞 Light Mode') : getTranslation('js-dark-mode', '🌙 Dark Mode');
 }
 
 function toggleDarkModeSetting() {
@@ -1969,19 +1972,19 @@ function submitBroadcast(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Request Broadcasted!', 'Your request was sent to matching sellers 📡', 'success');
+        showToast(getTranslation('toast-req-broadcasted-title', 'Request Broadcasted!'), getTranslation('toast-req-broadcasted-body', 'Your request was sent to matching sellers 📡'), 'success');
         document.getElementById('broadcast-form').reset();
         if (_user.district) document.getElementById('broadcast-district').value = _user.district;
         document.getElementById('broadcast-date').value = new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0];
         loadDashboardData();
       } else {
-        showToast('Error', data.error || 'Failed to broadcast request', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('err-failed-broadcast', 'Failed to broadcast request'), 'error');
       }
     });
 }
 
 function acceptSellerResponse(broadcastId, responseId) {
-  if (!confirm('Are you sure you want to accept this offer? This will close the broadcast.')) return;
+  if (!confirm(getTranslation('confirm-accept-offer', 'Are you sure you want to accept this offer? This will close the broadcast.'))) return;
   
   fetch(API_URL + `/api/buyer/broadcasts/${broadcastId}/accept-response`, {
     method: 'POST',
@@ -1994,10 +1997,10 @@ function acceptSellerResponse(broadcastId, responseId) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Offer Accepted!', 'Contact the seller to coordinate delivery 🤝', 'success');
+        showToast(getTranslation('toast-offer-accepted-title', 'Offer Accepted!'), getTranslation('toast-offer-accepted-body', 'Contact the seller to coordinate delivery 🤝'), 'success');
         loadDashboardData();
       } else {
-        showToast('Error', data.error || 'Failed to accept offer', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('err-failed-accept-offer', 'Failed to accept offer'), 'error');
       }
     });
 }
@@ -2101,11 +2104,11 @@ function submitEditRequest(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Request Updated!', 'Broadcast request updated 📡', 'success');
+        showToast(getTranslation('toast-req-updated-title', 'Request Updated!'), getTranslation('toast-req-updated-body', 'Broadcast request updated 📡'), 'success');
         closeEditRequestModal();
         loadDashboardData();
       } else {
-        showToast('Error', data.error || 'Failed to update request', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('err-failed-update-request', 'Failed to update request'), 'error');
       }
     });
 }
@@ -2119,29 +2122,31 @@ function showUserProfileModal(userId) {
     .then(r => r.json())
     .then(data => {
       if (!data.success || !data.user) {
-        showToast('Error', 'Failed to retrieve user profile', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), getTranslation('err-failed-retrieve-profile', 'Failed to retrieve user profile'), 'error');
         return;
       }
       const u = data.user;
       const initials = u.first_name.charAt(0) + (u.last_name ? u.last_name.charAt(0) : '');
       document.getElementById('profile-modal-avatar').textContent = initials.toUpperCase();
       document.getElementById('profile-modal-name').textContent = u.first_name + ' ' + (u.last_name || '');
-      document.getElementById('profile-modal-role').textContent = u.role.toUpperCase();
       
-      const statusText = u.status === 'approved' ? '🛡️ Verified Partner' : (u.status === 'rejected' ? '❌ Verification Rejected' : '⏳ Pending Verification');
+      const roleKey = u.role === 'buyer' ? 'role-buyer' : 'role-farmer';
+      document.getElementById('profile-modal-role').textContent = getTranslation(roleKey, u.role.toUpperCase());
+      
+      const statusText = u.status === 'approved' ? '🛡️ ' + getTranslation('js-verified-partner', 'Verified Partner') : (u.status === 'rejected' ? '❌ ' + getTranslation('js-status-rejected', 'Verification Rejected') : '⏳ ' + getTranslation('js-verification-pending', 'Pending Verification'));
       const statusColor = u.status === 'approved' ? 'var(--green)' : (u.status === 'rejected' ? '#D95050' : 'var(--amber)');
       
       const statusEl = document.getElementById('profile-modal-status');
       statusEl.textContent = statusText;
       statusEl.style.color = statusColor;
       
-      document.getElementById('profile-modal-district').textContent = u.district || 'N/A';
+      document.getElementById('profile-modal-district').textContent = getTranslation('district-' + (u.district || '').toLowerCase().replace(' ', ''), u.district || 'N/A');
       document.getElementById('profile-modal-phone').textContent = u.phone || 'N/A';
       document.getElementById('profile-modal-email').textContent = u.email || 'N/A';
       
       const score = parseFloat(u.trust_score || 5.0);
       document.getElementById('profile-modal-rating').textContent = score.toFixed(1) + ' / 5.0';
-      document.getElementById('profile-modal-deals').textContent = (u.completed_rentals || 0) + ' completed';
+      document.getElementById('profile-modal-deals').textContent = (u.completed_rentals || 0) + getTranslation('js-completed-suffix', ' completed');
       
       // Update detailed ratings sliders
       const reliability = u.completed_rentals > 0 ? Math.min(100, Math.round((score / 5) * 100)) : 100;
@@ -2164,7 +2169,7 @@ function showUserProfileModal(userId) {
       
       if (isSeller) {
         listingsSect.style.display = 'flex';
-        listingsList.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:10px 0;">Loading listings...</div>';
+        listingsList.innerHTML = `<div style="font-size:12px;color:var(--muted);text-align:center;padding:10px 0;">${getTranslation('js-loading', 'Loading...')}</div>`;
         
         Promise.all([
           fetch(API_URL + '/api/seller/crops?seller_id=' + userId, { headers: getAuthHeaders() }).then(r => r.json()),
@@ -2181,7 +2186,7 @@ function showUserProfileModal(userId) {
                 listingsHtml += `
                   <div style="display:flex; justify-content:space-between; font-size:12px; border-bottom:1px solid var(--surface); padding-bottom:4px; margin-bottom:4px;">
                     <span style="color:var(--text); font-weight:500;">🥬 ${listing.name}</span>
-                    <span style="color:var(--teal); font-weight:600;">Rs. ${parseFloat(listing.price_per_kg).toFixed(0)}/kg</span>
+                    <span style="color:var(--teal); font-weight:600;">Rs. ${parseFloat(listing.price_per_kg).toFixed(0)}${getTranslation('js-per-kg', '/kg')}</span>
                   </div>
                 `;
               });
@@ -2194,20 +2199,20 @@ function showUserProfileModal(userId) {
                 listingsHtml += `
                   <div style="display:flex; justify-content:space-between; font-size:12px; border-bottom:1px solid var(--surface); padding-bottom:4px; margin-bottom:4px;">
                     <span style="color:var(--text); font-weight:500;">🚜 ${listing.name}</span>
-                    <span style="color:var(--teal); font-weight:600;">Rs. ${parseFloat(listing.rental_rate).toLocaleString()}/day</span>
+                    <span style="color:var(--teal); font-weight:600;">Rs. ${parseFloat(listing.rental_rate).toLocaleString()}${getTranslation('js-per-day', '/day')}</span>
                   </div>
                 `;
               });
             }
             
             if (count === 0) {
-              listingsList.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:10px 0;">No active listings.</div>';
+              listingsList.innerHTML = `<div style="font-size:12px;color:var(--muted);text-align:center;padding:10px 0;">${getTranslation('js-no-active-listings', 'No active listings.')}</div>`;
             } else {
               listingsList.innerHTML = listingsHtml;
             }
           })
           .catch(err => {
-            listingsList.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:10px 0;">Failed to load listings.</div>';
+            listingsList.innerHTML = `<div style="font-size:12px;color:var(--muted);text-align:center;padding:10px 0;">${getTranslation('js-failed-load-listings', 'Failed to load listings.')}</div>`;
           });
       } else {
         listingsSect.style.display = 'none';
@@ -2223,7 +2228,7 @@ function showUserProfileModal(userId) {
       document.getElementById('user-profile-modal').style.display = 'flex';
     })
     .catch(() => {
-      showToast('Error', 'Could not load user profile details.', 'error');
+      showToast(getTranslation('toast-error-title', 'Error'), getTranslation('err-failed-load-profile', 'Could not load user profile details.'), 'error');
     });
 }
 
@@ -2477,10 +2482,10 @@ async function downloadLedgerReceipt(txId, listingName, sellerName, amount, dura
     doc.rect(10, 192, 128, 4, 'F');
 
     doc.save(`AgroNexa_Receipt_${txId.slice(0, 8)}.pdf`);
-    showToast('PDF Generated!', 'Receipt downloaded successfully 📄', 'success');
+    showToast(getTranslation('toast-pdf-generated-title', 'PDF Generated!'), getTranslation('toast-receipt-downloaded-body', 'Receipt downloaded successfully 📄'), 'success');
   } catch (err) {
     console.error(err);
-    showToast('PDF Error', 'Failed to generate PDF receipt', 'error');
+    showToast(getTranslation('toast-pdf-error-title', 'PDF Error'), getTranslation('toast-pdf-receipt-error-body', 'Failed to generate PDF receipt'), 'error');
   }
 }
 
@@ -2630,15 +2635,15 @@ async function downloadBookingSlip(bookingId, listingName, ownerName, start, end
     doc.rect(10, 180, 128, 6, 'F');
 
     doc.save(`AgroNexa_Booking_${bookingId}.pdf`);
-    showToast('PDF Generated!', 'Booking slip downloaded successfully 📄', 'success');
+    showToast(getTranslation('toast-pdf-generated-title', 'PDF Generated!'), getTranslation('toast-slip-downloaded-body', 'Booking slip downloaded successfully 📄'), 'success');
   } catch (err) {
     console.error(err);
-    showToast('PDF Error', 'Failed to generate booking slip PDF', 'error');
+    showToast(getTranslation('toast-pdf-error-title', 'PDF Error'), getTranslation('toast-pdf-slip-error-body', 'Failed to generate booking slip PDF'), 'error');
   }
 }
 
 function closeRequest(id) {
-  if (!confirm('Are you sure you want to close this request? No more sellers will be able to respond.')) return;
+  if (!confirm(getTranslation('confirm-close-request', 'Are you sure you want to close this request? No more sellers will be able to respond.'))) return;
   
   fetch(API_URL + '/api/buyer/broadcasts/' + id, {
     method: 'DELETE',
@@ -2650,10 +2655,10 @@ function closeRequest(id) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Request Closed', 'Broadcast request has been closed', 'warning');
+        showToast(getTranslation('toast-req-closed-title', 'Request Closed'), getTranslation('toast-req-closed-body', 'Broadcast request has been closed'), 'warning');
         loadDashboardData();
       } else {
-        showToast('Error', data.error || 'Failed to close request', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('err-failed-close-request', 'Failed to close request'), 'error');
       }
     });
 }
@@ -2668,7 +2673,7 @@ function loadBookings() {
     .then(data => {
       const container = document.getElementById('bookings-list');
       if (!data.success || !data.bookings || !data.bookings.length) {
-        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No equipment bookings. Visit the marketplace to rent tools!</div>';
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">' + getTranslation('js-no-equipment-bookings-marketplace', 'No equipment bookings. Visit the marketplace to rent tools!') + '</div>';
         return;
       }
 
@@ -2683,7 +2688,7 @@ function loadBookings() {
         if (item.listing_name.toLowerCase().includes('sprayer') || item.listing_name.toLowerCase().includes('machine')) icon = '🌿';
 
         const isPending = item.status === 'pending';
-        const cancelBtn = isPending ? `<button onclick="cancelBooking(${item.id})" style="background:none;border:none;color:var(--amber);font-size:11.5px;cursor:pointer;margin-top:4px;font-weight:500;">Cancel Request</button>` : '';
+        const cancelBtn = isPending ? `<button onclick="cancelBooking(${item.id})" style="background:none;border:none;color:var(--amber);font-size:11.5px;cursor:pointer;margin-top:4px;font-weight:500;">${getTranslation('js-cancel-request', 'Cancel Request')}</button>` : '';
         let pdfBtn = '';
         if (item.status === 'confirmed') {
           pdfBtn = `<button onclick="downloadBookingSlip(${item.id}, '${item.listing_name.replace(/'/g, "\\'")}', '${item.owner_name.replace(/'/g, "\\'")}', '${start}', '${end}', ${item.total_amount})" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; margin-top:4px; display:flex; align-items:center; gap:2px;">📥 PDF</button>`;
@@ -2694,14 +2699,14 @@ function loadBookings() {
             <div class="booking-icon">${icon}</div>
             <div class="booking-info">
               <div class="booking-name">${item.listing_name}</div>
-              <div class="booking-owner">Owner: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.owner_id})">${item.owner_name}</span> · 📞 ${item.owner_phone || 'N/A'}</div>
+              <div class="booking-owner">${getTranslation('js-owner', 'Owner')}: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.owner_id})">${item.owner_name}</span> · 📞 ${item.owner_phone || 'N/A'}</div>
               <div class="booking-dates">
                 <span>📅 ${start} – ${end}</span>
                 <span>Rs. ${parseFloat(item.total_amount).toLocaleString()}</span>
               </div>
             </div>
             <div style="display:flex;flex-direction:column;align-items:flex-end;">
-              <span class="booking-status ${item.status}">${item.status.toUpperCase()}</span>
+              <span class="booking-status ${item.status}">${getTranslation('booking-status-' + item.status, item.status).toUpperCase()}</span>
               ${cancelBtn}
               ${pdfBtn}
             </div>
@@ -2713,7 +2718,7 @@ function loadBookings() {
 }
 
 function cancelBooking(id) {
-  if (!confirm('Are you sure you want to cancel this booking request?')) return;
+  if (!confirm(getTranslation('confirm-cancel-booking', 'Are you sure you want to cancel this booking request?'))) return;
   fetch(API_URL + '/api/buyer/bookings/' + id, {
     method: 'DELETE',
     headers: getAuthHeaders(),
@@ -2722,10 +2727,10 @@ function cancelBooking(id) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Booking Cancelled', 'Equipment booking request cancelled', 'warning');
+        showToast(getTranslation('toast-booking-cancelled-title', 'Booking Cancelled'), getTranslation('toast-booking-cancelled-body', 'Equipment booking request cancelled'), 'warning');
         loadDashboardData();
       } else {
-        showToast('Error', data.error || 'Failed to cancel booking', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('err-failed-cancel-booking', 'Failed to cancel booking'), 'error');
       }
     });
 }
@@ -2747,7 +2752,7 @@ function switchBookingSubtab(subtab) {
     purchasesBtn.style.color = 'var(--muted)';
     rentalsList.style.display = 'block';
     purchasesList.style.display = 'none';
-    if (titleEl) titleEl.textContent = 'My Equipment Bookings';
+    if (titleEl) titleEl.textContent = getTranslation('panel-equipment-bookings', 'My Equipment Bookings');
   } else {
     purchasesBtn.style.background = '#fff';
     purchasesBtn.style.color = 'var(--teal)';
@@ -2755,7 +2760,7 @@ function switchBookingSubtab(subtab) {
     rentalsBtn.style.color = 'var(--muted)';
     rentalsList.style.display = 'none';
     purchasesList.style.display = 'block';
-    if (titleEl) titleEl.textContent = 'My Crop Purchase Orders';
+    if (titleEl) titleEl.textContent = getTranslation('panel-crop-purchase-orders', 'My Crop Purchase Orders');
   }
 }
 
@@ -2764,9 +2769,9 @@ var currentCropMaxQty = 0;
 
 function openCropOrderModal(id, rate, name, maxQty) {
   document.getElementById('book-crop-id').value = id;
-  document.getElementById('book-crop-title').textContent = 'Order ' + name;
-  document.getElementById('book-crop-rate').textContent = `Rs. ${parseFloat(rate).toFixed(0)} / kg`;
-  document.getElementById('book-crop-available-lbl').textContent = `Max Available: ${parseFloat(maxQty)} kg`;
+  document.getElementById('book-crop-title').textContent = getTranslation('modal-order-crops-title', 'Order Crops') + ': ' + name;
+  document.getElementById('book-crop-rate').textContent = `Rs. ${parseFloat(rate).toFixed(0)} ` + getTranslation('js-per-kg', '/kg');
+  document.getElementById('book-crop-available-lbl').textContent = getTranslation('modal-lbl-available-qty', 'Available Quantity') + `: ${parseFloat(maxQty)} kg`;
   
   currentCropRate = parseFloat(rate);
   currentCropMaxQty = parseFloat(maxQty);
@@ -2807,7 +2812,7 @@ function submitCropOrder(e) {
   const date = document.getElementById('book-crop-date').value;
 
   if (qty <= 0 || qty > currentCropMaxQty) {
-    showToast('Invalid Quantity', `Please enter a quantity between 0 and ${currentCropMaxQty} kg.`, 'error');
+    showToast(getTranslation('toast-invalid-qty-title', 'Invalid Quantity'), getTranslation('toast-invalid-qty-body-prefix', 'Please enter a quantity between 0 and') + ` ${currentCropMaxQty} kg.`, 'error');
     return;
   }
 
@@ -2824,16 +2829,16 @@ function submitCropOrder(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Order Placed!', 'Your crop purchase order has been sent to the farmer 🌾', 'success');
+        showToast(getTranslation('toast-order-placed-title', 'Order Placed!'), getTranslation('toast-order-placed-body', 'Your crop purchase order has been sent to the farmer 🌾'), 'success');
         closeCropOrderModal();
         switchBookingSubtab('purchases');
         loadDashboardData();
       } else {
-        showToast('Error', data.error || 'Failed to submit order', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('err-failed-submit-order', 'Failed to submit order'), 'error');
       }
     })
     .catch(err => {
-      showToast('Error', 'Server connection failure', 'error');
+      showToast(getTranslation('toast-error-title', 'Error'), getTranslation('err-server-connection', 'Server connection failure'), 'error');
     });
 }
 
@@ -2846,7 +2851,7 @@ function loadCropOrders() {
     .then(data => {
       const container = document.getElementById('crop-orders-list');
       if (!data.success || !data.orders || !data.orders.length) {
-        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No crop orders placed. Visit the marketplace to buy fresh produce!</div>';
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">' + getTranslation('js-no-crop-orders-placed', 'No crop orders placed. Visit the marketplace to buy fresh produce!') + '</div>';
         return;
       }
 
@@ -2864,14 +2869,14 @@ function loadCropOrders() {
             <div class="booking-icon" style="background:var(--green-pale); color:var(--green);">🌾</div>
             <div class="booking-info">
               <div class="booking-name">${item.crop_name}</div>
-              <div class="booking-owner">Seller: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.seller_id})">${item.seller_name}</span> · 📞 ${item.seller_phone || 'N/A'}</div>
+              <div class="booking-owner">${getTranslation('js-seller', 'Seller')}: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.seller_id})">${item.seller_name}</span> · 📞 ${item.seller_phone || 'N/A'}</div>
               <div class="booking-dates">
-                <span>📅 Deliv: ${deliveryDate}</span>
-                <span>Qty: ${item.quantity_kg} kg @ Rs. ${parseFloat(item.price_per_kg).toFixed(0)}/kg</span>
+                <span>📅 ${getTranslation('js-deliv', 'Deliv')}: ${deliveryDate}</span>
+                <span>${getTranslation('js-qty', 'Qty')}: ${item.quantity_kg} kg @ Rs. ${parseFloat(item.price_per_kg).toFixed(0)}/kg</span>
               </div>
             </div>
             <div style="display:flex;flex-direction:column;align-items:flex-end;">
-              <span class="booking-status ${statusClass}">${item.status.toUpperCase()}</span>
+              <span class="booking-status ${statusClass}">${getTranslation('booking-status-' + item.status, item.status).toUpperCase()}</span>
               <div style="font-size:13px; font-weight:600; color:var(--teal); margin-top: 4px;">Rs. ${parseFloat(item.total_amount).toLocaleString()}</div>
             </div>
           </div>
@@ -3018,10 +3023,10 @@ function expressInterest(cropId) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Interest Registered!', 'The seller has been notified and will contact you 🥬', 'success');
+        showToast(getTranslation('toast-interest-registered-title', 'Interest Registered!'), getTranslation('toast-interest-registered-body', 'The seller has been notified and will contact you 🥬'), 'success');
         loadDashboardData();
       } else {
-        showToast('Error', data.error || 'Failed to register interest', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('err-failed-register-interest', 'Failed to register interest'), 'error');
       }
     });
 }
@@ -3083,11 +3088,11 @@ function submitEquipmentBooking(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Booking Requested!', 'Your equipment rental request was sent to the owner 🚜', 'success');
+        showToast(getTranslation('toast-booking-requested-title', 'Booking Requested!'), getTranslation('toast-booking-requested-body', 'Your equipment rental request was sent to the owner 🚜'), 'success');
         closeBookingModal();
         loadDashboardData();
       } else {
-        showToast('Error', data.error || 'Failed to submit booking', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('err-failed-submit-booking', 'Failed to submit booking'), 'error');
       }
     });
 }
@@ -3102,7 +3107,7 @@ function loadLedger() {
     .then(data => {
       const container = document.getElementById('ledger-list');
       if (!data.success || !data.ledger || !data.ledger.length) {
-        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No secured agreements found yet. Confirm a booking to write to the ledger.</div>';
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">' + getTranslation('js-no-secured-agreements', 'No secured agreements found yet. Confirm a booking to write to the ledger.') + '</div>';
         return;
       }
 
@@ -3110,7 +3115,9 @@ function loadLedger() {
       data.ledger.forEach(item => {
         const dateStr = new Date(item.created_at).toLocaleDateString();
         const shortHash = item.block_hash ? `${item.block_hash.slice(0, 16)}...` : 'N/A';
-        const typeLabel = item.listing_type === 'equipment' ? '🚜 Equipment Rental' : '🥬 Crop Purchase';
+        const typeLabel = item.listing_type === 'equipment' 
+          ? '🚜 ' + getTranslation('ledger-type-equipment', 'Equipment Rental') 
+          : '🥬 ' + getTranslation('ledger-type-crop', 'Crop Purchase');
 
         html += `
           <div class="booking-item" style="display:block; padding:16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; margin-bottom: 2px;">
@@ -3122,10 +3129,10 @@ function loadLedger() {
               </div>
             </div>
             <div style="font-size:12px; color:var(--muted); display:flex; flex-direction:column; gap:4px;">
-              <span><strong>Type:</strong> ${typeLabel} (${item.duration_days || 1} days)</span>
-              <span><strong>Partner (Seller):</strong> <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.owner_id})">${item.owner_name}</span></span>
-              <span><strong>Transaction Hashed Block:</strong> <span style="font-family:monospace; background:rgba(0,0,0,0.04); padding:2px 6px; border-radius:4px; font-size:11px;">${shortHash}</span></span>
-              <span><strong>Timestamp:</strong> ${dateStr}</span>
+              <span><strong>${getTranslation('js-type', 'Type')}:</strong> ${typeLabel} (${item.duration_days || 1} ${getTranslation('js-days', 'days')})</span>
+              <span><strong>${getTranslation('js-partner-seller', 'Partner (Seller)')}:</strong> <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.owner_id})">${item.owner_name}</span></span>
+              <span><strong>${getTranslation('js-block-hash', 'Transaction Hashed Block')}:</strong> <span style="font-family:monospace; background:rgba(0,0,0,0.04); padding:2px 6px; border-radius:4px; font-size:11px;">${shortHash}</span></span>
+              <span><strong>${getTranslation('js-timestamp', 'Timestamp')}:</strong> ${dateStr}</span>
             </div>
           </div>
         `;
@@ -3139,19 +3146,19 @@ function verifyLedger() {
   const statusText = document.getElementById('ledger-status-text');
   const statusDot = document.getElementById('ledger-status-dot');
   
-  statusText.textContent = '🔒 Recalculating SHA-256 block hashes...';
+  statusText.textContent = getTranslation('ledger-status-calculating', '🔒 Recalculating SHA-256 block hashes...');
   statusDot.style.background = '#7BA090';
-
-  fetch(API_URL + '/api/seller/ledger/verify', {
+  
+  fetch(API_URL + '/api/ledger/verify', {
     headers: getAuthHeaders()
   })
     .then(r => r.json())
     .then(data => {
       if (data.success && data.valid) {
-        statusText.textContent = `✅ Cryptographic Integrity Verified: Chained SHA-256 ledger is completely secure (${data.total_records} block deals checked).`;
+        statusText.textContent = '✅ ' + getTranslation('ledger-status-verified', 'Ledger is fully verified and tamper-free') + ` (${data.total_records})`;
         statusDot.style.background = '#28A060';
       } else {
-        statusText.textContent = `⚠️ Chain integrity compromised at block: ${data.broken_at || 'unknown'}. Please notify system administrator.`;
+        statusText.textContent = getTranslation('ledger-status-failed-at', '⚠️ Chain integrity compromised at block: ') + ` ${data.broken_at || 'unknown'}`;
         statusDot.style.background = '#d95050';
       }
     })
@@ -3162,20 +3169,6 @@ function verifyLedger() {
 }
 
 // ── UTILS ──
-function formatTimeAgo(date) {
-  const seconds = Math.floor((new Date() - date) / 1000);
-  let interval = Math.floor(seconds / 31536000);
-  if (interval >= 1) return interval + 'y ago';
-  interval = Math.floor(seconds / 2592000);
-  if (interval >= 1) return interval + 'mo ago';
-  interval = Math.floor(seconds / 86400);
-  if (interval >= 1) return interval + 'd ago';
-  interval = Math.floor(seconds / 3600);
-  if (interval >= 1) return interval + 'h ago';
-  interval = Math.floor(seconds / 60);
-  if (interval >= 1) return interval + 'm ago';
-  return 'just now';
-}
 
 function initMarketMap() {
   if (marketMap) {
@@ -3345,13 +3338,16 @@ const DISTRICT_COORDS = {
 
 function loadWeather(district) {
   const displayDistrict = document.getElementById('weather-district-display');
-  if (displayDistrict) displayDistrict.textContent = district || 'Unknown';
+  if (displayDistrict) {
+    const districtKey = 'district-' + (district || '').toLowerCase().replace(/[^a-z]/g, '');
+    displayDistrict.textContent = getTranslation(districtKey, district || getTranslation('js-weather-unknown', 'Unknown'));
+  }
   
   const contentEl = document.getElementById('weather-widget-content');
   const advisoryEl = document.getElementById('weather-advisory-content');
   
   if (!district || !DISTRICT_COORDS[district]) {
-    if (contentEl) contentEl.innerHTML = `<div style="font-size:12px; color:var(--muted);">Select/save your district in Profile to load weather.</div>`;
+    if (contentEl) contentEl.innerHTML = `<div style="font-size:12px; color:var(--muted);">${getTranslation('js-weather-select-profile', 'Select/save your district in Profile to load weather.')}</div>`;
     return;
   }
   
@@ -3365,30 +3361,30 @@ function loadWeather(district) {
       const humidity = data.current.relative_humidity_2m;
       const code = data.current.weather_code;
       
-      let statusText = 'Normal';
+      let statusText = getTranslation('js-weather-status-normal', 'Normal');
       let icon = '☀️';
-      let advice = 'Good weather conditions for farming activities.';
+      let advice = getTranslation('js-weather-advice-farming', 'Good weather conditions for farming activities.');
       
       if (code === 0) {
-        statusText = 'Clear Sky';
+        statusText = getTranslation('js-weather-status-clear', 'Clear Sky');
         icon = '☀️';
-        advice = 'Optimal weather for harvesting and drying crops. Good time to broadcast requests.';
+        advice = getTranslation('js-weather-advice-harvesting', 'Optimal weather for harvesting and drying crops. Good time to broadcast requests.');
       } else if (code >= 1 && code <= 3) {
-        statusText = 'Partly Cloudy';
+        statusText = getTranslation('js-weather-status-partly-cloudy', 'Partly Cloudy');
         icon = '⛅';
-        advice = 'Favorable conditions for transport and outdoor storage.';
+        advice = getTranslation('js-weather-advice-transport', 'Favorable conditions for transport and outdoor storage.');
       } else if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) {
-        statusText = 'Rainy / Showers';
+        statusText = getTranslation('js-weather-status-rainy', 'Rainy / Showers');
         icon = '🌧️';
-        advice = 'Rain forecast. Ensure stored crops are well-covered. Avoid wet-field harvest.';
+        advice = getTranslation('js-weather-advice-rain', 'Rain forecast. Ensure stored crops are well-covered. Avoid wet-field harvest.');
       } else if (code >= 95) {
-        statusText = 'Thunderstorm';
+        statusText = getTranslation('js-weather-status-thunderstorm', 'Thunderstorm');
         icon = '⛈️';
-        advice = '⚠️ Thunderstorms detected. Keep transport vehicles sheltered and secure outdoor produce immediately.';
+        advice = getTranslation('js-weather-advice-thunderstorm', '⚠️ Thunderstorms detected. Keep transport vehicles sheltered and secure outdoor produce immediately.');
       } else {
-        statusText = 'Cloudy';
+        statusText = getTranslation('js-weather-status-cloudy', 'Cloudy');
         icon = '☁️';
-        advice = 'Favorable agricultural conditions. Keep crops protected from damp air.';
+        advice = getTranslation('js-weather-advice-cloudy', 'Favorable agricultural conditions. Keep crops protected from damp air.');
       }
       
       if (contentEl) {
@@ -3397,7 +3393,7 @@ function loadWeather(district) {
             <span style="font-size:32px;">${icon}</span>
             <div>
               <div style="font-size:16px; font-weight:600; color:var(--text);">${statusText}</div>
-              <div style="font-size:12px; color:var(--muted);">${temp}°C | Humidity: ${humidity}%</div>
+              <div style="font-size:12px; color:var(--muted);">${temp}°C | ${getTranslation('js-weather-humidity', 'Humidity')}: ${humidity}%</div>
             </div>
           </div>
         `;
@@ -3405,7 +3401,7 @@ function loadWeather(district) {
       if (advisoryEl) advisoryEl.textContent = advice;
     })
     .catch(err => {
-      if (contentEl) contentEl.innerHTML = `<div style="font-size:12px; color:var(--amber);">Unable to load weather data: ${err.message}</div>`;
+      if (contentEl) contentEl.innerHTML = `<div style="font-size:12px; color:var(--amber);">${getTranslation('js-weather-unable-load', 'Unable to load weather data')}: ${err.message}</div>`;
     });
 }
 
@@ -3542,7 +3538,7 @@ function loadMarketPrices() {
       });
     })
     .catch(err => {
-      tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:20px; color:var(--amber);">Failed to load crop prices: ${err.message}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:20px; color:var(--amber);">${getTranslation('js-err-failed-load-crop-prices', 'Failed to load crop prices')}: ${err.message}</td></tr>`;
     });
 }
 
@@ -3619,14 +3615,24 @@ function loadTransportDrivers() {
         
         const isOwner = _user && p.owner_id === _user.id;
         const bookBtnHtml = isOwner 
-          ? `<span style="font-size: 11px; color: var(--muted); font-style: italic;">Your Vehicle</span>`
+          ? `<span style="font-size: 11px; color: var(--muted); font-style: italic;">${getTranslation('js-your-vehicle', 'Your Vehicle')}</span>`
           : `<button onclick="openTransportBookingModal(${p.id})" class="btn-sm btn-confirm" style="margin:0; height:auto; padding:6px 12px; font-size:11px;" data-i18n="logistics-btn-book">Book Transport</button>`;
         
+        let typeKey = '';
+        if (p.vehicle_type === 'Lorry (Light)') typeKey = 'logistics-type-light-lorry';
+        else if (p.vehicle_type === 'Lorry (Heavy)') typeKey = 'logistics-type-heavy-lorry';
+        else if (p.vehicle_type === 'Tractor / Trailer') typeKey = 'logistics-type-tractor-trailer';
+        else if (p.vehicle_type === 'Refrigerated Truck') typeKey = 'logistics-type-refrigerated-truck';
+        const vehicleTypeTranslated = typeKey ? getTranslation(typeKey, p.vehicle_type) : p.vehicle_type;
+
+        const distKey = 'district-' + (p.district || '').toLowerCase().replace(/[^a-z]/g, '');
+        const districtTranslated = getTranslation(distKey, p.district);
+
         item.innerHTML = `
           <div>
-            <div style="font-weight:600; font-size:14.5px; color:var(--text);">${p.vehicle_type} — ${p.vehicle_no}</div>
-            <div style="font-size:12px; color:var(--muted); margin-top:2px;">Owner: ${p.owner_name} | Capacity: ${p.capacity_kg} kg</div>
-            <div style="font-size:11px; background:var(--teal-pale); color:var(--teal-mid); display:inline-block; padding:2px 8px; border-radius:4px; margin-top:6px;">📍 ${p.district}</div>
+            <div style="font-weight:600; font-size:14.5px; color:var(--text);">${vehicleTypeTranslated} — ${p.vehicle_no}</div>
+            <div style="font-size:12px; color:var(--muted); margin-top:2px;">${getTranslation('js-owner', 'Owner')}: ${p.owner_name} | ${getTranslation('js-capacity', 'Capacity')}: ${p.capacity_kg} kg</div>
+            <div style="font-size:11px; background:var(--teal-pale); color:var(--teal-mid); display:inline-block; padding:2px 8px; border-radius:4px; margin-top:6px;">📍 ${districtTranslated}</div>
           </div>
           <div style="display:flex; align-items:center; gap:8px;">
             <a href="tel:${p.phone}" class="broadcast-btn" style="text-decoration:none; padding:6px 12px; font-size:11px; height:auto; margin:0;" data-i18n="logistics-driver-call">📞 Call</a>
@@ -3638,7 +3644,7 @@ function loadTransportDrivers() {
       applyTranslations();
     })
     .catch(err => {
-      listEl.innerHTML = `<div style="font-size:12px;color:var(--amber);text-align:center;padding:20px 0;">Error loading drivers: ${err.message}</div>`;
+      listEl.innerHTML = `<div style="font-size:12px;color:var(--amber);text-align:center;padding:20px 0;">${getTranslation('js-error-loading-drivers', 'Error loading drivers')}: ${err.message}</div>`;
     });
 }
 
@@ -3666,15 +3672,15 @@ function submitTransportRegistration(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Success', 'Transport listing published successfully! 🚛', 'success');
+        showToast(getTranslation('toast-trans-published-title', 'Success'), getTranslation('toast-trans-published-body', 'Transport listing published successfully! 🚛'), 'success');
         document.getElementById('transport-register-form').reset();
         toggleTransportTab('browse');
       } else {
-        showToast('Error', data.error || 'Failed to register vehicle', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('err-failed-register-vehicle', 'Failed to register vehicle'), 'error');
       }
     })
     .catch(err => {
-      showToast('Error', err.message, 'error');
+      showToast(getTranslation('toast-error-title', 'Error'), err.message, 'error');
     });
 }
 
@@ -3715,15 +3721,15 @@ function submitTransportBooking(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Success', 'Transport booking request sent! 🚛', 'success');
+        showToast(getTranslation('toast-trans-booked-title', 'Success'), getTranslation('toast-trans-booked-body', 'Transport booking request sent! 🚛'), 'success');
         closeTransportBookingModal();
         toggleTransportTab('bookings');
       } else {
-        showToast('Error', data.error || 'Failed to request booking', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('err-failed-request-booking', 'Failed to request booking'), 'error');
       }
     })
     .catch(err => {
-      showToast('Error', err.message, 'error');
+      showToast(getTranslation('toast-error-title', 'Error'), err.message, 'error');
     });
 }
 
@@ -3800,9 +3806,16 @@ function loadTransportBookings() {
 
         let contactInfoHtml = '';
         if (isRequester) {
-          contactInfoHtml = `<div style="font-size:12px; color:var(--muted); margin-top:4px;"><b>Driver:</b> ${b.provider_owner_name} (${b.provider_phone}) | ${b.vehicle_type} [${b.vehicle_no}]</div>`;
+          let typeKey = '';
+          if (b.vehicle_type === 'Lorry (Light)') typeKey = 'logistics-type-light-lorry';
+          else if (b.vehicle_type === 'Lorry (Heavy)') typeKey = 'logistics-type-heavy-lorry';
+          else if (b.vehicle_type === 'Tractor / Trailer') typeKey = 'logistics-type-tractor-trailer';
+          else if (b.vehicle_type === 'Refrigerated Truck') typeKey = 'logistics-type-refrigerated-truck';
+          const vehicleTypeTranslated = typeKey ? getTranslation(typeKey, b.vehicle_type) : b.vehicle_type;
+
+          contactInfoHtml = `<div style="font-size:12px; color:var(--muted); margin-top:4px;"><b>${getTranslation('js-driver', 'Driver')}:</b> ${b.provider_owner_name} (${b.provider_phone}) | ${vehicleTypeTranslated} [${b.vehicle_no}]</div>`;
         } else {
-          contactInfoHtml = `<div style="font-size:12px; color:var(--muted); margin-top:4px;"><b>Client:</b> ${b.requester_name}</div>`;
+          contactInfoHtml = `<div style="font-size:12px; color:var(--muted); margin-top:4px;"><b>${getTranslation('js-client', 'Client')}:</b> ${b.requester_name}</div>`;
         }
 
         item.innerHTML = `
@@ -3810,11 +3823,11 @@ function loadTransportBookings() {
             <div>
               <div style="font-weight:600; font-size:15px; color:var(--text);">${b.commodity_name} — ${b.quantity_kg} kg</div>
               ${contactInfoHtml}
-              <div style="font-size:12px; color:var(--muted); margin-top:4px;"><b>Route:</b> ${b.pickup_address} ➔ ${b.delivery_address}</div>
-              <div style="font-size:12px; font-weight:600; color:var(--teal-mid); margin-top:4px;">Rs. ${b.price ? parseFloat(b.price).toLocaleString() : 'Negotiable'}</div>
+              <div style="font-size:12px; color:var(--muted); margin-top:4px;"><b>${getTranslation('js-route', 'Route')}:</b> ${b.pickup_address} ➔ ${b.delivery_address}</div>
+              <div style="font-size:12px; font-weight:600; color:var(--teal-mid); margin-top:4px;">Rs. ${b.price ? parseFloat(b.price).toLocaleString() : getTranslation('js-negotiable', 'Negotiable')}</div>
             </div>
             <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
-              <span style="font-size:11px; font-weight:600; text-transform:uppercase; padding:4px 10px; border-radius:6px; background:${badgeBg}; color:${badgeColor};" data-i18n="${statusKey}">${b.status}</span>
+              <span style="font-size:11px; font-weight:600; text-transform:uppercase; padding:4px 10px; border-radius:6px; background:${badgeBg}; color:${badgeColor};" data-i18n="${statusKey}">${getTranslation(statusKey, b.status).toUpperCase()}</span>
               <div style="display:flex; margin-top:8px;">
                 ${actionButtonsHtml}
               </div>
@@ -3826,7 +3839,7 @@ function loadTransportBookings() {
       applyTranslations();
     })
     .catch(err => {
-      listEl.innerHTML = `<div style="font-size:12px;color:var(--amber);text-align:center;padding:20px 0;">Error loading bookings: ${err.message}</div>`;
+      listEl.innerHTML = `<div style="font-size:12px;color:var(--amber);text-align:center;padding:20px 0;">${getTranslation('js-error-loading-bookings', 'Error loading bookings')}: ${err.message}</div>`;
     });
 }
 
@@ -3839,14 +3852,14 @@ function updateTransportBookingStatus(bookingId, status) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast('Success', `Booking updated to ${status}! 🚛`, 'success');
+        showToast(getTranslation('toast-booking-updated-title', 'Success'), getTranslation('toast-booking-updated-body-prefix', 'Booking updated to') + ` ${status}! 🚛`, 'success');
         loadTransportBookings();
       } else {
-        showToast('Error', data.error || 'Failed to update booking status', 'error');
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('err-failed-update-booking-status', 'Failed to update booking status'), 'error');
       }
     })
     .catch(err => {
-      showToast('Error', err.message, 'error');
+      showToast(getTranslation('toast-error-title', 'Error'), err.message, 'error');
     });
 }
 
