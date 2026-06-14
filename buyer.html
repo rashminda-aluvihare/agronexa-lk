@@ -25,7 +25,7 @@
   body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text);display:flex;min-height:100vh;transition:background 0.3s, color 0.3s}
 
   /* Sidebar */
-  .sidebar{width:240px;background:linear-gradient(180deg, #16222c 0%, #0d141b 100%);display:flex;flex-direction:column;flex-shrink:0}
+  .sidebar{width:240px;background:linear-gradient(180deg, #16222c 0%, #0d141b 100%);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
   .logo-wrap{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,0.07)}
   .logo-drop{display:inline-block;width:32px;height:32px;background:var(--teal-light);border-radius:50% 50% 8px 50%;margin-bottom:8px;box-shadow: 0 4px 10px rgba(77,182,228,0.3)}
   .logo-name{font-family:'DM Serif Display',serif;color:#fff;font-size:18px;letter-spacing:-0.3px;line-height:1.1}
@@ -36,7 +36,7 @@
   .user-role{font-size:11px;color:rgba(255,255,255,0.4);margin-top:1px}
   .role-badge{display:inline-block;padding:2px 8px;background:rgba(77,182,228,0.12);color:var(--teal-light);border:1px solid rgba(77,182,228,0.2);border-radius:20px;font-size:10px;font-weight:500;margin-top:4px}
   .verified-badge{display:inline-flex;align-items:center;gap:3px;background:var(--green-pale);color:var(--green);border:1px solid var(--green-light);font-size:9.5px;padding:1px 6px;border-radius:4px;font-weight:600;margin-left:6px}
-  nav{padding:16px 12px;flex:1;overflow-y:auto;min-height:0}
+  nav{padding:16px 12px;flex:1}
   .nav-section{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.25);padding:12px 12px 6px}
   .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;color:rgba(255,255,255,0.55);font-size:13.5px;font-weight:400;margin-bottom:2px;position:relative;transition:all 0.25s cubic-bezier(0.4, 0, 0.2, 1)}
   .nav-item::before{content:'';position:absolute;left:0;top:20%;height:60%;width:3px;background:var(--teal-light);border-radius:0 4px 4px 0;opacity:0;transition:opacity 0.25s}
