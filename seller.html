@@ -449,7 +449,7 @@
       width: 100% !important;
       border-right: none !important;
       border-bottom: 1px solid var(--border-color) !important;
-      height: 180px !important;
+      height: 100% !important;
       flex-shrink: 0 !important;
       max-height: none !important;
     }
@@ -457,7 +457,6 @@
       flex: 1 !important;
       height: auto !important;
       min-height: 0 !important;
-      display: flex !important;
       flex-direction: column !important;
     }
   }
@@ -610,10 +609,15 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
       <span data-i18n="nav-ledger">Ledger History</span>
     </div>
-    <div class="nav-item" onclick="switchTab('messages')">
+    <div class="nav-item" onclick="switchTab('chat')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-      <span data-i18n="nav-messages">Messages</span>
-      <span class="nav-badge" id="sidebar-messages-count" style="display:none;background:var(--amber);">0</span>
+      <span data-i18n="nav-chat">Chat</span>
+      <span class="nav-badge" id="sidebar-chat-count" style="display:none;background:var(--amber);">0</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('notifications')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span data-i18n="nav-notifications">Notifications</span>
+      <span class="nav-badge" id="sidebar-notifications-count" style="display:none;background:var(--amber);">0</span>
     </div>
     <div class="nav-item" onclick="switchTab('profile')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
@@ -1128,8 +1132,8 @@
       </div>
     </div>
 
-    <!-- Messages Section -->
-    <div class="content-section" id="section-messages" style="display:none;">
+    <!-- Chat Section -->
+    <div class="content-section" id="section-chat" style="display:none;">
       <div class="panel" style="padding:0; overflow:hidden; border-radius:var(--radius-lg);">
         <div class="chat-layout">
           <!-- Chat Sidebar (Active Conversations) -->
@@ -1150,9 +1154,12 @@
           </div>
           <div class="chat-main" id="chat-window-active" style="display:none;">
             <div class="chat-main-header">
-              <div>
-                <div class="chat-main-title" id="chat-active-name" style="cursor:pointer; text-decoration:underline;" onclick="showUserProfileModal(activeChatUserId)">Buyer Name</div>
-                <div style="font-size:11px; color:var(--text-muted); margin-top:2px;" id="chat-active-role" data-i18n="js-buyer-role">Buyer</div>
+              <div style="display:flex; align-items:center; gap:12px;">
+                <button type="button" id="chat-back-btn" onclick="backToChatList()" style="display:none; align-items:center; justify-content:center; background:none; border:none; font-size:16px; color:var(--text-main); cursor:pointer; padding:4px 8px; border-radius:6px; transition:background 0.2s;"><span data-i18n="btn-chat-back">⬅️ Back</span></button>
+                <div>
+                  <div class="chat-main-title" id="chat-active-name" style="cursor:pointer; text-decoration:underline;" onclick="showUserProfileModal(activeChatUserId)">Buyer Name</div>
+                  <div style="font-size:11px; color:var(--text-muted); margin-top:2px;" id="chat-active-role" data-i18n="js-buyer-role">Buyer</div>
+                </div>
               </div>
               <div class="verified-badge" data-i18n="js-verified-partner">Verified Partner</div>
             </div>
@@ -1186,14 +1193,17 @@
           </div>
         </div>
       </div>
-      
+    </div>
+
+    <!-- Notifications Section -->
+    <div class="content-section" id="section-notifications" style="display:none;">
       <!-- System Notifications -->
-      <div class="panel" style="margin-top:20px;">
+      <div class="panel">
         <div class="panel-head">
           <div class="panel-title" data-i18n="panel-notifications-alerts">🔔 System Notifications & Alerts</div>
           <div class="panel-action" onclick="markAllNotificationsRead()" style="cursor:pointer" data-i18n="btn-mark-all-read">Mark all as read</div>
         </div>
-        <div id="notifications-inbox-list" style="display:flex; flex-direction:column; gap:12px; max-height:250px; overflow-y:auto; padding-right:5px;">
+        <div id="notifications-inbox-list" style="display:flex; flex-direction:column; gap:12px; max-height:400px; overflow-y:auto; padding-right:5px;">
           <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;" data-i18n="js-no-notifications">No messages or notifications.</div>
         </div>
       </div>
@@ -1729,6 +1739,7 @@ function initSocket() {
     console.log('🔔 New notification:', notif);
     showToast(notif.title, notif.body, 'info', 6000);
     loadDashboardData();
+    loadNotificationsInbox();
   });
 
   socket.on('requests_update', function() {
@@ -1778,7 +1789,8 @@ function switchTab(tab) {
   const sectionEquipment = document.getElementById('section-equipment');
   const sectionProfile = document.getElementById('section-profile');
   const sectionSettings = document.getElementById('section-settings');
-  const sectionMessages = document.getElementById('section-messages');
+  const sectionChat = document.getElementById('section-chat');
+  const sectionNotifications = document.getElementById('section-notifications');
   const sectionWeather = document.getElementById('section-weather');
   const sectionPriceIndex = document.getElementById('section-price-index');
   const sectionTransport = document.getElementById('section-transport');
@@ -1794,7 +1806,8 @@ function switchTab(tab) {
   sectionEquipment.style.display = 'none';
   sectionProfile.style.display = 'none';
   sectionSettings.style.display = 'none';
-  sectionMessages.style.display = 'none';
+  if (sectionChat) sectionChat.style.display = 'none';
+  if (sectionNotifications) sectionNotifications.style.display = 'none';
   if (sectionWeather) sectionWeather.style.display = 'none';
   if (sectionPriceIndex) sectionPriceIndex.style.display = 'none';
   if (sectionTransport) sectionTransport.style.display = 'none';
@@ -1823,10 +1836,33 @@ function switchTab(tab) {
   } else if (tab === 'settings') {
     sectionSettings.style.display = 'block';
     loadSettingsDetails();
-  } else if (tab === 'messages') {
-    sectionMessages.style.display = 'block';
-    loadNotificationsInbox();
+  } else if (tab === 'chat') {
+    if (sectionChat) sectionChat.style.display = 'block';
     loadChatsList();
+    
+    // On mobile, reset chat view when switching to chat tab
+    const sidebar = document.querySelector('.chat-sidebar');
+    const emptyWin = document.getElementById('chat-window-empty');
+    const activeWin = document.getElementById('chat-window-active');
+    const backBtn = document.getElementById('chat-back-btn');
+    if (window.innerWidth <= 768) {
+      if (sidebar) sidebar.style.display = 'flex';
+      if (emptyWin) emptyWin.style.display = 'none';
+      if (activeWin) activeWin.style.display = 'none';
+      if (backBtn) backBtn.style.display = 'none';
+    } else {
+      if (sidebar) sidebar.style.display = 'flex';
+      if (activeChatUserId) {
+        if (emptyWin) emptyWin.style.display = 'none';
+        if (activeWin) activeWin.style.display = 'flex';
+      } else {
+        if (emptyWin) emptyWin.style.display = 'flex';
+        if (activeWin) activeWin.style.display = 'none';
+      }
+    }
+  } else if (tab === 'notifications') {
+    if (sectionNotifications) sectionNotifications.style.display = 'block';
+    loadNotificationsInbox();
   } else if (tab === 'weather') {
     if (sectionWeather) {
       sectionWeather.style.display = 'block';
@@ -2637,11 +2673,13 @@ function loadDashboardData() {
     .then(r => r.json())
     .then(data => {
       if (!data.success) return;
-      const msgBadge = document.getElementById('sidebar-messages-count');
+      const msgBadge = document.getElementById('sidebar-notifications-count');
       if (msgBadge) {
         msgBadge.textContent = data.unread_count || 0;
         msgBadge.style.display = data.unread_count > 0 ? 'inline-block' : 'none';
       }
+      // Load chats list to update chat unread badge count
+      loadChatsList();
     });
 
   // 3. Load lists
@@ -3775,10 +3813,16 @@ function loadChatsList() {
       const container = document.getElementById('chat-conversations-list');
       if (!data.success || !data.chats || !data.chats.length) {
         container.innerHTML = '<div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">No active chats.</div>';
+        const chatBadge = document.getElementById('sidebar-chat-count');
+        if (chatBadge) chatBadge.style.display = 'none';
         return;
       }
       let html = '';
+      let totalUnreadChats = 0;
       data.chats.forEach(chat => {
+        if (chat.unread_count > 0) {
+          totalUnreadChats += parseInt(chat.unread_count, 10);
+        }
         const activeClass = activeChatUserId === chat.id ? 'active' : '';
         const unreadBadge = chat.unread_count > 0 ? `<span class="chat-unread-badge">${chat.unread_count}</span>` : '';
         const initials = chat.name.split(' ').map(w => w[0] || '').join('').toUpperCase().slice(0, 2);
@@ -3796,6 +3840,12 @@ function loadChatsList() {
         `;
       });
       container.innerHTML = html;
+      
+      const chatBadge = document.getElementById('sidebar-chat-count');
+      if (chatBadge) {
+        chatBadge.textContent = totalUnreadChats;
+        chatBadge.style.display = totalUnreadChats > 0 ? 'inline-block' : 'none';
+      }
     });
 }
 
@@ -4005,6 +4055,17 @@ function openDirectChat(buyerId, buyerName, buyerRole) {
   document.getElementById('chat-active-name').textContent = buyerName;
   document.getElementById('chat-active-role').textContent = buyerRole.toUpperCase() + ' · ' + (buyerRole === 'buyer' ? 'B2B Client' : 'Farmer');
   
+  // Mobile transition: hide sidebar and show back button
+  const sidebar = document.querySelector('.chat-sidebar');
+  const backBtn = document.getElementById('chat-back-btn');
+  if (window.innerWidth <= 768) {
+    if (sidebar) sidebar.style.display = 'none';
+    if (backBtn) backBtn.style.display = 'flex';
+  } else {
+    if (sidebar) sidebar.style.display = 'flex';
+    if (backBtn) backBtn.style.display = 'none';
+  }
+
   // Highlight active chat in list
   const items = document.querySelectorAll('.chat-user-item');
   items.forEach(item => item.classList.remove('active'));
@@ -4037,9 +4098,64 @@ function openDirectChat(buyerId, buyerName, buyerRole) {
         `;
       });
       box.innerHTML = html;
-      box.scrollTop = box.scrollHeight;
     });
 }
+
+function backToChatList() {
+  activeChatUserId = null;
+  const sidebar = document.querySelector('.chat-sidebar');
+  const emptyWin = document.getElementById('chat-window-empty');
+  const activeWin = document.getElementById('chat-window-active');
+  const backBtn = document.getElementById('chat-back-btn');
+  
+  if (window.innerWidth <= 768) {
+    if (sidebar) sidebar.style.display = 'flex';
+    if (emptyWin) emptyWin.style.display = 'none';
+    if (activeWin) activeWin.style.display = 'none';
+    if (backBtn) backBtn.style.display = 'none';
+  } else {
+    if (sidebar) sidebar.style.display = 'flex';
+    if (emptyWin) emptyWin.style.display = 'flex';
+    if (activeWin) activeWin.style.display = 'none';
+    if (backBtn) backBtn.style.display = 'none';
+  }
+  
+  // Unhighlight items
+  const items = document.querySelectorAll('.chat-user-item');
+  items.forEach(item => item.classList.remove('active'));
+}
+
+window.addEventListener('resize', function() {
+  const sidebar = document.querySelector('.chat-sidebar');
+  const emptyWin = document.getElementById('chat-window-empty');
+  const activeWin = document.getElementById('chat-window-active');
+  const backBtn = document.getElementById('chat-back-btn');
+  
+  if (window.innerWidth > 768) {
+    if (sidebar) sidebar.style.display = 'flex';
+    if (backBtn) backBtn.style.display = 'none';
+    if (activeChatUserId) {
+      if (emptyWin) emptyWin.style.display = 'none';
+      if (activeWin) activeWin.style.display = 'flex';
+    } else {
+      if (emptyWin) emptyWin.style.display = 'flex';
+      if (activeWin) activeWin.style.display = 'none';
+    }
+  } else {
+    // Mobile
+    if (activeChatUserId) {
+      if (sidebar) sidebar.style.display = 'none';
+      if (emptyWin) emptyWin.style.display = 'none';
+      if (activeWin) activeWin.style.display = 'flex';
+      if (backBtn) backBtn.style.display = 'flex';
+    } else {
+      if (sidebar) sidebar.style.display = 'flex';
+      if (emptyWin) emptyWin.style.display = 'none';
+      if (activeWin) activeWin.style.display = 'none';
+      if (backBtn) backBtn.style.display = 'none';
+    }
+  }
+});
 
 async function sendChatMessage(e) {
   e.preventDefault();
@@ -4132,7 +4248,7 @@ async function sendChatMessage(e) {
 
 // ── CHAT UTILS ──
 function startChatWithUser(userId, userName, userRole) {
-  switchTab('messages');
+  switchTab('chat');
   openDirectChat(userId, userName, userRole);
 }
 
