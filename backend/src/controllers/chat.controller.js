@@ -13,7 +13,13 @@ async function getUserChats(req, res, next) {
   try {
     const result = await db.query(
       `SELECT u.id, u.first_name || ' ' || u.last_name AS name, u.role, u.district,
-              (SELECT message FROM direct_messages 
+              (SELECT CASE 
+                        WHEN message IS NOT NULL AND message != '' THEN message
+                        WHEN attachment_type = 'image' THEN '🖼️ Image'
+                        WHEN attachment_type = 'audio' THEN '🎙️ Voice Note'
+                        ELSE '📎 Attachment'
+                      END
+               FROM direct_messages 
                WHERE (sender_id = $1 AND receiver_id = u.id) OR (sender_id = u.id AND receiver_id = $1)
                ORDER BY created_at DESC LIMIT 1) AS last_message,
               (SELECT created_at FROM direct_messages 
