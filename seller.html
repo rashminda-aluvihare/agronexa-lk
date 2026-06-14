@@ -443,13 +443,40 @@
     .chat-layout {
       display: flex !important;
       flex-direction: column !important;
+      height: 650px !important;
     }
     .chat-sidebar {
       width: 100% !important;
       border-right: none !important;
       border-bottom: 1px solid var(--border-color) !important;
-      max-height: 200px !important;
+      height: 180px !important;
+      flex-shrink: 0 !important;
+      max-height: none !important;
     }
+    .chat-main {
+      flex: 1 !important;
+      height: auto !important;
+      min-height: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .whatsapp-voice-player {
+      width: 100% !important;
+      min-width: 150px !important;
+      gap: 8px !important;
+    }
+    .voice-play-btn {
+      width: 32px !important;
+      height: 32px !important;
+      font-size: 12px !important;
+    }
+    .chat-bubble {
+      max-width: 85% !important;
+    }
+  }
   }
 
   /* Quick Actions Hub */
@@ -1133,11 +1160,24 @@
             <div class="chat-messages-container" id="chat-messages-box">
               <!-- Messages bubbles will populate here -->
             </div>
-            <div id="chat-attachment-preview" style="display:none; padding:10px 16px; background:rgba(0,0,0,0.03); border-top:1px solid var(--border-color); font-size:12px; display:flex; align-items:center; justify-content:space-between; width:100%;">
-              <span id="chat-preview-filename" style="font-weight:600; font-style:italic;"></span>
-              <button type="button" onclick="clearSelectedAttachment()" style="background:none; border:none; font-size:16px; font-weight:bold; cursor:pointer; color:#c53030;">&times;</button>
+            <div id="chat-attachment-preview" style="display:none; padding:12px 20px; background:var(--primary-pale); border-top:1px solid var(--border-color); border-left:4px solid var(--primary-light); font-size:12.5px; align-items:center; justify-content:space-between; width:100%; gap:12px; transition: all 0.3s ease;">
+              <div style="display:flex; align-items:center; gap:8px; color:var(--text-main); font-weight:500;">
+                <span id="chat-preview-icon" style="font-size:16px;">📎</span>
+                <span id="chat-preview-filename" style="font-style:normal; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:300px;">Attachment staged</span>
+              </div>
+              <button type="button" onclick="clearSelectedAttachment()" style="background:rgba(197,48,48,0.1); border:none; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#c53030; font-weight:bold; transition:all 0.2s;" title="Remove Attachment">&times;</button>
             </div>
-            <form class="chat-input-area" onsubmit="sendChatMessage(event)">
+            <div id="chat-recording-panel" style="display:none; padding:12px 24px; background:rgba(231,111,81,0.06); border-top:1px solid var(--border-color); align-items:center; justify-content:space-between; width:100%; gap:12px;">
+              <div style="display:flex; align-items:center; gap:10px; color:#ef4444; font-size:13.5px; font-weight:600;">
+                <span class="dot-live" style="background:#ef4444; width:10px; height:10px;"></span>
+                <span id="chat-recording-timer">Recording 0:00</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:12px;">
+                <button type="button" onclick="cancelVoiceRecording()" style="background:var(--bg-app); border:1px solid var(--border-color); border-radius:8px; padding:6px 12px; font-size:12px; font-weight:600; color:var(--text-muted); cursor:pointer; display:flex; align-items:center; gap:4px;" title="Discard Recording">❌ Discard</button>
+                <button type="button" onclick="stopVoiceRecordingAndStage()" style="background:#ef4444; color:#fff; border:none; border-radius:8px; padding:6px 14px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px;" title="Finish and Stage">⏹️ Done</button>
+              </div>
+            </div>
+            <form class="chat-input-area" id="chat-input-form" onsubmit="sendChatMessage(event)">
               <input type="file" id="chat-file-input" style="display:none;" onchange="handleChatFileSelected(event)">
               <button type="button" class="chat-attach-btn" onclick="document.getElementById('chat-file-input').click()" style="background:none; border:none; font-size:18px; cursor:pointer; color:var(--text-muted); padding:4px;" title="Attach File/Image">📎</button>
               <button type="button" id="chat-voice-btn" onclick="toggleVoiceRecording()" style="background:none; border:none; font-size:18px; cursor:pointer; color:var(--text-muted); padding:4px;" title="Record Voice Message">🎤</button>
@@ -3802,26 +3842,67 @@ function formatMessageContent(msg) {
   return html;
 }
 
+let recordingTimerInterval = null;
+let recordingDuration = 0;
+let shouldSaveRecording = true;
+
+function startRecordingTimer() {
+  recordingDuration = 0;
+  const timerEl = document.getElementById('chat-recording-timer');
+  if (timerEl) timerEl.textContent = 'Recording 0:00';
+  
+  if (recordingTimerInterval) clearInterval(recordingTimerInterval);
+  recordingTimerInterval = setInterval(() => {
+    recordingDuration++;
+    const mins = Math.floor(recordingDuration / 60);
+    const secs = (recordingDuration % 60).toString().padStart(2, '0');
+    if (timerEl) timerEl.textContent = `Recording ${mins}:${secs}`;
+  }, 1000);
+}
+
+function stopRecordingTimer() {
+  if (recordingTimerInterval) {
+    clearInterval(recordingTimerInterval);
+    recordingTimerInterval = null;
+  }
+}
+
 function stageAttachmentForUpload(file, name, defaultType = 'file') {
   stagedAttachmentFile = file;
   stagedAttachmentName = name;
   let type = defaultType;
-  if (file.type.startsWith('image/')) type = 'image';
-  else if (file.type.startsWith('audio/')) type = 'audio';
+  if (file.type && file.type.startsWith('image/')) type = 'image';
+  else if (file.type && file.type.startsWith('audio/')) type = 'audio';
   stagedAttachmentType = type;
   
-  document.getElementById('chat-attachment-preview').style.display = 'flex';
-  document.getElementById('chat-preview-filename').textContent = `Attachment staged: ${name} (${type})`;
-  document.getElementById('chat-message-input').required = false;
+  const previewEl = document.getElementById('chat-attachment-preview');
+  const filenameEl = document.getElementById('chat-preview-filename');
+  const iconEl = document.getElementById('chat-preview-icon');
+  
+  if (previewEl) previewEl.style.display = 'flex';
+  if (filenameEl) filenameEl.textContent = name;
+  if (iconEl) {
+    if (type === 'image') {
+      iconEl.textContent = '🖼️';
+      if (previewEl) previewEl.style.borderLeftColor = 'var(--primary-light)';
+    } else if (type === 'audio') {
+      iconEl.textContent = '🎙️';
+      if (previewEl) previewEl.style.borderLeftColor = '#10b981';
+    } else {
+      iconEl.textContent = '📎';
+      if (previewEl) previewEl.style.borderLeftColor = 'var(--text-hint)';
+    }
+  }
 }
 
 function clearSelectedAttachment() {
   stagedAttachmentFile = null;
   stagedAttachmentType = null;
   stagedAttachmentName = null;
-  document.getElementById('chat-attachment-preview').style.display = 'none';
-  document.getElementById('chat-message-input').required = true;
-  document.getElementById('chat-file-input').value = '';
+  const previewEl = document.getElementById('chat-attachment-preview');
+  if (previewEl) previewEl.style.display = 'none';
+  const fileInput = document.getElementById('chat-file-input');
+  if (fileInput) fileInput.value = '';
 }
 
 function handleChatFileSelected(event) {
@@ -3832,55 +3913,90 @@ function handleChatFileSelected(event) {
 }
 
 async function toggleVoiceRecording() {
-  const btn = document.getElementById('chat-voice-btn');
-  if (!isRecording) {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  if (isRecording) return;
+  
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    
+    let options = {};
+    let extension = 'weba';
+    let mimeType = 'audio/webm';
+    
+    if (typeof MediaRecorder.isTypeSupported === 'function') {
+      if (MediaRecorder.isTypeSupported('audio/webm')) {
+        options = { mimeType: 'audio/webm' };
+        mimeType = 'audio/webm';
+        extension = 'weba';
+      } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+        options = { mimeType: 'audio/mp4' };
+        mimeType = 'audio/mp4';
+        extension = 'm4a';
+      } else if (MediaRecorder.isTypeSupported('audio/ogg')) {
+        options = { mimeType: 'audio/ogg' };
+        mimeType = 'audio/ogg';
+        extension = 'ogg';
+      }
+    }
+    
+    mediaRecorder = new MediaRecorder(stream, options);
+    audioChunks = [];
+    shouldSaveRecording = true;
+    
+    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+    mediaRecorder.onstop = async () => {
+      stream.getTracks().forEach(track => track.stop());
+      stopRecordingTimer();
       
-      let options = {};
-      let extension = 'webm';
-      let mimeType = 'audio/webm';
-      
-      if (typeof MediaRecorder.isTypeSupported === 'function') {
-        if (MediaRecorder.isTypeSupported('audio/webm')) {
-          options = { mimeType: 'audio/webm' };
-          mimeType = 'audio/webm';
-          extension = 'webm';
-        } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
-          options = { mimeType: 'audio/mp4' };
-          mimeType = 'audio/mp4';
-          extension = 'm4a';
-        } else if (MediaRecorder.isTypeSupported('audio/ogg')) {
-          options = { mimeType: 'audio/ogg' };
-          mimeType = 'audio/ogg';
-          extension = 'ogg';
-        }
+      if (!shouldSaveRecording) {
+        return; // discarded
       }
       
-      mediaRecorder = new MediaRecorder(stream, options);
-      audioChunks = [];
-      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-      mediaRecorder.onstop = async () => {
-        const recordedMimeType = mediaRecorder.mimeType || mimeType;
-        const audioBlob = new Blob(audioChunks, { type: recordedMimeType });
-        const file = new File([audioBlob], `voice_note_${Date.now()}.${extension}`, { type: recordedMimeType });
-        stageAttachmentForUpload(file, `voice_note.${extension}`, 'audio');
-        stream.getTracks().forEach(track => track.stop());
-      };
-      mediaRecorder.start();
-      isRecording = true;
-      btn.innerHTML = '⏹️';
-      btn.style.color = '#c53030';
-      showToast(getTranslation('toast-recording-started', 'Recording'), getTranslation('toast-recording-mic-active', 'Microphone is recording... Speak now.'));
-    } catch (err) {
-      alert('Microphone access denied: ' + err.message);
-    }
-  } else {
-    mediaRecorder.stop();
-    isRecording = false;
-    btn.innerHTML = '🎤';
-    btn.style.color = 'var(--text-muted)';
+      const recordedMimeType = mediaRecorder.mimeType || mimeType;
+      const audioBlob = new Blob(audioChunks, { type: recordedMimeType });
+      const file = new File([audioBlob], `voice_note_${Date.now()}.${extension}`, { type: recordedMimeType });
+      stageAttachmentForUpload(file, `voice_note.${extension}`, 'audio');
+    };
+    
+    mediaRecorder.start();
+    isRecording = true;
+    
+    // UI Transitions
+    const formEl = document.getElementById('chat-input-form');
+    if (formEl) formEl.style.display = 'none';
+    const panelEl = document.getElementById('chat-recording-panel');
+    if (panelEl) panelEl.style.display = 'flex';
+    startRecordingTimer();
+    
+    showToast(getTranslation('toast-recording-started', 'Recording'), getTranslation('toast-recording-mic-active', 'Microphone is recording... Speak now.'));
+  } catch (err) {
+    alert('Microphone access denied: ' + err.message);
   }
+}
+
+function cancelVoiceRecording() {
+  if (!isRecording || !mediaRecorder) return;
+  shouldSaveRecording = false;
+  mediaRecorder.stop();
+  isRecording = false;
+  
+  // UI Transitions
+  const panelEl = document.getElementById('chat-recording-panel');
+  if (panelEl) panelEl.style.display = 'none';
+  const formEl = document.getElementById('chat-input-form');
+  if (formEl) formEl.style.display = 'flex';
+}
+
+function stopVoiceRecordingAndStage() {
+  if (!isRecording || !mediaRecorder) return;
+  shouldSaveRecording = true;
+  mediaRecorder.stop();
+  isRecording = false;
+  
+  // UI Transitions
+  const panelEl = document.getElementById('chat-recording-panel');
+  if (panelEl) panelEl.style.display = 'none';
+  const formEl = document.getElementById('chat-input-form');
+  if (formEl) formEl.style.display = 'flex';
 }
 
 function openDirectChat(buyerId, buyerName, buyerRole) {
@@ -3930,7 +4046,10 @@ async function sendChatMessage(e) {
   e.preventDefault();
   const input = document.getElementById('chat-message-input');
   const msgText = input.value.trim();
-  if (!msgText && !stagedAttachmentFile) return;
+  if (!msgText && !stagedAttachmentFile) {
+    showToast('Empty Message', 'Please type a message or select a file/voice first.', 'warning');
+    return;
+  }
   if (!activeChatUserId) return;
   
   let attachmentUrl = null;
@@ -4034,15 +4153,29 @@ function toggleVoicePlay(msgId) {
     }
   });
 
-  if (audio.paused) {
-    audio.play().then(() => {
-      btn.textContent = '⏸';
-    }).catch(err => {
-      console.error("Audio play failed:", err);
-    });
+  // Duration fixing trick
+  if (audio.duration === Infinity || isNaN(audio.duration)) {
+    audio.currentTime = 1e9; // seek to end
+    audio.addEventListener('timeupdate', function getDur() {
+      audio.currentTime = 0;
+      audio.removeEventListener('timeupdate', getDur);
+      playAudio();
+    }, { once: true });
   } else {
-    audio.pause();
-    btn.textContent = '▶';
+    playAudio();
+  }
+
+  function playAudio() {
+    if (audio.paused) {
+      audio.play().then(() => {
+        btn.textContent = '⏸';
+      }).catch(err => {
+        console.error("Audio play failed:", err);
+      });
+    } else {
+      audio.pause();
+      btn.textContent = '▶';
+    }
   }
 }
 
