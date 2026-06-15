@@ -69,6 +69,7 @@ async function initDatabase() {
     await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token VARCHAR(255);");
     await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token_expires TIMESTAMPTZ;");
     await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS sms_notifications BOOLEAN DEFAULT TRUE;");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();");
 
     // 2. Crop Listings Table
     await client.query(`
