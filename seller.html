@@ -624,6 +624,10 @@
       <span data-i18n="nav-notifications">Notifications</span>
       <span class="nav-badge" id="sidebar-notifications-count" style="display:none;background:var(--amber);">0</span>
     </div>
+    <div class="nav-item" onclick="switchTab('invoices')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <span data-i18n="nav-invoices">Invoices</span>
+    </div>
     <div class="nav-item" onclick="switchTab('profile')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       <span data-i18n="nav-profile">Profile</span>
@@ -1030,6 +1034,49 @@
         <div id="transport-bookings-list" style="display:flex; flex-direction:column; gap:12px;">
           <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;" data-i18n="js-loading">Loading transport bookings...</div>
         </div>
+      </div>
+    </div>
+
+    <!-- Invoices Section -->
+    <div class="panel content-section" id="section-invoices" style="display:none;">
+      <div class="panel-head" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+        <div class="panel-title">📄 <span data-i18n="panel-invoices-title">Invoices & Receipts</span></div>
+        <div style="font-size:12px; color:var(--text-muted);" id="invoices-summary-info">Showing 0 invoices</div>
+      </div>
+      
+      <!-- Filters Row -->
+      <div style="display:flex; gap:14px; margin-bottom:20px; flex-wrap:wrap; background:rgba(82,183,136,0.03); padding:16px; border-radius:12px; border:1px solid var(--border-color);">
+        <div style="flex:1; min-width:180px; display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:11px; font-weight:600; color:var(--text-main);" data-i18n="filter-lbl-search">Search Invoices</label>
+          <input type="text" id="invoices-filter-search" placeholder="Search item, hash, user..." oninput="filterInvoices()" style="width:100%; padding:8px 12px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card); color:var(--text-main); font-size:12.5px;" />
+        </div>
+        <div style="width:180px; display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:11px; font-weight:600; color:var(--text-main);" data-i18n="filter-lbl-type">Activity Type</label>
+          <select id="invoices-filter-type" onchange="filterInvoices()" style="width:100%; padding:8px 12px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card); color:var(--text-main); font-size:12.5px;">
+            <option value="all" data-i18n="filter-opt-all">All Activities</option>
+            <option value="ledger" data-i18n="filter-opt-ledger">Ledger Receipts</option>
+            <option value="rental" data-i18n="filter-opt-rental">Equipment Rentals</option>
+            <option value="transport" data-i18n="filter-opt-transport">Transport Bookings</option>
+          </select>
+        </div>
+        <div style="width:150px; display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:11px; font-weight:600; color:var(--text-main);" data-i18n="filter-lbl-start">Start Date</label>
+          <input type="date" id="invoices-filter-start-date" onchange="filterInvoices()" style="width:100%; padding:8px 12px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card); color:var(--text-main); font-size:12.5px;" />
+        </div>
+        <div style="width:150px; display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:11px; font-weight:600; color:var(--text-main);" data-i18n="filter-lbl-end">End Date</label>
+          <input type="date" id="invoices-filter-end-date" onchange="filterInvoices()" style="width:100%; padding:8px 12px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card); color:var(--text-main); font-size:12.5px;" />
+        </div>
+        <div style="display:flex; align-items:flex-end;">
+          <button onclick="clearInvoiceFilters()" style="padding:9px 16px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card); color:var(--text-main); font-size:12.5px; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:4px; height:36px;">
+            🔄 <span data-i18n="btn-clear">Clear</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Invoices List Container -->
+      <div id="invoices-list" style="display:flex; flex-direction:column; gap:12px;">
+        <!-- Invoices will be dynamically loaded here -->
       </div>
     </div>
 
@@ -1829,6 +1876,7 @@ function switchTab(tab) {
   const sectionSettings = document.getElementById('section-settings');
   const sectionChat = document.getElementById('section-chat');
   const sectionNotifications = document.getElementById('section-notifications');
+  const sectionInvoices = document.getElementById('section-invoices');
   const sectionWeather = document.getElementById('section-weather');
   const sectionPriceIndex = document.getElementById('section-price-index');
   const sectionTransport = document.getElementById('section-transport');
@@ -1846,6 +1894,7 @@ function switchTab(tab) {
   sectionSettings.style.display = 'none';
   if (sectionChat) sectionChat.style.display = 'none';
   if (sectionNotifications) sectionNotifications.style.display = 'none';
+  if (sectionInvoices) sectionInvoices.style.display = 'none';
   if (sectionWeather) sectionWeather.style.display = 'none';
   if (sectionPriceIndex) sectionPriceIndex.style.display = 'none';
   if (sectionTransport) sectionTransport.style.display = 'none';
@@ -1901,6 +1950,9 @@ function switchTab(tab) {
   } else if (tab === 'notifications') {
     if (sectionNotifications) sectionNotifications.style.display = 'block';
     loadNotificationsInbox();
+  } else if (tab === 'invoices') {
+    if (sectionInvoices) sectionInvoices.style.display = 'block';
+    loadInvoices();
   } else if (tab === 'weather') {
     if (sectionWeather) {
       sectionWeather.style.display = 'block';
@@ -3323,6 +3375,232 @@ function verifyLedger() {
     .catch(() => {
       statusText.textContent = getTranslation('js-verification-server-offline', 'Verification server offline');
     });
+}
+
+// ── INVOICES SYSTEM FUNCTIONS ──
+let sellerInvoices = [];
+
+function loadInvoices() {
+  if (!_user || !_user.id) return;
+  const listEl = document.getElementById('invoices-list');
+  if (!listEl) return;
+
+  listEl.innerHTML = `<div style="font-size:12.5px;color:var(--text-muted);text-align:center;padding:30px 0;">Loading invoices...</div>`;
+
+  const fetchLedger = fetch(API_URL + '/api/seller/ledger?owner_id=' + _user.id, { headers: getAuthHeaders() }).then(r => r.json()).catch(() => ({ success: false }));
+  const fetchRentals = fetch(API_URL + '/api/seller/bookings?owner_id=' + _user.id, { headers: getAuthHeaders() }).then(r => r.json()).catch(() => ({ success: false }));
+  const fetchTransport = fetch(API_URL + '/api/transport/bookings', { headers: getAuthHeaders() }).then(r => r.json()).catch(() => ({ success: false }));
+
+  Promise.all([fetchLedger, fetchRentals, fetchTransport])
+    .then(([ledgerRes, rentalsRes, transportRes]) => {
+      sellerInvoices = [];
+
+      // Process ledger entries
+      if (ledgerRes.success && ledgerRes.ledger) {
+        ledgerRes.ledger.forEach(item => {
+          sellerInvoices.push({
+            id: item.tx_id,
+            date: new Date(item.created_at),
+            type: 'ledger',
+            typeLabel: getTranslation('filter-opt-ledger', 'Ledger Receipt'),
+            title: item.listing_name || getTranslation('ledger-type-equipment', 'Equipment Rental'),
+            amount: parseFloat(item.amount),
+            status: 'secured',
+            partner: item.renter_name || 'Buyer',
+            partnerId: item.renter_id,
+            blockHash: item.block_hash,
+            prevHash: item.prev_hash,
+            duration: item.duration_days,
+            raw: item
+          });
+        });
+      }
+
+      // Process rentals bookings
+      if (rentalsRes.success && rentalsRes.bookings) {
+        // Save to window.ownerBookings so that printRentalInvoice can access it
+        window.ownerBookings = rentalsRes.bookings;
+        
+        rentalsRes.bookings.forEach(item => {
+          sellerInvoices.push({
+            id: 'INV-EQ-' + item.id,
+            date: new Date(item.created_at || item.start_date),
+            type: 'rental',
+            typeLabel: getTranslation('filter-opt-rental', 'Equipment Rental'),
+            title: item.listing_name,
+            amount: parseFloat(item.total_amount),
+            status: item.status,
+            partner: item.renter_name,
+            partnerId: item.renter_id,
+            blockHash: null,
+            prevHash: null,
+            bookingId: item.id,
+            raw: item
+          });
+        });
+      }
+
+      // Process transport bookings
+      if (transportRes.success && transportRes.bookings) {
+        transportRes.bookings.forEach(item => {
+          // Seller is the provider owner
+          if (item.provider_owner_id === _user.id) {
+            sellerInvoices.push({
+              id: 'INV-TR-' + item.id,
+              date: new Date(item.created_at),
+              type: 'transport',
+              typeLabel: getTranslation('filter-opt-transport', 'Transport Booking'),
+              title: item.commodity_name || 'Logistics Service',
+              amount: parseFloat(item.price) || 0,
+              status: item.status,
+              partner: item.requester_name || 'Client',
+              partnerId: item.requester_id,
+              blockHash: null,
+              prevHash: null,
+              bookingId: item.id,
+              raw: item
+            });
+          }
+        });
+      }
+
+      // Sort invoices chronologically (newest first)
+      sellerInvoices.sort((a, b) => b.date - a.date);
+
+      filterInvoices();
+    });
+}
+
+function filterInvoices() {
+  const searchQuery = document.getElementById('invoices-filter-search').value.toLowerCase().trim();
+  const typeFilter = document.getElementById('invoices-filter-type').value;
+  const startDateVal = document.getElementById('invoices-filter-start-date').value;
+  const endDateVal = document.getElementById('invoices-filter-end-date').value;
+
+  const startDate = startDateVal ? new Date(startDateVal) : null;
+  const endDate = endDateVal ? new Date(endDateVal) : null;
+  if (endDate) {
+    endDate.setHours(23, 59, 59, 999);
+  }
+
+  const filtered = sellerInvoices.filter(inv => {
+    // Search text matches title, partner, id, or block hash
+    if (searchQuery) {
+      const matchText = (inv.title + ' ' + inv.partner + ' ' + inv.id + ' ' + (inv.blockHash || '')).toLowerCase();
+      if (!matchText.includes(searchQuery)) return false;
+    }
+
+    // Type filter
+    if (typeFilter !== 'all' && inv.type !== typeFilter) return false;
+
+    // Date range filter
+    if (startDate && inv.date < startDate) return false;
+    if (endDate && inv.date > endDate) return false;
+
+    return true;
+  });
+
+  renderInvoices(filtered);
+}
+
+function renderInvoices(list) {
+  const container = document.getElementById('invoices-list');
+  const summaryInfo = document.getElementById('invoices-summary-info');
+  
+  if (summaryInfo) {
+    summaryInfo.textContent = `Showing ${list.length} invoices`;
+  }
+
+  if (list.length === 0) {
+    container.innerHTML = `<div style="font-size:12.5px;color:var(--text-muted);text-align:center;padding:30px 0;">No matching invoices found.</div>`;
+    return;
+  }
+
+  let html = '';
+  list.forEach(inv => {
+    const formattedDate = inv.date.toLocaleDateString('en-LK', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    const formattedAmount = 'Rs. ' + inv.amount.toLocaleString();
+    
+    let activityDetails = '';
+    let actionButtons = '';
+
+    if (inv.type === 'ledger') {
+      activityDetails = `
+        <div style="margin-top:8px; font-size:11.5px; display:flex; flex-direction:column; gap:4px; border-left:3px solid var(--accent); padding-left:10px; background:rgba(0,0,0,0.02); padding:6px 10px; border-radius:4px;">
+          <span><strong>Block Hash:</strong> <span style="font-family:monospace;">${inv.blockHash}</span></span>
+          <span><strong>Prev Hash:</strong> <span style="font-family:monospace;">${inv.prevHash}</span></span>
+          <span><strong>Ledger Status:</strong> <span style="color:var(--accent); font-weight:600;">🔒 Secured On-Chain</span></span>
+        </div>
+      `;
+      actionButtons = `
+        <button onclick="downloadLedgerReceipt('${inv.id}', '${inv.title.replace(/'/g, "\\'")}', '${inv.partner.replace(/'/g, "\\'")}', ${inv.amount}, ${inv.duration || 1}, '${inv.blockHash}', '${inv.prevHash}')" style="background:none; border:none; color:var(--primary-light); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:inline-flex; align-items:center; gap:4px;">📥 PDF Receipt</button>
+      `;
+    } else if (inv.type === 'rental') {
+      activityDetails = `
+        <div style="margin-top:8px; font-size:11.5px; display:flex; flex-direction:column; gap:4px; border-left:3px solid var(--accent-light); padding-left:10px; background:rgba(0,0,0,0.02); padding:6px 10px; border-radius:4px;">
+          <span><strong>Booking ID:</strong> ${inv.bookingId}</span>
+          <span><strong>Rental Schedule:</strong> ${new Date(inv.raw.start_date).toLocaleDateString()} to ${new Date(inv.raw.end_date).toLocaleDateString()}</span>
+          <span><strong>Booking Status:</strong> <span class="booking-status ${inv.status}" style="padding:1px 6px; font-size:10px; display:inline-block; border-radius:4px;">${inv.status.toUpperCase()}</span></span>
+        </div>
+      `;
+      if (inv.status === 'confirmed' || inv.status === 'completed') {
+        actionButtons = `
+          <button onclick="printRentalInvoice(${inv.bookingId})" style="background:none; border:none; color:var(--primary-light); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:inline-flex; align-items:center; gap:4px;">📄 Print Invoice</button>
+        `;
+      } else {
+        actionButtons = `<span style="font-size:11.5px; color:var(--text-muted);">Pending Confirmation</span>`;
+      }
+    } else if (inv.type === 'transport') {
+      activityDetails = `
+        <div style="margin-top:8px; font-size:11.5px; display:flex; flex-direction:column; gap:4px; border-left:3px solid var(--primary); padding-left:10px; background:rgba(0,0,0,0.02); padding:6px 10px; border-radius:4px;">
+          <span><strong>Booking ID:</strong> ${inv.bookingId}</span>
+          <span><strong>Route:</strong> ${inv.raw.pickup_address} ➔ ${inv.raw.delivery_address}</span>
+          <span><strong>Booking Status:</strong> <span class="booking-status ${inv.status}" style="padding:1px 6px; font-size:10px; display:inline-block; border-radius:4px;">${inv.status.toUpperCase()}</span></span>
+        </div>
+      `;
+      if (inv.status === 'confirmed' || inv.status === 'in-transit' || inv.status === 'delivered') {
+        actionButtons = `
+          <button onclick="printTransportInvoice(${inv.bookingId})" style="background:none; border:none; color:var(--primary-light); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:inline-flex; align-items:center; gap:4px;">📄 Print Invoice</button>
+        `;
+      } else {
+        actionButtons = `<span style="font-size:11.5px; color:var(--text-muted);">Pending Confirmation</span>`;
+      }
+    }
+
+    html += `
+      <div class="booking-item" style="display:block; padding:16px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:12px; margin-bottom:0px; box-shadow:0 2px 6px rgba(0,0,0,0.01);">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <span style="font-size:11px; text-transform:uppercase; font-weight:700; letter-spacing:0.5px; color:var(--text-muted);">${inv.typeLabel}</span>
+            <div style="font-weight:600; font-size:14.5px; color:var(--text-main); margin-top:2px;">${inv.title}</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">
+              <span>Partner: <strong>${inv.partner}</strong></span> · 
+              <span>ID: <strong style="font-family:monospace;">${inv.id}</strong></span>
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">🕒 ${formattedDate}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-weight:700; font-size:16px; color:var(--text-main);">${formattedAmount}</div>
+            <div style="margin-top:6px;">
+              ${actionButtons}
+            </div>
+          </div>
+        </div>
+        ${activityDetails}
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+  applyTranslations();
+}
+
+function clearInvoiceFilters() {
+  document.getElementById('invoices-filter-search').value = '';
+  document.getElementById('invoices-filter-type').value = 'all';
+  document.getElementById('invoices-filter-start-date').value = '';
+  document.getElementById('invoices-filter-end-date').value = '';
+  filterInvoices();
 }
 
 // ── REPUTATION SCORE FUNCTIONS ──
