@@ -28,11 +28,11 @@ async function pushNotification(userId, type, title, body) {
     }
 
     // 3. Dispatch SMS asynchronously (non-blocking)
-    db.query('SELECT phone, role FROM users WHERE id = $1', [userId])
+    db.query('SELECT phone, role, sms_notifications FROM users WHERE id = $1', [userId])
       .then((userRes) => {
         if (userRes.rows.length > 0) {
           const user = userRes.rows[0];
-          if (user.phone) {
+          if (user.phone && user.sms_notifications !== false) {
             // Send SMS notification
             const smsText = `[AgroNexa] ${title} - ${body}`;
             twilioService.sendSms(user.phone, smsText)

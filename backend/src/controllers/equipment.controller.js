@@ -455,11 +455,11 @@ async function confirmBooking(req, res, next) {
 
     const b = booking.rows[0];
 
-    // Block the listing calendar (status -> booked)
-    await db.query(
-      `UPDATE equipment_listings SET status = 'booked', updated_at = NOW() WHERE id = $1`,
-      [b.listing_id]
-    );
+    // Block the listing calendar (status -> booked) - Commented out to allow multiple bookings on non-overlapping dates
+    // await db.query(
+    //   `UPDATE equipment_listings SET status = 'booked', updated_at = NOW() WHERE id = $1`,
+    //   [b.listing_id]
+    // );
 
     // Calculate days
     const durationDays = Math.ceil((new Date(b.end_date) - new Date(b.start_date)) / 86400000) + 1;

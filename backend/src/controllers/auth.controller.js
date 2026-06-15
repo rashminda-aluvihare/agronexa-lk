@@ -153,7 +153,7 @@ async function login(req, res, next) {
     // 1. Check if admin credentials
     if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
       const adminUser = { id: 0, email: ADMIN_EMAIL, role: 'admin', name: 'Admin' };
-      const token = jwt.sign(adminUser, JWT_SECRET, { expiresIn: '30d' });
+      const token = jwt.sign(adminUser, JWT_SECRET, { expiresIn: '24h' });
 
       await auditService.logAction(0, 'ADMIN_LOGIN', req.ip);
 
@@ -171,9 +171,46 @@ async function login(req, res, next) {
     }
 
     const user = result.rows[0];
+
+    // Check temporary account lock
+    if (user.locked_until && new Date(user.locked_until) > new Date()) {
+      const remainingMs = new Date(user.locked_until) - new Date();
+      const remainingMins = Math.ceil(remainingMs / 60000);
+      return res.status(403).json({
+        error: `Your account is temporarily locked due to too many failed login attempts. Try again in ${remainingMins} minute(s).`
+      });
+    }
+
     const match = await bcrypt.compare(password, user.password_hash);
     if (!match) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+      const newAttempts = (user.failed_login_attempts || 0) + 1;
+      if (newAttempts >= 5) {
+        const lockUntil = new Date(Date.now() + 30 * 60000); // 30 mins
+        await db.query(
+          'UPDATE users SET failed_login_attempts = $1, locked_until = $2 WHERE id = $3',
+          [newAttempts, lockUntil, user.id]
+        );
+        return res.status(403).json({
+          error: 'Invalid email or password. Your account has been temporarily locked for 30 minutes.'
+        });
+      } else {
+        await db.query(
+          'UPDATE users SET failed_login_attempts = $1 WHERE id = $2',
+          [newAttempts, user.id]
+        );
+        const remaining = 5 - newAttempts;
+        return res.status(401).json({
+          error: `Invalid email or password. You have ${remaining} attempt(s) remaining before account lockout.`
+        });
+      }
+    }
+
+    // Reset attempts on successful match
+    if (user.failed_login_attempts > 0 || user.locked_until) {
+      await db.query(
+        'UPDATE users SET failed_login_attempts = 0, locked_until = NULL WHERE id = $1',
+        [user.id]
+      );
     }
 
     // 3. Check status approval
@@ -199,7 +236,7 @@ async function login(req, res, next) {
         name: user.first_name,
       },
       JWT_SECRET,
-      { expiresIn: '30d' }
+      { expiresIn: '24h' }
     );
 
     await auditService.logAction(user.id, 'USER_LOGIN', req.ip);
@@ -226,7 +263,7 @@ async function getProfile(req, res, next) {
   try {
     const result = await db.query(
       `SELECT id, role, first_name, last_name, email, phone, district,
-              address, nic_number, status, created_at
+              address, nic_number, status, sms_notifications, created_at
        FROM users WHERE id = $1`,
       [req.params.id]
     );
@@ -389,6 +426,15 @@ async function forgotPasswordLink(req, res, next) {
     console.log(`Please click the link below to reset your password (valid for 15 minutes):`);
     console.log(`${resetLink}\n`);
 
+    const fs = require('fs');
+    const path = require('path');
+    const logPath = path.join(__dirname, '../../../sent_emails.log');
+    try {
+      fs.appendFileSync(logPath, `\n[${new Date().toISOString()}] PASSWORD RESET EMAIL TO ${email}:\nReset Link: ${resetLink}\n`);
+    } catch (err) {
+      console.error('Failed to write to sent_emails.log:', err.message);
+    }
+
     return res.json({
       success: true,
       message: "A password reset link has been sent to your email.",
@@ -478,12 +524,44 @@ async function forgotEmail(req, res, next) {
     console.log(`Please click the link below if you need to reset your password (valid for 15 minutes):`);
     console.log(`${resetLink}\n`);
 
+    const fs = require('fs');
+    const path = require('path');
+    const logPath = path.join(__dirname, '../../../sent_emails.log');
+    try {
+      fs.appendFileSync(logPath, `\n[${new Date().toISOString()}] ACCOUNT RECOVERY EMAIL TO ${user.email}:\nRecovery Phone: ${phone}\nRegistered Email: ${user.email}\nReset Link: ${resetLink}\n`);
+    } catch (err) {
+      console.error('Failed to write to sent_emails.log:', err.message);
+    }
+
     return res.json({
       success: true,
       message: 'A recovery email has been simulated/sent to your registered address.',
       email: user.email,
       resetLinkSimulated: resetLink
     });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * PUT /api/profile/:id/sms-preference
+ */
+async function updateSmsPreference(req, res, next) {
+  const { enabled } = req.body;
+  const { id } = req.params;
+
+  try {
+    const result = await db.query(
+      'UPDATE users SET sms_notifications = $1 WHERE id = $2 RETURNING id, sms_notifications',
+      [enabled === true, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    return res.json({ success: true, sms_notifications: result.rows[0].sms_notifications });
   } catch (err) {
     next(err);
   }
@@ -501,4 +579,5 @@ module.exports = {
   forgotPasswordLink,
   resetPasswordLink,
   forgotEmail,
+  updateSmsPreference,
 };

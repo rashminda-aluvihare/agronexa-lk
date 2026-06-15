@@ -293,6 +293,11 @@ const TRANSLATIONS = {
     "profile-btn-save": "💾 Save Changes",
 
     // Settings page details
+    "settings-lbl-sms": "SMS Notifications",
+    "settings-desc-sms": "Receive Twilio SMS alerts for request broadcasts and bookings",
+    "toast-preference-updated-title": "Preference Updated!",
+    "toast-sms-enabled": "SMS notifications enabled.",
+    "toast-sms-disabled": "SMS notifications disabled.",
     "settings-lbl-visual-theme": "Visual Theme",
     "settings-desc-visual-theme": "Switch between light and dark modes",
     "settings-btn-toggle-theme": "Toggle Dark Mode",
@@ -989,6 +994,11 @@ const TRANSLATIONS = {
     "profile-btn-save": "💾 වෙනස්කම් සුරකින්න",
 
     // Settings page details
+    "settings-lbl-sms": "SMS දැනුම්දීම්",
+    "settings-desc-sms": "මිලදී ගැනීමේ ඉල්ලීම් සහ වෙන්කිරීම් සඳහා Twilio SMS ලැබීම පාලනය කරන්න",
+    "toast-preference-updated-title": "මනාපය යාවත්කාලීන කරන ලදී!",
+    "toast-sms-enabled": "SMS දැනුම්දීම් සක්‍රිය කරන ලදී.",
+    "toast-sms-disabled": "SMS දැනුම්දීම් අක්‍රිය කරන ලදී.",
     "settings-lbl-visual-theme": "දෘශ්‍ය තේමාව",
     "settings-desc-visual-theme": "අඳුරු (Dark) සහ ආලෝක (Light) මාදිලි අතර මාරු වන්න",
     "settings-btn-toggle-theme": "රාත්‍රී මාදිලිය සක්‍රිය කරන්න",
@@ -1685,6 +1695,11 @@ const TRANSLATIONS = {
     "profile-btn-save": "💾 மாற்றங்களைச் சேமிக்கவும்",
 
     // Settings page details
+    "settings-lbl-sms": "SMS அறிவிப்புகள்",
+    "settings-desc-sms": "கோரிக்கைகள் மற்றும் முன்பதிவுகளுக்கான Twilio SMS அறிவிப்புகளைப் பெறவும்",
+    "toast-preference-updated-title": "விருப்பம் புதுப்பிக்கப்பட்டது!",
+    "toast-sms-enabled": "SMS அறிவிப்புகள் செயல்படுத்தப்பட்டது.",
+    "toast-sms-disabled": "SMS அறிவிப்புகள் முடக்கப்பட்டது.",
     "settings-lbl-visual-theme": "காட்சி தீம்",
     "settings-desc-visual-theme": "ஒளி மற்றும் இருண்ட முறைகளுக்கு இடையில் மாறவும்",
     "settings-btn-toggle-theme": "இருண்ட பயன்முறையை இயக்கு",

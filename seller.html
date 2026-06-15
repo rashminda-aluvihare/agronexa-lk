@@ -1116,6 +1116,13 @@
       <div style="display:flex; flex-direction:column; gap:20px;">
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:15px;">
           <div>
+            <div style="font-size:14px; font-weight:500; color:var(--text-main);" data-i18n="settings-lbl-sms">SMS Notifications</div>
+            <div style="font-size:12px; color:var(--text-muted);" data-i18n="settings-desc-sms">Receive Twilio SMS alerts for request broadcasts and bookings</div>
+          </div>
+          <input type="checkbox" id="sms-toggle-chk" onchange="toggleSMSPreferenceSetting()" style="width:20px; height:20px; cursor:pointer;" />
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:15px;">
+          <div>
             <div style="font-size:14px; font-weight:500; color:var(--text-main);" data-i18n="settings-lbl-visual-theme">Visual Theme</div>
             <div style="font-size:12px; color:var(--text-muted);" data-i18n="settings-desc-visual-theme">Switch between light and dark modes</div>
           </div>
@@ -1971,6 +1978,36 @@ function saveProfile(e) {
 function loadSettingsDetails() {
   const isDark = document.body.classList.contains('dark');
   document.getElementById('dark-mode-btn').textContent = isDark ? '🌞 Light Mode' : '🌙 Dark Mode';
+
+  if (_user && _user.id) {
+    fetch(API_URL + '/api/profile/' + _user.id, { headers: getAuthHeaders() })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success && data.user) {
+          document.getElementById('sms-toggle-chk').checked = data.user.sms_notifications !== false;
+        }
+      })
+      .catch(err => console.error('Failed to load SMS preference:', err));
+  }
+}
+
+function toggleSMSPreferenceSetting() {
+  if (!_user || !_user.id) return;
+  const enabled = document.getElementById('sms-toggle-chk').checked;
+  fetch(API_URL + `/api/profile/${_user.id}/sms-preference`, {
+    method: 'PUT',
+    headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ enabled })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        showToast(getTranslation('toast-preference-updated-title', 'Preference Updated!'), enabled ? getTranslation('toast-sms-enabled', 'SMS notifications enabled.') : getTranslation('toast-sms-disabled', 'SMS notifications disabled.'), 'success');
+      } else {
+        showToast(getTranslation('toast-error-title', 'Error'), 'Failed to update SMS preference.', 'error');
+      }
+    })
+    .catch(() => showToast(getTranslation('toast-error-title', 'Error'), 'Connection failed.', 'error'));
 }
 
 function toggleDarkModeSetting() {

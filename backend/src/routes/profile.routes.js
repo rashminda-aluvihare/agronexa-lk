@@ -8,5 +8,6 @@ router.use(authRequired);
 
 router.get('/:id', authController.getProfile);
 router.put('/:id', authController.updateProfile);
+router.put('/:id/sms-preference', authController.updateSmsPreference);
 
 module.exports = router;
