@@ -263,7 +263,7 @@ async function getProfile(req, res, next) {
   try {
     const result = await db.query(
       `SELECT id, role, first_name, last_name, email, phone, district,
-              address, nic_number, status, sms_notifications, created_at
+              address, nic_number, status, sms_notifications, profile_photo_path, created_at
        FROM users WHERE id = $1`,
       [req.params.id]
     );
@@ -360,6 +360,7 @@ async function resetPassword(req, res, next) {
  */
 async function updateProfile(req, res, next) {
   let { first_name, last_name, district, address, phone } = req.body;
+  const profile_photo_path = req.file ? req.file.path.replace(/\\/g, '/') : null;
   try {
     if (phone) {
       const e164 = twilioService.normalizePhoneToE164(phone);
@@ -375,10 +376,11 @@ async function updateProfile(req, res, next) {
          district = COALESCE($3, district),
          address = COALESCE($4, address),
          phone = COALESCE($5, phone),
+         profile_photo_path = COALESCE($6, profile_photo_path),
          updated_at = NOW()
-       WHERE id = $6
-       RETURNING id, role, first_name, last_name, email, phone, district, address, status, created_at`,
-      [first_name, last_name, district, address, phone, req.params.id]
+       WHERE id = $7
+       RETURNING id, role, first_name, last_name, email, phone, district, address, status, profile_photo_path, created_at`,
+      [first_name, last_name, district, address, phone, profile_photo_path, req.params.id]
     );
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });

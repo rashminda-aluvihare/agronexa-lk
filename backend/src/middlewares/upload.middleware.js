@@ -6,6 +6,7 @@ const fs = require('fs');
 const nicDir = 'uploads/nic/';
 const listingDir = 'uploads/listings/';
 const chatDir = 'uploads/chat/';
+const profileDir = 'uploads/profile/';
 
 if (!fs.existsSync(nicDir)) {
   fs.mkdirSync(nicDir, { recursive: true });
@@ -15,6 +16,9 @@ if (!fs.existsSync(listingDir)) {
 }
 if (!fs.existsSync(chatDir)) {
   fs.mkdirSync(chatDir, { recursive: true });
+}
+if (!fs.existsSync(profileDir)) {
+  fs.mkdirSync(profileDir, { recursive: true });
 }
 
 // Storage for NIC documents
@@ -65,8 +69,25 @@ const uploadChat = multer({
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
 });
 
+// Storage for profile photos
+const profileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, profileDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+const uploadProfilePhoto = multer({
+  storage: profileStorage,
+  limits: { fileSize: 3 * 1024 * 1024 }, // 3MB
+});
+
 module.exports = {
   uploadNic,
   uploadListings,
   uploadChat,
+  uploadProfilePhoto,
 };

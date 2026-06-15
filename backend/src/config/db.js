@@ -56,6 +56,7 @@ async function initDatabase() {
         reset_token VARCHAR(255),
         reset_token_expires TIMESTAMPTZ,
         sms_notifications BOOLEAN DEFAULT TRUE,
+        profile_photo_path TEXT,
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()
       );
@@ -70,6 +71,7 @@ async function initDatabase() {
     await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token_expires TIMESTAMPTZ;");
     await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS sms_notifications BOOLEAN DEFAULT TRUE;");
     await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_photo_path TEXT;");
 
     // 2. Crop Listings Table
     await client.query(`

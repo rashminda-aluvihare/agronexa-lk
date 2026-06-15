@@ -1078,6 +1078,20 @@
         <div class="panel-title" data-i18n="panel-profile-details">👤 My Profile Details</div>
       </div>
       <form id="profile-form" onsubmit="saveProfile(event)">
+        <!-- Profile Picture Widget -->
+        <div style="display:flex; align-items:center; gap:20px; margin-bottom:24px; padding:10px 0;">
+          <div style="position:relative; width:80px; height:80px; border-radius:50%; background:var(--teal-mid); display:flex; align-items:center; justify-content:center; overflow:hidden; border:2px solid var(--teal-light);" id="profile-photo-container">
+            <span id="profile-photo-initials" style="font-weight:600; font-size:24px; color:#fff;">--</span>
+            <img id="profile-photo-img" style="width:100%; height:100%; object-fit:cover; display:none;" />
+          </div>
+          <div>
+            <button type="button" class="btn" style="padding:6px 14px; font-size:12.5px; border-radius:6px; display:inline-flex; align-items:center; gap:6px; cursor:pointer;" onclick="document.getElementById('profile-photo-input').click()">
+              📸 <span data-i18n="btn-upload-photo">Upload Photo</span>
+            </button>
+            <input type="file" id="profile-photo-input" accept="image/*" style="display:none;" onchange="previewProfilePhoto(this)" />
+            <div style="font-size:11px; color:var(--muted); margin-top:6px;" data-i18n="hint-photo-size">Supported formats: JPG, PNG. Max size: 3MB.</div>
+          </div>
+        </div>
         <div class="form-row">
           <div class="form-field">
             <div class="form-label" data-i18n="profile-lbl-fname">First Name</div>
@@ -1487,7 +1501,11 @@ var marketMarkers = [];
   // Immediately show session data
   var name = _user.name || _user.email;
   var initials = name.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
-  document.getElementById('user-avatar').textContent = initials;
+  if (_user.profile_photo_path) {
+    document.getElementById('user-avatar').innerHTML = `<img src="${API_URL}/${_user.profile_photo_path}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />`;
+  } else {
+    document.getElementById('user-avatar').textContent = initials;
+  }
   document.getElementById('user-name').textContent = name;
   
   function updateWelcomeGreeting() {
@@ -1515,7 +1533,11 @@ var marketMarkers = [];
 
         var fullName = (p.first_name + ' ' + p.last_name).trim();
         var ini = fullName.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
-        document.getElementById('user-avatar').textContent = ini;
+        if (p.profile_photo_path) {
+          document.getElementById('user-avatar').innerHTML = `<img src="${API_URL}/${p.profile_photo_path}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />`;
+        } else {
+          document.getElementById('user-avatar').textContent = ini;
+        }
         document.getElementById('user-name').textContent = fullName;
         document.getElementById('page-greeting').textContent = 'Welcome back, ' + p.first_name + ' 👋';
 
@@ -1533,7 +1555,7 @@ var marketMarkers = [];
         _user = {
           id: p.id, email: p.email, role: p.role,
           name: p.first_name, first_name: p.first_name, last_name: p.last_name, district: p.district, phone: p.phone,
-          address: p.address
+          address: p.address, profile_photo_path: p.profile_photo_path
         };
         sessionStorage.setItem('agro_user', JSON.stringify(_user));
         loadDashboardData();
@@ -2346,7 +2368,33 @@ function loadProfileDetails() {
       document.getElementById('profile-address').value = u.address || '';
       document.getElementById('profile-role').value = u.role ? u.role.toUpperCase() : '';
       document.getElementById('profile-status').value = u.status ? u.status.toUpperCase() : '';
+
+      // Set profile photo preview
+      if (u.profile_photo_path) {
+        document.getElementById('profile-photo-initials').style.display = 'none';
+        const img = document.getElementById('profile-photo-img');
+        img.src = API_URL + '/' + u.profile_photo_path;
+        img.style.display = 'block';
+      } else {
+        const initials = ((u.first_name || '') + ' ' + (u.last_name || '')).trim().split(' ').map(w => w[0] || '').join('').toUpperCase().slice(0,2);
+        document.getElementById('profile-photo-initials').textContent = initials || '--';
+        document.getElementById('profile-photo-initials').style.display = 'block';
+        document.getElementById('profile-photo-img').style.display = 'none';
+      }
     });
+}
+
+function previewProfilePhoto(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById('profile-photo-initials').style.display = 'none';
+      const img = document.getElementById('profile-photo-img');
+      img.src = e.target.result;
+      img.style.display = 'block';
+    }
+    reader.readAsDataURL(input.files[0]);
+  }
 }
 
 function saveProfile(e) {
@@ -2356,17 +2404,25 @@ function saveProfile(e) {
   const phone = document.getElementById('profile-phone').value.trim();
   const district = document.getElementById('profile-district').value;
   const address = document.getElementById('profile-address').value.trim();
+  const fileInput = document.getElementById('profile-photo-input');
+
+  const formData = new FormData();
+  formData.append('first_name', fname);
+  formData.append('last_name', lname);
+  formData.append('phone', phone);
+  formData.append('district', district);
+  formData.append('address', address);
+  if (fileInput.files && fileInput.files[0]) {
+    formData.append('profile_photo', fileInput.files[0]);
+  }
+
+  const headers = getAuthHeaders();
+  delete headers['Content-Type'];
 
   fetch(API_URL + '/api/profile/' + _user.id, {
     method: 'PUT',
-    headers: getAuthHeaders(),
-    body: JSON.stringify({
-      first_name: fname,
-      last_name: lname,
-      phone: phone,
-      district: district,
-      address: address
-    })
+    headers: headers,
+    body: formData
   })
     .then(r => r.json())
     .then(data => {
@@ -2376,14 +2432,19 @@ function saveProfile(e) {
         const fullName = (p.first_name + ' ' + p.last_name).trim();
         const initials = fullName.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
         
-        document.getElementById('user-avatar').textContent = initials;
+        const avatarEl = document.getElementById('user-avatar');
+        if (p.profile_photo_path) {
+          avatarEl.innerHTML = `<img src="${API_URL}/${p.profile_photo_path}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />`;
+        } else {
+          avatarEl.innerHTML = initials;
+        }
         document.getElementById('user-name').textContent = fullName;
         document.getElementById('user-district').textContent = getTranslation('district-' + p.district.toLowerCase().replace(' ', ''), p.district);
         
         _user = {
           id: p.id, email: p.email, role: p.role,
           name: p.first_name, first_name: p.first_name, last_name: p.last_name, district: p.district, phone: p.phone,
-          address: p.address
+          address: p.address, profile_photo_path: p.profile_photo_path
         };
         sessionStorage.setItem('agro_user', JSON.stringify(_user));
         loadProfileDetails();

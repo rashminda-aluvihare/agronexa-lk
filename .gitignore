@@ -4,3 +4,4 @@ frontend/node_modules
 node_modules/
 db_data/
 *.log
+uploads/
