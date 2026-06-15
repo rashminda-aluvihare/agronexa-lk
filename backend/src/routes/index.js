@@ -27,5 +27,7 @@ apiRouter.use('/chat', chatRoutes);
 
 // Misc routes
 apiRouter.get('/market-prices', miscController.getMarketPrices);
+apiRouter.get('/public-stats', miscController.getPublicStats);
 
 module.exports = { apiRouter };
+

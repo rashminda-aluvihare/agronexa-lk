@@ -197,7 +197,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
       <div class="feat"><div class="feat-dot"></div><span class="feat-txt" data-i18n="feat-sms">Real-Time SMS Alerts</span><span class="feat-badge" data-i18n="feat-active">Active</span></div>
     </div>
     <div class="stats">
-      <div class="stat"><div class="stat-n">10K+</div><div class="stat-l" data-i18n="stat-farmers">Farmers</div></div>
+      <div class="stat"><div class="stat-n" id="farmers-count">10K+</div><div class="stat-l" data-i18n="stat-farmers">Farmers</div></div>
       <div class="stat"><div class="stat-n">25</div><div class="stat-l" data-i18n="stat-districts">Districts</div></div>
       <div class="stat"><div class="stat-n">98%</div><div class="stat-l" data-i18n="stat-uptime">Uptime</div></div>
     </div>
@@ -1089,6 +1089,18 @@ async function sendForgotEmail() {
   }
 }
 
+async function loadPublicStats() {
+  try {
+    const res = await fetch(API_URL + '/api/public-stats');
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('farmers-count').textContent = data.farmerCount;
+    }
+  } catch (err) {
+    console.error('Failed to load public stats:', err);
+  }
+}
+
 // ── ON LOAD CHECK FOR RESET TOKEN ──
 window.addEventListener('DOMContentLoaded', () => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -1096,6 +1108,7 @@ window.addEventListener('DOMContentLoaded', () => {
   if (token) {
     sw('reset');
   }
+  loadPublicStats();
 });
 </script>
 </body>

@@ -53,6 +53,22 @@ async function getMarketPrices(req, res) {
   }
 }
 
+/**
+ * GET /api/public-stats
+ */
+async function getPublicStats(req, res) {
+  try {
+    const result = await db.query("SELECT COUNT(*) FROM users WHERE role = 'farmer' OR role = 'seller'");
+    const farmerCount = parseInt(result.rows[0].count, 10);
+    return res.json({ success: true, farmerCount });
+  } catch (err) {
+    console.error('Error fetching public stats:', err.message);
+    return res.status(500).json({ success: false, error: 'Database query failed' });
+  }
+}
+
 module.exports = {
   getMarketPrices,
+  getPublicStats,
 };
+
