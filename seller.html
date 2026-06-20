@@ -551,6 +551,150 @@
       justify-content: space-between !important;
     }
   }
+
+  /* Redesigned Mobile-First Stats Overview */
+  .stats-row {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 0px !important;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 24px !important;
+    box-shadow: var(--shadow-sm);
+  }
+  .overview-header {
+    grid-column: span 4;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-hint);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+  }
+  .stat-card {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 16px !important;
+    box-shadow: none !important;
+    position: relative;
+    overflow: visible;
+    transition: none !important;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+  }
+  .stat-card:hover {
+    transform: none !important;
+  }
+  .stat-card::after {
+    display: none !important;
+  }
+  .stat-card:not(:first-of-type) {
+    border-left: 1px solid var(--border-color) !important;
+  }
+  .stat-val {
+    font-family: var(--font-body) !important;
+    font-size: 26px !important;
+    font-weight: 700 !important;
+    color: var(--text-main) !important;
+    line-height: 1.1 !important;
+  }
+  .stat-card.green .stat-val { color: var(--primary-light) !important; }
+  .stat-card.amber .stat-val { color: var(--accent) !important; }
+  .stat-card.gold .stat-val { color: var(--gold) !important; }
+  .stat-card.blue .stat-val { color: var(--info) !important; }
+  
+  .stat-label {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: var(--text-muted) !important;
+    margin-top: 2px !important;
+  }
+  .stat-delta {
+    font-size: 11px !important;
+    color: var(--text-hint) !important;
+    margin-top: 2px !important;
+  }
+  
+  /* Quick Actions Custom Style overrides */
+  .quick-action-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px !important;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .quick-action-card:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: var(--shadow-md) !important;
+    border-color: var(--primary-light) !important;
+    background: var(--primary-pale) !important;
+  }
+  .quick-action-title {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: var(--text-main) !important;
+  }
+  .quick-action-desc {
+    font-size: 12px !important;
+    color: var(--text-muted) !important;
+    line-height: 1.4 !important;
+    margin-top: 0px !important;
+  }
+
+  @media (max-width: 768px) {
+    .stats-row {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 20px 0px !important;
+    }
+    .overview-header {
+      grid-column: span 2 !important;
+    }
+    .stat-card {
+      padding: 0 12px !important;
+    }
+    .stat-card:nth-of-type(2n+1) {
+      border-left: none !important;
+    }
+    .stat-card:nth-of-type(2n) {
+      border-left: 1px solid var(--border-color) !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .stats-row {
+      grid-template-columns: 1fr !important;
+      gap: 16px !important;
+      padding: 20px !important;
+    }
+    .overview-header {
+      grid-column: span 1 !important;
+      margin-bottom: 8px !important;
+    }
+    .stat-card {
+      border-left: none !important;
+      padding: 0 0 12px 0 !important;
+      border-bottom: 1px solid var(--border-color) !important;
+    }
+    .stat-card:last-of-type {
+      border-bottom: none !important;
+      padding-bottom: 0 !important;
+    }
+    .quick-actions-hub {
+      grid-template-columns: 1fr !important;
+    }
+  }
 </style>
 </head>
 <body>
@@ -667,51 +811,40 @@
 
     <!-- Stats -->
     <div class="stats-row content-section" id="section-stats">
+      <div class="overview-header">
+        <span data-i18n="overview-title">Business Overview</span>
+      </div>
       <div class="stat-card green">
-        <div class="stat-icon green">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2z"/><path d="M12 6v6l4 2"/></svg>
-        </div>
         <div class="stat-val" id="stat-active-listings">—</div>
         <div class="stat-label" data-i18n="card-active-listings">Active Listings</div>
-        <div class="stat-delta up" data-i18n="card-active-listings-sub">Active in marketplace</div>
+        <div class="stat-delta" data-i18n="card-active-listings-sub">Active in marketplace</div>
       </div>
       <div class="stat-card amber">
-        <div class="stat-icon amber">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-        </div>
         <div class="stat-val" id="stat-pending-requests">—</div>
         <div class="stat-label" data-i18n="card-pending-requests">Pending Buyer Requests</div>
-        <div class="stat-delta down" data-i18n="card-pending-requests-sub">Needs response</div>
+        <div class="stat-delta" data-i18n="card-pending-requests-sub">Needs response</div>
       </div>
       <div class="stat-card gold">
-        <div class="stat-icon gold">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
-        </div>
         <div class="stat-val" id="stat-revenue">—</div>
         <div class="stat-label" data-i18n="card-monthly-earnings">Earnings this month</div>
-        <div class="stat-delta up" data-i18n="js-earned-this-month">earned this month</div>
+        <div class="stat-delta" data-i18n="js-earned-this-month">earned this month</div>
       </div>
       <div class="stat-card blue">
-        <div class="stat-icon blue">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        </div>
         <div class="stat-val" id="stat-completed-rentals">—</div>
         <div class="stat-label" data-i18n="card-completed-rentals">Completed Rentals</div>
-        <div class="stat-delta up" data-i18n="card-completed-rentals-sub">Successful rentals</div>
+        <div class="stat-delta" data-i18n="card-completed-rentals-sub">Successful rentals</div>
       </div>
     </div>
 
     <!-- Quick Actions Hub -->
     <div id="section-quick-actions" class="quick-actions-hub content-section">
       <div class="quick-action-card" onclick="switchTab('listings')">
-        <div class="quick-action-icon">🌾</div>
         <div class="quick-action-info">
           <div class="quick-action-title" data-i18n="qa-add-listing-title">Add Crop Listing</div>
           <div class="quick-action-desc" data-i18n="qa-add-listing-desc">Publish your crop stock to marketplace</div>
         </div>
       </div>
       <div class="quick-action-card" onclick="switchTab('requests')">
-        <div class="quick-action-icon">📩</div>
         <div class="quick-action-info">
           <div class="quick-action-title" data-i18n="qa-view-requests-title">View Buyer Requests</div>
           <div class="quick-action-desc" data-i18n="qa-view-requests-desc">See recent crop demands from corporate buyers</div>
