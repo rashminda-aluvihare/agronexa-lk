@@ -843,6 +843,15 @@
       </div>
     </div>
 
+    <!-- Dashboard Alerts -->
+    <div id="section-dashboard-alerts" style="display: none; margin-top: 20px;">
+      <div style="background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--primary); border-radius: 12px; padding: 16px; box-shadow: 0 4px 10px rgba(22,34,44,0.03);">
+        <div id="dashboard-alert-text" style="font-size: 13.5px; color: var(--text); font-weight: 500; line-height: 1.6;">
+          <!-- Loaded dynamically -->
+        </div>
+      </div>
+    </div>
+
     <!-- Quick Actions Hub -->
     <div id="section-quick-actions" class="quick-actions-hub">
       <div class="quick-action-card" onclick="switchTab('requests')">
@@ -2411,6 +2420,7 @@ function switchTab(tab) {
   });
 
   const sectionStats = document.getElementById('section-stats');
+  const sectionDashboardAlerts = document.getElementById('section-dashboard-alerts');
   const sectionQuickActions = document.getElementById('section-quick-actions');
   const sectionBroadcastsResponses = document.getElementById('section-broadcasts-responses');
   const sectionBookingsMarket = document.getElementById('section-bookings-market');
@@ -2431,6 +2441,7 @@ function switchTab(tab) {
 
   // Hide all sections first
   sectionStats.style.display = 'none';
+  if (sectionDashboardAlerts) sectionDashboardAlerts.style.display = 'none';
   if (sectionQuickActions) sectionQuickActions.style.display = 'none';
   sectionBroadcastsResponses.style.display = 'none';
   sectionBookingsMarket.style.display = 'none';
@@ -2446,6 +2457,7 @@ function switchTab(tab) {
 
   if (tab === 'dashboard') {
     sectionStats.style.display = 'grid';
+    loadDashboardAlerts();
   } else if (tab === 'marketplace') {
     sectionBookingsMarket.style.display = 'block';
     panelBookings.style.display = 'none';
@@ -2532,6 +2544,49 @@ function switchTab(tab) {
     sidebar.classList.remove('active');
   }
 }
+
+function loadDashboardAlerts() {
+  const alertsSection = document.getElementById('section-dashboard-alerts');
+  const alertText = document.getElementById('dashboard-alert-text');
+  if (!alertsSection || !alertText) return;
+
+  fetch(API_URL + '/api/transport/bookings', {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success && data.bookings) {
+        const activeBookings = data.bookings.filter(b => 
+          b.requester_id === _user.id && (b.status === 'confirmed' || b.status === 'in-transit')
+        );
+        if (activeBookings.length > 0) {
+          alertsSection.style.display = 'block';
+          const latest = activeBookings[0];
+          let template = getTranslation('dashboard-alert-incoming-delivery', 'Incoming Delivery: {commodity} ({quantity}kg) status is {status}.');
+          let text = template
+            .replace('{commodity}', latest.commodity_name)
+            .replace('{quantity}', latest.quantity_kg)
+            .replace('{status}', getTranslation('booking-status-' + latest.status, latest.status));
+          alertText.innerHTML = text;
+        } else {
+          alertsSection.style.display = 'none';
+        }
+      } else {
+        alertsSection.style.display = 'none';
+      }
+    })
+    .catch(err => {
+      console.error('Error fetching dashboard alerts:', err);
+      alertsSection.style.display = 'none';
+    });
+}
+
+document.addEventListener('languageChanged', () => {
+  const alertsSection = document.getElementById('section-dashboard-alerts');
+  if (alertsSection && alertsSection.style.display !== 'none') {
+    loadDashboardAlerts();
+  }
+});
 
 // ── PROFILE FUNCTIONS ──
 function loadProfileDetails() {

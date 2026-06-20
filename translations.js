@@ -222,8 +222,9 @@ const TRANSLATIONS = {
     "booking-action-cancel": "Cancel",
     "booking-action-confirm": "Confirm",
     "booking-action-transit": "Start Transit",
-    "booking-action-delivered": "Mark Delivered",
     "logistics-no-bookings": "No transport bookings found.",
+    "dashboard-alert-transport-pending": "Logistics: You have {count} active transport booking(s). Manage them in 'Transport Logistics'.",
+    "dashboard-alert-incoming-delivery": "Incoming Delivery: {commodity} ({quantity}kg) status is {status}.",
 
     // Dashboard Titles, Headers, Placeholders (Buyer & Seller)
     "title-buyer-dash": "Buyer Dashboard",
@@ -933,8 +934,9 @@ const TRANSLATIONS = {
     "booking-action-cancel": "අවලංගු කරන්න",
     "booking-action-confirm": "තහවුරු කරන්න",
     "booking-action-transit": "ගමන ආරම්භ කරන්න",
-    "booking-action-delivered": "භාරදුන් බව සලකුණු කරන්න",
     "logistics-no-bookings": "ප්‍රවාහන ඇණවුම් කිසිවක් හමු නොවීය.",
+    "dashboard-alert-transport-pending": "ප්‍රවාහන සේවා: ඔබට සක්‍රීය ප්‍රවාහන ඇණවුම් {count}ක් ඇත. කළමනාකරණය සඳහා 'ප්‍රවාහන සේවා' වෙත යන්න.",
+    "dashboard-alert-incoming-delivery": "ලැබීමට නියමිත තොග: {commodity} {quantity}kg ප්‍රවාහන තත්ත්වය \"{status}\" වේ.",
 
     // Dashboard Titles, Headers, Placeholders (Buyer & Seller)
     "title-buyer-dash": "ගැණුම්කරුගේ ප්‍රධාන පුවරුව",
@@ -1644,8 +1646,9 @@ const TRANSLATIONS = {
     "booking-action-cancel": "ரத்து செய்க",
     "booking-action-confirm": "உறுதிசெய்",
     "booking-action-transit": "பயணத்தை தொடங்கு",
-    "booking-action-delivered": "வழங்கப்பட்டதாக குறி",
     "logistics-no-bookings": "முன்பதிவுகள் எதுவும் இல்லை.",
+    "dashboard-alert-transport-pending": "தளவாடங்கள்: உங்களிடம் {count} செயலில் உள்ள போக்குவரத்து முன்பதிவு(கள்) உள்ளன. நிர்வகிக்க 'போக்குவரத்து தளவாடங்கள்' பகுதிக்குச் செல்லவும்.",
+    "dashboard-alert-incoming-delivery": "வரவிருக்கும் சரக்கு: {commodity} ({quantity}kg) தற்போதைய நிலை \"{status}\".",
 
     // Dashboard Titles, Headers, Placeholders (Buyer & Seller)
     "title-buyer-dash": "வாங்குபவர் டாஷ்போர்டு",

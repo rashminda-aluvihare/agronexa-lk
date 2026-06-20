@@ -836,6 +836,15 @@
       </div>
     </div>
 
+    <!-- Dashboard Alerts -->
+    <div id="section-dashboard-alerts" class="content-section" style="display: none; margin-top: 20px;">
+      <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-left: 4px solid var(--primary); border-radius: 12px; padding: 16px; box-shadow: var(--shadow-sm);">
+        <div id="dashboard-alert-text" style="font-size: 13.5px; color: var(--text-main); font-weight: 500; line-height: 1.6;">
+          <!-- Loaded dynamically -->
+        </div>
+      </div>
+    </div>
+
     <!-- Quick Actions Hub -->
     <div id="section-quick-actions" class="quick-actions-hub content-section">
       <div class="quick-action-card" onclick="switchTab('listings')">
@@ -2001,6 +2010,7 @@ function switchTab(tab) {
   });
 
   const sectionStats = document.getElementById('section-stats');
+  const sectionDashboardAlerts = document.getElementById('section-dashboard-alerts');
   const sectionQuickActions = document.getElementById('section-quick-actions');
   const sectionListingsRequests = document.getElementById('section-listings-requests');
   const sectionLedgerRep = document.getElementById('section-ledger-rep');
@@ -2019,6 +2029,7 @@ function switchTab(tab) {
 
   // Hide all sections first
   sectionStats.style.display = 'none';
+  if (sectionDashboardAlerts) sectionDashboardAlerts.style.display = 'none';
   if (sectionQuickActions) sectionQuickActions.style.display = 'none';
   sectionListingsRequests.style.display = 'none';
   sectionLedgerRep.style.display = 'none';
@@ -2034,6 +2045,7 @@ function switchTab(tab) {
 
   if (tab === 'dashboard') {
     sectionStats.style.display = 'grid';
+    loadDashboardAlerts();
   } else if (tab === 'listings') {
     sectionListingsRequests.style.display = 'block';
     panelCrops.style.display = 'block';
@@ -2115,6 +2127,44 @@ function switchTab(tab) {
     sidebar.classList.remove('active');
   }
 }
+
+function loadDashboardAlerts() {
+  const alertsSection = document.getElementById('section-dashboard-alerts');
+  const alertText = document.getElementById('dashboard-alert-text');
+  if (!alertsSection || !alertText) return;
+
+  fetch(API_URL + '/api/transport/bookings', {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success && data.bookings) {
+        const activeBookings = data.bookings.filter(b => b.status === 'pending' || b.status === 'confirmed');
+        if (activeBookings.length > 0) {
+          alertsSection.style.display = 'block';
+          const count = activeBookings.length;
+          let template = getTranslation('dashboard-alert-transport-pending', 'Logistics: You have {count} active transport booking(s). Manage them in "Transport Logistics".');
+          let text = template.replace('{count}', count);
+          alertText.innerHTML = text;
+        } else {
+          alertsSection.style.display = 'none';
+        }
+      } else {
+        alertsSection.style.display = 'none';
+      }
+    })
+    .catch(err => {
+      console.error('Error fetching dashboard alerts:', err);
+      alertsSection.style.display = 'none';
+    });
+}
+
+document.addEventListener('languageChanged', () => {
+  const alertsSection = document.getElementById('section-dashboard-alerts');
+  if (alertsSection && alertsSection.style.display !== 'none') {
+    loadDashboardAlerts();
+  }
+});
 
 // ── PROFILE FUNCTIONS ──
 function loadProfileDetails() {
