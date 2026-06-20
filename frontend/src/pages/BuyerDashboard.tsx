@@ -1,12 +1,9 @@
 import React from 'react'
-import { ChevronRight, MessageSquareText, Send, Tractor, Truck, User2 } from 'lucide-react'
+import { MessageSquareText, Tractor, Truck, User2 } from 'lucide-react'
 import { SidebarLayout } from '../shared/layout/SidebarLayout'
 import { GlassCard } from '../shared/ui/GlassCard'
 import { StatCard } from '../shared/ui/StatCard'
-import { Badge } from '../shared/ui/Badge'
 import { buyerDummy } from '../data/buyerDummy'
-
-const districtBg = 'bg-brand-teal-50/70 dark:bg-white/5'
 
 export default function BuyerDashboard({ onSwitchRole }: { onSwitchRole: () => void }) {
   return (
@@ -16,7 +13,7 @@ export default function BuyerDashboard({ onSwitchRole }: { onSwitchRole: () => v
       activeNav="Dashboard"
       onSwitchRole={onSwitchRole}
       topbar={{
-        liveText: 'Live',
+        liveText: 'සජීවී (Live)',
         dateText: new Date('2026-05-08T00:00:00').toLocaleDateString(undefined, {
           weekday: 'long',
           year: 'numeric',
@@ -27,198 +24,136 @@ export default function BuyerDashboard({ onSwitchRole }: { onSwitchRole: () => v
       }}
     >
       <div className="flex flex-col gap-5">
+        {/* Welcome Section */}
+        <div className="rounded-3xl border border-black/5 dark:border-white/10 bg-gradient-to-r from-brand-teal-500/10 to-brand-green-500/5 dark:from-brand-teal-500/5 dark:to-transparent p-6 sm:p-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-ink dark:text-white">ආයුබෝවන්, {buyerDummy.profile.name}! 🛒</h1>
+              <p className="text-sm text-slate-600 dark:text-slate-300 mt-2">
+                ගැනුම්කරුගේ උපකරණ පුවරුව වෙත සාදරයෙන් පිළිගනිමු. (Welcome to your buyer dashboard)
+              </p>
+            </div>
+            <div className="flex items-center gap-3 bg-white/70 dark:bg-white/5 border border-black/5 dark:border-white/10 px-4 py-3 rounded-2xl">
+              <span className="text-xl" aria-hidden="true">👤</span>
+              <div>
+                <div className="text-xs text-slate-600 dark:text-slate-300 font-medium">ගිණුමේ තත්ත්වය (Account Status)</div>
+                <div className="text-sm font-semibold text-brand-teal-600 dark:text-brand-teal-300">සක්‍රීය ගැනුම්කරු (Active Buyer)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Grid */}
         <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
           <StatCard
             tone="teal"
             icon={<Tractor className="h-5 w-5" />}
             value={buyerDummy.stats.activeRequests}
-            label="Active Requests"
-            footer="Awaiting seller response"
+            label="මගේ ඉල්ලීම් (Active Requests)"
+            footer="පිළිතුරු ලැබෙමින් පවතී"
           />
           <StatCard
             tone="amber"
             icon={<MessageSquareText className="h-5 w-5" />}
             value={buyerDummy.stats.newResponses}
-            label="New Responses"
-            footer="From sellers"
+            label="ලැබුණු පිළිතුරු (Seller Responses)"
+            footer="විකුණුම්කරුවන්ගෙන් ලැබුණි"
           />
           <StatCard
             tone="green"
             icon={<User2 className="h-5 w-5" />}
             value={buyerDummy.stats.confirmedBookings}
-            label="Confirmed Bookings"
-            footer="↑ 1 this week"
+            label="තහවුරු කළ වෙන් කිරීම් (Confirmed Bookings)"
+            footer="මේ සතියේ 1ක්"
           />
           <StatCard
             tone="purple"
             icon={<Truck className="h-5 w-5" />}
             value={buyerDummy.stats.pastPurchases}
-            label="Past Purchases"
-            footer="Lifetime"
+            label="මුළු මිලදී ගැනීම් (Total Purchases)"
+            footer="සම්පූර්ණ"
           />
         </section>
 
-        <section className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+        {/* Dashboard Content: Simple Quick Actions & Alerts */}
+        <section className="grid grid-cols-1 xl:grid-cols-3 gap-5">
           <div className="xl:col-span-2 flex flex-col gap-4">
-            <GlassCard
-              title="Broadcast Buyer Request Form"
-              subtitle="Send your request to all matching sellers"
-              actionLabel={null}
-            >
-              <div className={`rounded-2xl border border-brand-teal-100/70 ${districtBg} p-4`}>
-                <div className="text-sm font-semibold text-brand-teal-700 dark:text-brand-teal-300">
-                  Requests expire after 72 hours if no response is accepted
-                </div>
-              </div>
-
-              <form className="mt-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <label className="flex flex-col gap-2">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-300">Commodity</span>
-                    <input
-                      className="h-11 rounded-2xl bg-white/70 dark:bg-white/5 border border-black/5 dark:border-white/10 px-3 focus:outline-none focus:ring-2 focus:ring-brand-teal-500/40"
-                      placeholder="Tomatoes, Carrots..."
-                      defaultValue="Tomatoes"
-                    />
-                  </label>
-                  <label className="flex flex-col gap-2">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-300">Quantity (kg)</span>
-                    <input
-                      type="number"
-                      className="h-11 rounded-2xl bg-white/70 dark:bg-white/5 border border-black/5 dark:border-white/10 px-3 focus:outline-none focus:ring-2 focus:ring-brand-teal-500/40"
-                      placeholder="e.g. 50"
-                      defaultValue={buyerDummy.form.quantityKg}
-                    />
-                  </label>
-                  <label className="flex flex-col gap-2">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-300">Required Date</span>
-                    <input
-                      type="date"
-                      className="h-11 rounded-2xl bg-white/70 dark:bg-white/5 border border-black/5 dark:border-white/10 px-3 focus:outline-none focus:ring-2 focus:ring-brand-teal-500/40"
-                      defaultValue={buyerDummy.form.requiredDate}
-                    />
-                  </label>
-                  <label className="flex flex-col gap-2">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-300">Buyer Location</span>
-                    <input
-                      className="h-11 rounded-2xl bg-white/70 dark:bg-white/5 border border-black/5 dark:border-white/10 px-3 focus:outline-none focus:ring-2 focus:ring-brand-teal-500/40"
-                      placeholder="District"
-                      defaultValue={buyerDummy.form.locationDistrict}
-                    />
-                  </label>
-                  <label className="flex flex-col gap-2 sm:col-span-2">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-300">Price Offer (Rs./kg)</span>
-                    <input
-                      type="number"
-                      className="h-11 rounded-2xl bg-white/70 dark:bg-white/5 border border-black/5 dark:border-white/10 px-3 focus:outline-none focus:ring-2 focus:ring-brand-teal-500/40"
-                      placeholder="Leave blank for open offer"
-                      defaultValue={buyerDummy.form.priceOfferPerKg ?? ''}
-                    />
-                  </label>
-                </div>
+            <GlassCard title="ඉක්මන් පියවර (Quick Actions)" subtitle="ඔබට අවශ්‍ය ප්‍රධාන කාර්යයන් පහසුවෙන් සිදු කරන්න">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <button
+                  onClick={() => alert('බෝග මිලදී ගැනීමට සහ වෙළඳපොළ බැලීමට වම් පස ඇති "Marketplace" පිටුව භාවිතා කරන්න.')}
+                  className="flex items-center gap-4 p-5 rounded-2xl border border-brand-teal-100/70 bg-brand-teal-50/40 dark:bg-white/5 hover:bg-brand-teal-500/10 transition-all text-left group"
+                >
+                  <div className="h-12 w-12 rounded-2xl bg-brand-teal-500 text-white flex items-center justify-center font-bold text-xl group-hover:scale-105 transition-transform">
+                    🛍️
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-ink dark:text-white">වෙළඳපොළට යන්න</h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">Go to Crop Marketplace</p>
+                  </div>
+                </button>
 
                 <button
-                  type="button"
-                  className="mt-4 w-full h-12 rounded-2xl bg-brand-teal-500 text-white font-semibold shadow-soft hover:bg-brand-teal-600 transition-all"
-                  aria-label="Broadcast request"
+                  onClick={() => alert('අලුත් ඉල්ලීමක් කිරීමට වම් පස ඇති "My Requests" පිටුව භාවිතා කරන්න.')}
+                  className="flex items-center gap-4 p-5 rounded-2xl border border-brand-green-100/70 bg-brand-green-50/40 dark:bg-white/5 hover:bg-brand-green-500/10 transition-all text-left group"
                 >
-                  <span className="inline-flex items-center justify-center gap-2">
-                    <Send className="h-5 w-5" />
-                    Broadcast to Sellers
-                  </span>
-                </button>
-              </form>
-            </GlassCard>
-
-            <GlassCard title="Seller Responses" subtitle="Negotiation updates" actionLabel={`${buyerDummy.responses.length} new`}>
-              <div className="space-y-3">
-                {buyerDummy.responses.map((m) => (
-                  <div
-                    key={m.id}
-                    className={`rounded-2xl border p-4 ${
-                      m.kind === 'highlight'
-                        ? 'border-brand-teal-200/70 bg-brand-teal-50/70 dark:bg-white/5'
-                        : 'border-black/5 dark:border-white/10 bg-white/60 dark:bg-white/5'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="font-semibold text-ink dark:text-white">{m.sellerName}</div>
-                        <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">{m.sellerDistrict}</div>
-                      </div>
-                      <div className="text-xs text-slate-500 dark:text-slate-400">{m.deliveryDate}</div>
-                    </div>
-
-                    <div className="mt-3 text-sm text-slate-700 dark:text-slate-200">
-                      <span className="font-semibold">Offer:</span> {m.details}
-                    </div>
-
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <button className="px-3 py-2 rounded-xl bg-brand-teal-500 text-white font-semibold text-sm hover:bg-brand-teal-600 transition-all">
-                        Confirm
-                      </button>
-                      <button className="px-3 py-2 rounded-xl bg-white/60 dark:bg-white/5 border border-black/5 dark:border-white/10 text-ink dark:text-white font-semibold text-sm hover:bg-white/80 dark:hover:bg-white/10 transition-all">
-                        Accept Counter
-                      </button>
-                      <button className="px-3 py-2 rounded-xl bg-white/60 dark:bg-white/5 border border-red-200/60 dark:border-red-400/20 text-red-600 dark:text-red-300 font-semibold text-sm hover:bg-red-50/70 dark:hover:bg-red-950/20 transition-all">
-                        Decline
-                      </button>
-                    </div>
+                  <div className="h-12 w-12 rounded-2xl bg-brand-green-500 text-white flex items-center justify-center font-bold text-xl group-hover:scale-105 transition-transform">
+                    📝
                   </div>
-                ))}
+                  <div>
+                    <h3 className="font-semibold text-ink dark:text-white">අලුත් ඉල්ලීමක් කරන්න</h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">Post a New Crop Request</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => alert('ප්‍රවාහන සහ කෘෂිකාර්මික උපකරණ වෙන් කිරීමට වම් පස ඇති "My Bookings" පිටුව භාවිතා කරන්න.')}
+                  className="flex items-center gap-4 p-5 rounded-2xl border border-brand-purple-100/70 bg-brand-purple-50/40 dark:bg-white/5 hover:bg-brand-purple-500/10 transition-all text-left group"
+                >
+                  <div className="h-12 w-12 rounded-2xl bg-brand-purple-500 text-white flex items-center justify-center font-bold text-xl group-hover:scale-105 transition-transform">
+                    🚛
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-ink dark:text-white">ප්‍රවාහන / උපකරණ කුලියට ගන්න</h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">Rent Vehicles or Equipment</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => alert('පණිවිඩ කියවීමට සහ යැවීමට වම් පස ඇති "Messages" පිටුව භාවිතා කරන්න.')}
+                  className="flex items-center gap-4 p-5 rounded-2xl border border-brand-blue-100/70 bg-brand-blue-50/40 dark:bg-white/5 hover:bg-brand-blue-500/10 transition-all text-left group"
+                >
+                  <div className="h-12 w-12 rounded-2xl bg-brand-blue-500 text-white flex items-center justify-center font-bold text-xl group-hover:scale-105 transition-transform">
+                    💬
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-ink dark:text-white">මගේ පණිවිඩ (Messages)</h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">Read Chat Conversations</p>
+                  </div>
+                </button>
               </div>
             </GlassCard>
           </div>
 
+          {/* Sidebar alert box */}
           <div className="flex flex-col gap-4">
-            <GlassCard title="Equipment Bookings" subtitle="Your rental status" actionLabel="View all">
+            <GlassCard title="නවතම දැනුම්දීම් (Recent Updates)">
               <div className="space-y-3">
-                {buyerDummy.bookings.map((b) => (
-                  <div
-                    key={b.id}
-                    className="flex items-start gap-3 rounded-2xl p-3 border border-black/5 dark:border-white/10 bg-white/60 dark:bg-white/5 hover:bg-black/[0.02] dark:hover:bg-white/10 transition-colors"
-                  >
-                    <div className="h-10 w-10 rounded-2xl bg-brand-teal-50/80 dark:bg-white/5 flex items-center justify-center">
-                      <span className="text-lg" aria-hidden>
-                        {b.icon}
-                      </span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-ink dark:text-white truncate">{b.equipmentName}</div>
-                      <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">Owner: {b.ownerName} · {b.ownerDistrict}</div>
-                      <div className="text-xs text-slate-500 dark:text-slate-400 mt-2 flex flex-wrap gap-x-4">
-                        <span>{b.duration}</span>
-                        <span className="font-semibold">Rs. {b.price.toLocaleString()}</span>
-                      </div>
-                    </div>
-                    <div className="mt-1">
-                      <Badge tone={b.status === 'Confirmed' ? 'green' : b.status === 'Pending' ? 'amber' : 'red'}>{b.status}</Badge>
-                    </div>
+                <div className="p-4 rounded-2xl border border-brand-teal-100 bg-brand-teal-50/30 dark:bg-white/5">
+                  <div className="text-xs text-slate-600 dark:text-slate-300 font-semibold mb-1">නව පිළිතුරක් ඇත</div>
+                  <div className="text-sm font-semibold text-brand-teal-700 dark:text-brand-teal-300">
+                    Sunil K. විසින් තක්කාලි 80kg සඳහා පිළිතුරක් එවා ඇත.
                   </div>
-                ))}
-              </div>
-            </GlassCard>
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-2">පෙරවරු 10:24 · May 10</div>
+                </div>
 
-            <GlassCard title="Browse Marketplace" subtitle="Express Interest to start negotiation" actionLabel="View all listings">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {buyerDummy.marketplace.map((p) => (
-                  <div
-                    key={p.id}
-                    className="rounded-2xl border border-black/5 dark:border-white/10 bg-white/60 dark:bg-white/5 p-4 hover:-translate-y-0.5 transition-transform duration-200"
-                  >
-                    <div className="h-24 rounded-2xl bg-brand-teal-50/80 dark:bg-white/5 flex items-center justify-center text-4xl">{p.icon}</div>
-                    <div className="mt-3 font-semibold text-ink dark:text-white">{p.name}</div>
-                    <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">
-                      {p.district} · {p.availableStock} kg · In stock
-                    </div>
-                    <div className="mt-2 font-semibold text-brand-teal-700 dark:text-brand-teal-300">Rs. {p.pricePerKg}/kg</div>
-                    <button className="mt-3 w-full h-10 rounded-xl bg-white/70 dark:bg-white/5 border border-black/5 dark:border-white/10 text-ink dark:text-white font-semibold text-sm hover:bg-white/90 dark:hover:bg-white/10 transition-all">
-                      <span className="inline-flex items-center justify-center gap-2">
-                        Express Interest <ChevronRight className="h-4 w-4" />
-                      </span>
-                    </button>
+                <div className="p-4 rounded-2xl border border-brand-green-100 bg-brand-green-50/30 dark:bg-white/5">
+                  <div className="text-xs text-slate-600 dark:text-slate-300 font-semibold mb-1">කුලියට ගැනීම තහවුරුයි</div>
+                  <div className="text-sm font-semibold text-brand-green-700 dark:text-brand-green-300">
+                    Kubota Mini Tractor වෙන් කිරීම නියමිත පරිදි තහවුරු කර ඇත.
                   </div>
-                ))}
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-2">ඊයේ · May 9</div>
+                </div>
               </div>
             </GlassCard>
           </div>
@@ -227,5 +162,6 @@ export default function BuyerDashboard({ onSwitchRole }: { onSwitchRole: () => v
     </SidebarLayout>
   )
 }
+
 
 

@@ -1,11 +1,9 @@
 import React from 'react'
 import { Bell, Calendar, ShieldCheck, Sparkles, Wallet, Wheat } from 'lucide-react'
-import { MonthlyEarningsChart } from '../shared/charts/MonthlyEarningsChart'
 import { GlassCard } from '../shared/ui/GlassCard'
 import { StatCard } from '../shared/ui/StatCard'
 import { SidebarLayout } from '../shared/layout/SidebarLayout'
 import { sellerDummy } from '../data/sellerDummy'
-import { Badge } from '../shared/ui/Badge'
 
 export default function SellerDashboard({ onSwitchRole }: { onSwitchRole: () => void }) {
   return (
@@ -15,7 +13,7 @@ export default function SellerDashboard({ onSwitchRole }: { onSwitchRole: () => 
       activeNav="Dashboard"
       onSwitchRole={onSwitchRole}
       topbar={{
-        liveText: 'Live',
+        liveText: 'සජීවී (Live)',
         dateText: new Date('2026-05-08T00:00:00').toLocaleDateString(undefined, {
           weekday: 'long',
           year: 'numeric',
@@ -26,155 +24,131 @@ export default function SellerDashboard({ onSwitchRole }: { onSwitchRole: () => 
       }}
     >
       <div className="flex flex-col gap-5">
+        {/* Welcome Section */}
+        <div className="rounded-3xl border border-black/5 dark:border-white/10 bg-gradient-to-r from-brand-green-500/10 to-brand-teal-500/5 dark:from-brand-green-500/5 dark:to-transparent p-6 sm:p-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-ink dark:text-white">ආයුබෝවන්, {sellerDummy.profile.name}! 🌾</h1>
+              <p className="text-sm text-slate-600 dark:text-slate-300 mt-2">
+                කෘෂිකාර්මික උපකරණ පුවරුව වෙත සාදරයෙන් පිළිගනිමු. (Welcome to your farming dashboard)
+              </p>
+            </div>
+            <div className="flex items-center gap-3 bg-white/70 dark:bg-white/5 border border-black/5 dark:border-white/10 px-4 py-3 rounded-2xl">
+              <ShieldCheck className="h-5 w-5 text-brand-green-600 dark:text-brand-green-300" />
+              <div>
+                <div className="text-xs text-slate-600 dark:text-slate-300 font-medium">ගිණුමේ තත්ත්වය (Account Status)</div>
+                <div className="text-sm font-semibold text-brand-green-600 dark:text-brand-green-300">සක්‍රීයයි (Active)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Grid */}
         <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
           <StatCard
             tone="green"
             icon={<Wheat className="h-5 w-5" />}
             value={sellerDummy.stats.activeListings}
-            label="Active Listings"
-            footer="↑ 2 this week"
+            label="විකිණීමට ඇති බෝග (Crops for Sale)"
+            footer="මේ සතියේ අලුතින් 2ක්"
           />
           <StatCard
             tone="amber"
             icon={<Bell className="h-5 w-5" />}
             value={sellerDummy.stats.pendingRequests}
-            label="Pending Buyer Requests"
-            footer="Needs response"
+            label="ගැනුම්කරුවන්ගේ ඉල්ලීම් (Pending Requests)"
+            footer="පිළිතුරු දිය යුතුය"
           />
           <StatCard
             tone="blue"
             icon={<Wallet className="h-5 w-5" />}
-            value={`Rs. ${sellerDummy.stats.earningsThisMonth.toLocaleString()}`}
-            label="Earnings This Month"
-            footer="↑ 18% vs last month"
+            value={`රු. ${sellerDummy.stats.earningsThisMonth.toLocaleString()}`}
+            label="මේ මාසයේ ආදායම (Monthly Earnings)"
+            footer="පසුගිය මාසයට වඩා 18% වැඩිවීමක්"
           />
           <StatCard
             tone="purple"
             icon={<Sparkles className="h-5 w-5" />}
             value={sellerDummy.stats.completedRentals}
-            label="Completed Rentals"
-            footer="↑ 4 this month"
+            label="කුලියට දුන් වාර (Completed Rentals)"
+            footer="මේ මාසයේ 4ක්"
           />
         </section>
 
-        <section className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+        {/* Dashboard Content: Simple Quick Actions & Profile Ratings */}
+        <section className="grid grid-cols-1 xl:grid-cols-3 gap-5">
           <div className="xl:col-span-2 flex flex-col gap-4">
-            <GlassCard title="My Crop Listings" subtitle="Manage your available produce" actionLabel="+ Add New">
-              <div className="divide-y divide-black/5 dark:divide-white/10">
-                {sellerDummy.cropListings.map((l) => (
-                  <div
-                    key={l.id}
-                    className="py-3 flex items-center gap-3 hover:bg-black/[0.02] dark:hover:bg-white/5 transition-colors rounded-xl px-2 -mx-2"
-                  >
-                    <div className="h-11 w-11 rounded-2xl glass-border bg-white/60 dark:bg-white/5 flex items-center justify-center shadow-sm">
-                      <span className="text-xl" aria-hidden>
-                        {l.icon}
-                      </span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-ink dark:text-white truncate">{l.name}</div>
-                      <div className="text-sm text-slate-600 dark:text-slate-300 mt-0.5">
-                        {l.district} · {l.availableQty} kg available
-                      </div>
-                      <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Listed {l.listedAgo}</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-semibold text-brand-green-500">Rs. {l.pricePerKg}/kg</div>
-                      <div className="mt-2 flex justify-end">
-                        <Badge tone={l.status === 'Active' ? 'green' : 'amber'}>{l.status}</Badge>
-                      </div>
-                    </div>
+            <GlassCard title="ඉක්මන් පියවර (Quick Actions)" subtitle="ඔබට අවශ්‍ය ප්‍රධාන කාර්යයන් පහසුවෙන් සිදු කරන්න">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <button
+                  onClick={() => alert('අලුත් බෝගයක් එක් කිරීමට වම් පස ඇති "My Listings" පිටුව භාවිතා කරන්න.')}
+                  className="flex items-center gap-4 p-5 rounded-2xl border border-brand-green-100/70 bg-brand-green-50/40 dark:bg-white/5 hover:bg-brand-green-500/10 transition-all text-left group"
+                >
+                  <div className="h-12 w-12 rounded-2xl bg-brand-green-500 text-white flex items-center justify-center font-bold text-xl group-hover:scale-105 transition-transform">
+                    🌾
                   </div>
-                ))}
-              </div>
-            </GlassCard>
-
-            <GlassCard title="Incoming Buyer Requests" subtitle="Accept, counter-offer, or decline" actionLabel={`${sellerDummy.requests.length} new`}>
-              <div className="divide-y divide-black/5 dark:divide-white/10">
-                {sellerDummy.requests.map((r) => (
-                  <div key={r.id} className="py-4">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="min-w-0">
-                        <div className="font-semibold text-ink dark:text-white truncate">{r.cropName}</div>
-                        <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">Buyer: {r.buyerName} · {r.buyerDistrict}</div>
-                      </div>
-                      <Badge tone="amber">{r.statusLabel}</Badge>
-                    </div>
-
-                    <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-600 dark:text-slate-300">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-slate-400" />
-                        <span>{r.date}</span>
-                      </div>
-                      <div className="flex items-center gap-2 justify-start sm:justify-end">
-                        <span className="text-brand-amber-500 font-semibold">Rs. {r.offeredPricePerKg}/kg</span>
-                      </div>
-                    </div>
-
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <button className="px-3 py-2 rounded-xl bg-brand-green-500 text-white font-semibold text-sm hover:bg-brand-green-600 transition-all">
-                        Accept
-                      </button>
-                      <button className="px-3 py-2 rounded-xl bg-white/60 dark:bg-white/5 border border-black/5 dark:border-white/10 text-ink dark:text-white font-semibold text-sm hover:bg-white/80 dark:hover:bg-white/10 transition-all">
-                        Counter Offer
-                      </button>
-                      <button className="px-3 py-2 rounded-xl bg-white/60 dark:bg-white/5 border border-red-200/60 dark:border-red-400/20 text-red-600 dark:text-red-300 font-semibold text-sm hover:bg-red-50/70 dark:hover:bg-red-950/20 transition-all">
-                        Decline
-                      </button>
-                    </div>
+                  <div>
+                    <h3 className="font-semibold text-ink dark:text-white">බෝගයක් විකිණීමට දමන්න</h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">+ List a New Crop for Sale</p>
                   </div>
-                ))}
+                </button>
+
+                <button
+                  onClick={() => alert('ඉල්ලීම් බැලීමට වම් පස ඇති "Buyer Requests" පිටුව භාවිතා කරන්න.')}
+                  className="flex items-center gap-4 p-5 rounded-2xl border border-brand-amber-100/70 bg-brand-amber-50/40 dark:bg-white/5 hover:bg-brand-amber-500/10 transition-all text-left group"
+                >
+                  <div className="h-12 w-12 rounded-2xl bg-brand-amber-500 text-white flex items-center justify-center font-bold text-xl group-hover:scale-105 transition-transform">
+                    💬
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-ink dark:text-white">ගැනුම්කරුවන්ගේ ඉල්ලීම්</h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">View Incoming Buyer Requests</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => alert('උපකරණ කළමනාකරණය සඳහා වම් පස ඇති "Equipment Rentals" පිටුව භාවිතා කරන්න.')}
+                  className="flex items-center gap-4 p-5 rounded-2xl border border-brand-purple-100/70 bg-brand-purple-50/40 dark:bg-white/5 hover:bg-brand-purple-500/10 transition-all text-left group"
+                >
+                  <div className="h-12 w-12 rounded-2xl bg-brand-purple-500 text-white flex items-center justify-center font-bold text-xl group-hover:scale-105 transition-transform">
+                    🚜
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-ink dark:text-white">උපකරණ කුලියට දෙන්න</h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">Manage Equipment Rentals</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => alert('ගනුදෙනු ඉතිහාසය බැලීමට වම් පස ඇති "Ledger History" පිටුව භාවිතා කරන්න.')}
+                  className="flex items-center gap-4 p-5 rounded-2xl border border-brand-blue-100/70 bg-brand-blue-50/40 dark:bg-white/5 hover:bg-brand-blue-500/10 transition-all text-left group"
+                >
+                  <div className="h-12 w-12 rounded-2xl bg-brand-blue-500 text-white flex items-center justify-center font-bold text-xl group-hover:scale-105 transition-transform">
+                    💸
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-ink dark:text-white">මගේ ගනුදෙනු විස්තර</h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">View Transaction Ledger</p>
+                  </div>
+                </button>
               </div>
             </GlassCard>
           </div>
 
+          {/* Sidebar Panel for Rating & Verification details */}
           <div className="flex flex-col gap-4">
-            <GlassCard
-              title="Blockchain Ledger"
-              subtitle="Recent rental/service transactions"
-              actionLabel="View all"
-            >
-              <div className="space-y-3">
-                {sellerDummy.ledgerRecent.map((tx) => (
-                  <div key={tx.id} className="flex items-center gap-3 rounded-2xl px-2 py-2 hover:bg-black/[0.02] dark:hover:bg-white/5 transition-colors">
-                    <div className="h-10 w-10 rounded-2xl bg-brand-green-50 dark:bg-white/5 border border-brand-green-100 dark:border-white/10 flex items-center justify-center">
-                      <ShieldCheck className="h-4 w-4 text-brand-green-500" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-semibold text-ink dark:text-white truncate">{tx.title}</div>
-                      <div className="text-xs text-slate-500 dark:text-slate-400 font-mono truncate">{tx.hashPreview}</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm font-semibold text-brand-green-500">Rs. {tx.amount.toLocaleString()}</div>
-                      <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">{tx.when}</div>
-                    </div>
-                  </div>
-                ))}
-
-                <div className="mt-3 rounded-2xl border border-brand-green-200/70 dark:border-white/10 bg-brand-green-50/60 dark:bg-white/5 p-3 flex items-start gap-2">
-                  <div className="mt-0.5">
-                    <ShieldCheck className="h-5 w-5 text-brand-green-600" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold text-brand-green-700 dark:text-brand-green-300">Chain verified — No tampering detected</div>
-                    <div className="text-xs text-slate-600 dark:text-slate-300 mt-1">Integrity checks completed for latest entries.</div>
-                  </div>
-                </div>
-              </div>
-            </GlassCard>
-
-            <GlassCard title="Seller Reputation Panel" subtitle="Based on verified rentals">
+            <GlassCard title="ඔබේ ශ්‍රේණිගත කිරීම (Rating)" subtitle="ගැනුම්කරුවන්ගේ ප්‍රතිපෝෂණ මත පදනම්ව">
               <div className="flex items-end gap-4">
                 <div>
                   <div className="text-5xl font-semibold text-brand-green-600">{sellerDummy.reputation.score.toFixed(1)}</div>
-                  <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">Rating score</div>
+                  <div className="text-sm font-semibold text-brand-green-600 dark:text-brand-green-300 mt-2">විශිෂ්ට මට්ටමේ (Excellent) ⭐</div>
                 </div>
               </div>
 
-              <div className="mt-4 space-y-3">
+              <div className="mt-4 space-y-4">
                 <div>
                   <div className="flex justify-between text-sm text-slate-600 dark:text-slate-300">
-                    <span>Reliability</span>
+                    <span>විශ්වාසවන්තභාවය (Reliability)</span>
                     <span className="font-semibold">{sellerDummy.reputation.reliability}%</span>
                   </div>
                   <div className="mt-2 h-2 rounded-full bg-black/5 dark:bg-white/10 overflow-hidden">
@@ -183,35 +157,32 @@ export default function SellerDashboard({ onSwitchRole }: { onSwitchRole: () => 
                 </div>
                 <div>
                   <div className="flex justify-between text-sm text-slate-600 dark:text-slate-300">
-                    <span>Timeliness</span>
+                    <span>වේලාවට වැඩ කිරීම (Timeliness)</span>
                     <span className="font-semibold">{sellerDummy.reputation.timeliness}%</span>
                   </div>
                   <div className="mt-2 h-2 rounded-full bg-black/5 dark:bg-white/10 overflow-hidden">
                     <div className="h-full rounded-full bg-brand-amber-500" style={{ width: `${sellerDummy.reputation.timeliness}%` }} />
                   </div>
                 </div>
-                <div>
-                  <div className="flex justify-between text-sm text-slate-600 dark:text-slate-300">
-                    <span>Accuracy</span>
-                    <span className="font-semibold">{sellerDummy.reputation.accuracy}%</span>
-                  </div>
-                  <div className="mt-2 h-2 rounded-full bg-black/5 dark:bg-white/10 overflow-hidden">
-                    <div className="h-full rounded-full bg-brand-blue-500" style={{ width: `${sellerDummy.reputation.accuracy}%` }} />
-                  </div>
-                </div>
               </div>
             </GlassCard>
 
-            <GlassCard title="Monthly Earnings" subtitle="Last 5 months income">
-              <MonthlyEarningsChart />
-              <div className="mt-3 text-sm text-slate-600 dark:text-slate-300">
-                Rs. {sellerDummy.earnings.lastMonthTotal.toLocaleString()} earned in {sellerDummy.earnings.lastMonthLabel}
+            <div className="rounded-3xl border border-brand-green-200 bg-brand-green-50/30 dark:bg-white/5 p-5">
+              <div className="flex gap-3">
+                <span className="text-2xl" aria-hidden="true">🛡️</span>
+                <div>
+                  <h4 className="font-bold text-brand-green-800 dark:text-brand-green-300 text-sm">බ්ලොක්චේන් මඟින් ආරක්ෂිතයි</h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+                    ඔබේ සියලුම මුදල් ගනුදෙනු සහ කුලී ගිවිසුම් වෙනස් කළ නොහැකි ලෙස බ්ලොක්චේන් (Blockchain) ජාලය හරහා සුරක්ෂිතව සටහන් වේ.
+                  </p>
+                </div>
               </div>
-            </GlassCard>
+            </div>
           </div>
         </section>
       </div>
     </SidebarLayout>
   )
 }
+
 
