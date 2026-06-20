@@ -2137,7 +2137,7 @@ const TRANSLATIONS = {
 
 // Apply translations based on stored selection
 function applyTranslations() {
-  const currentLang = localStorage.getItem("agro_lang") || "en";
+  const currentLang = localStorage.getItem("agro_lang") || "si";
   const dictionary = TRANSLATIONS[currentLang];
   if (!dictionary) return;
 
@@ -2188,7 +2188,7 @@ function changeLanguage(lang) {
 
 // Global translation helper
 function getTranslation(key, defaultValue = "") {
-  const currentLang = localStorage.getItem("agro_lang") || "en";
+  const currentLang = localStorage.getItem("agro_lang") || "si";
   const dictionary = TRANSLATIONS[currentLang];
   if (dictionary && dictionary[key]) {
     return dictionary[key];
@@ -2225,7 +2225,7 @@ function injectLanguageSelector() {
   `;
   
   // Set current selected value
-  selector.value = localStorage.getItem("agro_lang") || "en";
+  selector.value = localStorage.getItem("agro_lang") || "si";
   
   selector.addEventListener("change", function(e) {
     changeLanguage(e.target.value);
@@ -2241,7 +2241,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Bind listener to manually defined selector if it exists
   const manualSelector = document.getElementById("language-selector");
   if (manualSelector) {
-    manualSelector.value = localStorage.getItem("agro_lang") || "en";
+    manualSelector.value = localStorage.getItem("agro_lang") || "si";
     // Avoid duplicate event listener
     manualSelector.removeEventListener("change", handleLangChange);
     manualSelector.addEventListener("change", handleLangChange);

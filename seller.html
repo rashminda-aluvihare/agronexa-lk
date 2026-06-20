@@ -1816,7 +1816,7 @@ var pingStart = 0;
     
     if (currentCreatedAt) {
       const d = new Date(currentCreatedAt);
-      const lang = localStorage.getItem("agro_lang") || "en";
+      const lang = localStorage.getItem("agro_lang") || "si";
       const locale = lang === 'si' ? 'si-LK' : (lang === 'ta' ? 'ta-LK' : 'en-US');
       const formattedDate = d.toLocaleDateString(locale, { month: 'short', year: 'numeric' });
       document.getElementById('member-since').textContent = getTranslation('js-member-since', 'Member since') + ' ' + formattedDate;
@@ -2938,7 +2938,7 @@ function loadDashboardData() {
       document.getElementById('stat-active-listings').textContent = a.crop_listings.active || 0;
       document.getElementById('stat-completed-rentals').textContent = a.bookings.confirmed || 0;
       document.getElementById('stat-revenue').textContent = 'Rs. ' + (a.ledger.total_revenue || 0).toLocaleString();
-      const lang = localStorage.getItem("agro_lang") || "en";
+      const lang = localStorage.getItem("agro_lang") || "si";
       const locale = lang === 'si' ? 'si-LK' : (lang === 'ta' ? 'ta-LK' : 'en-US');
       const monthName = new Date().toLocaleDateString(locale, { month: 'long' });
       let earnedText = '';
@@ -4982,7 +4982,7 @@ function showCropChart(cropName, historyData) {
   
   panel.style.display = 'block';
   
-  const currentLang = localStorage.getItem("agro_lang") || "en";
+  const currentLang = localStorage.getItem("agro_lang") || "si";
   let titlePrefix = "7-Day Price Trend";
   if (currentLang === "si") {
     titlePrefix = "දින 7ක මිල ප්‍රවණතාවය";
