@@ -739,6 +739,10 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h18l-2 13H5L3 3z"/><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
       <span data-i18n="nav-marketplace">Marketplace</span>
     </div>
+    <div class="nav-item" onclick="switchTab('equipment')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 3H8v4h8V3z"/></svg>
+      <span data-i18n="nav-seller-equipment">Equipment Rentals</span>
+    </div>
     <div class="nav-item" onclick="switchTab('requests')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
       <span data-i18n="nav-requests">My Requests</span>
@@ -2497,6 +2501,42 @@ function switchTab(tab) {
     sectionStats.style.display = 'grid';
     loadDashboardAlerts();
   } else if (tab === 'marketplace') {
+    marketType = 'crops';
+    document.getElementById('market-title').textContent = getTranslation('panel-marketplace-crops', 'Marketplace Crops');
+    document.getElementById('market-title').setAttribute('data-i18n', 'panel-marketplace-crops');
+    const toggleBtn = document.getElementById('market-toggle-btn');
+    if (toggleBtn) {
+      toggleBtn.textContent = getTranslation('btn-view-equipment', '🚜 View Equipment');
+      toggleBtn.setAttribute('data-i18n', 'btn-view-equipment');
+    }
+    const searchInput = document.getElementById('market-search');
+    if (searchInput) {
+      searchInput.placeholder = getTranslation('placeholder-search-produce', 'Search produce...');
+      searchInput.setAttribute('data-i18n-placeholder', 'placeholder-search-produce');
+    }
+
+    sectionBookingsMarket.style.display = 'block';
+    panelBookings.style.display = 'none';
+    panelMarketplace.style.display = 'block';
+    const mapEl = document.getElementById('market-map');
+    if (mapEl) mapEl.style.display = 'block';
+    initMarketMap();
+    loadMarketplace();
+  } else if (tab === 'equipment') {
+    marketType = 'equipment';
+    document.getElementById('market-title').textContent = getTranslation('panel-marketplace-equipment', 'Marketplace Equipment');
+    document.getElementById('market-title').setAttribute('data-i18n', 'panel-marketplace-equipment');
+    const toggleBtn = document.getElementById('market-toggle-btn');
+    if (toggleBtn) {
+      toggleBtn.textContent = getTranslation('btn-view-crops', '🌾 View Crops');
+      toggleBtn.setAttribute('data-i18n', 'btn-view-crops');
+    }
+    const searchInput = document.getElementById('market-search');
+    if (searchInput) {
+      searchInput.placeholder = getTranslation('placeholder-search-machinery', 'Search tractors, pumps, machinery...');
+      searchInput.setAttribute('data-i18n-placeholder', 'placeholder-search-machinery');
+    }
+
     sectionBookingsMarket.style.display = 'block';
     panelBookings.style.display = 'none';
     panelMarketplace.style.display = 'block';
@@ -4232,19 +4272,11 @@ function loadCropOrders() {
 
 // ── MARKETPLACE FUNCTIONS ──
 function toggleMarketType() {
-  const searchInput = document.getElementById('market-search');
   if (marketType === 'crops') {
-    marketType = 'equipment';
-    document.getElementById('market-title').textContent = 'Marketplace Equipment';
-    document.getElementById('market-toggle-btn').textContent = '🥬 View Crops';
-    searchInput.placeholder = 'Search tractors, pumps, machinery...';
+    switchTab('equipment');
   } else {
-    marketType = 'crops';
-    document.getElementById('market-title').textContent = 'Marketplace Crops';
-    document.getElementById('market-toggle-btn').textContent = '🚜 View Equipment';
-    searchInput.placeholder = 'Search produce...';
+    switchTab('marketplace');
   }
-  loadMarketplace();
 }
 
 function loadMarketplace() {
