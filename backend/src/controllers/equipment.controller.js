@@ -48,7 +48,7 @@ async function createEquipmentListing(req, res, next) {
       return res.status(400).json({ error: 'owner_id and name are required' });
     }
 
-    const photos = (req.files || []).map((f) => f.path.replace(/\\/g, '/'));
+    const photos = (req.files || []).map((f) => 'uploads/listings/' + f.filename);
 
     const result = await db.query(
       `INSERT INTO equipment_listings 
@@ -101,7 +101,7 @@ async function updateEquipmentListing(req, res, next) {
     const current = existing.rows[0];
     const { name, type, description, rental_rate, district, condition, status } = req.body;
     const photos = req.files && req.files.length
-      ? req.files.map((f) => f.path.replace(/\\/g, '/'))
+      ? req.files.map((f) => 'uploads/listings/' + f.filename)
       : current.photos;
 
     const result = await db.query(

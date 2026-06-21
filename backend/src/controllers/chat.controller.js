@@ -15,9 +15,9 @@ async function getUserChats(req, res, next) {
       `SELECT u.id, u.first_name || ' ' || u.last_name AS name, u.role, u.district,
               (SELECT CASE 
                         WHEN message IS NOT NULL AND message != '' THEN message
-                        WHEN attachment_type = 'image' THEN '🖼️ Image'
-                        WHEN attachment_type = 'audio' THEN '🎙️ Voice Note'
-                        ELSE '📎 Attachment'
+                        WHEN attachment_type = 'image' THEN 'Image'
+                        WHEN attachment_type = 'audio' THEN 'Voice Note'
+                        ELSE 'Attachment'
                       END
                FROM direct_messages 
                WHERE (sender_id = $1 AND receiver_id = u.id) OR (sender_id = u.id AND receiver_id = $1)

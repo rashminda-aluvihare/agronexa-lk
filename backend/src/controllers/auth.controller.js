@@ -79,8 +79,8 @@ async function registerWithOtp(req, res, next) {
     const password_hash = await bcrypt.hash(password, 12);
     
     // Multer files
-    const nic_front_path = req.files?.nic_front?.[0]?.path || null;
-    const nic_back_path = req.files?.nic_back?.[0]?.path || null;
+    const nic_front_path = req.files?.nic_front?.[0] ? 'uploads/nic/' + req.files.nic_front[0].filename : null;
+    const nic_back_path = req.files?.nic_back?.[0] ? 'uploads/nic/' + req.files.nic_back[0].filename : null;
 
     // 3. Insert user (status defaults to pending)
     const result = await db.query(
@@ -360,7 +360,7 @@ async function resetPassword(req, res, next) {
  */
 async function updateProfile(req, res, next) {
   let { first_name, last_name, district, address, phone } = req.body;
-  const profile_photo_path = req.file ? req.file.path.replace(/\\/g, '/') : null;
+  const profile_photo_path = req.file ? 'uploads/profile/' + req.file.filename : null;
   try {
     if (phone) {
       const e164 = twilioService.normalizePhoneToE164(phone);

@@ -2,11 +2,12 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Ensure upload directories exist
-const nicDir = 'uploads/nic/';
-const listingDir = 'uploads/listings/';
-const chatDir = 'uploads/chat/';
-const profileDir = 'uploads/profile/';
+// Ensure upload directories exist under the project root uploads directory
+const uploadsRoot = path.join(__dirname, '../../..', 'uploads');
+const nicDir = path.join(uploadsRoot, 'nic/');
+const listingDir = path.join(uploadsRoot, 'listings/');
+const chatDir = path.join(uploadsRoot, 'chat/');
+const profileDir = path.join(uploadsRoot, 'profile/');
 
 if (!fs.existsSync(nicDir)) {
   fs.mkdirSync(nicDir, { recursive: true });
