@@ -1122,6 +1122,23 @@
         <div style="width:10px; height:10px; border-radius:50%; background:#7BA090;" id="ledger-status-dot"></div>
         <span style="font-size:12.5px; color:#155C35; font-weight:600;" id="ledger-status-text">Cryptographic Integrity Status: Unknown</span>
       </div>
+
+      <!-- Receipt Verification Card -->
+      <div class="panel" style="margin-top:20px; border-top: 1px solid var(--border); padding-top: 20px;">
+        <div class="panel-head" style="margin-bottom:10px;">
+          <div class="panel-title" style="font-size:14px; font-weight:600;" data-i18n="js-verify-receipt-title">Verify PDF Receipt Hash</div>
+        </div>
+        <p style="font-size:12px; color:var(--muted); margin-bottom:12px;" data-i18n="js-verify-receipt-desc">
+          Check if an offline PDF receipt is tampered. Enter invoice details to compute its SHA-256 hash in browser and check registry matches.
+        </p>
+        <div style="display:flex; flex-wrap:wrap; gap:10px; max-width: 600px;">
+          <input type="text" id="verify-tx-id" placeholder="Transaction ID (Tx ID)" style="flex:1; min-width: 180px; height:36px; padding:0 12px; border:1px solid var(--border); border-radius:10px; font-size:13px; outline:none;" />
+          <input type="number" id="verify-amount" placeholder="Amount (Rs.)" style="flex:1; min-width: 120px; height:36px; padding:0 12px; border:1px solid var(--border); border-radius:10px; font-size:13px; outline:none;" />
+          <input type="number" id="verify-duration" placeholder="Duration (Days)" style="flex:1; min-width: 100px; height:36px; padding:0 12px; border:1px solid var(--border); border-radius:10px; font-size:13px; outline:none;" />
+          <button onclick="verifyOfflineReceipt()" style="height:36px; background:var(--primary); color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; padding: 0 16px;" data-i18n="btn-verify-receipt">Verify Receipt Integrity</button>
+        </div>
+        <div id="receipt-verify-result" style="margin-top:12px; padding:10px 14px; border-radius:10px; font-size:12.5px; display:none; max-width: 600px;"></div>
+      </div>
     </div>
 
     <!-- Transport Matching Section -->
@@ -3436,7 +3453,14 @@ async function downloadLedgerReceipt(txId, listingName, sellerName, amount, dura
     doc.setFontSize(7.5);
     doc.text('Verified Partner Guarantee  |  Escrow Protected  |  Quality Assured', 18, y);
 
-    y += 18;
+    y += 10;
+    doc.setFont('courier', 'normal');
+    doc.setFontSize(6.5);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`LEDGER BLOCK HASH (SHA-256): ${blockHash || 'GENESIS_BLOCK_HASH'}`, 14, y);
+    doc.text(`PREVIOUS BLOCK HASH:         ${prevHash || '0'}`, 14, y + 3);
+
+    y += 10;
     doc.setFont('helvetica', 'italic');
     doc.setFontSize(7.5);
     doc.setTextColor(120, 120, 120);
@@ -4485,6 +4509,7 @@ function loadLedger() {
         return;
       }
 
+      window.ledgerEntries = data.ledger;
       let html = '';
       data.ledger.forEach(item => {
         const dateStr = new Date(item.created_at).toLocaleDateString();
@@ -4499,6 +4524,7 @@ function loadLedger() {
               <span style="font-weight:600; font-size:13.5px; color:var(--text);">${item.listing_name || 'Agro Deal'}</span>
               <div style="text-align:right;">
                 <span style="font-weight:600; font-size:14px; color:var(--teal); display:block;">Rs. ${parseFloat(item.amount).toLocaleString()}</span>
+                <button onclick="verifyAgreementDirectly('${item.tx_id}')" style="background:none; border:none; color:var(--teal); font-size:11.5px; cursor:pointer; font-weight:600; margin-top:4px; margin-right:8px;">🔗 Verify</button>
                 <button onclick="downloadLedgerReceipt('${item.tx_id}', '${(item.listing_name || 'Equipment').replace(/'/g, "\\'")}', '${(item.owner_name || 'Seller').replace(/'/g, "\\'")}', ${item.amount}, ${item.duration_days || 1}, '${item.block_hash}', '${item.prev_hash}')" style="background:none; border:none; color:var(--teal-light); font-size:11.5px; cursor:pointer; font-weight:600; margin-top:4px;">📥 PDF</button>
               </div>
             </div>
@@ -4516,30 +4542,176 @@ function loadLedger() {
     });
 }
 
-function verifyLedger() {
+async function verifyLedger() {
   const statusText = document.getElementById('ledger-status-text');
   const statusDot = document.getElementById('ledger-status-dot');
+  if (!statusText || !statusDot) return;
   
   statusText.textContent = getTranslation('ledger-status-calculating', '🔒 Recalculating SHA-256 block hashes...');
   statusDot.style.background = '#7BA090';
   
-  fetch(API_URL + '/api/ledger/verify', {
-    headers: getAuthHeaders()
-  })
-    .then(r => r.json())
-    .then(data => {
-      if (data.success && data.valid) {
-        statusText.textContent = '✅ ' + getTranslation('ledger-status-verified', 'Ledger is fully verified and tamper-free') + ` (${data.total_records})`;
-        statusDot.style.background = '#28A060';
-      } else {
-        statusText.textContent = getTranslation('ledger-status-failed-at', '⚠️ Chain integrity compromised at block: ') + ` ${data.broken_at || 'unknown'}`;
-        statusDot.style.background = '#d95050';
-      }
-    })
-    .catch(() => {
-      statusText.textContent = '❌ Failed to verify ledger integrity.';
-      statusDot.style.background = '#d95050';
+  try {
+    const res = await fetch(API_URL + '/api/ledger/verify-chain-data', {
+      headers: getAuthHeaders()
     });
+    const data = await res.json();
+    if (!data.success || !data.ledger) {
+      statusText.textContent = '❌ Failed to load chain data.';
+      statusDot.style.background = '#d95050';
+      return;
+    }
+
+    const sha256 = async (message) => {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    };
+
+    let prevHash = '0';
+    let isValid = true;
+    let brokenAtTx = null;
+
+    for (const entry of data.ledger) {
+      const recordData = {
+        txId: entry.tx_id,
+        listingId: entry.listing_id,
+        renterId: entry.renter_id,
+        ownerId: entry.owner_id,
+        amount: parseFloat(entry.amount),
+        days: parseInt(entry.duration_days, 10)
+      };
+
+      const dataStr = JSON.stringify(recordData) + entry.prev_hash;
+      const expectedHash = await sha256(dataStr);
+
+      if (expectedHash !== entry.block_hash || entry.prev_hash !== prevHash) {
+        isValid = false;
+        brokenAtTx = entry.tx_id;
+        break;
+      }
+      prevHash = entry.block_hash;
+    }
+
+    if (isValid) {
+      statusText.textContent = '✅ ' + getTranslation('ledger-status-verified', 'Ledger is fully verified and tamper-free') + ` (${data.ledger.length})`;
+      statusDot.style.background = '#28A060';
+    } else {
+      statusText.textContent = getTranslation('ledger-status-failed-at', '⚠️ Chain integrity compromised at block: ') + ` ${brokenAtTx.slice(0, 8)}`;
+      statusDot.style.background = '#d95050';
+    }
+  } catch (err) {
+    console.error('Ledger verification error:', err);
+    statusText.textContent = '❌ Failed to verify ledger integrity.';
+    statusDot.style.background = '#d95050';
+  }
+}
+
+async function verifyOfflineReceipt() {
+  const txIdInp = document.getElementById('verify-tx-id');
+  const amountInp = document.getElementById('verify-amount');
+  const durationInp = document.getElementById('verify-duration');
+  const resultDiv = document.getElementById('receipt-verify-result');
+  if (!txIdInp || !amountInp || !durationInp || !resultDiv) return;
+
+  const txId = txIdInp.value.trim().toLowerCase();
+  const amount = parseFloat(amountInp.value);
+  const duration = parseInt(durationInp.value, 10);
+
+  if (!txId || isNaN(amount) || isNaN(duration)) {
+    showToast(getTranslation('toast-error-title', 'Error'), getTranslation('err-fill-fields', 'Please fill all validation fields'), 'error');
+    return;
+  }
+
+  resultDiv.style.display = 'block';
+  resultDiv.style.background = '#f5f5f5';
+  resultDiv.style.color = '#555';
+  resultDiv.textContent = getTranslation('js-verifying', 'Computing hash and verifying...');
+
+  try {
+    const res = await fetch(API_URL + '/api/ledger/verify-chain-data', {
+      headers: getAuthHeaders()
+    });
+    const data = await res.json();
+    if (!data.success || !data.ledger) {
+      resultDiv.style.background = '#fde8e8';
+      resultDiv.style.color = '#c81e1e';
+      resultDiv.textContent = getTranslation('js-verification-failed', 'Failed to load ledger database');
+      return;
+    }
+
+    const record = data.ledger.find(item => item.tx_id.toLowerCase() === txId);
+    if (!record) {
+      resultDiv.style.background = '#fde8e8';
+      resultDiv.style.color = '#c81e1e';
+      resultDiv.textContent = '❌ ' + getTranslation('js-receipt-not-found', 'Transaction ID not found in the blockchain database.');
+      return;
+    }
+
+    const recordData = {
+      txId: record.tx_id,
+      listingId: record.listing_id,
+      renterId: record.renter_id,
+      ownerId: record.owner_id,
+      amount: amount,
+      days: duration
+    };
+
+    const sha256 = async (message) => {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    };
+
+    const dataStr = JSON.stringify(recordData) + record.prev_hash;
+    const computedHash = await sha256(dataStr);
+
+    if (computedHash === record.block_hash) {
+      resultDiv.style.background = '#def7ec';
+      resultDiv.style.color = '#03543f';
+      resultDiv.innerHTML = `<strong>✅ Verification Successful!</strong><br>Receipt hash matched exactly with blockchain block hash:<br><code style="font-family:monospace;font-size:10px;word-break:break-all;">${computedHash}</code>`;
+    } else {
+      resultDiv.style.background = '#fde8e8';
+      resultDiv.style.color = '#c81e1e';
+      resultDiv.innerHTML = `<strong>⚠️ Verification Failed!</strong><br>The computed hash does not match. The printed receipt details have been altered/tampered!`;
+    }
+  } catch (err) {
+    console.error('Receipt verification error:', err);
+    resultDiv.style.background = '#fde8e8';
+    resultDiv.style.color = '#c81e1e';
+    resultDiv.textContent = '❌ Verification error occurred.';
+  }
+}
+
+async function verifyAgreementDirectly(txId) {
+  if (!window.ledgerEntries) return;
+  const entry = window.ledgerEntries.find(e => e.tx_id === txId);
+  if (!entry) return;
+
+  const sha256 = async (message) => {
+    const msgBuffer = new TextEncoder().encode(message);
+    const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  };
+
+  const agreementText = `AGREEMENT: TX_ID=${entry.tx_id} LISTING_ID=${entry.listing_id} RENTER_ID=${entry.renter_id} OWNER_ID=${entry.owner_id} AMOUNT=${parseFloat(entry.amount).toFixed(2)} DURATION=${parseInt(entry.duration_days, 10)}`;
+  const computedHash = await sha256(agreementText);
+
+  if (computedHash === entry.agreement_hash) {
+    showToast(
+      getTranslation('toast-agreement-verified-title', 'Agreement Verified'),
+      getTranslation('toast-agreement-verified-body', 'Terms match the cryptographically locked registry hash.') + `\nHash: ${computedHash.slice(0, 12)}...`,
+      'success'
+    );
+  } else {
+    showToast(
+      getTranslation('toast-agreement-failed-title', 'Cryptographic Mismatch!'),
+      getTranslation('toast-agreement-failed-body', 'Agreement details have been altered! Mismatch detected.'),
+      'error'
+    );
+  }
 }
 
 // ── INVOICES SYSTEM FUNCTIONS ──

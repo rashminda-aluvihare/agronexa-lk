@@ -61,7 +61,25 @@ async function verifyLedger(req, res, next) {
   }
 }
 
+/**
+ * GET /api/ledger/verify-chain-data
+ * Returns the raw block headers ordered by ID ascending for client-side chain validation.
+ */
+async function getLedgerChainData(req, res, next) {
+  try {
+    const result = await db.query(
+      `SELECT tx_id, listing_id, renter_id, owner_id, amount, duration_days, prev_hash, block_hash, agreement_hash
+       FROM rental_ledger
+       ORDER BY id ASC`
+    );
+    return res.json({ success: true, ledger: result.rows });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getLedger,
   verifyLedger,
+  getLedgerChainData,
 };

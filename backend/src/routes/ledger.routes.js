@@ -5,5 +5,6 @@ const { authRequired } = require('../middlewares/auth.middleware');
 
 router.get('/', authRequired, ledgerController.getLedger);
 router.get('/verify', authRequired, ledgerController.verifyLedger);
+router.get('/verify-chain-data', authRequired, ledgerController.getLedgerChainData);
 
 module.exports = router;
