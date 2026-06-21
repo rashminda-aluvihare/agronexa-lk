@@ -214,13 +214,15 @@ async function initDatabase() {
     // Ensure columns exist on legacy tables
     await client.query("ALTER TABLE rental_ledger ADD COLUMN IF NOT EXISTS agreement_hash VARCHAR(64);");
 
-    // Backfill agreement_hash for legacy rows
-    const legacyLedgers = await client.query("SELECT * FROM rental_ledger WHERE agreement_hash IS NULL");
+    // Backfill / update agreement_hash for all rows
+    const ledgers = await client.query("SELECT * FROM rental_ledger");
     const crypto = require('crypto');
-    for (const row of legacyLedgers.rows) {
-      const agreementText = `AGREEMENT: TX_ID=\${row.tx_id} LISTING_ID=\${row.listing_id} RENTER_ID=\${row.renter_id} OWNER_ID=\${row.owner_id} AMOUNT=\${parseFloat(row.amount).toFixed(2)} DURATION=\${parseInt(row.duration_days, 10)}`;
-      const agreementHash = crypto.createHash('sha256').update(agreementText).digest('hex');
-      await client.query("UPDATE rental_ledger SET agreement_hash = \$1 WHERE id = \$2", [agreementHash, row.id]);
+    for (const row of ledgers.rows) {
+      const agreementText = `AGREEMENT: TX_ID=${row.tx_id} LISTING_ID=${row.listing_id} RENTER_ID=${row.renter_id} OWNER_ID=${row.owner_id} AMOUNT=${parseFloat(row.amount).toFixed(2)} DURATION=${parseInt(row.duration_days, 10)}`;
+      const expectedHash = crypto.createHash('sha256').update(agreementText).digest('hex');
+      if (row.agreement_hash !== expectedHash) {
+        await client.query("UPDATE rental_ledger SET agreement_hash = $1 WHERE id = $2", [expectedHash, row.id]);
+      }
     }
 
     // 8. Notifications Table
