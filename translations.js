@@ -236,6 +236,8 @@ const TRANSLATIONS = {
     "toast-agreement-verified-body": "Terms match the cryptographically locked registry hash.",
     "toast-agreement-failed-title": "Cryptographic Mismatch!",
     "toast-agreement-failed-body": "Agreement details have been altered! Mismatch detected.",
+    "nav-user-manual": "User Manual",
+    "btn-download-manual": "Download PDF Manual",
 
     // Dashboard Titles, Headers, Placeholders (Buyer & Seller)
     "title-buyer-dash": "Buyer Dashboard",
@@ -959,6 +961,8 @@ const TRANSLATIONS = {
     "toast-agreement-verified-body": "ගිවිසුම් කොන්දේසි ලෙජරයේ ලියාපදිංචි කර ඇති අගය සමඟ සම්පූර්ණයෙන්ම ගැලපේ.",
     "toast-agreement-failed-title": "ක්‍රිප්ටොග්‍රැෆික් නොගැලපීමක්!",
     "toast-agreement-failed-body": "ගිවිසුමේ විස්තර වෙනස් කර ඇත! නොගැලපීමක් අනාවරණය විය.",
+    "nav-user-manual": "පරිශීලක අත්පොත",
+    "btn-download-manual": "පරිශීලක අත්පොත බාගත කරන්න (PDF)",
 
     // Dashboard Titles, Headers, Placeholders (Buyer & Seller)
     "title-buyer-dash": "ගැණුම්කරුගේ ප්‍රධාන පුවරුව",
@@ -1682,6 +1686,8 @@ const TRANSLATIONS = {
     "toast-agreement-verified-body": "ஒப்பந்த விதிமுறைகள் பதிவேட்டின் ஹாஷ் உடன் சரியாகப் பொருந்துகிறது.",
     "toast-agreement-failed-title": "கிரிப்டோகிராஃபிக் பொருத்தமின்மை!",
     "toast-agreement-failed-body": "ஒப்பந்த விவரங்கள் மாற்றப்பட்டுள்ளன! பொருத்தமின்மை கண்டறியப்பட்டது.",
+    "nav-user-manual": "பயனர் கையேடு",
+    "btn-download-manual": "பயனர் கையேட்டைப் பதிවிறக்கவும் (PDF)",
 
     // Dashboard Titles, Headers, Placeholders (Buyer & Seller)
     "title-buyer-dash": "வாங்குபவர் டாஷ்போர்டு",

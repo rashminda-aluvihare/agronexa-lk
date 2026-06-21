@@ -776,6 +776,13 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       <span data-i18n="nav-profile">Profile</span>
     </div>
+    <div class="nav-item" onclick="switchTab('user-manual')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+      </svg>
+      <span data-i18n="nav-user-manual">User Manual</span>
+    </div>
     <div class="nav-item" onclick="switchTab('settings')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
       <span data-i18n="nav-settings">Settings</span>
@@ -1362,6 +1369,17 @@
           <span style="font-size:11px; color:var(--primary-light); font-weight:600; background:var(--primary-pale); border:1px solid var(--primary-light); padding:4px 8px; border-radius:4px;" data-i18n="settings-badge-active">ACTIVE (JWT)</span>
         </div>
       </div>
+    </div>
+
+    <!-- User Manual Section -->
+    <div class="panel" id="section-user-manual" style="display:none;">
+      <div class="panel-head" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:15px; margin-bottom:20px;">
+        <div class="panel-title" data-i18n="nav-user-manual">User Manual</div>
+        <button class="btn-sm btn-accept" onclick="downloadUserManualPDF()" style="margin-top:0; width:auto; padding:8px 16px;" data-i18n="btn-download-manual">Download PDF Manual</button>
+      </div>
+      <div id="manual-content-en" style="display:none;"></div>
+      <div id="manual-content-si" style="display:none;"></div>
+      <div id="manual-content-ta" style="display:none;"></div>
     </div>
 
     <!-- Chat Section -->
@@ -2040,6 +2058,7 @@ function switchTab(tab) {
   const sectionWeather = document.getElementById('section-weather');
   const sectionPriceIndex = document.getElementById('section-price-index');
   const sectionTransport = document.getElementById('section-transport');
+  const sectionUserManual = document.getElementById('section-user-manual');
 
   const panelCrops = document.getElementById('panel-crop-listings');
   const panelRequests = document.getElementById('panel-buyer-requests');
@@ -2059,6 +2078,7 @@ function switchTab(tab) {
   if (sectionWeather) sectionWeather.style.display = 'none';
   if (sectionPriceIndex) sectionPriceIndex.style.display = 'none';
   if (sectionTransport) sectionTransport.style.display = 'none';
+  if (sectionUserManual) sectionUserManual.style.display = 'none';
 
   if (tab === 'dashboard') {
     sectionStats.style.display = 'grid';
@@ -2135,6 +2155,11 @@ function switchTab(tab) {
     if (sectionTransport) {
       sectionTransport.style.display = 'block';
       loadTransportDrivers();
+    }
+  } else if (tab === 'user-manual') {
+    if (sectionUserManual) {
+      sectionUserManual.style.display = 'block';
+      updateManualLanguageVisibility(localStorage.getItem('agro_lang') || 'si');
     }
   }
 
@@ -6227,6 +6252,618 @@ function showConfirmDialog(message) {
     btnOk.focus();
   });
 }
+
+// ── USER MANUAL FUNCTIONS & DATA ──
+const MANUAL_DATA = {
+  buyer: {
+    en: {
+      title: "AgroNexa LK - B2B Corporate Buyer User Manual",
+      sections: [
+        {
+          heading: "1. Direct Marketplace",
+          steps: [
+            {
+              title: "Marketplace Navigation",
+              text: "Search and filter fresh produce listings by district or category. Click on a listing to view contact details, map location, and register purchase interest directly."
+            },
+            {
+              title: "Viewing Details",
+              text: "Clicking a listing displays crop variety, harvest date, and available quantity. You can view the seller's verified location on the integrated Leaflet Map."
+            }
+          ]
+        },
+        {
+          heading: "2. Crop Demands & Broadcasts",
+          steps: [
+            {
+              title: "Publishing Demands",
+              text: "Create a new crop demand specifying quantity, location, and price. This creates an open request for sellers."
+            },
+            {
+              title: "SMS Broadcasts",
+              text: "Choose urgency levels (Normal, High, Urgent) to automatically send Twilio SMS broadcasts to farmers registered in your district matching the crop category."
+            }
+          ]
+        },
+        {
+          heading: "3. Farm Equipment Rentals",
+          steps: [
+            {
+              title: "Renting Machinery",
+              text: "Browse machinery (tractors, water pumps, harvesters) listed by farmers. Select start and end dates to calculate cost estimates."
+            },
+            {
+              title: "Rental Bookings",
+              text: "Submit rental requests. Track status (Pending, Confirmed, Cancelled) inside the Equipment Bookings panel."
+            }
+          ]
+        },
+        {
+          heading: "4. Cryptographic Blockchain Ledger & Receipts",
+          steps: [
+            {
+              title: "Immutable Ledger",
+              text: "All confirmed agreements are written to the ledger. This creates a secure SHA-256 block hash representing the immutable details."
+            },
+            {
+              title: "Offline Receipt Verification",
+              text: "Download PDF receipts and verify their integrity offline by computing SHA-256 hashes using the browser verification tool to check matches with the registry."
+            }
+          ]
+        }
+      ]
+    },
+    si: {
+      title: "AgroNexa LK - B2B ආයතනික ගැනුම්කරු පරිශීලක අත්පොත",
+      sections: [
+        {
+          heading: "1. සෘජු වෙළඳපොළ",
+          steps: [
+            {
+              title: "වෙළඳපොළ භාවිතය",
+              text: "දිස්ත්‍රික්කය හෝ වර්ගය අනුව නැවුම් බෝග සොයන්න සහ පෙරන්න. විකුණුම්කරුගේ සම්බන්ධතා විස්තර, සිතියම් පිහිටීම බැලීමට සහ මිලදී ගැනීමට උනන්දුවක් දැක්වීමට බෝග දැන්වීමක් මත ක්ලික් කරන්න."
+            },
+            {
+              title: "විස්තර බැලීම",
+              text: "දැන්වීමක් මත ක්ලික් කිරීමෙන් බෝග වර්ගය, අස්වනු නෙළන දිනය සහ පවතින ප්‍රමාණය පෙන්වයි. ඒකාබද්ධ සිතියම භාවිතයෙන් විකුණුම්කරුගේ පිහිටීම බැලිය හැකිය."
+            }
+          ]
+        },
+        {
+          heading: "2. බෝග ඉල්ලීම් සහ SMS විකාශනය",
+          steps: [
+            {
+              title: "ඉල්ලීම් පළ කිරීම",
+              text: "අවශ්‍ය ප්‍රමාණය, ස්ථානය සහ මිල සඳහන් කරමින් බෝග ඉල්ලීම් පළ කරන්න. මෙය ගොවීන් සඳහා විවෘත ඉල්ලීමක් නිර්මාණය කරයි."
+            },
+            {
+              title: "SMS විකාශනය",
+              text: "ඔබගේ දිස්ත්‍රික්කයේ ලියාපදිංචි වී සිටින අදාළ ගොවීන් වෙත ක්ෂණිකව Twilio SMS දැනුම්දීම් යැවීමට හදිසි මට්ටම් (Normal, High, Urgent) තෝරන්න."
+            }
+          ]
+        },
+        {
+          heading: "3. කෘෂි උපකරණ කුලියට ගැනීම",
+          steps: [
+            {
+              title: "යන්ත්‍රෝපකරණ සෙවීම",
+              text: "දේශීය ගොවීන් විසින් ලියාපදිංචි කර ඇති ට්‍රැක්ටර්, වතුර පොම්ප ආදී උපකරණ පරීක්ෂා කරන්න. ඇස්තමේන්තුගත කුලී මුදල බැලීමට දින තෝරන්න."
+            },
+            {
+              title: "වෙන්කරවා ගැනීම",
+              text: "කුලී ඉල්ලීමක් ඉදිරිපත් කරන්න. ඔබගේ වෙන්කිරීමේ තත්ත්වය (Pending, Confirmed, Cancelled) උපකරණ වෙන්කිරීම් පැනලය මඟින් නිරීක්ෂණය කරන්න."
+            }
+          ]
+        },
+        {
+          heading: "4. ක්‍රිප්ටොග්‍රැෆික් බ්ලොක්චේන් ලෙජරය සහ රිසිට්පත්",
+          steps: [
+            {
+              title: "නොවෙනස්වන ලෙජරය",
+              text: "තහවුරු කරන ලද සියලුම ගිවිසුම් බ්ලොක්චේන් ලෙජරයේ ලියාපදිංචි වේ. මෙය ගනුදෙනු තොරතුරු සඳහා ආරක්ෂිත SHA-256 හැෂ් අගයක් නිර්මාණය කරයි."
+            },
+            {
+              title: "රිසිට්පත් වලංගුභාවය පරීක්ෂා කිරීම",
+              text: "බාගත කළ PDF රිසිට්පත්වල වලංගුභාවය පද්ධතියේ ඇති සත්‍යාපන මෙවලම භාවිතයෙන් SHA-256 හැෂ් අගය ගණනය කර ලෙජරය සමඟ සසඳා බලා තහවුරු කරන්න."
+            }
+          ]
+        }
+      ]
+    },
+    ta: {
+      title: "AgroNexa LK - B2B கார்ப்பரேட் வாங்குபவர் பயனர் கையேடு",
+      sections: [
+        {
+          heading: "1. நேரடி சந்தைப்பகுதி",
+          steps: [
+            {
+              title: "சந்தை வழிசெலுத்தல்",
+              text: "பயிர் வகை அல்லது மாவட்டம் வாரியாக புதிய பயிர்களைத் தேடவும் வடிகட்டவும். விற்பனையாளர் தொடர்பு விவரங்கள், வரைபட இருப்பிடத்தைப் பார்க்க விளம்பரத்தில் கிளிக் செய்யவும்."
+            },
+            {
+              title: "விவரங்களைப் பார்ப்பது",
+              text: "பட்டியலில் கிளிக் செய்வதன் மூலம் பயிர் வகை, அறுவடை தேதி மற்றும் அளவு ஆகியவற்றைக் காட்டுகிறது. Leaflet வரைபடத்தில் விற்பனையாளரின் இருப்பிடத்தை சரிபார்க்கலாம்."
+            }
+          ]
+        },
+        {
+          heading: "2. பயிர் தேவைகள் மற்றும் ஒளிபரப்பு",
+          steps: [
+            {
+              title: "தேவைகளை வெளியிடுதல்",
+              text: "அளவு, இருப்பிடம் மற்றும் விலையைக் குறிப்பிட்டு உங்களது பயிர் தேவைகளை வெளியிடவும். இது விவசாயிகளுக்கான திறந்த கோரிக்கையை உருவாக்குகிறது."
+            },
+            {
+              title: "SMS ஒளிபரப்பு",
+              text: "உங்கள் மாவட்டத்தில் உள்ள விவசாயிகளுக்கு உடனடியாக Twilio SMS அனுப்ப அவசர நிலைகளை (Normal, High, Urgent) தேர்ந்தெடுக்கவும்."
+            }
+          ]
+        },
+        {
+          heading: "3. விவசாய உபகரணங்கள் வாடகை",
+          steps: [
+            {
+              title: "இயந்திரங்களை வாடகைக்கு எடுத்தல்",
+              text: "விவசாயிகளால் பட்டியலிடப்பட்ட விவசாய இயந்திரங்களை (டிராக்டர்கள், தண்ணீர் பம்புகள்) உலாவவும். வாடகைக் செலவைக் கணக்கிட தேதிகளைத் தேர்ந்தெடுக்கவும்."
+            },
+            {
+              title: "முன்பதிவு",
+              text: "வாடகை கோரிக்கையைச் சமர்ப்பிக்கவும். உபகரண முன்பதிவு பலகத்தில் அதன் நிலையை (Pending, Confirmed, Cancelled) கண்காணிக்கவும்."
+            }
+          ]
+        },
+        {
+          heading: "4. கிரிப்டோகிராஃபிக் பிளாக்செயினில் லெட்ஜர் & ரசீதுகள்",
+          steps: [
+            {
+              title: "பிளாக்செயின் லெட்ஜர்",
+              text: "உறுதிப்படுத்தப்பட்ட அனைத்து ஒப்பந்தங்களும் லெட்ஜரில் எழுதப்படுகின்றன. இது மாற்ற முடியாத விவரங்களைக் குறிக்கும் பாதுகாப்பான SHA-256 ஹாஷை உருவாக்குகிறது."
+            },
+            {
+              title: "ரசீது சரிபார்ப்பு",
+              text: "PDF ரசீதுகளைப் பதிவிறக்கி, அவை பிளாக்செயினில் உள்ள ஹாஷுடன் பொருந்துகிறதா என்பதை அறிய SHA-256 ஹாஷ்களைக் கணக்கிடும் சரிபார்ப்பு கருவி மூலம் சரிபார்க்கவும்."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  seller: {
+    en: {
+      title: "AgroNexa LK - Local Farmer / Seller User Manual",
+      sections: [
+        {
+          heading: "1. Crop Listings Management",
+          steps: [
+            {
+              title: "Publishing Harvest",
+              text: "Publish your crop stock to the marketplace. Set the crop name, price per kg, category (Vegetables, Fruits, Grains, Spices, etc.), and description."
+            },
+            {
+              title: "Inventory Tracking",
+              text: "AgroNexa automatically updates crop availability. Stock level is auto-decremented on confirmed purchase orders."
+            }
+          ]
+        },
+        {
+          heading: "2. Farm Equipment Listings",
+          steps: [
+            {
+              title: "Listing Machinery",
+              text: "List plows, tractors, sprayers, and water pumps for rent. Define the daily rental rate, condition, and availability details."
+            },
+            {
+              title: "Rental Income",
+              text: "Rent tools to local farmers in your district to earn extra revenue during off-harvest periods."
+            }
+          ]
+        },
+        {
+          heading: "3. Booking & Blockchain Ledger Logging",
+          steps: [
+            {
+              title: "Incoming Buyer Demands",
+              text: "View real-time buyer demands broadcasted in your district. Submit bids and proposals offering your price."
+            },
+            {
+              title: "Order & Rental Approvals",
+              text: "Accept or decline bookings. Confirmed orders are cryptographically hashed and logged on the AgroNexa blockchain ledger to protect against tampering."
+            },
+            {
+              title: "Earnings Analytics",
+              text: "Review monthly earnings analytics compiled directly from successful blockchain transaction receipts."
+            }
+          ]
+        },
+        {
+          heading: "4. Reputation & Trust Score",
+          steps: [
+            {
+              title: "Reputation Parameters",
+              text: "Your trust profile rates Reliability, Timeliness, and Accuracy. Scores are calculated from blockchain ledger records of completed rentals."
+            },
+            {
+              title: "Verified Badge",
+              text: "Maintain high ratings to display the 'Verified Partner' badge and attract higher B2B crop demand orders."
+            }
+          ]
+        }
+      ]
+    },
+    si: {
+      title: "AgroNexa LK - දේශීය ගොවි / විකුණුම්කරු පරිශීලක අත්පොත",
+      sections: [
+        {
+          heading: "1. බෝග දැන්වීම් කළමනාකරණය",
+          steps: [
+            {
+              title: "අස්වැන්න පළ කිරීම",
+              text: "ඔබගේ බෝග තොග වෙළඳපොළට එක් කරන්න. බෝගයේ නම, කිලෝග්‍රෑමයක මිල, වර්ගය (එළවළු, පළතුරු, ධාන්‍ය වර්ග, කුළුබඩු ආදී) සහ විස්තරය ඇතුළත් කරන්න."
+            },
+            {
+              title: "තොග පාලනය",
+              text: "AgroNexa මඟින් බෝග තොග ස්වයංක්‍රීයව යාවත්කාලීන කරයි. ගැනුම්කරු ඇණවුම තහවුරු කළ විට තොග ප්‍රමාණය ස්වයංක්‍රීයව අඩු වේ."
+            }
+          ]
+        },
+        {
+          heading: "2. කෘෂි උපකරණ ලැයිස්තුගත කිරීම",
+          steps: [
+            {
+              title: "යන්ත්‍රෝපකරණ එක් කිරීම",
+              text: "ට්‍රැක්ටර්, නගුල්, ඉසිනයන් සහ වතුර පොම්ප කුලියට දීමට එක් කරන්න. දෛනික කුලී මිල, උපකරණයේ තත්ත්වය සහ ලබාගත හැකි දිනයන් සඳහන් කරන්න."
+            },
+            {
+              title: "කුලී ආදායම",
+              text: "අස්වනු නොනෙළන කාල සීමාවන්හිදී අමතර ආදායමක් උපයා ගැනීමට ඔබේ දිස්ත්‍රික්කයේ සිටින අනෙකුත් ගොවීන් සඳහා උපකරණ කුලියට දෙන්න."
+            }
+          ]
+        },
+        {
+          heading: "3. වෙන්කිරීම් සහ බ්ලොක්චේන් ලෙජර ගත කිරීම",
+          steps: [
+            {
+              title: "ගැනුම්කරුවන්ගේ ඉල්ලීම්",
+              text: "ඔබගේ දිස්ත්‍රික්කයේ ගැනුම්කරුවන් විසින් පළ කර ඇති මිලදී ගැනීමේ ඉල්ලීම් බලන්න. ඔබේ මිල ඉදිරිපත් කරමින් ලංසු ඉදිරිපත් කරන්න."
+            },
+            {
+              title: "අනුමැතිය සහ ලෙජර සටහන්",
+              text: "ලැබෙන වෙන්කිරීමේ ඉල්ලීම් සහ ඇණවුම් පිළිගන්න හෝ ප්‍රතික්ෂේප කරන්න. තහවුරු කළ පසු, සියලු ගනුදෙනු හැෂ් කර බ්ලොක්චේන් ලෙජරයට ඇතුළත් වේ."
+            },
+            {
+              title: "ආදායම් විශ්ලේෂණය",
+              text: "ලෙජර වාර්තා ඇසුරෙන් සකස් කරන ලද මාසික ආදායම් සහ ඉපැයීම් ප්‍රස්ථාර විශ්ලේෂණය පරීක්ෂා කරන්න."
+            }
+          ]
+        },
+        {
+          heading: "4. කීර්ති නාමය සහ විශ්වාසනීය ලකුණු",
+          steps: [
+            {
+              title: "කීර්තිනාම මිනුම්",
+              text: "ඔබගේ පැතිකඩෙහි විශ්වාසනීයත්වය, වේලාවට වැඩ කිරීම සහ නිරවද්‍යතාවය ඇගයීමට ලක්වේ. මෙම ලකුණු සාර්ථක ලෙජර් ගිවිසුම් මත පදනම්ව ගණනය කෙරේ."
+            },
+            {
+              title: "සත්‍යාපිත ලාංඡනය",
+              text: "වැඩි ගැනුම්කරුවන් ආකර්ෂණය කර ගැනීමට සහ වැඩි ඇණවුම් ප්‍රමාණයක් ලබා ගැනීමට ඉහළ තරු මට්ටමක් පවත්වා ගන්න."
+            }
+          ]
+        }
+      ]
+    },
+    ta: {
+      title: "AgroNexa LK - உள்ளூர் விவசாயி / விற்பனையாளர் பயனர் கையேடு",
+      sections: [
+        {
+          heading: "1. பயிர் விளம்பரங்கள் மேலாண்மை",
+          steps: [
+            {
+              title: "அறுவடையை வெளியிடுதல்",
+              text: "உங்கள் பயிர் இருப்புகளை சந்தையில் வெளியிடவும். பயிரின் பெயர், கிலோ விலை, வகை (காய்கறிகள், பழங்கள், தானியங்கள், மசாலாப் பொருட்கள் போன்றவை) மற்றும் விளக்கத்தை அமைக்கவும்."
+            },
+            {
+              title: "இருப்பு கண்காணிப்பு",
+              text: "AgroNexa பயிர் இருப்புகளை தானாகவே புதுப்பிக்கும். வாங்குபவர் ஆர்டர்கள் உறுதி செய்யப்படும்போது இருப்பு அளவு தானாகவே குறைக்கப்படும்."
+            }
+          ]
+        },
+        {
+          heading: "2. விவசாய உபகரணங்கள் பட்டியல்",
+          steps: [
+            {
+              title: "இயந்திரங்களை பட்டியலிடுதல்",
+              text: "டிராக்டர்கள், தண்ணீர் பம்புகள், தெளிப்பான்களை வாடகைக்கு பட்டியலிடவும். தினசரி வாடகை கட்டணம், இயந்திரத்தின் நிலை மற்றும் இருப்பு விவரங்களை அமைக்கவும்."
+            },
+            {
+              title: "வாடகை வருமானம்",
+              text: "அறுவடை இல்லாத காலங்களில் கூடுதல் வருமானம் ஈட்ட உங்கள் மாவட்டத்தில் உள்ள மற்ற விவசாயிகளுக்கு உபகரணங்களை வாடகைக்கு விடுங்கள்."
+            }
+          ]
+        },
+        {
+          heading: "3. முன்பதிவு & பிளாக்செயின் லெட்ஜர் பதிவு",
+          steps: [
+            {
+              title: "வாங்குபவர்களின் தேவைகள்",
+              text: "உங்கள் மாவட்டத்தில் ஒளிபரப்பப்படும் வாங்குபவர்களின் தேவைகளைக் காண்க. உங்கள் விலையை வழங்கி திட்டங்களை (bids) சமர்ப்பிக்கவும்."
+            },
+            {
+              title: "ஆர்டர் & வாடகை ஒப்புதல்கள்",
+              text: "முன்பதிவுகளை ஏற்கவும் அல்லது நிராகரிக்கவும். உறுதிசெய்யப்பட்டவுடன், பரிவர்த்தனைகள் கிரிப்டோகிராஃபிக் முறையில் ஹாஷ் செய்யப்பட்டு பிளாக்செயினில் லெட்ஜர் செய்யப்படும்."
+            },
+            {
+              title: "வருவாய் பகுப்பாய்வு",
+              text: "வெற்றிகரமான லெட்ஜர் பரிவர்த்தனைகளின் அடிப்படையில் தயாரிக்கப்பட்ட மாதாந்திர வருவாய் புள்ளிவிவரங்களை பகுப்பாய்வும்."
+            }
+          ]
+        },
+        {
+          heading: "4. நற்பெயர் மற்றும் நம்பகத்தன்மை புள்ளிகள்",
+          steps: [
+            {
+              title: "நற்பெயர் காரணிகள்",
+              text: "உங்கள் சுயவிவரத்தில் நம்பகத்தன்மை, துல்லியம் போன்ற காரணிகள் மதிப்பிடப்படும். இந்த புள்ளிகள் லெட்ஜரில் பதிவு செய்யப்பட்ட வாடகைகளின் அடிப்படையில் கணக்கிடப்படும்."
+            },
+            {
+              title: "சரிபார்க்கப்பட்ட கூட்டாளி",
+              text: "வாங்குபவர்களை ஈர்க்கவும் அதிக பயிர் தேவைகளைப் பெறவும் உங்களது நற்பெயரை உயர்வாகப் பராமரிக்கவும்."
+            }
+          ]
+        }
+      ]
+    }
+  }
+};
+
+function updateManualLanguageVisibility(lang) {
+  const manualEn = document.getElementById('manual-content-en');
+  const manualSi = document.getElementById('manual-content-si');
+  const manualTa = document.getElementById('manual-content-ta');
+  if (!manualEn || !manualSi || !manualTa) return;
+
+  manualEn.style.display = 'none';
+  manualSi.style.display = 'none';
+  manualTa.style.display = 'none';
+
+  const activeManual = document.getElementById('manual-content-' + lang);
+  if (activeManual) {
+    activeManual.style.display = 'block';
+  }
+}
+
+function generateManualHTML() {
+  const role = window.location.pathname.includes('buyer') ? 'buyer' : 'seller';
+  const roleData = MANUAL_DATA[role];
+  if (!roleData) return;
+
+  const isBuyer = role === 'buyer';
+  const colorPrimaryLight = isBuyer ? 'var(--teal-light)' : 'var(--primary-light)';
+  const colorPrimaryMid = isBuyer ? 'var(--teal-mid)' : 'var(--primary)';
+  const colorBorder = isBuyer ? 'var(--border)' : 'var(--border-color)';
+  const colorText = isBuyer ? 'var(--text)' : 'var(--text-main)';
+  const colorMuted = isBuyer ? 'var(--muted)' : 'var(--text-muted)';
+
+  const langs = ['en', 'si', 'ta'];
+  langs.forEach(lang => {
+    const langData = roleData[lang];
+    const container = document.getElementById('manual-content-' + lang);
+    if (!container) return;
+
+    let html = `<div style="color: ${colorText}; padding: 10px 0;">`;
+    html += `<h2 style="font-size: 18px; font-weight: 700; margin-bottom: 20px; border-bottom: 2px solid ${colorBorder}; padding-bottom: 8px;">${langData.title}</h2>`;
+
+    langData.sections.forEach(sec => {
+      html += `<div style="margin-bottom: 24px;">`;
+      html += `<h3 style="font-size: 15px; font-weight: 600; color: ${colorPrimaryLight}; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">${sec.heading}</h3>`;
+
+      sec.steps.forEach(step => {
+        html += `<div style="margin-bottom: 14px; background: rgba(128,128,128,0.03); padding: 12px 16px; border-radius: 8px; border-left: 3px solid ${colorPrimaryMid};">`;
+        html += `<h4 style="font-size: 13.5px; font-weight: 600; margin-bottom: 4px; color: ${colorText};">${step.title}</h4>`;
+        html += `<p style="font-size: 12.5px; color: ${colorMuted}; margin: 0; line-height: 1.5;">${step.text}</p>`;
+        html += `</div>`;
+      });
+
+      html += `</div>`;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+  });
+}
+
+function downloadUserManualPDF() {
+  const lang = localStorage.getItem("agro_lang") || "si";
+  const role = window.location.pathname.includes('buyer') ? 'buyer' : 'seller';
+  const roleData = MANUAL_DATA[role];
+  if (!roleData) return;
+  const langData = roleData[lang];
+
+  const canvasWidth = 800;
+  const pageHeight = 1130; 
+  const marginLeft = 60;
+  const marginRight = 60;
+  const contentWidth = canvasWidth - marginLeft - marginRight;
+
+  const measureCanvas = document.createElement('canvas');
+  const mCtx = measureCanvas.getContext('2d');
+  measureCanvas.width = canvasWidth;
+  measureCanvas.height = 2000;
+
+  const fontTitle = 'bold 22px "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif';
+  const fontHeading = 'bold 16px "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif';
+  const fontStepTitle = 'bold 13px "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif';
+  const fontBody = '12px "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif';
+  const fontFooter = '10px "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif';
+
+  const titleLineHeight = 30;
+  const headingLineHeight = 24;
+  const stepTitleLineHeight = 18;
+  const bodyLineHeight = 18;
+
+  function measureBlock(ctx, text, font, width, lineHeight) {
+    ctx.font = font;
+    const words = text.split(' ');
+    let line = '';
+    let testLine = '';
+    let height = 0;
+
+    for (let n = 0; n < words.length; n++) {
+      testLine = line + words[n] + ' ';
+      const metrics = ctx.measureText(testLine);
+      if (metrics.width > width && n > 0) {
+        line = words[n] + ' ';
+        height += lineHeight;
+      } else {
+        line = testLine;
+      }
+    }
+    height += lineHeight;
+    return height;
+  }
+
+  let currentY = 80;
+
+  currentY += measureBlock(mCtx, langData.title, fontTitle, contentWidth, titleLineHeight);
+  currentY += 30;
+
+  langData.sections.forEach(sec => {
+    currentY += headingLineHeight + 10;
+
+    sec.steps.forEach(step => {
+      currentY += stepTitleLineHeight + 4;
+      currentY += measureBlock(mCtx, step.text, fontBody, contentWidth - 20, bodyLineHeight);
+      currentY += 15;
+    });
+
+    currentY += 15;
+  });
+
+  currentY += 60;
+
+  const totalPages = Math.ceil(currentY / pageHeight) || 1;
+  const totalHeight = totalPages * pageHeight;
+
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvasWidth;
+  canvas.height = totalHeight;
+
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvasWidth, totalHeight);
+
+  let drawY = 80;
+
+  function drawWrappedText(ctx, text, x, y, width, font, lineHeight, color) {
+    ctx.font = font;
+    ctx.fillStyle = color || '#16222c';
+    const words = text.split(' ');
+    let line = '';
+    let testLine = '';
+
+    for (let n = 0; n < words.length; n++) {
+      testLine = line + words[n] + ' ';
+      const metrics = ctx.measureText(testLine);
+      if (metrics.width > width && n > 0) {
+        ctx.fillText(line, x, y);
+        line = words[n] + ' ';
+        y += lineHeight;
+      } else {
+        line = testLine;
+      }
+    }
+    ctx.fillText(line, x, y);
+    return y + lineHeight;
+  }
+
+  drawY = drawWrappedText(ctx, langData.title, marginLeft, drawY, contentWidth, fontTitle, titleLineHeight, '#16222c');
+  drawY += 20;
+
+  const colorPrimary = role === 'buyer' ? '#1a4f72' : '#0f5236';
+
+  langData.sections.forEach(sec => {
+    ctx.font = fontHeading;
+    ctx.fillStyle = colorPrimary;
+    ctx.fillText(sec.heading, marginLeft, drawY);
+    drawY += headingLineHeight + 10;
+
+    sec.steps.forEach(step => {
+      ctx.font = fontStepTitle;
+      ctx.fillStyle = '#16222c';
+      ctx.fillText(step.title, marginLeft + 15, drawY);
+
+      ctx.fillStyle = colorPrimary;
+      ctx.fillRect(marginLeft, drawY - 11, 4, 15);
+
+      drawY += stepTitleLineHeight + 4;
+
+      drawY = drawWrappedText(ctx, step.text, marginLeft + 15, drawY, contentWidth - 15, fontBody, bodyLineHeight, '#5e6d7a');
+      drawY += 15;
+    });
+
+    drawY += 15;
+  });
+
+  for (let i = 0; i < totalPages; i++) {
+    const pageBottomY = (i + 1) * pageHeight;
+
+    ctx.strokeStyle = '#dbe2e8';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(marginLeft, pageBottomY - 50);
+    ctx.lineTo(canvasWidth - marginRight, pageBottomY - 50);
+    ctx.stroke();
+
+    ctx.font = fontFooter;
+    ctx.fillStyle = '#90a1b0';
+    const pageText = `${i + 1} / ${totalPages}`;
+    ctx.fillText(pageText, canvasWidth - marginRight - ctx.measureText(pageText).width, pageBottomY - 32);
+    ctx.fillText('AgroNexa LK', marginLeft, pageBottomY - 32);
+  }
+
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({
+    orientation: 'p',
+    unit: 'mm',
+    format: 'a4'
+  });
+
+  const a4WidthMM = 210;
+  const a4HeightMM = 297;
+
+  for (let i = 0; i < totalPages; i++) {
+    if (i > 0) {
+      pdf.addPage();
+    }
+
+    const pageCanvas = document.createElement('canvas');
+    pageCanvas.width = canvasWidth;
+    pageCanvas.height = pageHeight;
+    const pCtx = pageCanvas.getContext('2d');
+
+    pCtx.drawImage(canvas, 0, i * pageHeight, canvasWidth, pageHeight, 0, 0, canvasWidth, pageHeight);
+
+    const pageImgData = pageCanvas.toDataURL('image/png');
+    pdf.addImage(pageImgData, 'PNG', 0, 0, a4WidthMM, a4HeightMM, undefined, 'FAST');
+  }
+
+  const filename = `AgroNexa_LK_User_Manual_${role}_${lang}.pdf`;
+  pdf.save(filename);
+
+  if (typeof showToast === 'function') {
+    showToast(getTranslation('toast-success-title', 'Success'), getTranslation('toast-pdf-generated-title', 'PDF Generated'), 'success');
+  } else {
+    alert('User manual downloaded successfully!');
+  }
+}
+
+document.addEventListener('languageChanged', (e) => {
+  updateManualLanguageVisibility(e.detail);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  generateManualHTML();
+  updateManualLanguageVisibility(localStorage.getItem('agro_lang') || 'si');
+});
 </script>
 </body>
 </html>

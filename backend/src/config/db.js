@@ -1,3 +1,4 @@
+process.env.PGCLIENTENCODING = 'utf-8';
 const { Pool } = require('pg');
 
 const sslConfig = process.env.DATABASE_URL && !process.env.DATABASE_URL.includes('localhost') && !process.env.DATABASE_URL.includes('127.0.0.1')
