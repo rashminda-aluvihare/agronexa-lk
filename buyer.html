@@ -404,6 +404,14 @@
   @media (max-width: 768px) {
     body {
       flex-direction: column !important;
+      overflow-y: auto !important;
+      height: auto !important;
+      min-height: 100vh !important;
+    }
+    .main {
+      overflow: visible !important;
+      height: auto !important;
+      flex: none !important;
     }
     .sidebar {
       position: fixed;
@@ -455,6 +463,10 @@
     }
     .content {
       padding: 20px !important;
+      overflow-y: visible !important;
+      overflow: visible !important;
+      height: auto !important;
+      flex: none !important;
     }
     .chat-layout {
       display: flex !important;
