@@ -3458,8 +3458,9 @@ async function downloadLedgerReceipt(txId, listingName, sellerName, amount, dura
     doc.setFont('courier', 'normal');
     doc.setFontSize(6.5);
     doc.setTextColor(100, 100, 100);
-    doc.text(`LEDGER BLOCK HASH (SHA-256): ${blockHash || 'GENESIS_BLOCK_HASH'}`, 14, y);
-    doc.text(`PREVIOUS BLOCK HASH:         ${prevHash || '0'}`, 14, y + 3);
+    doc.text(`LEDGER TRANSACTION ID (TX ID): ${txId}`, 14, y);
+    doc.text(`LEDGER BLOCK HASH (SHA-256):   ${blockHash || 'GENESIS_BLOCK_HASH'}`, 14, y + 3);
+    doc.text(`PREVIOUS BLOCK HASH:           ${prevHash || '0'}`, 14, y + 6);
 
     y += 10;
     doc.setFont('helvetica', 'italic');
@@ -4530,6 +4531,7 @@ function loadLedger() {
               </div>
             </div>
             <div style="font-size:12px; color:var(--muted); display:flex; flex-direction:column; gap:4px;">
+              <span><strong>Transaction ID (Tx ID):</strong> <span style="font-family:monospace; background:rgba(0,0,0,0.04); padding:2px 6px; border-radius:4px; font-size:11px; user-select:all;">${item.tx_id}</span></span>
               <span><strong>${getTranslation('js-type', 'Type')}:</strong> ${typeLabel} (${item.duration_days || 1} ${getTranslation('js-days', 'days')})</span>
               <span><strong>${getTranslation('js-partner-seller', 'Partner (Seller)')}:</strong> <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.owner_id})">${item.owner_name}</span></span>
               <span><strong>${getTranslation('js-block-hash', 'Transaction Hashed Block')}:</strong> <span style="font-family:monospace; background:rgba(0,0,0,0.04); padding:2px 6px; border-radius:4px; font-size:11px;">${shortHash}</span></span>

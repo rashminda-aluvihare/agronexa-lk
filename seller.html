@@ -3534,7 +3534,8 @@ function loadLedger() {
             </div>
             <div style="flex:1">
               <div class="ledger-label">${listingNameTranslated} · ${getTranslation('js-rented-to', 'Rented to')} <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--primary);" onclick="showUserProfileModal(${item.renter_id})">${renterNameTranslated}</span> (${item.duration_days} ${getTranslation('js-days', 'days')})</div>
-              <div class="ledger-hash">block_hash: ${item.block_hash.slice(0,18)}.</div>
+              <div class="ledger-hash">Tx ID: <span style="font-family:monospace; background:rgba(0,0,0,0.04); padding:2px 6px; border-radius:4px; font-size:11px; user-select:all;">${item.tx_id}</span></div>
+              <div class="ledger-hash" style="margin-top:2px;">block_hash: ${item.block_hash.slice(0,18)}.</div>
             </div>
             <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
               <div class="ledger-amt">Rs. ${parseFloat(item.amount).toLocaleString()}</div>
@@ -4364,8 +4365,9 @@ async function downloadLedgerReceipt(txId, listingName, buyerName, amount, durat
     doc.setFont('courier', 'normal');
     doc.setFontSize(6.5);
     doc.setTextColor(100, 100, 100);
-    doc.text(`LEDGER BLOCK HASH (SHA-256): ${blockHash || 'GENESIS_BLOCK_HASH'}`, 14, y);
-    doc.text(`PREVIOUS BLOCK HASH:         ${prevHash || '0'}`, 14, y + 3);
+    doc.text(`LEDGER TRANSACTION ID (TX ID): ${txId}`, 14, y);
+    doc.text(`LEDGER BLOCK HASH (SHA-256):   ${blockHash || 'GENESIS_BLOCK_HASH'}`, 14, y + 3);
+    doc.text(`PREVIOUS BLOCK HASH:           ${prevHash || '0'}`, 14, y + 6);
 
     y += 10;
     doc.setFont('helvetica', 'italic');
