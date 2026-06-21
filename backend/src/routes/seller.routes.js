@@ -42,6 +42,12 @@ router.post('/equipment', sellerRoleCheck, uploadListings.array('photos', 5), eq
 router.put('/equipment/:id', sellerRoleCheck, uploadListings.array('photos', 5), equipmentController.updateEquipmentListing);
 router.delete('/equipment/:id', sellerRoleCheck, equipmentController.deleteEquipmentListing);
 
+// Equipment Marketplace & Bookings (renter side)
+router.get('/marketplace/equipment', sellerRoleCheck, equipmentController.browseMarketplaceEquipment);
+router.post('/bookings', sellerRoleCheck, equipmentController.bookEquipment);
+router.get('/my-bookings', sellerRoleCheck, equipmentController.getBuyerBookings);
+router.delete('/bookings/:id', sellerRoleCheck, equipmentController.cancelBooking);
+
 // Bookings (owner side)
 router.get('/bookings', sellerRoleCheck, equipmentController.getSellerBookings);
 router.post('/bookings/:id/confirm', sellerRoleCheck, equipmentController.confirmBooking);

@@ -1078,26 +1078,59 @@
     </div>
 
     <!-- Equipment Rentals Section -->
-    <div class="grid-2 content-section" id="section-equipment" style="display:none;">
-      <!-- Equipment Listings -->
-      <div class="panel" id="panel-equipment-listings">
-        <div class="panel-head">
-          <div class="panel-title">🚜 <span data-i18n="tab-my-equipment-listings">My Equipment Listings</span></div>
-          <div class="panel-action" onclick="openAddEquipmentModal()" style="cursor:pointer" data-i18n="btn-add-new">➕ Add New</div>
+    <!-- Equipment Rentals Section -->
+    <div class="panel content-section" id="section-equipment" style="display:none;">
+      <div class="panel-head" style="margin-bottom: 20px;">
+        <div class="panel-title">🚜 <span data-i18n="tab-equipment-rentals">Equipment Rentals & Marketplace</span></div>
+      </div>
+
+      <!-- Equipment Tab Bar -->
+      <div style="display:flex; background:#EDF5EF; border-radius:10px; padding:4px; gap:4px; margin-bottom:20px;">
+        <button id="equipment-tab-my-listings-btn" onclick="toggleEquipmentTab('my-listings')" style="flex:1; height:36px; border:none; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; background:#fff; color:#155C35;" data-i18n="equip-tab-my-listings">My Equipment</button>
+        <button id="equipment-tab-marketplace-btn" onclick="toggleEquipmentTab('marketplace')" style="flex:1; height:36px; border:none; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; background:transparent; color:#6B9B7A;" data-i18n="equip-tab-marketplace">Browse Marketplace</button>
+        <button id="equipment-tab-my-bookings-btn" onclick="toggleEquipmentTab('my-bookings')" style="flex:1; height:36px; border:none; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; background:transparent; color:#6B9B7A;" data-i18n="equip-tab-my-bookings">My Bookings</button>
+      </div>
+
+      <!-- Tab 1: My Equipment Listings & Booking Requests -->
+      <div id="equipment-my-listings-panel" class="grid-2">
+        <!-- Equipment Listings -->
+        <div class="panel" id="panel-equipment-listings" style="border:none; box-shadow:none; padding:0;">
+          <div class="panel-head">
+            <div class="panel-title">🚜 <span data-i18n="tab-my-equipment-listings">My Equipment Listings</span></div>
+            <div class="panel-action" onclick="openAddEquipmentModal()" style="cursor:pointer" data-i18n="btn-add-new">➕ Add New</div>
+          </div>
+          <div id="equipment-listings-list" style="max-height: 400px; overflow-y: auto;">
+            <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;" data-i18n="js-loading">Loading equipment...</div>
+          </div>
         </div>
-        <div id="equipment-listings-list" style="max-height: 400px; overflow-y: auto;">
-          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;" data-i18n="js-loading">Loading equipment...</div>
+
+        <!-- Equipment Booking Requests -->
+        <div class="panel" id="panel-equipment-bookings" style="border:none; box-shadow:none; padding:0;">
+          <div class="panel-head">
+            <div class="panel-title">📥 <span data-i18n="tab-tool-rental-bookings">Tool Rental Bookings</span></div>
+            <span style="font-size:11px;color:var(--accent);font-weight:500" id="equipment-bookings-count">0 pending</span>
+          </div>
+          <div id="equipment-bookings-list" style="max-height: 400px; overflow-y: auto;">
+            <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;" data-i18n="js-loading">Loading booking requests...</div>
+          </div>
         </div>
       </div>
 
-      <!-- Equipment Booking Requests -->
-      <div class="panel" id="panel-equipment-bookings">
-        <div class="panel-head">
-          <div class="panel-title">📥 <span data-i18n="tab-tool-rental-bookings">Tool Rental Bookings</span></div>
-          <span style="font-size:11px;color:var(--accent);font-weight:500" id="equipment-bookings-count">0 pending</span>
+      <!-- Tab 2: Equipment Marketplace -->
+      <div id="equipment-marketplace-panel" style="display:none;">
+        <div style="display:flex; gap:12px; margin-bottom:16px;">
+          <input type="text" class="form-input" id="equipment-market-search" placeholder="Search equipment..." style="flex:1;" oninput="loadEquipmentMarketplace()" data-i18n-placeholder="placeholder-search-equipment">
+          <button class="btn" onclick="loadEquipmentMarketplace()" data-i18n="btn-search">🔍 Search</button>
         </div>
-        <div id="equipment-bookings-list" style="max-height: 400px; overflow-y: auto;">
-          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;" data-i18n="js-loading">Loading booking requests...</div>
+        <div id="equipment-marketplace-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:16px; max-height: 500px; overflow-y: auto; padding: 4px;">
+          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;grid-column: 1/-1;" data-i18n="js-loading">Loading equipment listings...</div>
+        </div>
+      </div>
+
+      <!-- Tab 3: My Bookings (As renter) -->
+      <div id="equipment-my-bookings-panel" style="display:none;">
+        <div id="equipment-renter-bookings-list" style="display:flex; flex-direction:column; gap:12px; max-height: 500px; overflow-y: auto; padding: 4px;">
+          <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;" data-i18n="js-loading">Loading your bookings...</div>
         </div>
       </div>
     </div>
@@ -1577,6 +1610,36 @@
             <textarea id="equip-desc" rows="3" data-i18n-placeholder="form-ph-desc" placeholder="Specify terms, driver availability..." style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;font-family:inherit;font-size:13px;outline:none;"></textarea>
           </div>
           <button type="submit" class="btn-sm btn-accept" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;background:var(--green);color:#fff;" data-i18n="btn-publish-tool">Publish Equipment Listing</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- EQUIPMENT BOOKING MODAL -->
+    <div id="book-equip-modal" style="display:none;position:fixed;inset:0;background:rgba(20,29,43,0.7);backdrop-filter:blur(4px);z-index:2000;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:20px;padding:32px;max-width:400px;width:95%;box-shadow:0 20px 60px rgba(20,29,43,0.3);border:1px solid var(--border);position:relative;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <h3 style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--text)" id="book-equip-title" data-i18n="modal-book-equip-title">Book Equipment</h3>
+          <button onclick="closeBookingModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted)">&times;</button>
+        </div>
+        <form id="book-equip-form" onsubmit="submitEquipmentBooking(event)">
+          <input type="hidden" id="book-equip-id">
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="modal-lbl-daily-rate">Daily Rate</label>
+            <div id="book-equip-rate" style="font-size:15px;font-weight:600;color:var(--teal)">Rs. 0 / day</div>
+          </div>
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="modal-lbl-start-date">Start Date</label>
+            <input class="form-input" type="date" id="book-start-date" required style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+          </div>
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="modal-lbl-end-date">End Date</label>
+            <input class="form-input" type="date" id="book-end-date" required style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+          </div>
+          <div style="margin-bottom:20px;background:var(--teal-pale);padding:10px 14px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:12px;color:var(--teal);font-weight:500;" data-i18n="modal-lbl-est-cost">Estimated Cost</span>
+            <span style="font-size:15px;color:var(--teal);font-weight:600;" id="book-total-cost">Rs. 0</span>
+          </div>
+          <button type="submit" class="btn-sm btn-confirm" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;background:var(--teal);color:#fff;" data-i18n="modal-btn-confirm-booking">Confirm Booking Request</button>
         </form>
       </div>
     </div>
@@ -2096,8 +2159,8 @@ function switchTab(tab) {
     document.getElementById('panel-ledger').style.display = 'block';
     document.getElementById('panel-rep-earnings').style.display = 'none';
   } else if (tab === 'equipment') {
-    sectionEquipment.style.display = 'grid';
-    loadEquipmentData();
+    sectionEquipment.style.display = 'block';
+    toggleEquipmentTab('my-listings');
   } else if (tab === 'profile') {
     sectionProfile.style.display = 'block';
     loadProfileDetails();
@@ -2897,6 +2960,234 @@ function printReturnReceipt(bookingId) {
   const printWindow = window.open('', '_blank');
   printWindow.document.write(receiptHtml);
   printWindow.document.close();
+}
+
+// ── EQUIPMENT SHARED MARKETPLACE & BOOKING FUNCTIONS ──
+let activeEquipmentTab = 'my-listings';
+let currentEquipmentRate = 0;
+
+function toggleEquipmentTab(tabName) {
+  activeEquipmentTab = tabName;
+  const tabs = ['my-listings', 'marketplace', 'my-bookings'];
+  tabs.forEach(t => {
+    const btn = document.getElementById(`equipment-tab-${t}-btn`);
+    const panel = document.getElementById(`equipment-${t}-panel`);
+    if (t === tabName) {
+      btn.style.background = '#155C35';
+      btn.style.color = '#fff';
+      panel.style.display = (t === 'my-listings') ? 'grid' : 'block';
+    } else {
+      btn.style.background = 'transparent';
+      btn.style.color = '#6B9B7A';
+      panel.style.display = 'none';
+    }
+  });
+
+  if (tabName === 'marketplace') {
+    loadEquipmentMarketplace();
+  } else if (tabName === 'my-bookings') {
+    loadSellerRenterBookings();
+  } else if (tabName === 'my-listings') {
+    loadEquipmentData();
+  }
+}
+
+function loadEquipmentMarketplace() {
+  const query = document.getElementById('equipment-market-search').value.trim();
+  const container = document.getElementById('equipment-marketplace-grid');
+
+  fetch(API_URL + `/api/seller/marketplace/equipment?search=${encodeURIComponent(query)}`, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success || !data.listings || !data.listings.length) {
+        container.innerHTML = '<div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;grid-column: 1/-1;">No equipment available matching your search.</div>';
+        return;
+      }
+
+      let html = '';
+      data.listings.forEach(item => {
+        // Don't show our own equipment
+        if (item.owner_id === _user.id) return;
+
+        let icon = '🚜';
+        if (item.name.toLowerCase().includes('pump') || item.name.toLowerCase().includes('water')) icon = '💧';
+        if (item.name.toLowerCase().includes('transport') || item.name.toLowerCase().includes('lorry')) icon = '🚛';
+        if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) icon = '🌿';
+
+        if (item.photos && item.photos.length > 0) {
+          icon = `<img src="${API_URL}/${item.photos[0]}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;">`;
+        }
+
+        const distKey = 'district-' + (item.district || _user.district || 'kurunegala').toLowerCase().replace(/[^a-z]/g, '');
+        const districtTranslated = getTranslation(distKey, item.district || 'Kurunegala');
+        const condTranslated = getTranslation('cond-' + item.condition.toLowerCase(), item.condition);
+
+        html += `
+          <div class="market-card" style="margin-bottom:0; box-sizing:border-box; width:100%;">
+            <div class="market-card-img" style="height:80px; font-size:32px;">${icon}</div>
+            <div class="market-card-name" style="font-size:13px; font-weight:600;">${item.name}</div>
+            <div class="market-card-meta" style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">
+              ${districtTranslated} · ${condTranslated}
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">
+              Owner: <span style="font-weight:600; color:var(--primary);">${item.owner_name}</span>
+            </div>
+            <div class="market-card-price" style="font-size:13.5px; font-weight:600; color:#155C35;">Rs. ${parseFloat(item.rental_rate).toLocaleString()}/day</div>
+            <button class="interest-btn" style="margin-top:8px; width:100%; background:#EDF5EF; color:#155C35; border:none; border-radius:8px; padding:8px 0; font-size:12px; font-weight:600; cursor:pointer;" 
+              onclick="openEquipmentBookingModal(${item.id}, ${item.rental_rate}, '${item.name.replace(/'/g, "\\'")}')">
+              🚜 Rent Now
+            </button>
+          </div>
+        `;
+      });
+
+      if (!html) {
+        container.innerHTML = '<div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;grid-column: 1/-1;">No equipment available matching your search.</div>';
+      } else {
+        container.innerHTML = html;
+      }
+    });
+}
+
+function loadSellerRenterBookings() {
+  const container = document.getElementById('equipment-renter-bookings-list');
+
+  fetch(API_URL + '/api/seller/my-bookings', {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success || !data.bookings || !data.bookings.length) {
+        container.innerHTML = '<div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">You have not made any rental bookings yet.</div>';
+        return;
+      }
+
+      let html = '';
+      data.bookings.forEach(b => {
+        let icon = '🚜';
+        const statusLabel = getTranslation('booking-status-' + b.status.toLowerCase(), b.status);
+        const statusClass = b.status === 'confirmed' ? 'active' : (b.status === 'pending' ? 'pending' : 'deactivated');
+        
+        const startStr = new Date(b.start_date).toLocaleDateString();
+        const endStr = new Date(b.end_date).toLocaleDateString();
+
+        let actionBtn = '';
+        if (b.status === 'pending') {
+          actionBtn = `<button onclick="cancelEquipmentBooking(${b.id})" style="background:none; border:none; color:var(--amber); font-size:11px; cursor:pointer; font-weight:600;">Cancel Request</button>`;
+        }
+
+        html += `
+          <div class="booking-item" style="display:flex; justify-content:space-between; align-items:center; padding:12px; margin-bottom:8px; border-radius:10px; background:#fff; border:1px solid var(--border);">
+            <div style="display:flex; gap:12px; align-items:center;">
+              <div style="width:36px; height:36px; border-radius:8px; background:#EDF5EF; display:flex; align-items:center; justify-content:center; font-size:18px;">${icon}</div>
+              <div>
+                <div style="font-size:13px; font-weight:600; color:var(--text);">${b.listing_name}</div>
+                <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Owner: ${b.owner_name} · ${b.owner_phone}</div>
+                <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Dates: ${startStr} - ${endStr}</div>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:13px; font-weight:600; color:#155C35;">Rs. ${parseFloat(b.total_amount).toLocaleString()}</div>
+              <div style="display:flex; align-items:center; gap:6px; margin-top:4px; justify-content:flex-end;">
+                <span class="status-pill ${statusClass}" style="padding:2px 8px; font-size:10px;">${statusLabel}</span>
+                ${actionBtn}
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    });
+}
+
+function openEquipmentBookingModal(id, rate, name) {
+  currentEquipmentRate = parseFloat(rate);
+  document.getElementById('book-equip-id').value = id;
+  document.getElementById('book-equip-title').textContent = `${getTranslation('modal-book-equip-title', 'Book Equipment')} - ${name}`;
+  document.getElementById('book-equip-rate').textContent = `Rs. ${currentEquipmentRate.toLocaleString()} / ${getTranslation('js-per-day', 'day')}`;
+  
+  // Set default dates (tomorrow and day after tomorrow)
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const dayAfter = new Date();
+  dayAfter.setDate(dayAfter.getDate() + 2);
+  
+  document.getElementById('book-start-date').value = tomorrow.toISOString().split('T')[0];
+  document.getElementById('book-end-date').value = dayAfter.toISOString().split('T')[0];
+  
+  updateEquipmentBookingCost();
+  
+  // Bind inputs
+  document.getElementById('book-start-date').onchange = updateEquipmentBookingCost;
+  document.getElementById('book-end-date').onchange = updateEquipmentBookingCost;
+
+  document.getElementById('book-equip-modal').style.display = 'flex';
+}
+
+function updateEquipmentBookingCost() {
+  const start = new Date(document.getElementById('book-start-date').value);
+  const end = new Date(document.getElementById('book-end-date').value);
+  
+  if (isNaN(start) || isNaN(end) || end < start) {
+    document.getElementById('book-total-cost').textContent = 'Rs. 0';
+    return;
+  }
+  
+  const days = Math.ceil((end - start) / 86400000) + 1;
+  const total = days * currentEquipmentRate;
+  document.getElementById('book-total-cost').textContent = 'Rs. ' + total.toLocaleString();
+}
+
+function closeBookingModal() {
+  document.getElementById('book-equip-modal').style.display = 'none';
+  document.getElementById('book-equip-form').reset();
+}
+
+function submitEquipmentBooking(e) {
+  e.preventDefault();
+  const id = document.getElementById('book-equip-id').value;
+  const start = document.getElementById('book-start-date').value;
+  const end = document.getElementById('book-end-date').value;
+
+  fetch(API_URL + '/api/seller/bookings', {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      listing_id: id,
+      start_date: start,
+      end_date: end
+    })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        showToast(getTranslation('toast-booking-requested-title', 'Booking Requested!'), getTranslation('toast-booking-requested-body', 'Your equipment rental request was sent to the owner 🚜'), 'success');
+        closeBookingModal();
+        toggleEquipmentTab('my-bookings');
+      } else {
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('err-failed-submit-booking', 'Failed to submit booking'), 'error');
+      }
+    });
+}
+
+function cancelEquipmentBooking(bookingId) {
+  if (!confirm(getTranslation('js-confirm-cancel-booking', 'Are you sure you want to cancel this booking request?'))) return;
+
+  fetch(API_URL + '/api/seller/bookings/' + bookingId, {
+    method: 'DELETE',
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        showToast(getTranslation('toast-booking-cancelled-title', 'Booking Cancelled'), getTranslation('toast-booking-cancelled-body', 'Your booking request has been cancelled'), 'info');
+        loadSellerRenterBookings();
+      } else {
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || 'Failed to cancel booking', 'error');
+      }
+    });
 }
 
 function openAddEquipmentModal() {
