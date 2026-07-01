@@ -706,14 +706,14 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
         </div>
 
         <div class="widget-card">
-          <div class="widget-title">Quick CSV Exports</div>
+          <div class="widget-title">Quick PDF Exports</div>
           <p style="font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 20px;">
-            Export live platform registers directly as CSV spreadsheets for backup, audit, or report generation.
+            Export live platform registers directly as formatted PDF reports for backup, audit, or review.
           </p>
           <div class="action-grid">
-            <button class="btn-secondary" onclick="exportCSV('users')">Users Register</button>
-            <button class="btn-secondary" onclick="exportCSV('ledger')">Ledger Blocks</button>
-            <button class="btn-secondary" onclick="exportCSV('audit-logs')">System Logs</button>
+            <button class="btn-secondary" onclick="exportPDF('users')">Users Register</button>
+            <button class="btn-secondary" onclick="exportPDF('ledger')">Ledger Blocks</button>
+            <button class="btn-secondary" onclick="exportPDF('audit-logs')">System Logs</button>
           </div>
         </div>
       </div>
@@ -872,6 +872,8 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
 <div id="toast"></div>
 
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 <script>
 var API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:'
   ? 'http://localhost:3000'
@@ -1335,10 +1337,58 @@ async function verifyLedgerChain() {
   btn.textContent = 'Verify Ledger Chain Integrity'; btn.disabled = false;
 }
 
-// ── EXPORT CSV ──
-function exportCSV(resource) {
-  var url = API_URL + '/api/admin/export/' + resource + '?admin_email=' + encodeURIComponent(adminEmail) + '&admin_password=' + encodeURIComponent(adminPass);
-  window.open(url, '_blank');
+// ── EXPORT PDF ──
+async function exportPDF(resource) {
+  showToast('Generating PDF report...');
+  try {
+    var url = API_URL + '/api/admin/export/' + resource 
+      + '?admin_email=' + encodeURIComponent(adminEmail) 
+      + '&admin_password=' + encodeURIComponent(adminPass)
+      + '&format=json';
+      
+    var res = await fetch(url);
+    var data = await res.json();
+    if (data.success && data.headers && data.rows) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: 'a4'
+      });
+      
+      // Document Title/Header
+      doc.setFillColor(11, 61, 34); // Deep Forest Green theme
+      doc.rect(0, 0, 297, 24, 'F');
+      
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(16);
+      doc.text('AGRONEXA LK — ADMINISTRATIVE PORTAL', 14, 10);
+      
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.text('Resource Report: ' + resource.toUpperCase() + ' REGISTER | Export Date: ' + new Date().toLocaleString(), 14, 16);
+      
+      // AutoTable generator
+      doc.autoTable({
+        startY: 28,
+        head: [data.headers],
+        body: data.rows,
+        theme: 'striped',
+        headStyles: { fillColor: [21, 92, 53] }, // Deep green headers
+        styles: { fontSize: 8.5, cellPadding: 2.5 },
+        margin: { left: 10, right: 10 }
+      });
+      
+      doc.save(`AgroNexa_Admin_${resource}_Export.pdf`);
+      showToast('PDF downloaded successfully!');
+    } else {
+      showToast('Failed to fetch data for PDF.');
+    }
+  } catch (e) {
+    console.error(e);
+    showToast('Error generating PDF.');
+  }
 }
 
 // ── SEARCH & FILTER USERS ──

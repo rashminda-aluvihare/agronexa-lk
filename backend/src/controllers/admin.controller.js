@@ -274,6 +274,10 @@ async function exportResource(req, res, next) {
       return res.status(400).json({ error: 'Invalid resource. Allowed resources are users, ledger, audit-logs.' });
     }
 
+    if (req.query.format === 'json') {
+      return res.json({ success: true, headers, rows });
+    }
+
     // Generate CSV string
     const csvContent = [
       headers.map(escapeCSVValue).join(','),
