@@ -140,20 +140,49 @@ async function getAuditLogs(req, res, next) {
   const page = parseInt(req.query.page, 10) || 1;
   const limit = parseInt(req.query.limit, 10) || 50;
   const offset = (page - 1) * limit;
+  const search = req.query.search ? `%${req.query.search}%` : null;
 
   try {
-    const logsResult = await db.query(
-      `SELECT al.*, 
-              CASE WHEN al.user_id = 0 THEN 'Admin' ELSE u.first_name || ' ' || u.last_name END AS user_name,
-              u.email AS user_email
-       FROM audit_logs al
-       LEFT JOIN users u ON u.id = al.user_id
-       ORDER BY al.created_at DESC
-       LIMIT $1 OFFSET $2`,
-      [limit, offset]
-    );
+    let queryText = `
+      SELECT al.*, 
+             CASE WHEN al.user_id = 0 THEN 'Admin' ELSE u.first_name || ' ' || u.last_name END AS user_name,
+             u.email AS user_email
+      FROM audit_logs al
+      LEFT JOIN users u ON u.id = al.user_id
+    `;
+    
+    let countText = `
+      SELECT COUNT(*) 
+      FROM audit_logs al
+      LEFT JOIN users u ON u.id = al.user_id
+    `;
 
-    const countResult = await db.query('SELECT COUNT(*) FROM audit_logs');
+    const whereClauses = [];
+    const queryParams = [];
+    let paramIndex = 1;
+
+    if (search) {
+      whereClauses.push(`(
+        u.email ILIKE $${paramIndex} OR 
+        al.action ILIKE $${paramIndex} OR 
+        al.details ILIKE $${paramIndex} OR
+        u.first_name ILIKE $${paramIndex} OR
+        u.last_name ILIKE $${paramIndex}
+      )`);
+      queryParams.push(search);
+      paramIndex++;
+    }
+
+    if (whereClauses.length > 0) {
+      const whereStr = ' WHERE ' + whereClauses.join(' AND ');
+      queryText += whereStr;
+      countText += whereStr;
+    }
+
+    queryText += ` ORDER BY al.created_at DESC LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
+
+    const logsResult = await db.query(queryText, [...queryParams, limit, offset]);
+    const countResult = await db.query(countText, queryParams);
     const total = parseInt(countResult.rows[0].count, 10);
 
     return res.json({

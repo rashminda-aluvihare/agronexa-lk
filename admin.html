@@ -825,6 +825,15 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
     <!-- AUDIT LOGS TAB -->
     <div id="tab-audit" style="display:none;">
       <div class="section-title">System Audit Logs (Read-only)</div>
+      <div class="filter-bar" style="margin-bottom:16px;">
+        <input class="filter-input" type="text" id="search-audit" oninput="debounceAuditSearch()" placeholder="Search logs by email, action, details..." />
+        <select class="filter-select" id="filter-audit-limit" onchange="loadAuditLogs(1)">
+          <option value="10">Show 10</option>
+          <option value="25">Show 25</option>
+          <option value="50" selected>Show 50</option>
+          <option value="100">Show 100</option>
+        </select>
+      </div>
       <div id="audit-list-container" style="background:#fff; border-radius:12px; border:1px solid var(--border); overflow-x:auto;">
         <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:left; min-width:600px;">
           <thead>
@@ -841,14 +850,30 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
           </tbody>
         </table>
       </div>
+      <div id="audit-pagination" style="display:flex; justify-content:center; align-items:center; gap:12px; margin-top:16px;"></div>
     </div>
   </div>
 </div>
 
 <!-- LIGHTBOX -->
-<div id="lightbox" onclick="closeLightbox()">
+<div id="lightbox" onclick="if(event.target===this)closeLightbox()">
   <button id="lightbox-close" onclick="closeLightbox()">✕</button>
-  <img id="lightbox-img" src="" alt="NIC"/>
+  <div style="position:relative; display:flex; flex-direction:column; align-items:center; gap:16px;">
+    <div id="lightbox-img-container" style="overflow:hidden; border-radius:12px; display:flex; align-items:center; justify-content:center;">
+      <img id="lightbox-img" src="" alt="NIC" style="max-width:85vw; max-height:75vh; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.5); transition:transform 0.2s; transform-origin:center;"/>
+    </div>
+    <div style="background:rgba(255,255,255,0.15); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); padding:8px 16px; border-radius:30px; display:flex; gap:14px; border:1px solid rgba(255,255,255,0.2); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);" onclick="event.stopPropagation()">
+      <button onclick="rotateImage(-90)" style="background:transparent; border:none; color:#fff; cursor:pointer; font-size:12.5px; font-weight:600; display:flex; align-items:center; gap:6px; font-family:inherit;">🔄 Left</button>
+      <div style="width:1px; background:rgba(255,255,255,0.25);"></div>
+      <button onclick="rotateImage(90)" style="background:transparent; border:none; color:#fff; cursor:pointer; font-size:12.5px; font-weight:600; display:flex; align-items:center; gap:6px; font-family:inherit;">🔄 Right</button>
+      <div style="width:1px; background:rgba(255,255,255,0.25);"></div>
+      <button onclick="zoomImage(0.1)" style="background:transparent; border:none; color:#fff; cursor:pointer; font-size:12.5px; font-weight:600; font-family:inherit;">➕ Zoom In</button>
+      <div style="width:1px; background:rgba(255,255,255,0.25);"></div>
+      <button onclick="zoomImage(-0.1)" style="background:transparent; border:none; color:#fff; cursor:pointer; font-size:12.5px; font-weight:600; font-family:inherit;">➖ Zoom Out</button>
+      <div style="width:1px; background:rgba(255,255,255,0.25);"></div>
+      <button onclick="resetLightboxImage()" style="background:transparent; border:none; color:#fff; cursor:pointer; font-size:12.5px; font-weight:600; font-family:inherit;">↺ Reset</button>
+    </div>
+  </div>
 </div>
 
 <!-- TOAST -->
@@ -999,6 +1024,12 @@ function nicFrame(label, url, imgId) {
 function renderActions(uid) {
   return '<div id="action-area-' + uid + '">'
     + '<div class="reason-box" id="reason-box-' + uid + '">'
+      + '<div style="margin-bottom:8px; display:flex; flex-wrap:wrap; gap:6px;">'
+        + '<button type="button" class="btn-secondary" style="height:26px; padding:0 8px; font-size:11px; font-weight:500;" onclick="setRejectPreset(' + uid + ', \'NIC photo is blurry or unreadable.\')">Blurry Image</button>'
+        + '<button type="button" class="btn-secondary" style="height:26px; padding:0 8px; font-size:11px; font-weight:500;" onclick="setRejectPreset(' + uid + ', \'NIC number does not match registered details.\')">Number Mismatch</button>'
+        + '<button type="button" class="btn-secondary" style="height:26px; padding:0 8px; font-size:11px; font-weight:500;" onclick="setRejectPreset(' + uid + ', \'NIC photo front and/or back sides are missing.\')">Missing Sides</button>'
+        + '<button type="button" class="btn-secondary" style="height:26px; padding:0 8px; font-size:11px; font-weight:500;" onclick="setRejectPreset(' + uid + ', \'Uploaded documents are invalid.\')">Invalid Doc</button>'
+      + '</div>'
       + '<textarea class="reason-inp" id="reason-inp-' + uid + '" placeholder="Reason for rejection (e.g. NIC image blurry, NIC mismatch)..."></textarea>'
       + '<div style="display:flex;gap:8px;margin-top:8px;">'
         + '<button class="btn-confirm-reject" onclick="doReject(' + uid + ')">Confirm Reject</button>'
@@ -1010,6 +1041,14 @@ function renderActions(uid) {
       + '<button class="btn-reject" onclick="startReject(' + uid + ')">Reject</button>'
     + '</div>'
   + '</div>';
+}
+
+function setRejectPreset(uid, text) {
+  var ta = document.getElementById('reason-inp-' + uid);
+  if (ta) {
+    ta.value = text;
+    ta.style.borderColor = 'var(--border)';
+  }
 }
 
 function esc(s) {
@@ -1024,11 +1063,43 @@ function toggleCard(id) {
 }
 
 // ── LIGHTBOX ──
+var imgRotation = 0;
+var imgZoom = 1;
+
 function openLightbox(url) {
+  imgRotation = 0;
+  imgZoom = 1;
+  updateLightboxTransform();
   document.getElementById('lightbox-img').src = url;
   document.getElementById('lightbox').classList.add('open');
 }
-function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+
+function rotateImage(deg) {
+  imgRotation = (imgRotation + deg) % 360;
+  updateLightboxTransform();
+}
+
+function zoomImage(val) {
+  imgZoom = Math.max(0.5, Math.min(3, imgZoom + val));
+  updateLightboxTransform();
+}
+
+function resetLightboxImage() {
+  imgRotation = 0;
+  imgZoom = 1;
+  updateLightboxTransform();
+}
+
+function updateLightboxTransform() {
+  var img = document.getElementById('lightbox-img');
+  if (img) {
+    img.style.transform = 'scale(' + imgZoom + ') rotate(' + imgRotation + 'deg)';
+  }
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
 
 // ── REJECT FLOW ──
 function startReject(uid) {
@@ -1128,14 +1199,38 @@ async function changeStatus(uid, newStatus) {
   } catch(e) { showToast('Connection error'); }
 }
 
-async function loadAuditLogs() {
+var auditCurrentPage = 1;
+var auditSearchTimeout;
+
+function debounceAuditSearch() {
+  clearTimeout(auditSearchTimeout);
+  auditSearchTimeout = setTimeout(function() {
+    loadAuditLogs(1);
+  }, 300);
+}
+
+async function loadAuditLogs(page) {
+  if (page) auditCurrentPage = page;
   var tbody = document.getElementById('audit-list');
+  var limit = document.getElementById('filter-audit-limit').value || 50;
+  var search = document.getElementById('search-audit').value.trim();
+  
   try {
-    var res = await fetch(API_URL + '/api/admin/audit-logs?admin_email=' + encodeURIComponent(adminEmail) + '&admin_password=' + encodeURIComponent(adminPass));
+    var url = API_URL + '/api/admin/audit-logs'
+      + '?admin_email=' + encodeURIComponent(adminEmail)
+      + '&admin_password=' + encodeURIComponent(adminPass)
+      + '&page=' + auditCurrentPage
+      + '&limit=' + limit;
+    if (search) {
+      url += '&search=' + encodeURIComponent(search);
+    }
+    
+    var res = await fetch(url);
     var data = await res.json();
     if (data.success && data.logs) {
       if (data.logs.length === 0) {
         tbody.innerHTML = '<tr><td colspan="5" style="padding:20px; text-align:center; color:var(--muted);">No logs recorded.</td></tr>';
+        document.getElementById('audit-pagination').innerHTML = '';
         return;
       }
       tbody.innerHTML = '';
@@ -1155,10 +1250,38 @@ async function loadAuditLogs() {
           '<td style="padding:12px 16px; color:var(--muted); font-family:monospace; max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="' + details + '">' + details + '</td>';
         tbody.appendChild(tr);
       });
+      
+      renderAuditPagination(data.page, data.pages);
     }
   } catch(e) {
     tbody.innerHTML = '<tr><td colspan="5" style="padding:20px; text-align:center; color:var(--danger);">Error loading audit logs.</td></tr>';
+    document.getElementById('audit-pagination').innerHTML = '';
   }
+}
+
+function renderAuditPagination(curr, total) {
+  var pagEl = document.getElementById('audit-pagination');
+  if (total <= 1) {
+    pagEl.innerHTML = '';
+    return;
+  }
+  
+  var html = '';
+  if (curr > 1) {
+    html += '<button class="btn-secondary" style="height:32px; padding:0 12px; font-size:12px; cursor:pointer;" onclick="loadAuditLogs(' + (curr - 1) + ')">Prev</button>';
+  } else {
+    html += '<button class="btn-secondary" style="height:32px; padding:0 12px; font-size:12px; opacity:0.5; cursor:not-allowed;" disabled>Prev</button>';
+  }
+  
+  html += '<span style="font-size:13px; color:var(--ink); font-weight:500; margin:0 8px;">Page ' + curr + ' of ' + total + '</span>';
+  
+  if (curr < total) {
+    html += '<button class="btn-secondary" style="height:32px; padding:0 12px; font-size:12px; cursor:pointer;" onclick="loadAuditLogs(' + (curr + 1) + ')">Next</button>';
+  } else {
+    html += '<button class="btn-secondary" style="height:32px; padding:0 12px; font-size:12px; opacity:0.5; cursor:not-allowed;" disabled>Next</button>';
+  }
+  
+  pagEl.innerHTML = html;
 }
 
 // ── TOAST ──
