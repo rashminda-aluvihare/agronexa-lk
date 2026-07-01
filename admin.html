@@ -616,19 +616,19 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
 
   <div class="tab-row">
     <button class="tab-btn on" id="tab-overview-btn" onclick="switchTab('overview')">
-      📊 Overview
+      Overview
     </button>
     <button class="tab-btn" id="tab-pending-btn" onclick="switchTab('pending')">
-      ⏳ Pending Review <span class="tab-count" id="pending-count">0</span>
+      Pending Review <span class="tab-count" id="pending-count">0</span>
     </button>
     <button class="tab-btn" id="tab-all-btn" onclick="switchTab('all')">
-      📋 All Registrations <span class="tab-count" id="all-count">0</span>
+      All Registrations <span class="tab-count" id="all-count">0</span>
     </button>
     <button class="tab-btn" id="tab-transport-btn" onclick="switchTab('transport')">
-      🚛 Transport Providers
+      Transport Providers
     </button>
     <button class="tab-btn" id="tab-audit-btn" onclick="switchTab('audit')">
-      🛡️ Audit Logs
+      Audit Logs
     </button>
   </div>
 
@@ -638,42 +638,54 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
       <div class="section-title">System Overview</div>
       <div class="stats-grid">
         <div class="stat-card">
-          <div class="stat-card-icon">👨‍🌾</div>
+          <div class="stat-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
           <div class="stat-card-info">
             <div class="stat-card-lbl">Total Farmers</div>
             <div class="stat-card-val" id="stat-farmers">—</div>
           </div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-icon">🛒</div>
+          <div class="stat-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          </div>
           <div class="stat-card-info">
             <div class="stat-card-lbl">Total Buyers</div>
             <div class="stat-card-val" id="stat-buyers">—</div>
           </div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-icon">🌾</div>
+          <div class="stat-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.5 1 9.8a7 7 0 0 1-9 8.2zm0 0v-5"/></svg>
+          </div>
           <div class="stat-card-info">
             <div class="stat-card-lbl">Active Crops</div>
             <div class="stat-card-val" id="stat-crops">—</div>
           </div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-icon">🚜</div>
+          <div class="stat-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </div>
           <div class="stat-card-info">
             <div class="stat-card-lbl">Active Equipment</div>
             <div class="stat-card-val" id="stat-equipment">—</div>
           </div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-icon">⛓️</div>
+          <div class="stat-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5"/></svg>
+          </div>
           <div class="stat-card-info">
             <div class="stat-card-lbl">Ledger Transactions</div>
             <div class="stat-card-val" id="stat-txs">—</div>
           </div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-icon">💰</div>
+          <div class="stat-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
           <div class="stat-card-info">
             <div class="stat-card-lbl">Ledger Value (LKR)</div>
             <div class="stat-card-val" id="stat-val">—</div>
@@ -683,32 +695,32 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
 
       <div class="widget-grid">
         <div class="widget-card">
-          <div class="widget-title">🛡️ Cryptographic Ledger Integrity</div>
+          <div class="widget-title">Cryptographic Ledger Integrity</div>
           <p style="font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 20px;">
             Check the cryptographic integrity of the AgroNexa LK transaction ledger. This re-verifies the SHA-256 block hash chaining to detect database tampering.
           </p>
           <div id="ledger-status-box" style="padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; font-size: 13.5px; display: flex; align-items: center; gap: 10px; background: var(--paper); border: 1.5px solid var(--border);">
-            🔍 Not verified in this session
+            Not verified in this session
           </div>
           <button class="a-btn" onclick="verifyLedgerChain()" id="verify-ledger-btn">Verify Ledger Chain Integrity</button>
         </div>
 
         <div class="widget-card">
-          <div class="widget-title">📥 Quick CSV Exports</div>
+          <div class="widget-title">Quick CSV Exports</div>
           <p style="font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 20px;">
             Export live platform registers directly as CSV spreadsheets for backup, audit, or report generation.
           </p>
           <div class="action-grid">
-            <button class="btn-secondary" onclick="exportCSV('users')">👥 Users Register</button>
-            <button class="btn-secondary" onclick="exportCSV('ledger')">⛓️ Ledger Blocks</button>
-            <button class="btn-secondary" onclick="exportCSV('audit-logs')">📋 System Logs</button>
+            <button class="btn-secondary" onclick="exportCSV('users')">Users Register</button>
+            <button class="btn-secondary" onclick="exportCSV('ledger')">Ledger Blocks</button>
+            <button class="btn-secondary" onclick="exportCSV('audit-logs')">System Logs</button>
           </div>
         </div>
       </div>
 
       <!-- EMERGENCY SYSTEM RESET -->
       <div style="background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 24px; margin-top: 24px;">
-        <div class="widget-title" style="color: var(--danger); font-size: 11px;"><span style="font-size: 1.2rem;">⚠️</span> Emergency System Maintenance</div>
+        <div class="widget-title" style="color: var(--danger); font-size: 11px;">Emergency System Maintenance</div>
         <p style="font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 20px;">
           This action will permanently delete all registered users (Farmers and Buyers), crop listings, equipment listings, bookings, transactions, audit logs, and chat messages. This cannot be undone. Use this only when resetting the environment.
         </p>
@@ -728,12 +740,12 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
       <div class="filter-bar">
         <input class="filter-input" type="text" id="search-user" oninput="filterUsers()" placeholder="Search users by name, email, phone, NIC..." />
         <select class="filter-select" id="filter-role" onchange="filterUsers()">
-          <option value="all">🌾 All Roles</option>
+          <option value="all">All Roles</option>
           <option value="farmer">Farmer / Seller</option>
           <option value="buyer">Corporate Buyer</option>
         </select>
         <select class="filter-select" id="filter-district" onchange="filterUsers()">
-          <option value="all">📍 All Districts</option>
+          <option value="all">All Districts</option>
           <option>Ampara</option><option>Anuradhapura</option><option>Badulla</option><option>Badulla</option><option>Batticaloa</option>
           <option>Colombo</option><option>Galle</option><option>Gampaha</option><option>Hambantota</option>
           <option>Jaffna</option><option>Kalutara</option><option>Kandy</option><option>Kegalle</option>
@@ -742,7 +754,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
           <option>Ratnapura</option><option>Trincomalee</option>
         </select>
         <select class="filter-select" id="filter-status" onchange="filterUsers()">
-          <option value="all">🚦 All Statuses</option>
+          <option value="all">All Statuses</option>
           <option value="pending">Pending</option>
           <option value="approved">Approved</option>
           <option value="rejected">Rejected</option>
@@ -757,7 +769,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
       <div class="section-title">Logistics & Transport Registry</div>
       <div class="widget-grid">
         <div class="widget-card">
-          <div class="widget-title">🚛 Register Transport Vehicle</div>
+          <div class="widget-title">Register Transport Vehicle</div>
           <form id="admin-transport-form" onsubmit="submitAdminTransport(event)">
             <div class="form-grid">
               <div class="form-field">
@@ -802,7 +814,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
         </div>
 
         <div class="widget-card" style="display: flex; flex-direction: column;">
-          <div class="widget-title">📋 Active Providers</div>
+          <div class="widget-title">Active Providers</div>
           <div id="admin-transport-list" style="flex: 1; overflow-y: auto; max-height: 340px; display: flex; flex-direction: column; gap: 12px; padding-right: 4px;">
             <div class="loading">Loading transport listings...</div>
           </div>
@@ -939,10 +951,10 @@ function renderList(containerId, users, actionsVisible) {
           + '<div class="ucard-name">' + esc(u.first_name) + ' ' + esc(u.last_name) + '</div>'
           + '<div class="ucard-email">' + esc(u.email) + '</div>'
           + '<div class="ucard-meta">'
-            + '<span class="meta-pill">' + (u.role === 'farmer' ? '🌾 Farmer' : '🛒 Buyer') + '</span>'
-            + '<span class="meta-pill">📍 ' + esc(u.district || '—') + '</span>'
-            + '<span class="meta-pill">📅 ' + date + '</span>'
-            + (u.nic_number ? '<span class="meta-pill">🪪 ' + esc(u.nic_number) + '</span>' : '')
+            + '<span class="meta-pill">' + (u.role === 'farmer' ? 'Farmer' : 'Buyer') + '</span>'
+            + '<span class="meta-pill">District: ' + esc(u.district || '—') + '</span>'
+            + '<span class="meta-pill">Date: ' + date + '</span>'
+            + (u.nic_number ? '<span class="meta-pill">NIC: ' + esc(u.nic_number) + '</span>' : '')
           + '</div>'
         + '</div>'
         + '<span class="ucard-status ' + statusClass + '">' + statusLabel + '</span>'
@@ -994,8 +1006,8 @@ function renderActions(uid) {
       + '</div>'
     + '</div>'
     + '<div class="actions">'
-      + '<button class="btn-approve" onclick="doApprove(' + uid + ')">✅ Approve Account</button>'
-      + '<button class="btn-reject" onclick="startReject(' + uid + ')">❌ Reject</button>'
+      + '<button class="btn-approve" onclick="doApprove(' + uid + ')">Approve Account</button>'
+      + '<button class="btn-reject" onclick="startReject(' + uid + ')">Reject</button>'
     + '</div>'
   + '</div>';
 }
@@ -1039,10 +1051,10 @@ async function doApprove(uid) {
     });
     var data = await res.json();
     if (data.success) {
-      showToast('✅ Account approved successfully!');
+      showToast('Account approved successfully!');
       await loadAll();
-    } else { showToast('❌ ' + (data.error||'Error')); }
-  } catch(e) { showToast('❌ Connection error'); }
+    } else { showToast(data.error||'Error'); }
+  } catch(e) { showToast('Connection error'); }
 }
 
 // ── REJECT ──
@@ -1056,10 +1068,10 @@ async function doReject(uid) {
     });
     var data = await res.json();
     if (data.success) {
-      showToast('🚫 Account rejected.');
+      showToast('Account rejected.');
       await loadAll();
-    } else { showToast('❌ ' + (data.error||'Error')); }
-  } catch(e) { showToast('❌ Connection error'); }
+    } else { showToast(data.error||'Error'); }
+  } catch(e) { showToast('Connection error'); }
 }
 
 // ── TABS ──
@@ -1095,10 +1107,10 @@ async function changeRole(uid, newRole) {
     });
     var data = await res.json();
     if (data.success) {
-      showToast('✅ Role updated successfully.');
+      showToast('Role updated successfully.');
       await loadAll();
-    } else { showToast('❌ ' + (data.error || 'Error')); }
-  } catch(e) { showToast('❌ Connection error'); }
+    } else { showToast(data.error || 'Error'); }
+  } catch(e) { showToast('Connection error'); }
 }
 
 async function changeStatus(uid, newStatus) {
@@ -1110,10 +1122,10 @@ async function changeStatus(uid, newStatus) {
     });
     var data = await res.json();
     if (data.success) {
-      showToast('✅ Status updated successfully.');
+      showToast('Status updated successfully.');
       await loadAll();
-    } else { showToast('❌ ' + (data.error || 'Error')); }
-  } catch(e) { showToast('❌ Connection error'); }
+    } else { showToast(data.error || 'Error'); }
+  } catch(e) { showToast('Connection error'); }
 }
 
 async function loadAuditLogs() {
@@ -1189,21 +1201,21 @@ async function verifyLedgerChain() {
     var data = await res.json();
     if (data.success) {
       if (data.valid) {
-        statusBox.innerHTML = '✅ <strong>Ledger Intact!</strong> Verified ' + data.total_records + ' transactions securely.';
+        statusBox.innerHTML = '<strong>Ledger Intact!</strong> Verified ' + data.total_records + ' transactions securely.';
         statusBox.style.background = 'var(--ok-bg)';
         statusBox.style.borderColor = 'var(--ok-border)';
         statusBox.style.color = 'var(--ok)';
       } else {
-        statusBox.innerHTML = '❌ <strong>Ledger Compromised!</strong> Broken at TX ID: <code style="word-break:break-all;">' + data.broken_at + '</code>';
+        statusBox.innerHTML = '<strong>Ledger Compromised!</strong> Broken at TX ID: <code style="word-break:break-all;">' + data.broken_at + '</code>';
         statusBox.style.background = 'var(--danger-bg)';
         statusBox.style.borderColor = 'var(--danger-border)';
         statusBox.style.color = 'var(--danger)';
       }
     } else {
-      statusBox.innerHTML = '❌ Verification failed: ' + (data.error || 'Server error');
+      statusBox.innerHTML = 'Verification failed: ' + (data.error || 'Server error');
     }
   } catch(e) {
-    statusBox.innerHTML = '❌ Connection error during cryptographic verification.';
+    statusBox.innerHTML = 'Connection error during cryptographic verification.';
   }
   btn.textContent = 'Verify Ledger Chain Integrity'; btn.disabled = false;
 }
@@ -1262,11 +1274,11 @@ async function loadTransport() {
         el.innerHTML = 
           '<div>' +
             '<div style="font-size:13.5px; font-weight:600; color:var(--ink);">' + esc(tp.owner_name) + '</div>' +
-            '<div style="font-size:11.5px; color:var(--muted); margin-top:2px;">🚛 ' + esc(tp.vehicle_type) + ' (' + esc(tp.vehicle_no) + ')</div>' +
+            '<div style="font-size:11.5px; color:var(--muted); margin-top:2px;">Vehicle: ' + esc(tp.vehicle_type) + ' (' + esc(tp.vehicle_no) + ')</div>' +
             '<div style="display:flex; gap:6px; margin-top:6px; flex-wrap:wrap;">' +
-              '<span class="meta-pill">📍 ' + esc(tp.district) + '</span>' +
+              '<span class="meta-pill">District: ' + esc(tp.district) + '</span>' +
               '<span class="meta-pill">Capacity: ' + tp.capacity_kg + ' kg</span>' +
-              '<span class="meta-pill">📞 ' + esc(tp.phone) + '</span>' +
+              '<span class="meta-pill">Phone: ' + esc(tp.phone) + '</span>' +
             '</div>' +
           '</div>' +
           '<button class="tp-delete-btn" onclick="deactivateTransport(' + tp.id + ')">Delete</button>';
@@ -1300,15 +1312,15 @@ async function submitAdminTransport(e) {
     });
     var data = await res.json();
     if (data.success) {
-      showToast('✅ Vehicle registered successfully!');
+      showToast('Vehicle registered successfully!');
       document.getElementById('admin-transport-form').reset();
       await loadTransport();
       await loadDashboardStats();
     } else {
-      showToast('❌ ' + (data.error || 'Failed to register'));
+      showToast(data.error || 'Failed to register');
     }
   } catch(e) {
-    showToast('❌ Connection error');
+    showToast('Connection error');
   }
   btn.textContent = 'Publish Transport Provider'; btn.disabled = false;
 }
@@ -1319,14 +1331,14 @@ async function deactivateTransport(id) {
     var res = await fetch(API_URL + '/api/transport/' + id, { method: 'DELETE' });
     var data = await res.json();
     if (data.success) {
-      showToast('🗑️ Provider removed.');
+      showToast('Provider removed.');
       await loadTransport();
       await loadDashboardStats();
     } else {
-      showToast('❌ ' + (data.error || 'Failed to delete'));
+      showToast(data.error || 'Failed to delete');
     }
   } catch(e) {
-    showToast('❌ Connection error');
+    showToast('Connection error');
   }
 }
 
@@ -1340,7 +1352,7 @@ function initSocket() {
     });
 
     socket.on('new_user_registered', function(data) {
-      showToast('🔔 New registration: ' + data.message + ' awaits your approval!');
+      showToast('New registration: ' + data.message + ' awaits your approval!');
       // Auto-reload stats and pending lists
       loadDashboardStats();
       loadPending();
@@ -1349,14 +1361,14 @@ function initSocket() {
 }
 
 async function triggerSystemReset() {
-  const confirm1 = confirm("🚨 WARNING: Are you absolutely sure you want to delete ALL data? This will clear all users, crop listings, equipment bookings, chats, and logs. This action CANNOT be undone!");
+  const confirm1 = confirm("WARNING: Are you absolutely sure you want to delete ALL data? This will clear all users, crop listings, equipment bookings, chats, and logs. This action CANNOT be undone!");
   if (!confirm1) return;
 
-  const confirm2 = confirm("⚠️ FINAL CONFIRMATION: Double check your choice. Are you 100% sure you want to factory reset the database?");
+  const confirm2 = confirm("FINAL CONFIRMATION: Double check your choice. Are you 100% sure you want to factory reset the database?");
   if (!confirm2) return;
 
   var btn = document.getElementById('reset-db-btn');
-  btn.textContent = '⏳ Wiping Database...'; btn.disabled = true;
+  btn.textContent = 'Wiping Database...'; btn.disabled = true;
 
   try {
     var res = await fetch(API_URL + '/api/admin/system/reset', {
@@ -1366,14 +1378,14 @@ async function triggerSystemReset() {
     });
     var data = await res.json();
     if (data.success) {
-      alert("✅ System database has been successfully factory reset! Logging out...");
+      alert("System database has been successfully factory reset! Logging out...");
       logout();
     } else {
-      showToast('❌ ' + (data.error || 'Failed to reset database.'));
+      showToast(data.error || 'Failed to reset database.');
       btn.textContent = 'Wipe & Reset System Database'; btn.disabled = false;
     }
   } catch (err) {
-    showToast('❌ Connection error during database reset.');
+    showToast('Connection error during database reset.');
     btn.textContent = 'Wipe & Reset System Database'; btn.disabled = false;
   }
 }
