@@ -1,178 +1,201 @@
-# 🌾 AgroNexa LK — Smart Farming Platform
+# 🌾 AgroNexa LK — Smart Farming & B2B Agricultural Platform
 
 [![GitHub license](https://img.shields.io/github/license/rashminda-aluvihare/agronexa-lk?style=flat-squared&color=green)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/rashminda-aluvihare/agronexa-lk?style=flat-squared)](https://github.com/rashminda-aluvihare/agronexa-lk/stargazers)
 [![Render Deployment](https://img.shields.io/badge/Deployed%20on-Railway%20%26%20Vercel-blue?style=flat-squared)](https://agronexa-lk.vercel.app/)
 
-A premium, state-of-the-art agricultural B2B marketplace and rental platform designed for Sri Lanka. **AgroNexa LK** bridges the gap between local farmers (sellers) and corporate buyers, facilitating direct trade of fresh produce, farm machinery rentals, and automated cryptographic transaction logging.
+AgroNexa LK is a decoupled B2B agricultural marketplace, machinery sharing, and logistics platform designed to solve structural inefficiencies in Sri Lanka's agrarian supply chains. The system aims to eliminate financial exploitation of local farmers by middleman cartels and optimize the utilization of agricultural equipment.
 
----
-
-## ✨ Core Features
-
-*   🔒 **OTP-Gate Authentication (Twilio)**: Secure mobile number authentication. Integrates a developer mock bypass (`123456` / `000000`) for rapid testing without burning Twilio credits.
-*   👤 **NIC Identity Verification**: Built-in KYC upload pipeline. Sellers and buyers must upload front/back copies of their National Identity Cards (NIC), subject to administrator approval before portal access.
-*   🛡️ **Immutable Cryptographic Ledger**: Every confirmed rental agreement is hashed, chained, and appended to a tamper-proof SHA-256 ledger (blockchain-style) to prevent post-confirmation modifications.
-*   📡 **SMS Broadcast Network**: Buyers can broadcast crop requests (commodity, volume, target price), which instantly notifies all matching local sellers.
-*   💬 **Real-time Live Chat**: Real-time messaging pipeline built on WebSockets (Socket.io) allowing farmers and buyers to negotiate directly.
-*   🗺️ **Interactive Geographic Marketplace**: Integrates Leaflet.js map overlays mapping crop stock and equipment availability coordinates across Sri Lanka.
-*   🌗 **Rich Premium UI**: Stunning visual dashboard loaded with dark mode settings, analytics charts, status indicator badges, and micro-animations.
+The platform provides role-based interfaces for **Farmers (Sellers)**, **Corporate Buyers**, **Logistics Providers**, and **System Administrators**, backed by a PostgreSQL database and a Node/Express.js backend.
 
 ---
 
 ## 🛠️ Technology Stack
 
-*   **Frontend**: Vanilla HTML5, CSS3 Variables (Custom HSL Themes), JavaScript (ES6+), Socket.io Client, Leaflet.js
-*   **Backend**: Node.js, Express.js (REST API, WebSockets)
-*   **Database**: PostgreSQL (pg pool, relational design)
-*   **Services**: Twilio (SMS OTP verification)
-*   **Hosting**: Deployed statically on Vercel (Frontend) and dynamically on Railway/Render (Backend Node server & database)
+- **Backend**: Node.js, Express.js (REST API, WebSockets via Socket.io)
+- **Database**: PostgreSQL (relational design, indexing, transactional queries)
+- **Frontend Dashboard**: React, Vite, TypeScript, TailwindCSS, Lucide Icons, Recharts (analytics)
+- **Legacy Frontend Pages**: HTML5, Vanilla CSS, JS Client Engines, Leaflet.js (interactive maps)
+- **Third-Party Services**: Twilio API (SMS verification & transactional alerts), HARTI website (crop price scraping)
 
 ---
 
-## 📁 Project Layout
+## 📁 Project Structure
 
 ```
 agronexa-lk/
-├── server.js              # Entry node — registers Express app, Socket.io server, & inline endpoints
-├── authRoutes.js          # Authentication router (Twilio OTP verify, register-with-otp KYC upload)
-├── buyerRoutes.js         # Buyer marketplace, requests broadcasting, & equipment bookings router
-├── sellerRoutes.js        # Seller crops inventory, equipment listings, incoming requests router
-├── authMiddleware.js      # JWT token parser and role verification middleware
-├── public/                # Static assets (if serving directly from Node)
-├── uploads/
-│   └── nic/               # KYC NIC front/back uploads directory
-├── index.html             # AgroNexa Portal Entry (Login, registration, password resets)
-├── buyer.html             # Corporate Buyer Portal (Dashboard, Marketplace, Requests, Chat, Ledger)
-├── seller.html            # Farmer / Seller Portal (Inventory, Bookings, Reputation, Chat, Ledger)
-├── admin.html             # Master Administrator Panel (KYC Review, User Management, Audit logs)
-└── package.json           # Application dependencies
+├── backend/                   # Express.js REST API Server
+│   ├── src/
+│   │   ├── config/            # PostgreSQL Connection & Auto-Migrations
+│   │   ├── controllers/       # Route controllers (auth, marketplace, ledger, transport, chat, admin)
+│   │   ├── docs/              # Swagger API Specifications
+│   │   ├── middlewares/       # JWT auth, rate limits, image upload filters, error handlers
+│   │   ├── routes/            # Route groupings (admin, auth, buyer, seller, transport, chat, ledger)
+│   │   ├── services/          # Business logic: Crypto Ledger, HARTI Web Scraper, SMS Alerts
+│   │   ├── socket/            # Socket.io configuration for real-time messaging
+│   │   ├── app.js             # App setup & static page endpoints
+│   │   └── server.js          # Server entry point
+│   └── package.json           # Backend dependency configuration
+├── frontend/                  # React + Vite Client Dashboard
+│   ├── src/
+│   │   ├── data/              # Mock data and local storage variables
+│   │   ├── pages/             # BuyerDashboard and SellerDashboard components
+│   │   ├── shared/            # Common UI elements
+│   │   ├── styles/            # Tailwind and global stylesheet rules
+│   │   └── App.tsx            # React application router & switcher
+│   └── package.json           # Frontend configuration and Vite scripts
+├── diagrams/                  # System Design & Architecture Diagrams (UML & Flowcharts)
+├── uploads/                   # Local media uploads folder (KYC NIC scans, crop photos)
+├── index.html                 # Legacy Client Login page
+├── seller.html                # Legacy Farmer/Seller dashboard
+├── buyer.html                 # Legacy Corporate Buyer dashboard
+├── admin.html                 # Legacy Administrator control panel
+├── translations.js            # Shared multi-lingual translation dictionary (English, Sinhala, Tamil)
+├── server.js                  # Root server startup wrapper for hosting environments
+├── package.json               # Root dependencies and startup scripts
+└── TODO.md                    # System development checklist
 ```
 
 ---
 
-## 🚀 Installation & Local Setup
+## ✨ Core Features & Technical Implementation
 
-Follow these steps to run a fully functional local development instance:
+### 1. Multi-lingual Localization Engine
+- **Implementation**: Managed in [translations.js](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/translations.js). It serves as a unified client-side localization dictionary supporting **English**, **Sinhala**, and **Tamil**.
+- **State Preservation**: Language configurations are saved directly in local storage, enabling dynamic text replacement without page refreshes.
 
-### Prerequisites
-*   Node.js (v18+)
-*   PostgreSQL (v14+) running locally
+### 2. Tamper-Evident SHA-256 Transaction Ledger
+- **Algorithm**: A blockchain-inspired transaction log implemented in [ledger.service.js](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/backend/src/services/ledger.service.js) for machinery rental agreements.
+- **Chaining**: Each confirmed lease writes a block to the database, capturing transactional details (`listing_id`, `amount`, `duration_days`), an agreement text signature hash, and a SHA-256 hash chaining to the previous block:
+  $$\text{block\_hash} = \text{SHA256}(\text{tx\_id} + \text{payload} + \text{prev\_hash})$$
+- **Verification Engine**: Administrators can trigger a sequential re-computation process that compares calculated hashes against stored records. Any unauthorized database modification breaks the chain and flags the affected records.
 
-### 1. Clone & Install
-```bash
-git clone https://github.com/rashminda-aluvihare/agronexa-lk.git
-cd agronexa-lk
-npm install
+### 3. Double-Booking Prevention Algorithm
+- **Concurrency Control**: Implemented inside [equipment.controller.js](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/backend/src/controllers/equipment.controller.js).
+- **Logic**: Prevents overlapping machinery leases on overlapping dates. Validation SQL checks if any approved reservation conflicts with a requested schedule before saving the lease:
+  ```sql
+  WHERE (start_date <= :requested_end_date AND end_date >= :requested_start_date)
+  ```
+
+### 4. HARTI Agricultural Market Price Scraper
+- **Scraper Service**: Configured in [scraper.service.js](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/backend/src/services/scraper.service.js).
+- **Execution**: Scrapes daily commodity market prices from the Hector Kobbekaduwa Agrarian Research and Training Institute (HARTI) website using Axios and Cheerio.
+- **Simulation Fallback**: If external servers are unresponsive, the system runs a mock fluctuation algorithm to simulate daily price updates based on historical ranges.
+
+### 5. Secure KYC Validation Pipeline
+- **Validation Route**: Coordinates image uploads via Multer to `uploads/nic/` for review.
+- **Admin Lightbox UI**: Located in [admin.html](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/admin.html). It contains image-manipulation tools (scaling, rotation) built on CSS and Canvas to review NIC cards. Users are registered as `pending` and cannot trade until verified by an admin.
+
+### 6. WebSocket Chat & Internal Alerts
+- **Communication Hub**: Built using Socket.io inside [socket.js](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/backend/src/socket).
+- **Real-Time Delivery**: Matches active sockets to dispatch messages, update typing states, and update read/unread statuses instantly on user UI panels.
+
+### 7. Logistics & Transport Matching
+- **Matching Engine**: Located in [transport.controller.js](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/backend/src/controllers/transport.controller.js).
+- **Logistics**: Allows transport providers to list vehicles, districts covered, and rates per kilometer. Sellers can request delivery bookings, match with local drivers, and track cargo transportation parameters.
+
+---
+
+## 🔌 API Endpoints Documentation
+
+Swagger documentation is available at `/api-docs` when running the application.
+
+### 🔑 Authentication (`/api/auth`)
+- `POST /api/auth/send-otp` — Dispatches verification code (Mock mode bypass is active if Twilio credentials are blank).
+- `POST /api/auth/verify-otp` — Validates SMS OTP codes.
+- `POST /api/auth/register-with-otp` — Multi-part registration uploading `nic_front` and `nic_back` files.
+- `POST /api/login` — Verifies credentials, returns a JWT token.
+- `POST /api/auth/forgot-password` — Generates a secure reset password payload.
+
+### 🌾 Seller/Farmer Portal (`/api/seller`)
+- `POST /api/seller/crops` — Creates a new crop inventory listing.
+- `GET /api/seller/crops` — Fetches crop listings associated with the logged-in seller.
+- `PUT /api/seller/crops/:id/update-stock` — Updates current quantity figures.
+- `GET /api/seller/bookings` — Lists equipment bookings awaiting owner confirmation.
+- `POST /api/seller/bookings/:id/confirm` — Approves booking and records transaction blocks to the SHA-256 ledger.
+- `GET /api/seller/analytics` — Provides sales metrics and revenue breakdown.
+
+### 🏢 Corporate Buyer Portal (`/api/buyer`)
+- `GET /api/buyer/marketplace/crops` — Browses public catalog with search and filters.
+- `POST /api/buyer/marketplace/crops/:id/interest` — Expresses trade interest to the farmer.
+- `POST /api/buyer/broadcasts` — Broadcasts commodity/price requests to sellers in target districts.
+- `POST /api/buyer/bookings` — Requests a reservation for seller machinery.
+- `GET /api/buyer/dashboard` — Fetches overview metrics, matching broadcasts, and recent listings.
+
+### 🚚 Transport & Logistics (`/api/transport`)
+- `GET /api/transport` — Browses active vehicle and driver profiles.
+- `POST /api/transport` — Creates or updates a transport provider profile.
+- `POST /api/transport/bookings` — Initiates transport bookings for commodity logistics.
+- `PUT /api/transport/bookings/:id/status` — Updates status (pending, accepted, completed).
+
+### 👑 Administrator (`/api/admin`)
+- `GET /api/admin/pending` — Retrieves user profiles awaiting NIC review.
+- `POST /api/admin/approve/:id` — Activates verified user accounts.
+- `POST /api/admin/reject/:id` — Rejects application and logs rejection explanations.
+- `GET /api/admin/audit-logs` — Fetches system action audit histories.
+- `GET /api/admin/export/:resource` — Exports statistics as CSV spreadsheets.
+
+---
+
+## 🚀 Installation & Development Setup
+
+### 1. Database Setup
+Ensure PostgreSQL is installed and running locally. Create a database instance:
+```sql
+CREATE DATABASE agronexa;
 ```
 
-### 2. Configure Environment Variables
-Create a `.env` file in the root directory:
+### 2. Configuration (.env)
+Create a `.env` file in the root folder of the project:
 ```ini
 PORT=3000
-DATABASE_URL=postgresql://postgres@127.0.0.1:5432/agronexa
+DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@127.0.0.1:5432/agronexa
 
-# Admin Setup
+# Admin Account setup (seeded if database is blank)
 ADMIN_EMAIL=admin@agronexa.lk
-ADMIN_PASSWORD=ChangeThisToASecurePassword123!
+ADMIN_PASSWORD=AdminSecurePassword123!
 
-# JWT Encryption
-JWT_SECRET=super-secure-jwt-key-change-this-in-prod
+# JWT Secret
+JWT_SECRET=your_jwt_signing_key_secret
 
-# Twilio Credentials (Leave empty to trigger developer mock OTP bypass)
+# Twilio SMS API Keys (If left empty, OTP bypass matches code '123456' / '000000')
 TWILIO_ACCOUNT_SID=
 TWILIO_AUTH_TOKEN=
 TWILIO_VERIFY_SID=
 ```
 
-### 3. Initialize Database
-Ensure your local PostgreSQL instance is running. The database schema, relational tables, constraints, and audit logs are **auto-migrated and initialized on startup** — no manual SQL executions needed!
-
-### 4. Fire It Up!
+### 3. Run Backend Server
+Install dependencies and run the server locally:
 ```bash
-# Run with live reload
+# Run from root directory
+npm install
 npm run dev
 ```
-Open **`http://localhost:3000`** in your browser.
+The server will boot, run SQL tables initialization/migrations, and host the HTTP server on `http://localhost:3000`.
+
+### 4. Run Frontend Dashboard
+Navigate to the frontend folder, install dependencies, and spin up Vite dev server:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+The React frontend dashboard will run on `http://localhost:5173`.
 
 ---
 
-## 🔌 API Documentation
+## 📐 System Design & Architecture Diagrams
 
-<details>
-<summary>🔑 Authentication Endpoints</summary>
+Detailed UML diagrams and workflow flowcharts are available in the [diagrams/](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/diagrams) folder:
 
-| Method | Route | Auth | Payload | Description |
-| :--- | :--- | :--- | :--- | :--- |
-| `POST` | `/api/auth/send-otp` | None | `{ "phone": "+94771234567" }` | Sends SMS verification code (auto-bypasses to mock if Twilio credentials are blank) |
-| `POST` | `/api/auth/verify-otp` | None | `{ "phone": "+94771234567", "code": "123456" }` | Validates verification code |
-| `POST` | `/api/auth/register-with-otp` | None | Multipart FormData (KYC fields + `nic_front`, `nic_back`) | Creates new user account in `pending` status |
-| `POST` | `/api/login` | None | `{ "email": "user@example.com", "password": "Password123!" }` | Authenticates user and returns JWT token and user profile role |
-
-</details>
-
-<details>
-<summary>👑 Administrator Endpoints</summary>
-
-| Method | Route | Auth | Queries | Description |
-| :--- | :--- | :--- | :--- | :--- |
-| `GET` | `/api/admin/pending` | JWT | `?admin_email=..&admin_password=..` | Retrieves users awaiting KYC approval |
-| `POST` | `/api/admin/approve/:id` | JWT | Request Body (Credentials) | Activates user account status to `approved` |
-| `POST` | `/api/admin/reject/:id` | JWT | `{ "reason": "NIC blurred" }` | Rejects KYC application |
-| `GET` | `/api/admin/audit-logs` | JWT | Credentials query | Fetches application audit logs |
-
-</details>
-
-<details>
-<summary>🌾 Farmer / Seller Endpoints</summary>
-
-| Method | Route | Auth | Description |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/seller/crops` | JWT | Creates a new crop stock listing for the marketplace |
-| `GET` | `/api/seller/crops?seller_id=1` | JWT | Retrieves active crop listings owned by the seller |
-| `DELETE` | `/api/seller/crops/:id` | JWT | Deactivates crop stock listing |
-| `POST` | `/api/seller/equipment` | JWT | Publishes a piece of machinery for rent |
-| `GET` | `/api/seller/bookings?owner_id=1` | JWT | Fetches rental booking requests |
-| `POST` | `/api/seller/bookings/:id/confirm` | JWT | Accepts booking request and writes to the blockchain ledger |
-
-</details>
-
-<details>
-<summary>🏢 Corporate Buyer Endpoints</summary>
-
-| Method | Route | Auth | Description |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/api/buyer/marketplace/crops` | JWT | Browse and filter all available crop listings in Sri Lanka |
-| `POST` | `/api/buyer/marketplace/crops/:id/interest` | JWT | Expresses trade interest to the farmer |
-| `POST` | `/api/buyer/bookings` | JWT | Submits a request to book a seller's machinery |
-| `POST` | `/api/buyer/broadcasts` | JWT | Broadcasts a buy request for specific crops across local districts |
-
-</details>
-
----
-
-## 🛡️ Tamper-Proof SHA-256 Chained Ledger
-
-AgroNexa LK includes a simplified cryptographic blockchain protocol to secure B2B rental agreements. Every time a seller confirms an incoming booking request, a transaction block is mined:
-1.  **Block Payload**: `listing_id`, `listing_type`, `renter_id`, `owner_id`, `amount`, and `duration_days`.
-2.  **Chaining**: The block references the hash of the *previous transaction block* (`prev_hash`).
-3.  **Cryptographic Hash**: A `block_hash` is calculated by running the payload through a SHA-256 mining algorithm:
-    $$\text{block\_hash} = \text{SHA256}(\text{tx\_id} + \text{payload} + \text{prev\_hash})$$
-4.  **Verification**: Any user can trigger the **Verify Chain** validation tool. If any block's value (such as rental price or owner ID) is altered in the PostgreSQL database directly, the hash chain breaks instantly, alerting users to a security breach.
-
----
-
-## 🌍 Deployment
-
-### Frontend (Vercel)
-The client frontend is optimized for static deployments. You can deploy the folder straight to Vercel. 
-*Note: Make sure your `API_URL` environment mapping points to your deployed backend node.*
-
-### Backend (Railway / Render)
-1.  Connect your GitHub repository to Railway.
-2.  Attach a PostgreSQL database resource.
-3.  Add all standard environment variables listed in the environment section.
-4.  Deploy. The service automatically runs migrations and handles connections.
+- **Architecture Overview**: [Overall System Architecture](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/diagrams/Figure_4.1_Overall_System_Architecture.png)
+- **Relational Model**: [Entity Relationship Diagram (ERD)](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/diagrams/Figure_4.2_Entity_Relationship_Diagram.png)
+- **Functional Scope**: [Use Case Diagram](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/diagrams/Figure_4.3_Use_Case_Diagram.png)
+- **Security Check**: [KYC Verification Activity Diagram](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/diagrams/Figure_4.11_KYC_Verification_Activity_Diagram.png)
+- **Cryptographic Ledger**: [Chained Ledger Workflow Diagram](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/diagrams/Figure_4.8_Cryptographic_Ledger_Workflow.png)
+- **Booking Flow**: [Equipment Booking Sequence Diagram](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/diagrams/Figure_4.5_Equipment_Booking_Sequence_Diagram.png)
+- **Component Design**: [Component Diagram](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/diagrams/Figure_4.6_Component_Diagram.png)
+- **Development Layout**: [Code Structure Diagram](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/diagrams/Figure_5.7_Code_Structure.png)
 
 ---
 
