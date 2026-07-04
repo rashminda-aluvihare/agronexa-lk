@@ -4309,18 +4309,19 @@ function loadMarketplace() {
 
         let html = '';
         data.listings.forEach(item => {
-          let symbol = '🥬';
-          if (item.photos && item.photos.length > 0) {
-            symbol = `<img src="${API_URL}/${item.photos[0]}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;">`;
-          } else {
-            let emoji = '🥬';
-            if (item.name.toLowerCase().includes('tomato')) emoji = '🍅';
-            if (item.name.toLowerCase().includes('carrot')) emoji = '🥕';
-            if (item.name.toLowerCase().includes('chili')) emoji = '🌶️';
-            if (item.name.toLowerCase().includes('potato')) emoji = '🥔';
-            if (item.name.toLowerCase().includes('onion')) emoji = '🧅';
-            if (item.name.toLowerCase().includes('banana')) emoji = '🍌';
-            symbol = emoji;
+          let defaultEmoji = '🥬';
+          if (item.name.toLowerCase().includes('tomato')) defaultEmoji = '🍅';
+          if (item.name.toLowerCase().includes('carrot')) defaultEmoji = '🥕';
+          if (item.name.toLowerCase().includes('chili')) defaultEmoji = '🌶️';
+          if (item.name.toLowerCase().includes('potato')) defaultEmoji = '🥔';
+          if (item.name.toLowerCase().includes('onion')) defaultEmoji = '🧅';
+          if (item.name.toLowerCase().includes('banana')) defaultEmoji = '🍌';
+
+          let symbol = defaultEmoji;
+          if (item.photos && item.photos.length > 0 && item.photos[0]) {
+            let photoPath = item.photos[0].replace(/\\/g, '/').replace(/^\/+/, '');
+            let photoUrl = photoPath.startsWith('http') ? photoPath : `${API_URL}/${photoPath}`;
+            symbol = `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;" onerror="this.onerror=null; this.parentNode.innerHTML='${defaultEmoji}';">`;
           }
 
           const repScore = Math.min(5, (parseInt(item.seller_rep || 0) / 10) * 5).toFixed(1);
@@ -4363,15 +4364,16 @@ function loadMarketplace() {
 
         let html = '';
         data.listings.forEach(item => {
-          let symbol = '🚜';
-          if (item.photos && item.photos.length > 0) {
-            symbol = `<img src="${API_URL}/${item.photos[0]}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;">`;
-          } else {
-            let emoji = '🚜';
-            if (item.name.toLowerCase().includes('pump') || item.name.toLowerCase().includes('water')) emoji = '💧';
-            if (item.name.toLowerCase().includes('transport') || item.name.toLowerCase().includes('lorry')) emoji = '🚛';
-            if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) emoji = '🌿';
-            symbol = emoji;
+          let defaultEmoji = '🚜';
+          if (item.name.toLowerCase().includes('pump') || item.name.toLowerCase().includes('water')) defaultEmoji = '💧';
+          if (item.name.toLowerCase().includes('transport') || item.name.toLowerCase().includes('lorry')) defaultEmoji = '🚛';
+          if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) defaultEmoji = '🌿';
+
+          let symbol = defaultEmoji;
+          if (item.photos && item.photos.length > 0 && item.photos[0]) {
+            let photoPath = item.photos[0].replace(/\\/g, '/').replace(/^\/+/, '');
+            let photoUrl = photoPath.startsWith('http') ? photoPath : `${API_URL}/${photoPath}`;
+            symbol = `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;" onerror="this.onerror=null; this.parentNode.innerHTML='${defaultEmoji}';">`;
           }
 
           const repScore = Math.min(5, (parseInt(item.owner_rep || 0) / 10) * 5).toFixed(1);

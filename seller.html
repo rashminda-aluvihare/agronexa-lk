@@ -3023,13 +3023,16 @@ function loadEquipmentMarketplace() {
         // Don't show our own equipment
         if (item.owner_id === _user.id) return;
 
-        let icon = '🚜';
-        if (item.name.toLowerCase().includes('pump') || item.name.toLowerCase().includes('water')) icon = '💧';
-        if (item.name.toLowerCase().includes('transport') || item.name.toLowerCase().includes('lorry')) icon = '🚛';
-        if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) icon = '🌿';
+        let defaultEmoji = '🚜';
+        if (item.name.toLowerCase().includes('pump') || item.name.toLowerCase().includes('water')) defaultEmoji = '💧';
+        if (item.name.toLowerCase().includes('transport') || item.name.toLowerCase().includes('lorry')) defaultEmoji = '🚛';
+        if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) defaultEmoji = '🌿';
 
-        if (item.photos && item.photos.length > 0) {
-          icon = `<img src="${API_URL}/${item.photos[0]}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;">`;
+        let icon = defaultEmoji;
+        if (item.photos && item.photos.length > 0 && item.photos[0]) {
+          let photoPath = item.photos[0].replace(/\\/g, '/').replace(/^\/+/, '');
+          let photoUrl = photoPath.startsWith('http') ? photoPath : `${API_URL}/${photoPath}`;
+          icon = `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;" onerror="this.onerror=null; this.parentNode.innerHTML='${defaultEmoji}';">`;
         }
 
         const distKey = 'district-' + (item.district || _user.district || 'kurunegala').toLowerCase().replace(/[^a-z]/g, '');
@@ -3420,9 +3423,17 @@ function loadCropListings() {
       let html = '';
       data.listings.forEach(item => {
         if (item.status === 'deactivated') return;
-        let img = '🌾';
-        if (item.photos && item.photos.length > 0) {
-          img = `<img src="${API_URL}/${item.photos[0]}" style="width:100%; height:100%; object-fit:cover; border-radius:10px;">`;
+        let defaultEmoji = '🌾';
+        if (item.name.toLowerCase().includes('tomato')) defaultEmoji = '🍅';
+        if (item.name.toLowerCase().includes('carrot')) defaultEmoji = '🥕';
+        if (item.name.toLowerCase().includes('chili')) defaultEmoji = '🌶️';
+        if (item.name.toLowerCase().includes('potato')) defaultEmoji = '🥔';
+
+        let img = defaultEmoji;
+        if (item.photos && item.photos.length > 0 && item.photos[0]) {
+          let photoPath = item.photos[0].replace(/\\/g, '/').replace(/^\/+/, '');
+          let photoUrl = photoPath.startsWith('http') ? photoPath : `${API_URL}/${photoPath}`;
+          img = `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:10px;" onerror="this.onerror=null; this.parentNode.innerHTML='${defaultEmoji}';">`;
         }
         const dateStr = item.available_date ? new Date(item.available_date).toLocaleDateString() : 'N/A';
         const isPending = item.status === 'pending';
