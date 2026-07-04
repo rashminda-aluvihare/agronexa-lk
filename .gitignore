@@ -6,3 +6,5 @@ db_data/
 *.log
 uploads/
 AgroNexa_LK_Test_Cases.*
+scratch/
+sent_emails.log

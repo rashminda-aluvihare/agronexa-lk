@@ -1,5 +1,7 @@
 const db = require('../config/db');
 const auditService = require('../services/audit.service');
+const notificationService = require('../services/notification.service');
+const emailService = require('../services/email.service');
 
 // ── ADMIN CREDENTIALS FOR COMPATIBILITY ──
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@agronexa.lk';
@@ -90,6 +92,20 @@ async function approveUser(req, res, next) {
     // Audit log
     await auditService.logAction(0, 'ADMIN_APPROVE_USER', req.ip, { user_id: id, email: approvedUser.email });
 
+    // Send In-App / Socket notification
+    await notificationService.pushNotification(
+      approvedUser.id,
+      'system',
+      'Account Approved | ගිණුම අනුමත විය',
+      'Your AgroNexa LK account has been approved by the administrator. You can now log in and access all platform services.'
+    );
+
+    // Send Email notification to user's registered email
+    emailService.sendAccountApprovalEmail({
+      email: approvedUser.email,
+      name: approvedUser.first_name,
+    }).catch(err => console.error('Error sending approval email:', err.message));
+
     return res.json({ success: true });
   } catch (err) {
     next(err);
@@ -106,12 +122,13 @@ async function rejectUser(req, res, next) {
 
   const { id } = req.params;
   const { reason } = req.body;
+  const rejectionReason = reason || 'NIC verification details did not match system requirements';
 
   try {
     const result = await db.query(
       `UPDATE users SET status = 'rejected', rejection_reason = $1 
-       WHERE id = $2 RETURNING id, email`,
-      [reason || 'NIC verification failed', id]
+       WHERE id = $2 RETURNING id, email, first_name`,
+      [rejectionReason, id]
     );
 
     if (result.rows.length === 0) {
@@ -121,7 +138,22 @@ async function rejectUser(req, res, next) {
     const rejectedUser = result.rows[0];
 
     // Audit log
-    await auditService.logAction(0, 'ADMIN_REJECT_USER', req.ip, { user_id: id, email: rejectedUser.email, reason });
+    await auditService.logAction(0, 'ADMIN_REJECT_USER', req.ip, { user_id: id, email: rejectedUser.email, reason: rejectionReason });
+
+    // Send In-App / Socket notification
+    await notificationService.pushNotification(
+      rejectedUser.id,
+      'system',
+      'Account Rejected | ගිණුම ප්‍රතික්ෂේප විය',
+      `Your AgroNexa LK account registration was rejected. Reason: ${rejectionReason}`
+    );
+
+    // Send Email notification to user's registered email
+    emailService.sendAccountRejectionEmail({
+      email: rejectedUser.email,
+      name: rejectedUser.first_name,
+      reason: rejectionReason,
+    }).catch(err => console.error('Error sending rejection email:', err.message));
 
     return res.json({ success: true });
   } catch (err) {
@@ -324,14 +356,48 @@ async function changeUserStatus(req, res, next) {
   }
 
   const { id } = req.params;
-  const { status } = req.body;
+  const { status, reason } = req.body;
+  const rejectionReason = reason || 'NIC verification details did not match system requirements';
 
   try {
-    const result = await db.query('UPDATE users SET status = $1 WHERE id = $2 RETURNING id', [status, id]);
+    const result = await db.query(
+      `UPDATE users SET status = $1, rejection_reason = $2 WHERE id = $3 RETURNING id, email, first_name`,
+      [status, status === 'rejected' ? rejectionReason : null, id]
+    );
+
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found.' });
     }
+
+    const updatedUser = result.rows[0];
+
     await auditService.logAction(0, 'USER_STATUS_CHANGE', req.ip, { target_user_id: id, new_status: status });
+
+    if (status === 'approved') {
+      await notificationService.pushNotification(
+        updatedUser.id,
+        'system',
+        'Account Approved | ගිණුම අනුමත විය',
+        'Your AgroNexa LK account status has been updated to approved.'
+      );
+      emailService.sendAccountApprovalEmail({
+        email: updatedUser.email,
+        name: updatedUser.first_name,
+      }).catch(err => console.error('Error sending approval email:', err.message));
+    } else if (status === 'rejected') {
+      await notificationService.pushNotification(
+        updatedUser.id,
+        'system',
+        'Account Rejected | ගිණුම ප්‍රතික්ෂේප විය',
+        `Your AgroNexa LK account registration status was set to rejected. Reason: ${rejectionReason}`
+      );
+      emailService.sendAccountRejectionEmail({
+        email: updatedUser.email,
+        name: updatedUser.first_name,
+        reason: rejectionReason,
+      }).catch(err => console.error('Error sending rejection email:', err.message));
+    }
+
     return res.json({ success: true });
   } catch (err) {
     next(err);

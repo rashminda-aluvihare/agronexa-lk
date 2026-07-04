@@ -1,0 +1,33 @@
+flowchart TD
+    Start([Start Booking]) --> SelectEquipment[Buyer Selects Rental Equipment]
+    SelectEquipment --> InputDates[Input Start Date & End Date]
+    InputDates --> SubmitBooking[POST /api/bookings]
+    SubmitBooking --> ValidateAvailability{Is Equipment Available for Dates?}
+    
+    ValidateAvailability -- No --> BookingError[Return Booking Error to Client]
+    BookingError --> SelectEquipment
+    
+    ValidateAvailability -- Yes --> CalculateCost[Calculate Total Amount = Rate * Days]
+    CalculateCost --> InsertPending[Insert Booking in DB with status = pending]
+    InsertPending --> NotifyOwner[Notify Equipment Owner]
+    NotifyOwner --> WaitAcceptance{Does Owner Accept Booking?}
+    
+    WaitAcceptance -- No/Reject --> UpdateCancelled[Update Booking status = cancelled]
+    UpdateCancelled --> EndCancelled([End])
+    
+    WaitAcceptance -- Yes/Accept --> POSTConfirm[POST /api/bookings/:id/confirm]
+    POSTConfirm --> UpdateStatusConfirmed[Update Booking status = confirmed]
+    UpdateStatusConfirmed --> FetchLastBlock[Retrieve Last Block Hash from rental_ledger]
+    FetchLastBlock --> GetHash{Is Last Hash Found?}
+    
+    GetHash -- No --> UseGenesis[Set previous_hash = 0]
+    GetHash -- Yes --> UsePrevHash[Set previous_hash = last block_hash]
+    
+    UseGenesis --> GenerateRecord[Generate recordData: txId, listingId, renterId, ownerId, amount, days]
+    UsePrevHash --> GenerateRecord
+    
+    GenerateRecord --> HashRecord[Compute block_hash = SHA256JSONRecord + prev_hash]
+    HashRecord --> CreateAgreement[Create agreementText and compute agreement_hash = SHA256agreementText]
+    CreateAgreement --> InsertLedger[Insert Block into rental_ledger table]
+    InsertLedger --> ResponseSuccess[Return Secured Booking Receipt]
+    ResponseSuccess --> EndSecured([End])

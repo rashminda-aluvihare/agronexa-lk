@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const db = require('../config/db');
 const twilioService = require('../services/twilio.service');
 const auditService = require('../services/audit.service');
+const emailService = require('../services/email.service');
 const { JWT_SECRET } = require('../middlewares/auth.middleware');
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@agronexa.lk';
@@ -420,22 +421,14 @@ async function forgotPasswordLink(req, res, next) {
       [token, expires, user.id]
     );
 
-    // Simulate sending email
+    // Send password reset email
     const resetLink = `${req.protocol}://${req.get("host")}/index.html?reset_token=${token}`;
-    console.log(`\n📧 [SIMULATED EMAIL TO ${email}]`);
-    console.log(`Hello ${user.first_name},`);
-    console.log(`You requested a password reset for your AgroNexa LK account.`);
-    console.log(`Please click the link below to reset your password (valid for 15 minutes):`);
-    console.log(`${resetLink}\n`);
-
-    const fs = require('fs');
-    const path = require('path');
-    const logPath = path.join(__dirname, '../../../sent_emails.log');
-    try {
-      fs.appendFileSync(logPath, `\n[${new Date().toISOString()}] PASSWORD RESET EMAIL TO ${email}:\nReset Link: ${resetLink}\n`);
-    } catch (err) {
-      console.error('Failed to write to sent_emails.log:', err.message);
-    }
+    await emailService.sendEmail({
+      to: email,
+      subject: '🔑 AgroNexa LK - Password Reset Request',
+      text: `Hello ${user.first_name || 'User'},\n\nYou requested a password reset for your AgroNexa LK account.\nPlease click the link below to reset your password (valid for 15 minutes):\n${resetLink}\n\nBest regards,\nAgroNexa LK Team`,
+      html: `<p>Hello <strong>${user.first_name || 'User'}</strong>,</p><p>You requested a password reset for your AgroNexa LK account.</p><p><a href="${resetLink}">Click here to reset your password</a> (link valid for 15 minutes).</p>`
+    });
 
     return res.json({
       success: true,

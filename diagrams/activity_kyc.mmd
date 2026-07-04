@@ -1,0 +1,19 @@
+flowchart TD
+    Start([Start Admin Session]) --> ViewPending[Get List of Pending Users]
+    ViewPending --> SelectUser[Select User to Review]
+    SelectUser --> InspectDocs[Inspect Uploaded NIC Images & Details]
+    InspectDocs --> Decision{Decision: Approve or Reject?}
+    
+    Decision -- Approve --> CallApprove[Call POST /api/admin/approve/:id]
+    CallApprove --> UpdateStatusApprove[Update Status to 'approved' & Clear Rejection Reason]
+    UpdateStatusApprove --> AuditApprove[Log ADMIN_APPROVE_USER Action to Audit Log]
+    AuditApprove --> NotifyApprove[Send SMS / System Notification: Account Activated]
+    
+    Decision -- Reject --> EnterReason[Provide Rejection Reason]
+    EnterReason --> CallReject[Call POST /api/admin/reject/:id]
+    CallReject --> UpdateStatusReject[Update Status to 'rejected' & Store Rejection Reason]
+    UpdateStatusReject --> AuditReject[Log ADMIN_REJECT_USER Action to Audit Log]
+    AuditReject --> NotifyReject[Send SMS / System Notification: Verification Rejected with Reason]
+    
+    NotifyApprove --> End([End])
+    NotifyReject --> End

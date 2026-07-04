@@ -1,0 +1,47 @@
+sequenceDiagram
+    autonumber
+    actor Buyer as Buyer Client
+    participant FE as React Frontend
+    participant Router as Express API Router
+    participant BookCtrl as Booking Controller
+    participant DB as PostgreSQL Database
+    participant LedgerSrv as Ledger Service
+    participant OwnerFE as Owner Frontend UI
+    actor Owner as Equipment Owner
+
+    Buyer->>FE: Select Equipment & Booking Dates
+    FE->>Router: POST /api/bookings {listingId, startDate, endDate}
+    Router->>BookCtrl: createBooking(req, res)
+    BookCtrl->>DB: Query listing details (ownerId, price, status)
+    DB-->>BookCtrl: Listing Info
+    BookCtrl->>BookCtrl: Compute duration & total cost
+    BookCtrl->>DB: INSERT INTO bookings status='pending'
+    DB-->>BookCtrl: Booking Record
+    BookCtrl->>DB: Create booking notification for Owner
+    BookCtrl-->>FE: 201 Booking Created (Pending Confirmation)
+    FE-->>Buyer: Show "Awaiting Owner Confirmation"
+
+    Note over Owner, BookCtrl: Owner Acceptance Phase
+    Owner->>OwnerFE: Click "Accept Booking Request"
+    OwnerFE->>Router: POST /api/bookings/:id/confirm
+    Router->>BookCtrl: confirmBooking(req, res)
+    BookCtrl->>DB: UPDATE bookings SET status = 'confirmed'
+    
+    rect rgb(255, 240, 245)
+        Note over BookCtrl, LedgerSrv: Cryptographic Ledger Chain Assembly
+        BookCtrl->>LedgerSrv: writeLedgerEntry(listingId, renterId, ownerId, amount, duration)
+        LedgerSrv->>DB: SELECT block_hash FROM rental_ledger ORDER BY id DESC LIMIT 1
+        DB-->>LedgerSrv: Returns Last Block Hash (or '0' if first)
+        LedgerSrv->>LedgerSrv: Generate random txId UUID
+        LedgerSrv->>LedgerSrv: hashRecord(txId, listingId, renterId, ownerId, amount, days, prevHash)
+        Note over LedgerSrv: block_hash = SHA256(JSON(tx_data) + prevHash)
+        LedgerSrv->>LedgerSrv: hashAgreement(txId, listingId, renterId, ownerId, amount, days)
+        Note over LedgerSrv: agreement_hash = SHA256(Agreement string)
+        LedgerSrv->>DB: INSERT INTO rental_ledger (tx_id, prev_hash, block_hash, agreement_hash, ...)
+        DB-->>LedgerSrv: Ledger Block saved
+        LedgerSrv-->>BookCtrl: Block entry confirmed
+    end
+    
+    BookCtrl->>DB: Create notification for Buyer
+    BookCtrl-->>OwnerFE: 200 Booking Confirmed & Secured
+    OwnerFE-->>Owner: Display "Booking Confirmed"
