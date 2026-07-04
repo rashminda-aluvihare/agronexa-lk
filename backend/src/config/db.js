@@ -6,11 +6,11 @@ const sslConfig = process.env.DATABASE_URL && !process.env.DATABASE_URL.includes
   : false;
 
 const pool = new Pool({
-  host: process.env.DB_HOST || process.env.DBHOST,
-  database: process.env.DB_NAME || process.env.DBNAME,
-  user: process.env.DB_USER || process.env.DBUSER,
-  password: process.env.DB_PASSWORD || process.env.DBPASSWORD,
-  port: process.env.DB_PORT || 5432,
+  host: process.env.DB_HOST || process.env.DBHOST || '127.0.0.1',
+  database: process.env.DB_NAME || process.env.DBNAME || 'postgres',
+  user: process.env.DB_USER || process.env.DBUSER || 'postgres',
+  password: (process.env.DB_PASSWORD !== undefined && process.env.DB_PASSWORD !== '') ? process.env.DB_PASSWORD : (process.env.DBPASSWORD || undefined),
+  port: process.env.DB_PORT || 5437,
   connectionString: process.env.DATABASE_URL,
   ssl: sslConfig,
 });
