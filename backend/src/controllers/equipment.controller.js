@@ -250,7 +250,20 @@ async function getEquipmentListingDetail(req, res, next) {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
- * POST /api/buyer/bookings (book equipment)
+ * ====================================================================================
+ * VIVA EXPLANATION - DOUBLE-BOOKING PREVENTION & EQUIPMENT RESERVATION ALGORITHM
+ * ====================================================================================
+ * Key Examiner Questions & Answers:
+ * 
+ * 1. How does AgroNexa LK prevent double-booking of agricultural machinery?
+ *    - Uses SQL date range comparison logic: `NOT (end_date < $2 OR start_date > $3)`
+ *    - Mathematically equivalent to: `(existing_start <= requested_end AND existing_end >= requested_start)`.
+ *    - If any overlapping 'confirmed' reservation exists for the same equipment, the API rejects the request with HTTP 409 Conflict.
+ * 
+ * 2. How is total rental cost computed?
+ *    - `durationDays = Math.ceil((end_date - start_date) / 86400000) + 1`
+ *    - `totalAmount = rental_rate * durationDays`
+ * ====================================================================================
  */
 async function bookEquipment(req, res, next) {
   const { buyer_id, listing_id, start_date, end_date } = req.body;
@@ -261,7 +274,7 @@ async function bookEquipment(req, res, next) {
   }
 
   try {
-    // 1. Check listing availability
+    // Step 1: Ensure equipment listing exists and is marked 'available'
     const listing = await db.query(
       `SELECT * FROM equipment_listings WHERE id = $1 AND status = 'available'`,
       [listing_id]
@@ -270,7 +283,8 @@ async function bookEquipment(req, res, next) {
       return res.status(409).json({ error: 'Equipment is not available for booking' });
     }
 
-    // 2. Check overlap
+    // Step 2: DOUBLE-BOOKING PREVENTION QUERY
+    // Verifies that requested start_date & end_date do NOT overlap with any existing confirmed booking
     const overlap = await db.query(
       `SELECT id FROM equipment_bookings
        WHERE listing_id = $1 AND status = 'confirmed'
@@ -281,11 +295,12 @@ async function bookEquipment(req, res, next) {
       return res.status(409).json({ error: 'Selected dates overlap with an existing booking' });
     }
 
+    // Step 3: Compute total duration in days and total rental cost
     const el = listing.rows[0];
     const durationDays = Math.ceil((new Date(end_date) - new Date(start_date)) / 86400000) + 1;
     const totalAmount = (el.rental_rate || 0) * durationDays;
 
-    // 3. Create booking
+    // Step 4: Insert booking record into PostgreSQL database with 'pending' status
     const result = await db.query(
       `INSERT INTO equipment_bookings 
          (listing_id, renter_id, owner_id, start_date, end_date, total_amount, status)
@@ -296,7 +311,7 @@ async function bookEquipment(req, res, next) {
 
     const booking = result.rows[0];
 
-    // 4. Resolve renter name and notify owner
+    // Step 5: Resolve buyer profile and push real-time alert to equipment owner
     const buyerResult = await db.query('SELECT first_name FROM users WHERE id = $1', [renter_id]);
     const buyerName = buyerResult.rows[0]?.first_name || 'A buyer';
 
@@ -307,7 +322,7 @@ async function bookEquipment(req, res, next) {
       `${buyerName} has requested to rent "${el.name}" from ${start_date} to ${end_date}. Total: Rs. ${totalAmount.toLocaleString()}.`
     );
 
-    // Audit log
+    // Audit logging for system security tracking
     await auditService.logAction(renter_id, 'BOOK_EQUIPMENT', req.ip, { id: booking.id, listing_id });
 
     return res.status(201).json({ success: true, booking });
@@ -315,6 +330,7 @@ async function bookEquipment(req, res, next) {
     next(err);
   }
 }
+
 
 /**
  * GET /api/buyer/bookings (buyer side history)

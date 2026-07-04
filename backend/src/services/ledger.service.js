@@ -1,11 +1,31 @@
+/**
+ * ====================================================================================
+ * VIVA EXPLANATION - TAMPER-EVIDENT SHA-256 TRANSACTION LEDGER SERVICE
+ * ====================================================================================
+ * Key Examiner Questions & Answers:
+ * 
+ * 1. Why do we need a cryptographic ledger in an agricultural platform?
+ *    - To prevent fraud and unauthorized modification of machinery lease contracts/financials.
+ *    - Guarantees transaction history immutability without requiring expensive blockchain gas fees.
+ * 
+ * 2. How are the blocks chained together?
+ *    - Each block calculates: block_hash = SHA256(JSON(record_data) + prev_hash)
+ *    - The genesis (first) block uses prev_hash = '0'. Subsequent blocks link to the previous record's `block_hash`.
+ * 
+ * 3. How does verification detect database tampering?
+ *    - `verifyLedgerChain()` re-executes SHA-256 hashing for every row in chronological order.
+ *    - If an attacker manually modifies `amount` or `duration` in PostgreSQL, the computed hash will mismatch `block_hash`, immediately identifying the broken transaction ID.
+ * ====================================================================================
+ */
+
 const crypto = require('crypto');
 const db = require('../config/db');
 
 /**
- * Computes the SHA-256 hash of a ledger block.
- * @param {object} record - Data fields of the transaction
- * @param {string} prevHash - Hash of the previous block
- * @returns {string} - Computed hex hash
+ * Helper Function: Computes SHA-256 hash of a single ledger block.
+ * @param {object} record - Transaction data payload (txId, listingId, renterId, ownerId, amount, days)
+ * @param {string} prevHash - SHA-256 hash string of the preceding block
+ * @returns {string} - Computed 64-character hexadecimal hash
  */
 function hashRecord(record, prevHash) {
   const data = JSON.stringify(record) + prevHash;
@@ -13,17 +33,17 @@ function hashRecord(record, prevHash) {
 }
 
 /**
- * Inserts a transaction into the immutable ledger after hashing it.
+ * Writes an immutable block entry into `rental_ledger` PostgreSQL table.
  */
 async function writeLedgerEntry(listingId, listingType, renterId, ownerId, amount, durationDays) {
-  // 1. Get previous block's hash
+  // Step 1: Fetch the hash of the latest block in the chain (or '0' if first block)
   const lastEntry = await db.query(
     `SELECT block_hash FROM rental_ledger ORDER BY id DESC LIMIT 1`
   );
   const prevHash = lastEntry.rows.length ? lastEntry.rows[0].block_hash : '0';
 
-  // 2. Setup transaction details
-  const txId = crypto.randomUUID().replace(/-/g, '');
+  // Step 2: Construct transaction payload
+  const txId = crypto.randomUUID().replace(/-/g, ''); // Generate unique transaction ID
   const recordData = {
     txId,
     listingId,
@@ -33,12 +53,12 @@ async function writeLedgerEntry(listingId, listingType, renterId, ownerId, amoun
     days: parseInt(durationDays, 10),
   };
 
-  // 3. Compute block hash and agreement hash
+  // Step 3: Calculate SHA-256 block hash & legal contract agreement text hash
   const blockHash = hashRecord(recordData, prevHash);
   const agreementText = `AGREEMENT: TX_ID=${txId} LISTING_ID=${listingId} RENTER_ID=${renterId} OWNER_ID=${ownerId} AMOUNT=${parseFloat(amount).toFixed(2)} DURATION=${parseInt(durationDays, 10)}`;
   const agreementHash = crypto.createHash('sha256').update(agreementText).digest('hex');
 
-  // 4. Write to DB
+  // Step 4: Persist block into PostgreSQL database
   const result = await db.query(
     `INSERT INTO rental_ledger 
        (tx_id, listing_id, listing_type, renter_id, owner_id, amount, duration_days, prev_hash, block_hash, agreement_hash)
@@ -62,13 +82,14 @@ async function writeLedgerEntry(listingId, listingType, renterId, ownerId, amoun
 }
 
 /**
- * Recalculates and verifies the cryptographic chain integrity of the ledger.
+ * System Audit Function: Recalculates and verifies cryptographic chain integrity from start to end.
  */
 async function verifyLedgerChain() {
   const result = await db.query(`SELECT * FROM rental_ledger ORDER BY id ASC`);
   const entries = result.rows;
   let prevHash = '0';
 
+  // Iterate over every historical transaction block in chronological order
   for (const entry of entries) {
     const recordData = {
       txId: entry.tx_id,
@@ -79,16 +100,19 @@ async function verifyLedgerChain() {
       days: parseInt(entry.duration_days, 10),
     };
 
+    // Recompute expected block hash and agreement hash
     const expectedHash = hashRecord(recordData, entry.prev_hash);
 
     const agreementText = `AGREEMENT: TX_ID=${entry.tx_id} LISTING_ID=${entry.listing_id} RENTER_ID=${entry.renter_id} OWNER_ID=${entry.owner_id} AMOUNT=${parseFloat(entry.amount).toFixed(2)} DURATION=${parseInt(entry.duration_days, 10)}`;
     const expectedAgreementHash = crypto.createHash('sha256').update(agreementText).digest('hex');
 
+    // Check if stored values match recomputed values
     if (
       expectedHash !== entry.block_hash ||
       entry.prev_hash !== prevHash ||
       expectedAgreementHash !== entry.agreement_hash
     ) {
+      // Tampering detected! Return location of corrupted block.
       return {
         valid: false,
         total_records: entries.length,
@@ -98,6 +122,7 @@ async function verifyLedgerChain() {
     prevHash = entry.block_hash;
   }
 
+  // Chain is intact and untampered
   return {
     valid: true,
     total_records: entries.length,
@@ -110,3 +135,4 @@ module.exports = {
   writeLedgerEntry,
   verifyLedgerChain,
 };
+

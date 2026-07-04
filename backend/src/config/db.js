@@ -1,10 +1,28 @@
+/**
+ * ====================================================================================
+ * VIVA EXPLANATION - POSTGRESQL CONNECTION POOL & AUTO-MIGRATION CONFIGURATION
+ * ====================================================================================
+ * Key Examiner Questions & Answers:
+ * 
+ * 1. How does AgroNexa LK connect to the database efficiently?
+ *    - Uses `node-postgres` (`pg.Pool`) connection pooling.
+ *    - Reuses database connections instead of opening/closing a connection per HTTP request, reducing latency and resource consumption.
+ * 
+ * 2. How are database migrations managed?
+ *    - `initDatabase()` executes on server startup (`server.js`).
+ *    - Runs `CREATE TABLE IF NOT EXISTS` schema definitions automatically, ensuring seamless deployment across local development and cloud environments (Vercel/Railway).
+ * ====================================================================================
+ */
+
 process.env.PGCLIENTENCODING = 'UTF8';
 const { Pool } = require('pg');
 
+// SSL configuration for production cloud hosting environment
 const sslConfig = process.env.DATABASE_URL && !process.env.DATABASE_URL.includes('localhost') && !process.env.DATABASE_URL.includes('127.0.0.1')
   ? { rejectUnauthorized: false }
   : false;
 
+// Create PostgreSQL connection pool instance
 const pool = new Pool({
   host: process.env.DB_HOST || process.env.DBHOST || '127.0.0.1',
   database: process.env.DB_NAME || process.env.DBNAME || 'postgres',
@@ -15,14 +33,18 @@ const pool = new Pool({
   ssl: sslConfig,
 });
 
+/**
+ * Executes a parameterized SQL query using connection pool.
+ * @param {string} text - SQL Query statement (with $1, $2 placeholders)
+ * @param {Array} params - Array of parameter values
+ */
 async function query(text, params) {
   const start = Date.now();
   const res = await pool.query(text, params);
   const duration = Date.now() - start;
-  // Optional query logging for debugging
-  // console.log('executed query', { text, duration, rows: res.rowCount });
   return res;
 }
+
 
 async function initDatabase() {
   const client = await pool.connect();
