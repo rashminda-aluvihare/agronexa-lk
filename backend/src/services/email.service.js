@@ -5,21 +5,32 @@ const path = require('path');
 const logPath = path.join(__dirname, '../../../sent_emails.log');
 
 /**
- * Configure Nodemailer transport.
- * Uses environment variables if provided, otherwise falls back to test/stream configuration.
+ * Configure Nodemailer transport dynamically based on environment variables.
  */
-let transporter = null;
-
-if (process.env.SMTP_HOST && process.env.SMTP_USER) {
-  transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: parseInt(process.env.SMTP_PORT || '587', 10),
-    secure: process.env.SMTP_SECURE === 'true',
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
+function getTransporter() {
+  if (process.env.SMTP_HOST && process.env.SMTP_USER) {
+    return nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: parseInt(process.env.SMTP_PORT || '587', 10),
+      secure: process.env.SMTP_SECURE === 'true',
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+  }
+  if (process.env.SMTP_SERVICE === 'gmail' || process.env.SMTP_USER) {
+    if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+      return nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
+      });
+    }
+  }
+  return null;
 }
 
 /**
@@ -52,10 +63,11 @@ async function sendEmail({ to, subject, text, html }) {
   logEmailToFile(to, subject, text);
 
   // If SMTP is configured, attempt sending real email via Nodemailer
-  if (transporter) {
+  const activeTransporter = getTransporter();
+  if (activeTransporter) {
     try {
-      const info = await transporter.sendMail({
-        from: process.env.EMAIL_FROM || '"AgroNexa LK Support" <no-reply@agronexa.lk>',
+      const info = await activeTransporter.sendMail({
+        from: process.env.EMAIL_FROM || (process.env.SMTP_USER ? `"AgroNexa LK" <${process.env.SMTP_USER}>` : '"AgroNexa LK Support" <no-reply@agronexa.lk>'),
         to,
         subject,
         text,
