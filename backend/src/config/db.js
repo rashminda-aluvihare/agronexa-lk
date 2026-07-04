@@ -28,7 +28,7 @@ const pool = new Pool({
   database: process.env.DB_NAME || process.env.DBNAME || 'postgres',
   user: process.env.DB_USER || process.env.DBUSER || 'postgres',
   password: (process.env.DB_PASSWORD !== undefined && process.env.DB_PASSWORD !== '') ? process.env.DB_PASSWORD : (process.env.DBPASSWORD || undefined),
-  port: process.env.DB_PORT || 5437,
+  port: process.env.DB_PORT || 5432,
   connectionString: process.env.DATABASE_URL,
   ssl: sslConfig,
 });
@@ -310,7 +310,6 @@ async function initDatabase() {
     // Ensure owner_id column exists on transport_providers table
     await client.query("ALTER TABLE transport_providers ADD COLUMN IF NOT EXISTS owner_id INTEGER REFERENCES users(id);");
     await client.query("ALTER TABLE transport_providers ADD COLUMN IF NOT EXISTS rate_per_km NUMERIC(10,2) DEFAULT 150.00;");
-    await client.query("ALTER TABLE transport_bookings ADD COLUMN IF NOT EXISTS distance NUMERIC(10,2);");
 
     // 12. Transport Bookings Table
     await client.query(`
@@ -330,6 +329,8 @@ async function initDatabase() {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       );
     `);
+
+    await client.query("ALTER TABLE transport_bookings ADD COLUMN IF NOT EXISTS distance NUMERIC(10,2);");
 
     // 13. Market Prices Table (daily crop price index)
     await client.query(`
