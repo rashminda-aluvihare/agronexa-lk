@@ -164,17 +164,3 @@ function parseAveragePrice(text) {
 module.exports = {
   updateMarketPrices
 };
-ean = text.replace(/[^0-9.\-]/g, ''); // keep only numbers, dots, and hyphens
-  if (clean.includes('-')) {
-    const parts = clean.split('-').map(Number);
-    if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-      return (parts[0] + parts[1]) / 2;
-    }
-  }
-  const single = Number(clean);
-  return isNaN(single) ? 0 : single;
-}
-
-module.exports = {
-  updateMarketPrices
-};
