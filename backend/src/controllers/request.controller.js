@@ -92,7 +92,7 @@ async function createBroadcastRequest(req, res, next) {
       notificationService.pushNotification(
         s.id,
         'request',
-        `📢 New Buyer Request: ${crop}`,
+        `New Buyer Request: ${crop}`,
         `${resolvedName} from ${district} needs ${quantity} of ${crop}.${budget ? ' Budget: Rs. ' + budget : ''} Respond now!`
       )
     );
@@ -299,7 +299,7 @@ async function respondToRequest(req, res, next) {
     }
 
     // Notify buyer
-    const typeLabel = { accept: 'accepted ✅', reject: 'declined', counter: 'sent a counter-offer ↩️' };
+    const typeLabel = { accept: 'accepted', reject: 'declined', counter: 'sent a counter-offer' };
     await notificationService.pushNotification(
       br.buyer_id,
       'response',
@@ -347,7 +347,7 @@ async function acceptSellerResponse(req, res, next) {
       await notificationService.pushNotification(
         resp.seller_id,
         'response',
-        '🎉 Your offer was accepted!',
+        'Your offer was accepted!',
         `The buyer accepted your ${resp.type} for "${brQuery.rows[0].crop}". Contact them to arrange delivery.`
       );
     }
@@ -467,7 +467,7 @@ async function updateBroadcastRequest(req, res, next) {
       notificationService.pushNotification(
         s.id,
         'request',
-        `📢 Updated Buyer Request: ${crop || updatedRequest.crop}`,
+        `Updated Buyer Request: ${crop || updatedRequest.crop}`,
         `${updatedRequest.buyer_name || 'Buyer'} updated their request in ${district || updatedRequest.district}. Respond now!`
       )
     );

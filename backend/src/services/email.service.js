@@ -92,7 +92,7 @@ async function sendEmail({ to, subject, text, html }) {
  */
 async function sendAccountApprovalEmail({ email, name }) {
   const userName = name || 'User';
-  const subject = '🎉 AgroNexa LK - Account Approved | ඔබේ ගිණුම අනුමත විය';
+  const subject = 'AgroNexa LK - Account Approved | ඔබේ ගිණුම අනුමත විය';
   const text = `Hello ${userName},
 
 Great news! Your AgroNexa LK account registration has been reviewed and APPROVED by our administration team.
@@ -109,7 +109,7 @@ AgroNexa LK Team
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
-      <h2 style="color: #166534;">🎉 AgroNexa LK Account Approved!</h2>
+      <h2 style="color: #166534;">AgroNexa LK Account Approved</h2>
       <p>Hello <strong>${userName}</strong>,</p>
       <p>Great news! Your AgroNexa LK account registration has been reviewed and <strong style="color: #166534;">APPROVED</strong> by our administration team.</p>
       <p>You can now log in to access all platform features including crop listings, equipment rentals, transport services, and marketplace direct messaging.</p>
@@ -134,7 +134,7 @@ AgroNexa LK Team
 async function sendAccountRejectionEmail({ email, name, reason }) {
   const userName = name || 'User';
   const rejectReason = reason || 'NIC verification details did not match system requirements.';
-  const subject = '⚠️ AgroNexa LK - Account Registration Status | ගිණුම් තත්ත්වය';
+  const subject = 'AgroNexa LK - Account Registration Status | ගිණුම් තත්ත්වය';
   const text = `Hello ${userName},
 
 We have reviewed your AgroNexa LK account registration application.
@@ -153,7 +153,7 @@ AgroNexa LK Team
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
-      <h2 style="color: #991b1b;">⚠️ AgroNexa LK Account Status Update</h2>
+      <h2 style="color: #991b1b;">AgroNexa LK Account Status Update</h2>
       <p>Hello <strong>${userName}</strong>,</p>
       <p>We have reviewed your AgroNexa LK account registration application.</p>
       <p>Unfortunately, your account registration could <strong>NOT</strong> be approved at this time.</p>

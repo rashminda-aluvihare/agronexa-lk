@@ -585,7 +585,7 @@ async function confirmCropOrder(req, res, next) {
     await notificationService.pushNotification(
       order.buyer_id,
       'booking',
-      `Crop Order Confirmed ✅`,
+      `Crop Order Confirmed`,
       `Your order of ${order.quantity_kg} kg of ${listing.name} was confirmed by the seller. Ledger TX: ${ledgerEntry.tx_id.slice(0, 12)}...`
     );
 
@@ -625,7 +625,7 @@ async function rejectCropOrder(req, res, next) {
     await notificationService.pushNotification(
       order.buyer_id,
       'booking',
-      `Crop Order Rejected ❌`,
+      `Crop Order Rejected`,
       `Your crop purchase request for listing #${order.crop_listing_id} was rejected by the seller.`
     );
 

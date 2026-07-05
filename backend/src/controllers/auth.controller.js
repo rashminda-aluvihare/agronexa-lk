@@ -425,7 +425,7 @@ async function forgotPasswordLink(req, res, next) {
     const resetLink = `${req.protocol}://${req.get("host")}/index.html?reset_token=${token}`;
     await emailService.sendEmail({
       to: email,
-      subject: '🔑 AgroNexa LK - Password Reset Request',
+      subject: 'AgroNexa LK - Password Reset Request',
       text: `Hello ${user.first_name || 'User'},\n\nYou requested a password reset for your AgroNexa LK account.\nPlease click the link below to reset your password (valid for 15 minutes):\n${resetLink}\n\nBest regards,\nAgroNexa LK Team`,
       html: `<p>Hello <strong>${user.first_name || 'User'}</strong>,</p><p>You requested a password reset for your AgroNexa LK account.</p><p><a href="${resetLink}">Click here to reset your password</a> (link valid for 15 minutes).</p>`
     });

@@ -494,7 +494,7 @@ async function confirmBooking(req, res, next) {
     await notificationService.pushNotification(
       b.renter_id,
       'booking',
-      'Booking Confirmed ✅',
+      'Booking Confirmed',
       `Your equipment booking has been confirmed. Transaction TX: ${ledgerEntry.tx_id.slice(0, 12)}...`
     );
 
@@ -537,7 +537,7 @@ async function rejectBooking(req, res, next) {
     await notificationService.pushNotification(
       b.renter_id,
       'booking',
-      'Booking Rejected ❌',
+      'Booking Rejected',
       `Your equipment booking request was rejected. ${reason ? 'Reason: ' + reason : ''}`
     );
 
@@ -592,7 +592,7 @@ async function completeBooking(req, res, next) {
     await notificationService.pushNotification(
       b.renter_id,
       'booking',
-      'Equipment Rental Completed 🚜',
+      'Equipment Rental Completed',
       `Your rental booking has been marked as completed/returned by the owner. Final Receipt is now available.`
     );
 
