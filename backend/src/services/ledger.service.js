@@ -1,22 +1,4 @@
-/**
- * ====================================================================================
- * VIVA EXPLANATION - TAMPER-EVIDENT SHA-256 TRANSACTION LEDGER SERVICE
- * ====================================================================================
- * Key Examiner Questions & Answers:
- * 
- * 1. Why do we need a cryptographic ledger in an agricultural platform?
- *    - To prevent fraud and unauthorized modification of machinery lease contracts/financials.
- *    - Guarantees transaction history immutability without requiring expensive blockchain gas fees.
- * 
- * 2. How are the blocks chained together?
- *    - Each block calculates: block_hash = SHA256(JSON(record_data) + prev_hash)
- *    - The genesis (first) block uses prev_hash = '0'. Subsequent blocks link to the previous record's `block_hash`.
- * 
- * 3. How does verification detect database tampering?
- *    - `verifyLedgerChain()` re-executes SHA-256 hashing for every row in chronological order.
- *    - If an attacker manually modifies `amount` or `duration` in PostgreSQL, the computed hash will mismatch `block_hash`, immediately identifying the broken transaction ID.
- * ====================================================================================
- */
+
 
 const crypto = require('crypto');
 const db = require('../config/db');
