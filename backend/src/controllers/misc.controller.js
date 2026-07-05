@@ -67,8 +67,23 @@ async function getPublicStats(req, res) {
   }
 }
 
+/**
+ * GET /api/weather-advisory?district=Nuwara%20Eliya
+ */
+async function getWeatherAdvisoryHandler(req, res) {
+  const { district } = req.query;
+  const weatherService = require('../services/weather.service');
+  try {
+    const data = await weatherService.getWeatherAdvisory(district);
+    return res.json({ success: true, weather: data });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+}
+
 module.exports = {
   getMarketPrices,
   getPublicStats,
+  getWeatherAdvisoryHandler,
 };
 
