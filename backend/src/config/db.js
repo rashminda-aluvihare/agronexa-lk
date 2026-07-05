@@ -1,18 +1,3 @@
-/**
- * ====================================================================================
- * VIVA EXPLANATION - POSTGRESQL CONNECTION POOL & AUTO-MIGRATION CONFIGURATION
- * ====================================================================================
- * Key Examiner Questions & Answers:
- * 
- * 1. How does AgroNexa LK connect to the database efficiently?
- *    - Uses `node-postgres` (`pg.Pool`) connection pooling.
- *    - Reuses database connections instead of opening/closing a connection per HTTP request, reducing latency and resource consumption.
- * 
- * 2. How are database migrations managed?
- *    - `initDatabase()` executes on server startup (`server.js`).
- *    - Runs `CREATE TABLE IF NOT EXISTS` schema definitions automatically, ensuring seamless deployment across local development and cloud environments (Vercel/Railway).
- * ====================================================================================
- */
 
 process.env.PGCLIENTENCODING = 'UTF8';
 const { Pool } = require('pg');
