@@ -1,21 +1,4 @@
-/**
- * ====================================================================================
- * VIVA EXPLANATION - HARTI AGRICULTURAL MARKET PRICE SCRAPER & SIMULATION SERVICE
- * ====================================================================================
- * Key Examiner Questions & Answers:
- * 
- * 1. How does the system fetch real-time market crop prices in Sri Lanka?
- *    - Uses Axios to download HTML content from HARTI (Hector Kobbekaduwa Agrarian Research Institute).
- *    - Cheerio parses the HTML tables, extracts wholesale commodity price ranges, and averages them.
- * 
- * 2. What happens if the external HARTI website is offline or down during live usage?
- *    - System executes a graceful Fallback Simulation Algorithm.
- *    - Applies a realistic seasonal market fluctuation (+/- 3%) based on previous price trends so system operations are never interrupted.
- * 
- * 3. How are price trends stored for charts?
- *    - Stores a 7-day rolling numerical array (`history`) in PostgreSQL to power sparkline charts on frontend dashboards.
- * ====================================================================================
- */
+
 
 const axios = require('axios');
 const cheerio = require('cheerio');
