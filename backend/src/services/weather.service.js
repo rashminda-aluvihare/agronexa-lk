@@ -1,14 +1,4 @@
-/**
- * ====================================================================================
- * VIVA EXPLANATION - WEATHER & CROP ADVISORY SERVICE
- * ====================================================================================
- * Key Examiner Questions & Answers:
- * 
- * 1. How does the system generate weather forecasts and agricultural recommendations?
- *    - Uses OpenWeatherMap API (or simulated fallback) based on district location.
- *    - Evaluates temperature, humidity, and rain probability to output crop protection tips.
- * ====================================================================================
- */
+
 
 const axios = require('axios');
 
