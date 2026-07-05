@@ -189,7 +189,7 @@ export default function BuyerDashboard({ onSwitchRole }: { onSwitchRole: () => v
                       <p className="text-xs text-slate-500 mt-0.5">ප්‍රදේශය: {item.district} · තොගය: {item.availableStock}kg</p>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm font-bold text-brand-teal-600 dark:text-brand-teal-400">රු. {item.pricePerKg}/kg</div>
+                      <div className="text-sm font-bold text-brand-teal-600 dark:text-brand-teal-400">1kg = Rs. {item.pricePerKg}</div>
                       <button
                         onClick={() => alert(`${item.name} මිලදී ගැනීම සඳහා විමසීමක් යවන ලදී.`)}
                         className="mt-1.5 px-3 py-1 bg-brand-teal-600 hover:bg-brand-teal-700 text-white font-semibold text-[10px] rounded-lg transition-all"

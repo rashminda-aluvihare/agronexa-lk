@@ -2972,7 +2972,7 @@ function loadBroadcastsAndResponses() {
       let html = '';
       allResponses.forEach(res => {
         const timeAgo = formatTimeAgo(new Date(res.createdAt));
-        const priceLabel = res.price ? `Rs. ${res.price}/kg` : 'requested price';
+        const priceLabel = res.price ? `1kg = Rs. ${res.price}` : 'requested price';
         const qtyLabel = res.quantity ? `${res.quantity} kg` : 'requested quantity';
         const counterText = res.type === 'counter' ? 'Counter offer:' : 'Offer details:';
         const repScore = Math.min(5, (parseInt(res.sellerRep || 0) / 10) * 5).toFixed(1);
@@ -3116,7 +3116,7 @@ function loadMyRequests() {
               Quantity: ${b.quantity} kg | Location: ${b.district}
             </div>
             <div style="font-size: 12px; color: var(--muted); margin-top: 2px;">
-              Needed: ${displayDate} ${b.budget ? ' | Price: Rs. ' + b.budget + '/kg' : ''}
+              Needed: ${displayDate} ${b.budget ? ' | 1kg = Rs. ' + b.budget : ''}
             </div>
             ${actionsHtml}
           </div>
@@ -3247,7 +3247,7 @@ function showUserProfileModal(userId) {
                 listingsHtml += `
                   <div style="display:flex; justify-content:space-between; font-size:12px; border-bottom:1px solid var(--surface); padding-bottom:4px; margin-bottom:4px;">
                     <span style="color:var(--text); font-weight:500;">🥬 ${listing.name}</span>
-                    <span style="color:var(--teal); font-weight:600;">Rs. ${parseFloat(listing.price_per_kg).toFixed(0)}${getTranslation('js-per-kg', '/kg')}</span>
+                    <span style="color:var(--teal); font-weight:600;">1kg = Rs. ${parseFloat(listing.price_per_kg).toFixed(0)}</span>
                   </div>
                 `;
               });
@@ -4164,7 +4164,7 @@ var currentCropMaxQty = 0;
 function openCropOrderModal(id, rate, name, maxQty) {
   document.getElementById('book-crop-id').value = id;
   document.getElementById('book-crop-title').textContent = getTranslation('modal-order-crops-title', 'Order Crops') + ': ' + name;
-  document.getElementById('book-crop-rate').textContent = `Rs. ${parseFloat(rate).toFixed(0)} ` + getTranslation('js-per-kg', '/kg');
+  document.getElementById('book-crop-rate').textContent = `1kg = Rs. ${parseFloat(rate).toFixed(0)}`;
   document.getElementById('book-crop-available-lbl').textContent = getTranslation('modal-lbl-available-qty', 'Available Quantity') + `: ${parseFloat(maxQty)} kg`;
   
   currentCropRate = parseFloat(rate);
@@ -4266,7 +4266,7 @@ function loadCropOrders() {
               <div class="booking-owner">${getTranslation('js-seller', 'Seller')}: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.seller_id})">${item.seller_name}</span> · 📞 ${item.seller_phone || 'N/A'}</div>
               <div class="booking-dates">
                 <span>📅 ${getTranslation('js-deliv', 'Deliv')}: ${deliveryDate}</span>
-                <span>${getTranslation('js-qty', 'Qty')}: ${item.quantity_kg} kg @ Rs. ${parseFloat(item.price_per_kg).toFixed(0)}/kg</span>
+                <span>${getTranslation('js-qty', 'Qty')}: ${item.quantity_kg} kg @ 1kg = Rs. ${parseFloat(item.price_per_kg).toFixed(0)}</span>
               </div>
             </div>
             <div style="display:flex;flex-direction:column;align-items:flex-end;">
@@ -4336,7 +4336,7 @@ function loadMarketplace() {
               <div style="font-size:11px; color:#f4a261; font-weight:600; display:flex; align-items:center; gap:2px; margin-top:2px; margin-bottom:6px;">
                 ★ ${repScore} (${item.seller_rep || 0} deals)
               </div>
-              <div class="market-card-price">Rs. ${parseFloat(item.price_per_kg).toFixed(0)}/kg</div>
+              <div class="market-card-price">1kg = Rs. ${parseFloat(item.price_per_kg).toFixed(0)}</div>
               <div style="display:flex; gap:6px; margin-top:8px;">
                 <button class="interest-btn" style="margin-top:0;" onclick="openCropOrderModal(${item.id}, ${item.price_per_kg}, '${item.name.replace(/'/g, "\\'")}', ${item.quantity_kg})">🛒 Order Now</button>
                 <button class="interest-btn" style="margin-top:0; background:var(--teal); color:#fff;" onclick="startChatWithUser(${item.seller_id}, '${item.seller_name.replace(/'/g, "\\'")}', 'farmer')">💬 Chat</button>
@@ -5120,7 +5120,7 @@ function updateMapMarkers(listings, type) {
         <div style="font-family:'DM Sans',sans-serif; min-width: 180px; padding: 2px; color: #16222c;">
           <h4 style="margin: 0 0 4px; font-size: 14px; font-weight: 600; color: #16222c;">${item.name}</h4>
           <div style="font-size: 11.5px; color: #5e6d7a; margin-bottom: 6px;">📍 ${item.district || 'Unknown'} · ${item.quantity_kg} kg</div>
-          <div style="font-size: 13px; font-weight: 600; color: #1a4f72; margin-bottom: 6px;">Rs. ${parseFloat(item.price_per_kg).toFixed(0)} / kg</div>
+          <div style="font-size: 13px; font-weight: 600; color: #1a4f72; margin-bottom: 6px;">1kg = Rs. ${parseFloat(item.price_per_kg).toFixed(0)}</div>
           <div style="border-top: 1px solid #dbe2e8; padding-top: 6px; font-size: 11px; display: flex; align-items: center; justify-content: space-between;">
             <span>Farmer: <strong>${item.seller_name}</strong></span>
             <span style="color: #2d6a4f; font-weight: 600;">★ ${repScore}</span>

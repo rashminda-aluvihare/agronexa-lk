@@ -3451,7 +3451,7 @@ function loadCropListings() {
               <div class="listing-meta">${districtTranslated} · ${item.quantity_kg} kg · ${getTranslation('js-avail', 'Avail')}: ${dateStr}</div>
             </div>
             <div style="display:flex;flex-direction:column;align-items:flex-end;">
-              <div class="listing-price">Rs. ${parseFloat(item.price_per_kg).toFixed(0)}/kg</div>
+              <div class="listing-price">1kg = Rs. ${parseFloat(item.price_per_kg).toFixed(0)}</div>
               <div style="display:flex;gap:8px;margin-top:4px;align-items:center;">
                 <span class="status-pill ${statusClass}">${statusLabel}</span>
                 <button onclick="openEditCropModal(${item.id}, ${item.quantity_kg}, ${item.price_per_kg}, '${item.name.replace(/'/g, "\\'")}')" style="background:none;border:none;color:var(--primary-light);font-size:11px;cursor:pointer;font-weight:600;">${getTranslation('js-edit', 'Edit')}</button>
