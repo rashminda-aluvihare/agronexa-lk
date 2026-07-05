@@ -22,7 +22,7 @@ async function start() {
     updateMarketPrices().catch((err) => {
       console.error('❌ Scheduled daily crop prices scraper update failed:', err.message);
     });
-  }, 24 * 60 * 60 * 1000);
+  }, 24 * 60 * 60 * 1000);  //Milisecond in to 24 hours 
 
   const app = createApp();
   const server = http.createServer(app);
