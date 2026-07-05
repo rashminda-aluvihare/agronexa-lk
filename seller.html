@@ -4702,13 +4702,11 @@ async function downloadLedgerReceipt(txId, listingName, buyerName, amount, durat
 
     y += 10;
     doc.setFont('courier', 'normal');
-    doc.setFontSize(6.5);
+    doc.setFontSize(7);
     doc.setTextColor(100, 100, 100);
     doc.text(`LEDGER TRANSACTION ID (TX ID): ${txId}`, 14, y);
-    doc.text(`LEDGER BLOCK HASH (SHA-256):   ${blockHash || 'GENESIS_BLOCK_HASH'}`, 14, y + 3);
-    doc.text(`PREVIOUS BLOCK HASH:           ${prevHash || '0'}`, 14, y + 6);
 
-    y += 10;
+    y += 6;
     doc.setFont('helvetica', 'italic');
     doc.setFontSize(7.5);
     doc.setTextColor(120, 120, 120);
