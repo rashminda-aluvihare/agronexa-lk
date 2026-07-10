@@ -782,6 +782,11 @@
       <span data-i18n="nav-price-index">Daily Price Index</span>
     </div>
     <div class="nav-section" data-i18n="sidebar-account">Account</div>
+    <div class="nav-item" onclick="switchTab('payments')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"/><line x1="12" y1="18" x2="12" y2="18"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      <span data-i18n="nav-payments">Order Payments</span>
+      <span class="nav-badge" id="sidebar-payments-count" style="display:none;background:var(--amber);">0</span>
+    </div>
     <div class="nav-item" onclick="switchTab('chat')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
       <span data-i18n="nav-chat">Chat</span>
@@ -1123,6 +1128,18 @@
           
           <button type="submit" class="btn-sm btn-confirm" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;" data-i18n="logistics-btn-submit-booking">Confirm Booking Request</button>
         </form>
+      </div>
+    </div>
+
+    <!-- Payments Section -->
+    <div class="panel content-section" id="section-payments" style="display: none; margin-top: 20px;">
+      <div class="panel-head">
+        <div class="panel-title" data-i18n="nav-payments">Order Payments</div>
+        <div id="payments-count-badge" style="font-size:11px;color:var(--teal);font-weight:600">0 pending payment</div>
+      </div>
+      <div class="panel-sub" style="font-size:12px; color:var(--text-muted); margin-bottom:15px;" data-i18n="buyer-payments-tab-desc">Submit bank transfer receipts for confirmed orders and track their verification status.</div>
+      <div id="payments-list-container" style="display:flex; flex-direction:column; gap:12px;">
+        <!-- Loaded dynamically -->
       </div>
     </div>
 
@@ -2559,6 +2576,7 @@ function switchTab(tab) {
   const sectionPriceIndex = document.getElementById('section-price-index');
   const sectionTransport = document.getElementById('section-transport');
   const sectionUserManual = document.getElementById('section-user-manual');
+  const sectionPayments = document.getElementById('section-payments');
 
   const panelBroadcastForm = document.getElementById('panel-broadcast-form');
   const panelResponses = document.getElementById('panel-responses');
@@ -2581,6 +2599,7 @@ function switchTab(tab) {
   if (sectionPriceIndex) sectionPriceIndex.style.display = 'none';
   if (sectionTransport) sectionTransport.style.display = 'none';
   if (sectionUserManual) sectionUserManual.style.display = 'none';
+  if (sectionPayments) sectionPayments.style.display = 'none';
 
   if (tab === 'dashboard') {
     sectionStats.style.display = 'grid';
@@ -2698,6 +2717,11 @@ function switchTab(tab) {
     if (sectionTransport) {
       sectionTransport.style.display = 'block';
       loadTransportDrivers();
+    }
+  } else if (tab === 'payments') {
+    if (sectionPayments) {
+      sectionPayments.style.display = 'block';
+      loadBuyerPaymentsTab();
     }
   } else if (tab === 'user-manual') {
     if (sectionUserManual) {
@@ -2863,6 +2887,8 @@ function submitPaymentProof(e) {
         );
         closePaymentModal();
         loadDashboardData();
+        loadBuyerPaymentsTab();
+        loadCropOrders();
       } else {
         showToast(getTranslation('toast-error-title', 'Error'), data.error || 'Failed to submit payment proof.', 'error');
       }
@@ -4512,9 +4538,17 @@ function loadCropOrders() {
     .then(r => r.json())
     .then(data => {
       const container = document.getElementById('crop-orders-list');
+      const sidebarPaymentsBadge = document.getElementById('sidebar-payments-count');
       if (!data.success || !data.orders || !data.orders.length) {
         container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">' + getTranslation('js-no-crop-orders-placed', 'No crop orders placed. Visit the marketplace to buy fresh produce!') + '</div>';
+        if (sidebarPaymentsBadge) sidebarPaymentsBadge.style.display = 'none';
         return;
+      }
+
+      const unpaidOrders = data.orders.filter(o => o.status === 'confirmed');
+      if (sidebarPaymentsBadge) {
+        sidebarPaymentsBadge.textContent = unpaidOrders.length;
+        sidebarPaymentsBadge.style.display = unpaidOrders.length > 0 ? 'inline-block' : 'none';
       }
 
       let html = '';
@@ -4558,6 +4592,120 @@ function loadCropOrders() {
               <div style="display:flex;flex-direction:column;align-items:flex-end;">
                 <span class="booking-status ${statusClass}">${getTranslation('booking-status-' + item.status, item.status).toUpperCase()}</span>
                 <div style="font-size:13px; font-weight:600; color:var(--teal); margin-top: 4px;">Rs. ${parseFloat(item.total_amount).toLocaleString()}</div>
+              </div>
+            </div>
+            ${bankDetailsHtml}
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    });
+}
+
+function loadBuyerPaymentsTab() {
+  if (!_user || !_user.id) return;
+  fetch(API_URL + '/api/buyer/crop-orders?buyer_id=' + _user.id, {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      const container = document.getElementById('payments-list-container');
+      const badge = document.getElementById('payments-count-badge');
+      if (!data.success || !data.orders || !data.orders.length) {
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">' + getTranslation('js-no-payments', 'No payment records found.') + '</div>';
+        if (badge) badge.textContent = '0 ' + getTranslation('js-pending-payment', 'pending payment');
+        return;
+      }
+
+      // Filter for confirmed, paid or completed crop orders
+      const paymentOrders = data.orders.filter(o => o.status === 'confirmed' || o.status === 'paid' || o.status === 'completed');
+      const unpaidVerify = paymentOrders.filter(o => o.status === 'confirmed');
+      
+      if (badge) {
+        badge.textContent = unpaidVerify.length + ' ' + getTranslation('js-pending-payment', 'pending payment');
+      }
+
+      if (paymentOrders.length === 0) {
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No payments pending or completed.</div>';
+        return;
+      }
+
+      let html = '';
+      paymentOrders.forEach(item => {
+        const isConfirmed = item.status === 'confirmed';
+        const isPaid = item.status === 'paid';
+        const formattedDate = item.paid_at ? new Date(item.paid_at).toLocaleString() : 'N/A';
+        const escapedRef = (item.payment_ref || '').replace(/'/g, "\\'");
+        
+        let statusText = '';
+        let statusColor = 'var(--muted)';
+        let actionButtons = '';
+        let bankDetailsHtml = '';
+
+        if (isConfirmed) {
+          statusText = getTranslation('booking-status-confirmed', 'UNPAID') + ' 💳';
+          statusColor = 'var(--accent)';
+          actionButtons = `
+            <button class="btn-sm btn-accept" onclick="openPaymentModal(${item.id}, '${item.crop_name.replace(/'/g, "\\'")}', ${parseFloat(item.total_amount)})" style="background:var(--teal); color:#fff; cursor:pointer; padding:8px 16px; font-size:12px; font-weight:600; border-radius:8px; border:none; margin-top:8px;">
+              ${getTranslation('btn-pay-now', 'Pay Now 💳')}
+            </button>
+          `;
+          
+          if (item.bank_name) {
+            bankDetailsHtml = `
+              <div style="margin-top: 12px; padding: 12px; background: rgba(0,0,0,0.01); border: 1px dashed var(--border); border-radius: 8px; font-size: 11.5px; line-height: 1.4; color: var(--text);">
+                <div style="font-weight: 700; color: var(--teal); display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                  ${getBankLogoHtml(item.bank_name)} <span data-i18n="order-bank-title">${getTranslation('order-bank-title', "Seller's Bank Details")}</span>
+                </div>
+                <div><b>${getTranslation('profile-lbl-bank-name', 'Bank')}:</b> ${item.bank_name} (${item.bank_branch})</div>
+                <div><b>${getTranslation('profile-lbl-bank-acc-name', 'Account Name')}:</b> ${item.bank_account_name}</div>
+                <div><b>${getTranslation('profile-lbl-bank-acc-no', 'Account Number')}:</b> ${item.bank_account_no}</div>
+              </div>
+            `;
+          }
+        } else if (isPaid) {
+          statusText = getTranslation('booking-status-paid', 'PAID') + ' 💸';
+          statusColor = 'var(--primary)';
+          const slipUrl = item.payment_slip_path.startsWith('http') ? item.payment_slip_path : `${API_URL}/${item.payment_slip_path}`;
+          actionButtons = `
+            <div style="display:flex; flex-direction:column; gap:4px; margin-top:8px; align-items:flex-end;">
+              <span style="font-size:10.5px; color:var(--text-muted);">Awaiting seller verification</span>
+              <button class="btn-sm" onclick="window.open('${slipUrl}', '_blank')" style="background:transparent; border:1px solid var(--border-color); color:var(--text-main); cursor:pointer; padding:6px 12px; font-size:11px; font-weight:600; border-radius:6px;">
+                ${getTranslation('btn-view-slip', 'View Slip 📄')}
+              </button>
+            </div>
+          `;
+        } else {
+          statusText = getTranslation('booking-status-completed', 'COMPLETED') + ' ✅';
+          statusColor = 'var(--green)';
+          const slipUrl = item.payment_slip_path ? (item.payment_slip_path.startsWith('http') ? item.payment_slip_path : `${API_URL}/${item.payment_slip_path}`) : '#';
+          actionButtons = item.payment_slip_path ? `
+            <button class="btn-sm" onclick="window.open('${slipUrl}', '_blank')" style="background:transparent; border:1px solid var(--border-color); color:var(--text-main); cursor:pointer; padding:6px 12px; font-size:11px; font-weight:600; border-radius:6px; margin-top:8px;">
+              ${getTranslation('btn-view-slip', 'View Slip 📄')}
+            </button>
+          ` : '';
+        }
+
+        html += `
+          <div class="booking-item" style="display:flex; flex-direction:column; padding:16px; border:1px solid var(--border-color); border-radius:12px; background:var(--bg-card); margin-bottom: 12px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div>
+                <div style="font-size:14.5px; font-weight:600; color:var(--text-main);">${item.crop_name}</div>
+                <div style="font-size:12px; color:var(--text-muted); margin-top:3px;">
+                  ${getTranslation('js-seller', 'Seller')}: <span style="font-weight:600; color:var(--teal);">${item.seller_name || 'Seller'}</span> · 📞 ${item.seller_phone || 'N/A'}
+                </div>
+                ${item.payment_ref ? `
+                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">
+                    Reference: <span style="font-family:monospace; font-weight:600;">${item.payment_ref}</span>
+                  </div>
+                ` : ''}
+                <div style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">
+                  Qty: <strong>${item.quantity_kg} kg</strong> · Amount Due: <strong style="color:var(--teal)">Rs. ${parseFloat(item.total_amount).toLocaleString()}</strong>
+                </div>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                <span style="font-size:12px; font-weight:700; color:${statusColor};">${statusText.toUpperCase()}</span>
+                ${actionButtons}
               </div>
             </div>
             ${bankDetailsHtml}

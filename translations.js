@@ -345,6 +345,8 @@ const TRANSLATIONS = {
     "nav-payments": "Order Payments",
     "js-pending-verification": "pending verification",
     "js-no-payments": "No payment records found.",
+    "js-pending-payment": "pending payment",
+    "buyer-payments-tab-desc": "Submit bank transfer receipts for confirmed orders and track their verification status.",
 
     // Settings page details
     "settings-lbl-sms": "SMS Notifications",
@@ -1102,6 +1104,8 @@ const TRANSLATIONS = {
     "nav-payments": "ඇණවුම් ගෙවීම්",
     "js-pending-verification": "සත්‍යාපනය වෙමින් පවතී",
     "js-no-payments": "ගෙවීම් වාර්තා හමු නොවුණි.",
+    "js-pending-payment": "ගෙවීමට ඇති ඇණවුම්",
+    "buyer-payments-tab-desc": "තහවුරු කරන ලද ඇණවුම් සඳහා බැංකු රිසිට්පත් ඉදිරිපත් කර ඒවායේ සත්‍යාපන තත්ත්වය නිරීක්ෂණය කරන්න.",
 
     // Settings page details
     "settings-lbl-sms": "SMS දැනුම්දීම්",
@@ -1859,6 +1863,8 @@ const TRANSLATIONS = {
     "nav-payments": "ஆர்டர் கட்டணங்கள்",
     "js-pending-verification": "சரிபார்ப்பு நிலுவையில் உள்ளது",
     "js-no-payments": "கட்டணப் பதிவுகள் எதுவும் இல்லை.",
+    "js-pending-payment": "கட்டணம் செலுத்த வேண்டியவை",
+    "buyer-payments-tab-desc": "உறுதிப்படுத்தப்பட்ட ஆர்டர்களுக்கான வங்கி பரிமாற்ற ரசீதுகளை சமர்ப்பித்து அவற்றின் சரிபார்ப்பு நிலையை கண்காணிக்கவும்.",
 
     // Settings page details
     "settings-lbl-sms": "SMS அறிவிப்புகள்",
