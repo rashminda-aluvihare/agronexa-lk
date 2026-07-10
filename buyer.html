@@ -4635,72 +4635,67 @@ function loadBuyerPaymentsTab() {
         const isConfirmed = item.status === 'confirmed';
         const isPaid = item.status === 'paid';
         const formattedDate = item.paid_at ? new Date(item.paid_at).toLocaleString() : 'N/A';
-        const escapedRef = (item.payment_ref || '').replace(/'/g, "\\'");
         
+        let statusClass = 'confirmed';
         let statusText = '';
-        let statusColor = 'var(--muted)';
-        let actionButtons = '';
-        let bankDetailsHtml = '';
-
         if (isConfirmed) {
-          statusText = getTranslation('booking-status-confirmed', 'UNPAID') + ' 💳';
-          statusColor = 'var(--accent)';
+          statusClass = 'pending';
+          statusText = getTranslation('booking-status-confirmed', 'UNPAID');
+        } else if (isPaid) {
+          statusClass = 'confirmed';
+          statusText = getTranslation('booking-status-paid', 'PAID') + ' 💸';
+        } else {
+          statusClass = 'confirmed';
+          statusText = getTranslation('booking-status-completed', 'COMPLETED');
+        }
+
+        let actionButtons = '';
+        if (isConfirmed) {
           const escapedBank = (item.bank_name || '').replace(/'/g, "\\'");
           const escapedBranch = (item.bank_branch || '').replace(/'/g, "\\'");
           const escapedAccName = (item.bank_account_name || '').replace(/'/g, "\\'");
           const escapedAccNo = (item.bank_account_no || '').replace(/'/g, "\\'");
+          
           actionButtons = `
-            <button class="btn-sm btn-accept" onclick="openPaymentModal(${item.id}, '${item.crop_name.replace(/'/g, "\\'")}', ${parseFloat(item.total_amount)}, '${escapedBank}', '${escapedBranch}', '${escapedAccName}', '${escapedAccNo}')" style="background:var(--teal); color:#fff; cursor:pointer; padding:8px 16px; font-size:12px; font-weight:600; border-radius:8px; border:none; margin-top:8px;">
+            <button class="btn-sm btn-accept" onclick="openPaymentModal(${item.id}, '${item.crop_name.replace(/'/g, "\\'")}', ${parseFloat(item.total_amount)}, '${escapedBank}', '${escapedBranch}', '${escapedAccName}', '${escapedAccNo}')" style="background:var(--teal); color:#fff; cursor:pointer; padding:8px 16px; font-size:12px; font-weight:600; border-radius:8px; border:none;">
               ${getTranslation('btn-pay-now', 'Pay Now 💳')}
             </button>
           `;
-          bankDetailsHtml = '';
-        } else if (isPaid) {
-          statusText = getTranslation('booking-status-paid', 'PAID') + ' 💸';
-          statusColor = 'var(--primary)';
-          const slipUrl = item.payment_slip_path.startsWith('http') ? item.payment_slip_path : `${API_URL}/${item.payment_slip_path}`;
-          actionButtons = `
-            <div style="display:flex; flex-direction:column; gap:4px; margin-top:8px; align-items:flex-end;">
-              <span style="font-size:10.5px; color:var(--text-muted);">Awaiting seller verification</span>
-              <button class="btn-sm" onclick="window.open('${slipUrl}', '_blank')" style="background:transparent; border:1px solid var(--border-color); color:var(--text-main); cursor:pointer; padding:6px 12px; font-size:11px; font-weight:600; border-radius:6px;">
-                ${getTranslation('btn-view-slip', 'View Slip 📄')}
-              </button>
-            </div>
-          `;
         } else {
-          statusText = getTranslation('booking-status-completed', 'COMPLETED') + ' ✅';
-          statusColor = 'var(--green)';
           const slipUrl = item.payment_slip_path ? (item.payment_slip_path.startsWith('http') ? item.payment_slip_path : `${API_URL}/${item.payment_slip_path}`) : '#';
           actionButtons = item.payment_slip_path ? `
-            <button class="btn-sm" onclick="window.open('${slipUrl}', '_blank')" style="background:transparent; border:1px solid var(--border-color); color:var(--text-main); cursor:pointer; padding:6px 12px; font-size:11px; font-weight:600; border-radius:6px; margin-top:8px;">
+            <button class="btn-sm" onclick="window.open('${slipUrl}', '_blank')" style="background:transparent; border:1px solid var(--border); color:var(--text); cursor:pointer; padding:6px 12px; font-size:11px; font-weight:600; border-radius:8px;">
               ${getTranslation('btn-view-slip', 'View Slip 📄')}
             </button>
           ` : '';
         }
 
         html += `
-          <div class="booking-item" style="display:flex; flex-direction:column; padding:16px; border:1px solid var(--border-color); border-radius:12px; background:var(--bg-card); margin-bottom: 12px;">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-              <div>
-                <div style="font-size:14.5px; font-weight:600; color:var(--text-main);">${item.crop_name}</div>
-                <div style="font-size:12px; color:var(--text-muted); margin-top:3px;">
-                  ${getTranslation('js-seller', 'Seller')}: <span style="font-weight:600; color:var(--teal);">${item.seller_name || 'Seller'}</span> · 📞 ${item.seller_phone || 'N/A'}
-                </div>
-                ${item.payment_ref ? `
-                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">
-                    Reference: <span style="font-family:monospace; font-weight:600;">${item.payment_ref}</span>
+          <div class="booking-item" style="display:flex; flex-direction:column; align-items:stretch; gap:10px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+              <div style="display:flex; gap:12px; align-items:center; width: 100%;">
+                <div class="booking-icon" style="background:var(--teal-pale); color:var(--teal);">💳</div>
+                <div class="booking-info" style="flex: 1;">
+                  <div class="booking-name" style="font-size:14px; font-weight:600; color:var(--text-main);">${item.crop_name}</div>
+                  <div class="booking-owner" style="font-size:12px; color:var(--text-muted); margin-top:2px;">
+                    ${getTranslation('js-seller', 'Seller')}: <span style="font-weight:600; color:var(--teal);">${item.seller_name || 'Seller'}</span> · 📞 ${item.seller_phone || 'N/A'}
                   </div>
-                ` : ''}
-                <div style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">
-                  Qty: <strong>${item.quantity_kg} kg</strong> · Amount Due: <strong style="color:var(--teal)">Rs. ${parseFloat(item.total_amount).toLocaleString()}</strong>
+                  ${item.payment_ref ? `
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px; font-family:monospace;">
+                      Ref: ${item.payment_ref}
+                    </div>
+                  ` : ''}
+                  <div class="booking-dates" style="font-size:11.5px; color:var(--text-muted); margin-top:4px; display: flex; gap: 14px;">
+                    <span>Qty: <strong>${item.quantity_kg} kg</strong></span>
+                    <span style="color:var(--teal); font-weight:600;">Rs. ${parseFloat(item.total_amount).toLocaleString()}</span>
+                  </div>
                 </div>
               </div>
-              <div style="display:flex; flex-direction:column; align-items:flex-end;">
-                <span style="font-size:12px; font-weight:700; color:${statusColor};">${statusText.toUpperCase()}</span>
+              <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px; flex-shrink: 0;">
+                <span class="booking-status ${statusClass}" style="font-size:11px; font-weight:700;">${statusText.toUpperCase()}</span>
                 ${actionButtons}
               </div>
             </div>
-            ${bankDetailsHtml}
           </div>
         `;
       });
