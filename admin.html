@@ -1572,6 +1572,15 @@ async function deactivateTransport(id) {
   }
 }
 
+function getAdminHeaders(extraHeaders = {}) {
+  const token = sessionStorage.getItem('agro_token');
+  const headers = Object.assign({}, extraHeaders);
+  if (token && token !== 'null') {
+    headers['Authorization'] = 'Bearer ' + token;
+  }
+  return headers;
+}
+
 var localAnnouncements = [];
 
 async function loadAnnouncements() {
@@ -1582,7 +1591,7 @@ async function loadAnnouncements() {
   try {
     const url = API_URL + '/api/admin/announcements?admin_email=' + encodeURIComponent(adminEmail) + '&admin_password=' + encodeURIComponent(adminPass);
     const res = await fetch(url, {
-      headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('agro_token') }
+      headers: getAdminHeaders()
     });
     const data = await res.json();
     if (data.success) {
@@ -1672,10 +1681,7 @@ async function saveAnnouncement(e) {
   try {
     const res = await fetch(url, {
       method: method,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + sessionStorage.getItem('agro_token')
-      },
+      headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(payload)
     });
     const data = await res.json();
@@ -1730,10 +1736,7 @@ async function deleteAnnouncement(id) {
   try {
     const res = await fetch(API_URL + '/api/admin/announcements/' + id, {
       method: 'DELETE',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + sessionStorage.getItem('agro_token') 
-      },
+      headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ admin_email: adminEmail, admin_password: adminPass })
     });
     const data = await res.json();
