@@ -3845,11 +3845,30 @@ async function completeCropOrder(id) {
 
 function openSlipModal(slipPath, txRef, paidAt) {
   const modalImg = document.getElementById('slip-modal-image');
+  const modalImageContainer = modalImg.parentNode;
+  
   if (slipPath) {
-    modalImg.src = slipPath.startsWith('http') ? slipPath : `${API_URL}/${slipPath}`;
-    modalImg.style.display = 'block';
+    const fullUrl = slipPath.startsWith('http') ? slipPath : `${API_URL}/${slipPath}`;
+    
+    if (slipPath.toLowerCase().endsWith('.pdf')) {
+      modalImageContainer.innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:30px; gap:10px; color:var(--text-main);">
+          <span style="font-size:48px;">📄</span>
+          <span style="font-weight:600; font-size:14px;">PDF Payment Slip</span>
+          <a href="${fullUrl}" target="_blank" style="color:var(--primary); font-weight:600; text-decoration:underline;">Click to Open PDF</a>
+        </div>
+        <img id="slip-modal-image" src="" alt="Payment Receipt" style="display:none;">
+      `;
+    } else {
+      modalImageContainer.innerHTML = `
+        <img id="slip-modal-image" src="${fullUrl}" alt="Payment Receipt" style="max-width:100%; max-height:280px; object-fit:contain; cursor:pointer;" onclick="window.open(this.src, '_blank')">
+      `;
+    }
   } else {
-    modalImg.style.display = 'none';
+    modalImageContainer.innerHTML = `
+      <div style="padding:20px; color:var(--text-muted);">No payment slip uploaded.</div>
+      <img id="slip-modal-image" src="" alt="Payment Receipt" style="display:none;">
+    `;
   }
   document.getElementById('slip-modal-ref').textContent = txRef || 'N/A';
   document.getElementById('slip-modal-date').textContent = paidAt || 'N/A';
