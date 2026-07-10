@@ -347,6 +347,9 @@ const TRANSLATIONS = {
     "js-no-payments": "No payment records found.",
     "js-pending-payment": "pending payment",
     "buyer-payments-tab-desc": "Submit bank transfer receipts for confirmed orders and track their verification status.",
+    "announcement-app-title": "AgroNexa-LK Mobile App Coming Soon! 🚀",
+    "announcement-app-desc": "We are excited to announce that our official mobile app is currently in development! Enjoy faster bookings, real-time push alerts, and direct farm-to-buyer connectivity right from your smartphone.",
+    "btn-notify-me": "Notify Me 🔔",
 
     // Settings page details
     "settings-lbl-sms": "SMS Notifications",
@@ -1106,6 +1109,9 @@ const TRANSLATIONS = {
     "js-no-payments": "ගෙවීම් වාර්තා හමු නොවුණි.",
     "js-pending-payment": "ගෙවීමට ඇති ඇණවුම්",
     "buyer-payments-tab-desc": "තහවුරු කරන ලද ඇණවුම් සඳහා බැංකු රිසිට්පත් ඉදිරිපත් කර ඒවායේ සත්‍යාපන තත්ත්වය නිරීක්ෂණය කරන්න.",
+    "announcement-app-title": "AgroNexa-LK ජංගම දුරකථන යෙදවුම (Mobile App) ළඟදීම! 🚀",
+    "announcement-app-desc": "අපගේ නිල ජංගම දුරකථන යෙදවුම (Mobile App) මේ වන විට සකස් වෙමින් පවතින බව සතුටින් දන්වා සිටිමු! ඔබගේ ස්මාර්ට් ජංගම දුරකථනය හරහා වේගවත් ඇණවුම් කිරීම්, සජීවී Push නිවේදන සහ සෘජු ගොවි-ගැනුම්කරු සම්බන්ධතාවය භුක්ති විඳින්න.",
+    "btn-notify-me": "මාව දැනුවත් කරන්න 🔔",
 
     // Settings page details
     "settings-lbl-sms": "SMS දැනුම්දීම්",
@@ -1865,6 +1871,9 @@ const TRANSLATIONS = {
     "js-no-payments": "கட்டணப் பதிவுகள் எதுவும் இல்லை.",
     "js-pending-payment": "கட்டணம் செலுத்த வேண்டியவை",
     "buyer-payments-tab-desc": "உறுதிப்படுத்தப்பட்ட ஆர்டர்களுக்கான வங்கி பரிமாற்ற ரசீதுகளை சமர்ப்பித்து அவற்றின் சரிபார்ப்பு நிலையை கண்காணிக்கவும்.",
+    "announcement-app-title": "அக்ரோநெக்ஸா-எல்கே மொபைல் ஆப் விரைவில்! 🚀",
+    "announcement-app-desc": "எங்கள் அதிகாரப்பூர்வ மொபைல் பயன்பாடு தற்போது உருவாக்கத்தில் உள்ளது என்பதை அறிவிப்பதில் மகிழ்ச்சி அடைகிறோம்! உங்கள் ஸ்மார்ட்போனிலிருந்தே வேகமான முன்பதிவுகள், நிகழ்நேர புஷ் விழிப்பூட்டல்கள் மற்றும் நேரடி பண்ணை-வாங்குபவர் இணைப்பை அனுபவிக்கவும்.",
+    "btn-notify-me": "எனக்கு அறிவிக்கவும் 🔔",
 
     // Settings page details
     "settings-lbl-sms": "SMS அறிவிப்புகள்",
