@@ -4645,24 +4645,16 @@ function loadBuyerPaymentsTab() {
         if (isConfirmed) {
           statusText = getTranslation('booking-status-confirmed', 'UNPAID') + ' 💳';
           statusColor = 'var(--accent)';
+          const escapedBank = (item.bank_name || '').replace(/'/g, "\\'");
+          const escapedBranch = (item.bank_branch || '').replace(/'/g, "\\'");
+          const escapedAccName = (item.bank_account_name || '').replace(/'/g, "\\'");
+          const escapedAccNo = (item.bank_account_no || '').replace(/'/g, "\\'");
           actionButtons = `
-            <button class="btn-sm btn-accept" onclick="openPaymentModal(${item.id}, '${item.crop_name.replace(/'/g, "\\'")}', ${parseFloat(item.total_amount)})" style="background:var(--teal); color:#fff; cursor:pointer; padding:8px 16px; font-size:12px; font-weight:600; border-radius:8px; border:none; margin-top:8px;">
+            <button class="btn-sm btn-accept" onclick="openPaymentModal(${item.id}, '${item.crop_name.replace(/'/g, "\\'")}', ${parseFloat(item.total_amount)}, '${escapedBank}', '${escapedBranch}', '${escapedAccName}', '${escapedAccNo}')" style="background:var(--teal); color:#fff; cursor:pointer; padding:8px 16px; font-size:12px; font-weight:600; border-radius:8px; border:none; margin-top:8px;">
               ${getTranslation('btn-pay-now', 'Pay Now 💳')}
             </button>
           `;
-          
-          if (item.bank_name) {
-            bankDetailsHtml = `
-              <div style="margin-top: 12px; padding: 12px; background: rgba(0,0,0,0.01); border: 1px dashed var(--border); border-radius: 8px; font-size: 11.5px; line-height: 1.4; color: var(--text);">
-                <div style="font-weight: 700; color: var(--teal); display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                  ${getBankLogoHtml(item.bank_name)} <span data-i18n="order-bank-title">${getTranslation('order-bank-title', "Seller's Bank Details")}</span>
-                </div>
-                <div><b>${getTranslation('profile-lbl-bank-name', 'Bank')}:</b> ${item.bank_name} (${item.bank_branch})</div>
-                <div><b>${getTranslation('profile-lbl-bank-acc-name', 'Account Name')}:</b> ${item.bank_account_name}</div>
-                <div><b>${getTranslation('profile-lbl-bank-acc-no', 'Account Number')}:</b> ${item.bank_account_no}</div>
-              </div>
-            `;
-          }
+          bankDetailsHtml = '';
         } else if (isPaid) {
           statusText = getTranslation('booking-status-paid', 'PAID') + ' 💸';
           statusColor = 'var(--primary)';
