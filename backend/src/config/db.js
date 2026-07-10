@@ -191,6 +191,10 @@ async function initDatabase() {
       );
     `);
 
+    await client.query("ALTER TABLE crop_orders ADD COLUMN IF NOT EXISTS payment_ref VARCHAR(100);");
+    await client.query("ALTER TABLE crop_orders ADD COLUMN IF NOT EXISTS payment_slip_path TEXT;");
+    await client.query("ALTER TABLE crop_orders ADD COLUMN IF NOT EXISTS paid_at TIMESTAMPTZ;");
+
     // 6. Request Responses Table
     await client.query(`
       CREATE TABLE IF NOT EXISTS request_responses (

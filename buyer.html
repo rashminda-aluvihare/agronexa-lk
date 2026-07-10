@@ -869,10 +869,8 @@
 
     <!-- Dashboard Alerts -->
     <div id="section-dashboard-alerts" style="display: none; margin-top: 20px;">
-      <div style="background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--primary); border-radius: 12px; padding: 16px; box-shadow: 0 4px 10px rgba(22,34,44,0.03);">
-        <div id="dashboard-alert-text" style="font-size: 13.5px; color: var(--text); font-weight: 500; line-height: 1.6;">
-          <!-- Loaded dynamically -->
-        </div>
+      <div id="dashboard-alerts-list" style="display: flex; flex-direction: column; gap: 12px;">
+        <!-- Alert cards loaded dynamically -->
       </div>
     </div>
 
@@ -1579,6 +1577,44 @@
             <span style="font-size:15px;color:var(--teal);font-weight:600;" id="book-crop-total-cost">Rs. 0</span>
           </div>
           <button type="submit" class="btn-sm btn-confirm" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;">Confirm Purchase Order</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- CROP ORDER PAYMENT MODAL -->
+    <div id="crop-payment-modal" style="display:none;position:fixed;inset:0;background:rgba(20,29,43,0.7);backdrop-filter:blur(4px);z-index:2000;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:20px;padding:32px;max-width:420px;width:95%;box-shadow:0 20px 60px rgba(20,29,43,0.3);border:1px solid var(--border);position:relative;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <h3 style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--text)" data-i18n="modal-payment-title">Submit Proof of Payment</h3>
+          <button onclick="closePaymentModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted)">&times;</button>
+        </div>
+        <form id="crop-payment-form" onsubmit="submitPaymentProof(event)">
+          <input type="hidden" id="payment-order-id">
+          
+          <!-- Bank Details Summary Card -->
+          <div style="background:rgba(0,0,0,0.02); border:1px dashed var(--border); border-radius:12px; padding:15px; margin-bottom:20px; font-size:12.5px; color:var(--text); line-height:1.5;">
+            <div style="font-weight:700; color:var(--teal); margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+              <span id="payment-modal-bank-logo"></span>
+              <span data-i18n="order-bank-title">Seller's Bank Details</span>
+            </div>
+            <div><b data-i18n="profile-lbl-bank-name">Bank Name:</b> <span id="payment-modal-bank-name"></span> (<span id="payment-modal-bank-branch"></span>)</div>
+            <div><b data-i18n="profile-lbl-bank-acc-name">Account Name:</b> <span id="payment-modal-bank-acc-name"></span></div>
+            <div><b data-i18n="profile-lbl-bank-acc-no">Account Number:</b> <span id="payment-modal-bank-acc-no"></span></div>
+            <div style="margin-top:10px; padding-top:10px; border-top:1px solid var(--border); display:flex; justify-content:space-between; font-weight:700; color:var(--teal); font-size:13.5px;">
+              <span>Amount Due:</span>
+              <span id="payment-modal-amount-due"></span>
+            </div>
+          </div>
+
+          <div style="margin-bottom:16px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="lbl-tx-ref">Transaction Reference / ID</label>
+            <input class="form-input" type="text" id="payment-tx-ref" placeholder="e.g. TXN1002345" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
+          </div>
+          <div style="margin-bottom:20px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="lbl-upload-slip">Upload Bank Transfer Slip</label>
+            <input class="form-input" type="file" id="payment-slip" accept="image/*,application/pdf" required style="width:100%;border:1px solid var(--border);padding:8px;border-radius:10px;outline:none;">
+          </div>
+          <button type="submit" class="btn-sm btn-confirm" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;" data-i18n="btn-submit-payment">Submit Payment Proof</button>
         </form>
       </div>
     </div>
@@ -2679,37 +2715,154 @@ function switchTab(tab) {
 
 function loadDashboardAlerts() {
   const alertsSection = document.getElementById('section-dashboard-alerts');
-  const alertText = document.getElementById('dashboard-alert-text');
-  if (!alertsSection || !alertText) return;
+  const alertsContainer = document.getElementById('dashboard-alerts-list');
+  if (!alertsSection || !alertsContainer) return;
 
-  fetch(API_URL + '/api/transport/bookings', {
-    headers: getAuthHeaders()
-  })
+  const fetchTransport = fetch(API_URL + '/api/transport/bookings', { headers: getAuthHeaders() })
     .then(r => r.json())
-    .then(data => {
-      if (data.success && data.bookings) {
-        const activeBookings = data.bookings.filter(b => 
+    .catch(() => ({ success: false }));
+
+  const fetchCrops = fetch(API_URL + '/api/buyer/crop-orders?buyer_id=' + _user.id, { headers: getAuthHeaders() })
+    .then(r => r.json())
+    .catch(() => ({ success: false }));
+
+  Promise.all([fetchTransport, fetchCrops])
+    .then(([transportData, cropsData]) => {
+      let alertCardsHtml = '';
+      let hasAlerts = false;
+
+      // 1. Process Transport Bookings
+      if (transportData.success && transportData.bookings) {
+        const activeBookings = transportData.bookings.filter(b => 
           b.requester_id === _user.id && (b.status === 'confirmed' || b.status === 'in-transit')
         );
-        if (activeBookings.length > 0) {
-          alertsSection.style.display = 'block';
-          const latest = activeBookings[0];
+        activeBookings.forEach(latest => {
+          hasAlerts = true;
           let template = getTranslation('dashboard-alert-incoming-delivery', 'Incoming Delivery: {commodity} ({quantity}kg) status is {status}.');
           let text = template
             .replace('{commodity}', latest.commodity_name)
             .replace('{quantity}', latest.quantity_kg)
             .replace('{status}', getTranslation('booking-status-' + latest.status, latest.status));
-          alertText.innerHTML = text;
-        } else {
-          alertsSection.style.display = 'none';
-        }
+          
+          alertCardsHtml += `
+            <div style="background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--primary); border-radius: 12px; padding: 16px; box-shadow: 0 4px 10px rgba(22,34,44,0.03); display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+              <div style="font-size: 13.5px; color: var(--text); font-weight: 500; line-height: 1.6;">
+                🚚 ${text}
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      // 2. Process Crop Orders needing Payment
+      if (cropsData.success && cropsData.orders) {
+        const unpaidOrders = cropsData.orders.filter(o => o.status === 'confirmed' && o.bank_name);
+        unpaidOrders.forEach(order => {
+          hasAlerts = true;
+          let template = getTranslation('dashboard-alert-pending-payment', 'Unpaid Order: Please submit payment for {commodity} ({quantity} kg) order.');
+          let text = template
+            .replace('{commodity}', order.crop_name)
+            .replace('{quantity}', order.quantity_kg);
+          
+          const escapedCrop = order.crop_name.replace(/'/g, "\\'");
+          const escapedBankName = order.bank_name.replace(/'/g, "\\'");
+          const escapedBankBranch = order.bank_branch.replace(/'/g, "\\'");
+          const escapedAccName = order.bank_account_name.replace(/'/g, "\\'");
+          const escapedAccNo = order.bank_account_no.replace(/'/g, "\\'");
+
+          alertCardsHtml += `
+            <div style="background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--teal); border-radius: 12px; padding: 16px; box-shadow: 0 4px 10px rgba(22,34,44,0.03); display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+              <div style="font-size: 13.5px; color: var(--text); font-weight: 500; line-height: 1.6;">
+                💳 ${text}
+              </div>
+              <button onclick="openPaymentModal(${order.id}, '${escapedCrop}', ${order.total_amount}, '${escapedBankName}', '${escapedBankBranch}', '${escapedAccName}', '${escapedAccNo}')" 
+                      class="btn-sm btn-confirm" 
+                      style="margin: 0; padding: 8px 16px; font-size: 12px; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                ${getTranslation('btn-pay-now', 'Pay Now 💳')}
+              </button>
+            </div>
+          `;
+        });
+      }
+
+      if (hasAlerts) {
+        alertsContainer.innerHTML = alertCardsHtml;
+        alertsSection.style.display = 'block';
       } else {
         alertsSection.style.display = 'none';
       }
     })
     .catch(err => {
-      console.error('Error fetching dashboard alerts:', err);
+      console.error('Error loading dashboard alerts:', err);
       alertsSection.style.display = 'none';
+    });
+}
+
+function openPaymentModal(orderId, cropName, totalAmount, bankName, bankBranch, bankAccountName, bankAccountNo) {
+  document.getElementById('payment-order-id').value = orderId;
+  document.getElementById('payment-modal-bank-logo').innerHTML = getBankLogoHtml(bankName);
+  document.getElementById('payment-modal-bank-name').textContent = bankName;
+  document.getElementById('payment-modal-bank-branch').textContent = bankBranch;
+  document.getElementById('payment-modal-bank-acc-name').textContent = bankAccountName;
+  document.getElementById('payment-modal-bank-acc-no').textContent = bankAccountNo;
+  document.getElementById('payment-modal-amount-due').textContent = 'Rs. ' + parseFloat(totalAmount).toLocaleString();
+  
+  document.getElementById('payment-tx-ref').value = '';
+  document.getElementById('payment-slip').value = '';
+  
+  document.getElementById('crop-payment-modal').style.display = 'flex';
+}
+
+function closePaymentModal() {
+  document.getElementById('crop-payment-modal').style.display = 'none';
+}
+
+function submitPaymentProof(e) {
+  e.preventDefault();
+  const orderId = document.getElementById('payment-order-id').value;
+  const txRef = document.getElementById('payment-tx-ref').value;
+  const slipFile = document.getElementById('payment-slip').files[0];
+  
+  if (!slipFile) {
+    showToast(getTranslation('toast-error-title', 'Error'), 'Please upload a bank transfer slip image.', 'error');
+    return;
+  }
+  
+  const formData = new FormData();
+  formData.append('payment_ref', txRef);
+  formData.append('payment_slip', slipFile);
+  
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  const origText = submitBtn.textContent;
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Submitting...';
+  
+  fetch(API_URL + '/api/buyer/crop-orders/' + orderId + '/pay', {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: formData
+  })
+    .then(r => r.json())
+    .then(data => {
+      submitBtn.disabled = false;
+      submitBtn.textContent = origText;
+      if (data.success) {
+        showToast(
+          getTranslation('toast-payment-success-title', 'Payment Submitted!'), 
+          getTranslation('toast-payment-success-body', 'Your payment proof has been successfully uploaded for review 💸'), 
+          'success'
+        );
+        closePaymentModal();
+        loadDashboardData();
+      } else {
+        showToast(getTranslation('toast-error-title', 'Error'), data.error || 'Failed to submit payment proof.', 'error');
+      }
+    })
+    .catch(err => {
+      submitBtn.disabled = false;
+      submitBtn.textContent = origText;
+      console.error('Error submitting payment proof:', err);
+      showToast(getTranslation('toast-error-title', 'Error'), 'Server connection failure.', 'error');
     });
 }
 

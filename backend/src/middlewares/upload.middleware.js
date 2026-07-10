@@ -21,6 +21,10 @@ if (!fs.existsSync(chatDir)) {
 if (!fs.existsSync(profileDir)) {
   fs.mkdirSync(profileDir, { recursive: true });
 }
+const paymentDir = path.join(uploadsRoot, 'payments/');
+if (!fs.existsSync(paymentDir)) {
+  fs.mkdirSync(paymentDir, { recursive: true });
+}
 
 // Storage for NIC documents
 const nicStorage = multer.diskStorage({
@@ -86,9 +90,26 @@ const uploadProfilePhoto = multer({
   limits: { fileSize: 3 * 1024 * 1024 }, // 3MB
 });
 
+// Storage for payment slips
+const paymentStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, paymentDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+const uploadPaymentSlip = multer({
+  storage: paymentStorage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+});
+
 module.exports = {
   uploadNic,
   uploadListings,
   uploadChat,
   uploadProfilePhoto,
+  uploadPaymentSlip,
 };

@@ -327,6 +327,14 @@ const TRANSLATIONS = {
     "profile-lbl-bank-acc-no": "Account Number",
     "order-bank-title": "Seller's Bank Details",
     "order-bank-instructions": "Please transfer the payment to the seller's bank account.",
+    "dashboard-alert-pending-payment": "Unpaid Order: Please submit payment for {commodity} ({quantity} kg) order.",
+    "btn-pay-now": "Pay Now 💳",
+    "modal-payment-title": "Submit Proof of Payment",
+    "lbl-upload-slip": "Upload Bank Transfer Slip",
+    "lbl-tx-ref": "Transaction Reference / ID",
+    "btn-submit-payment": "Submit Payment Proof",
+    "toast-payment-success-title": "Payment Submitted!",
+    "toast-payment-success-body": "Your payment proof has been successfully uploaded for review 💸",
 
     // Settings page details
     "settings-lbl-sms": "SMS Notifications",
@@ -1066,6 +1074,14 @@ const TRANSLATIONS = {
     "profile-lbl-bank-acc-no": "ගිණුම් අංකය",
     "order-bank-title": "විකුණුම්කරුගේ බැංකු විස්තර",
     "order-bank-instructions": "කරුණාකර ගෙවීම් විකුණුම්කරුගේ බැංකු ගිණුමට මාරු කරන්න.",
+    "dashboard-alert-pending-payment": "ගෙවීම් හිඟයි: {commodity} ({quantity} kg) ඇණවුම සඳහා කරුණාකර ගෙවීම් සිදු කරන්න.",
+    "btn-pay-now": "Pay Now 💳",
+    "modal-payment-title": "ගෙවීම් තහවුරු කිරීම",
+    "lbl-upload-slip": "බැංකු රිසිට්පත (Slip) Upload කරන්න",
+    "lbl-tx-ref": "ගනුදෙනු විමර්ශන අංකය (Transaction ID)",
+    "btn-submit-payment": "ගෙවීම් තොරතුරු ඉදිරිපත් කරන්න",
+    "toast-payment-success-title": "ගෙවීම් තොරතුරු ඉදිරිපත් කරන ලදී!",
+    "toast-payment-success-body": "ඔබගේ බැංකු රිසිට්පත සමාලෝචනය සඳහා සාර්ථකව යොමු කරන ලදී 💸",
 
     // Settings page details
     "settings-lbl-sms": "SMS දැනුම්දීම්",
@@ -1805,6 +1821,14 @@ const TRANSLATIONS = {
     "profile-lbl-bank-acc-no": "கணக்கு எண்",
     "order-bank-title": "விற்பனையாளரின் வங்கி விபரங்கள்",
     "order-bank-instructions": "தயவுசெய்து கொடுப்பனவை விற்பனையாளரின் வங்கிக் கணக்கிற்கு மாற்றவும்.",
+    "dashboard-alert-pending-payment": "செலுத்தப்படாத ஆர்டர்: தயவுசெய்து {commodity} ({quantity} கிலோ) ஆர்டருக்கான கட்டணத்தைச் செலுத்தவும்.",
+    "btn-pay-now": "இப்போது செலுத்தவும் 💳",
+    "modal-payment-title": "கட்டண சான்றைச் சமர்ப்பிக்கவும்",
+    "lbl-upload-slip": "வங்கி பரிமாற்ற சீட்டைப் பதிவேற்றவும்",
+    "lbl-tx-ref": "பரிவர்த்தனை குறிப்பு / ஐடி",
+    "btn-submit-payment": "கட்டண சான்றைச் சமர்ப்பிக்கவும்",
+    "toast-payment-success-title": "கட்டணம் சமர்ப்பிக்கப்பட்டது!",
+    "toast-payment-success-body": "மதிப்பாய்வுக்காக உங்கள் கட்டணச் சீட்டு வெற்றிகரமாக பதிவேற்றப்பட்டது 💸",
 
     // Settings page details
     "settings-lbl-sms": "SMS அறிவிப்புகள்",

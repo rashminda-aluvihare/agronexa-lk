@@ -8,6 +8,7 @@ const chatController = require('../controllers/chat.controller');
 const notificationController = require('../controllers/notification.controller');
 
 const { authRequired, requireRole } = require('../middlewares/auth.middleware');
+const { uploadPaymentSlip } = require('../middlewares/upload.middleware');
 
 // Public endpoints (no token/role verification if called publicly, but authRequired middleware has a hybrid fallback to query/body IDs)
 // Wait! Let's check if authRequired is needed here. The frontend uses a fallback to query parameters (?buyer_id=) for buyer marketplace routes. Let's make sure authRequired is applied where appropriate.
@@ -31,6 +32,7 @@ router.delete('/bookings/:id', equipmentController.cancelBooking);
 // Crop Orders (buyer side)
 router.post('/crop-orders', cropController.placeCropOrder);
 router.get('/crop-orders', cropController.getBuyerCropOrders);
+router.put('/crop-orders/:id/pay', uploadPaymentSlip.single('payment_slip'), cropController.payCropOrder);
 
 // Buyer Broadcast Requests
 router.post('/broadcasts', requestController.createBroadcastRequest);

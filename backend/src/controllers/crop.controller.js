@@ -642,6 +642,47 @@ async function rejectCropOrder(req, res, next) {
   }
 }
 
+async function payCropOrder(req, res, next) {
+  const { id } = req.params;
+  const { payment_ref } = req.body;
+  const buyer_id = req.auth.id;
+  const payment_slip_path = req.file ? 'uploads/payments/' + req.file.filename : null;
+
+  try {
+    const orderRes = await db.query(
+      `UPDATE crop_orders 
+       SET status = 'paid',
+           payment_ref = COALESCE($1, payment_ref),
+           payment_slip_path = COALESCE($2, payment_slip_path),
+           paid_at = NOW()
+       WHERE id = $3 AND buyer_id = $4 AND status = 'confirmed'
+       RETURNING *`,
+      [payment_ref || null, payment_slip_path, id, buyer_id]
+    );
+
+    if (orderRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Order not found, unauthorized, or not in confirmed status' });
+    }
+
+    const order = orderRes.rows[0];
+
+    // Notify seller
+    await notificationService.pushNotification(
+      order.seller_id,
+      'booking',
+      'Crop Order Paid',
+      `Buyer submitted payment for crop order #${order.id}. Reference: ${payment_ref || 'N/A'}`
+    );
+
+    // Audit log
+    await auditService.logAction(buyer_id, 'PAY_CROP_ORDER', req.ip, { id, payment_ref });
+
+    return res.json({ success: true, order });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getSellerCrops,
   createCropListing,
@@ -657,4 +698,5 @@ module.exports = {
   getSellerCropOrders,
   confirmCropOrder,
   rejectCropOrder,
+  payCropOrder,
 };
