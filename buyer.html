@@ -2839,7 +2839,9 @@ function submitPaymentProof(e) {
   
   fetch(API_URL + '/api/buyer/crop-orders/' + orderId + '/pay', {
     method: 'PUT',
-    headers: getAuthHeaders(),
+    headers: {
+      'Authorization': 'Bearer ' + sessionStorage.getItem('agro_token')
+    },
     body: formData
   })
     .then(r => r.json())
