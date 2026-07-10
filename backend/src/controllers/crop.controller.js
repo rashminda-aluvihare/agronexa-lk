@@ -488,7 +488,11 @@ async function getBuyerCropOrders(req, res, next) {
     const result = await db.query(
       `SELECT co.*, cl.name AS crop_name, cl.district,
               u.first_name || ' ' || u.last_name AS seller_name,
-              u.phone AS seller_phone
+              u.phone AS seller_phone,
+              CASE WHEN co.status = 'confirmed' THEN u.bank_name ELSE NULL END AS bank_name,
+              CASE WHEN co.status = 'confirmed' THEN u.bank_branch ELSE NULL END AS bank_branch,
+              CASE WHEN co.status = 'confirmed' THEN u.bank_account_name ELSE NULL END AS bank_account_name,
+              CASE WHEN co.status = 'confirmed' THEN u.bank_account_no ELSE NULL END AS bank_account_no
        FROM crop_orders co
        JOIN crop_listings cl ON cl.id = co.crop_listing_id
        JOIN users u ON u.id = co.seller_id

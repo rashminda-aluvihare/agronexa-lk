@@ -80,6 +80,10 @@ async function initDatabase() {
     await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS sms_notifications BOOLEAN DEFAULT TRUE;");
     await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();");
     await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_photo_path TEXT;");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS bank_name VARCHAR(120);");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS bank_branch VARCHAR(120);");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS bank_account_name VARCHAR(150);");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS bank_account_no VARCHAR(60);");
 
     // 2. Crop Listings Table
     await client.query(`

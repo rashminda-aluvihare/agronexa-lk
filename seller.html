@@ -1373,6 +1373,29 @@
             <input class="form-input" id="profile-status" readonly type="text" style="background:rgba(200,200,200,0.1);cursor:not-allowed;">
           </div>
         </div>
+        <div style="margin-top:20px; padding:15px; border:1px dashed var(--border-color); border-radius:8px; background:rgba(0,0,0,0.01);">
+          <div style="font-weight:600; font-size:14px; margin-bottom:12px; color:var(--primary);" data-i18n="profile-lbl-bank-details">Bank Details (For Receiving Payments)</div>
+          <div class="form-row">
+            <div class="form-field">
+              <div class="form-label" data-i18n="profile-lbl-bank-name">Bank Name</div>
+              <input class="form-input" id="profile-bank-name" type="text" placeholder="e.g. Bank of Ceylon">
+            </div>
+            <div class="form-field">
+              <div class="form-label" data-i18n="profile-lbl-bank-branch">Branch</div>
+              <input class="form-input" id="profile-bank-branch" type="text" placeholder="e.g. Colombo Fort">
+            </div>
+          </div>
+          <div class="form-row" style="margin-top:12px;">
+            <div class="form-field">
+              <div class="form-label" data-i18n="profile-lbl-bank-acc-name">Account Name</div>
+              <input class="form-input" id="profile-bank-acc-name" type="text" placeholder="e.g. A.B.C. Perera">
+            </div>
+            <div class="form-field">
+              <div class="form-label" data-i18n="profile-lbl-bank-acc-no">Account Number</div>
+              <input class="form-input" id="profile-bank-acc-no" type="text" placeholder="e.g. 123456789">
+            </div>
+          </div>
+        </div>
         <button type="submit" class="btn-sm btn-accept" style="margin-top:16px;">
           <span data-i18n="profile-btn-save">💾 Save Changes</span>
         </button>
@@ -2301,6 +2324,10 @@ function loadProfileDetails() {
       document.getElementById('profile-address').value = u.address || '';
       document.getElementById('profile-role').value = u.role ? u.role.toUpperCase() : '';
       document.getElementById('profile-status').value = u.status ? u.status.toUpperCase() : '';
+      document.getElementById('profile-bank-name').value = u.bank_name || '';
+      document.getElementById('profile-bank-branch').value = u.bank_branch || '';
+      document.getElementById('profile-bank-acc-name').value = u.bank_account_name || '';
+      document.getElementById('profile-bank-acc-no').value = u.bank_account_no || '';
 
       // Set profile photo preview
       if (u.profile_photo_path) {
@@ -2338,6 +2365,11 @@ function saveProfile(e) {
   const district = document.getElementById('profile-district').value;
   const address = document.getElementById('profile-address').value.trim();
   const fileInput = document.getElementById('profile-photo-input');
+  
+  const bankName = document.getElementById('profile-bank-name').value.trim();
+  const bankBranch = document.getElementById('profile-bank-branch').value.trim();
+  const bankAccName = document.getElementById('profile-bank-acc-name').value.trim();
+  const bankAccNo = document.getElementById('profile-bank-acc-no').value.trim();
 
   const formData = new FormData();
   formData.append('first_name', fname);
@@ -2345,6 +2377,10 @@ function saveProfile(e) {
   formData.append('phone', phone);
   formData.append('district', district);
   formData.append('address', address);
+  formData.append('bank_name', bankName);
+  formData.append('bank_branch', bankBranch);
+  formData.append('bank_account_name', bankAccName);
+  formData.append('bank_account_no', bankAccNo);
   if (fileInput.files && fileInput.files[0]) {
     formData.append('profile_photo', fileInput.files[0]);
   }
@@ -2380,7 +2416,8 @@ function saveProfile(e) {
         _user = {
           id: p.id, email: p.email, role: p.role,
           name: p.first_name, first_name: p.first_name, last_name: p.last_name, district: p.district, phone: p.phone,
-          address: p.address, profile_photo_path: p.profile_photo_path
+          address: p.address, profile_photo_path: p.profile_photo_path,
+          bank_name: p.bank_name, bank_branch: p.bank_branch, bank_account_name: p.bank_account_name, bank_account_no: p.bank_account_no
         };
         sessionStorage.setItem('agro_user', JSON.stringify(_user));
         loadProfileDetails();

@@ -264,7 +264,8 @@ async function getProfile(req, res, next) {
   try {
     const result = await db.query(
       `SELECT id, role, first_name, last_name, email, phone, district,
-              address, nic_number, status, sms_notifications, profile_photo_path, created_at
+              address, nic_number, status, sms_notifications, profile_photo_path, created_at,
+              bank_name, bank_branch, bank_account_name, bank_account_no
        FROM users WHERE id = $1`,
       [req.params.id]
     );
@@ -274,6 +275,14 @@ async function getProfile(req, res, next) {
     }
 
     const user = result.rows[0];
+
+    // Hide bank details if this is not the user's own profile
+    if (req.auth.id !== parseInt(req.params.id, 10)) {
+      delete user.bank_name;
+      delete user.bank_branch;
+      delete user.bank_account_name;
+      delete user.bank_account_no;
+    }
 
     // Compute ledger stats
     const ledgerStats = await db.query(
@@ -360,7 +369,11 @@ async function resetPassword(req, res, next) {
  * PUT /api/profile/:id
  */
 async function updateProfile(req, res, next) {
-  let { first_name, last_name, district, address, phone } = req.body;
+  if (req.auth.id !== parseInt(req.params.id, 10)) {
+    return res.status(403).json({ error: 'Unauthorized to update this profile' });
+  }
+
+  let { first_name, last_name, district, address, phone, bank_name, bank_branch, bank_account_name, bank_account_no } = req.body;
   const profile_photo_path = req.file ? 'uploads/profile/' + req.file.filename : null;
   try {
     if (phone) {
@@ -378,10 +391,14 @@ async function updateProfile(req, res, next) {
          address = COALESCE($4, address),
          phone = COALESCE($5, phone),
          profile_photo_path = COALESCE($6, profile_photo_path),
+         bank_name = COALESCE($7, bank_name),
+         bank_branch = COALESCE($8, bank_branch),
+         bank_account_name = COALESCE($9, bank_account_name),
+         bank_account_no = COALESCE($10, bank_account_no),
          updated_at = NOW()
-       WHERE id = $7
-       RETURNING id, role, first_name, last_name, email, phone, district, address, status, profile_photo_path, created_at`,
-      [first_name, last_name, district, address, phone, profile_photo_path, req.params.id]
+       WHERE id = $11
+       RETURNING id, role, first_name, last_name, email, phone, district, address, status, profile_photo_path, bank_name, bank_branch, bank_account_name, bank_account_no, created_at`,
+      [first_name, last_name, district, address, phone, profile_photo_path, bank_name, bank_branch, bank_account_name, bank_account_no, req.params.id]
     );
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });

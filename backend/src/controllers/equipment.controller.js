@@ -350,7 +350,11 @@ async function getBuyerBookings(req, res, next) {
     const result = await db.query(
       `SELECT eb.*, el.name AS listing_name, el.rental_rate, el.district,
               u.first_name || ' ' || u.last_name AS owner_name,
-              u.phone AS owner_phone, u.email AS owner_email
+              u.phone AS owner_phone, u.email AS owner_email,
+              CASE WHEN eb.status IN ('confirmed', 'completed') THEN u.bank_name ELSE NULL END AS bank_name,
+              CASE WHEN eb.status IN ('confirmed', 'completed') THEN u.bank_branch ELSE NULL END AS bank_branch,
+              CASE WHEN eb.status IN ('confirmed', 'completed') THEN u.bank_account_name ELSE NULL END AS bank_account_name,
+              CASE WHEN eb.status IN ('confirmed', 'completed') THEN u.bank_account_no ELSE NULL END AS bank_account_no
        FROM equipment_bookings eb
        JOIN equipment_listings el ON el.id = eb.listing_id
        JOIN users u ON u.id = eb.owner_id

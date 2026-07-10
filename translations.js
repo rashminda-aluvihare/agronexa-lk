@@ -334,6 +334,13 @@ const TRANSLATIONS = {
     "profile-lbl-role": "Role",
     "profile-lbl-status": "Status",
     "profile-btn-save": "💾 Save Changes",
+    "profile-lbl-bank-details": "Bank Details (For Receiving Payments)",
+    "profile-lbl-bank-name": "Bank Name",
+    "profile-lbl-bank-branch": "Branch",
+    "profile-lbl-bank-acc-name": "Account Name",
+    "profile-lbl-bank-acc-no": "Account Number",
+    "order-bank-title": "Seller's Bank Details",
+    "order-bank-instructions": "Please transfer the payment to the seller's bank account.",
 
     // Settings page details
     "settings-lbl-sms": "SMS Notifications",
@@ -1065,6 +1072,13 @@ const TRANSLATIONS = {
     "profile-lbl-role": "භූමිකාව",
     "profile-lbl-status": "තත්ත්වය",
     "profile-btn-save": "💾 වෙනස්කම් සුරකින්න",
+    "profile-lbl-bank-details": "බැංකු විස්තර (මුදල් ලබා ගැනීම සඳහා)",
+    "profile-lbl-bank-name": "බැංකුවේ නම",
+    "profile-lbl-bank-branch": "ශාඛාව",
+    "profile-lbl-bank-acc-name": "ගිණුම් හිමියාගේ නම",
+    "profile-lbl-bank-acc-no": "ගිණුම් අංකය",
+    "order-bank-title": "විකුණුම්කරුගේ බැංකු විස්තර",
+    "order-bank-instructions": "කරුණාකර ගෙවීම් විකුණුම්කරුගේ බැංකු ගිණුමට මාරු කරන්න.",
 
     // Settings page details
     "settings-lbl-sms": "SMS දැනුම්දීම්",
@@ -1796,6 +1810,13 @@ const TRANSLATIONS = {
     "profile-lbl-role": "பங்கு",
     "profile-lbl-status": "நிலை",
     "profile-btn-save": "💾 மாற்றங்களைச் சேமிக்கவும்",
+    "profile-lbl-bank-details": "வங்கி விவரங்கள் (பணம் பெறுவதற்கு)",
+    "profile-lbl-bank-name": "வங்கியின் பெயர்",
+    "profile-lbl-bank-branch": "கிளை",
+    "profile-lbl-bank-acc-name": "கணக்கு பெயர்",
+    "profile-lbl-bank-acc-no": "கணக்கு எண்",
+    "order-bank-title": "விற்பனையாளரின் வங்கி விபரங்கள்",
+    "order-bank-instructions": "தயவுசெய்து கொடுப்பனவை விற்பனையாளரின் வங்கிக் கணக்கிற்கு மாற்றவும்.",
 
     // Settings page details
     "settings-lbl-sms": "SMS அறிவிப்புகள்",
