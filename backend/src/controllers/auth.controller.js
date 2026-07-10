@@ -250,6 +250,8 @@ async function login(req, res, next) {
         email: user.email,
         role: user.role,
         name: user.first_name,
+        profile_photo_path: user.profile_photo_path,
+        district: user.district,
       },
     });
   } catch (err) {
