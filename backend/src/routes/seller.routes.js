@@ -36,6 +36,7 @@ router.put('/crops/:id/update-stock', sellerRoleCheck, cropController.updateCrop
 router.get('/crop-orders', sellerRoleCheck, cropController.getSellerCropOrders);
 router.post('/crop-orders/:id/confirm', sellerRoleCheck, cropController.confirmCropOrder);
 router.post('/crop-orders/:id/reject', sellerRoleCheck, cropController.rejectCropOrder);
+router.post('/crop-orders/:id/complete', sellerRoleCheck, cropController.completeCropOrder);
 
 // Equipment Listings
 router.post('/equipment', sellerRoleCheck, uploadListings.array('photos', 5), equipmentController.createEquipmentListing);

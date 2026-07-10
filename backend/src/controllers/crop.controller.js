@@ -683,6 +683,45 @@ async function payCropOrder(req, res, next) {
   }
 }
 
+async function completeCropOrder(req, res, next) {
+  const { id } = req.params;
+  const seller_id = req.body.seller_id || req.auth.id;
+
+  if (!seller_id) {
+    return res.status(400).json({ error: 'seller_id is required' });
+  }
+
+  try {
+    const orderRes = await db.query(
+      `UPDATE crop_orders SET status = 'completed'
+       WHERE id = $1 AND seller_id = $2 AND status = 'paid'
+       RETURNING *`,
+      [id, seller_id]
+    );
+
+    if (orderRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Crop order not found, unauthorized, or not paid yet' });
+    }
+
+    const order = orderRes.rows[0];
+
+    // Notify buyer
+    await notificationService.pushNotification(
+      order.buyer_id,
+      'booking',
+      'Crop Order Completed',
+      `Seller has completed/dispatched your crop order #${order.id}.🌾`
+    );
+
+    // Audit log
+    await auditService.logAction(seller_id, 'COMPLETE_CROP_ORDER', req.ip, { id });
+
+    return res.json({ success: true, order });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getSellerCrops,
   createCropListing,
@@ -699,4 +738,5 @@ module.exports = {
   confirmCropOrder,
   rejectCropOrder,
   payCropOrder,
+  completeCropOrder,
 };

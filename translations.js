@@ -335,6 +335,13 @@ const TRANSLATIONS = {
     "btn-submit-payment": "Submit Payment Proof",
     "toast-payment-success-title": "Payment Submitted!",
     "toast-payment-success-body": "Your payment proof has been successfully uploaded for review 💸",
+    "btn-view-slip": "View Slip 📄",
+    "btn-accept-complete": "Accept & Complete",
+    "modal-slip-title": "Payment Receipt Proof",
+    "lbl-tx-reference": "Transaction Reference / ID:",
+    "lbl-payment-date": "Date Submitted:",
+    "toast-complete-success-title": "Order Completed!",
+    "toast-complete-success-body": "Crop order has been successfully marked as completed 🌾",
 
     // Settings page details
     "settings-lbl-sms": "SMS Notifications",
@@ -1082,6 +1089,13 @@ const TRANSLATIONS = {
     "btn-submit-payment": "ගෙවීම් තොරතුරු ඉදිරිපත් කරන්න",
     "toast-payment-success-title": "ගෙවීම් තොරතුරු ඉදිරිපත් කරන ලදී!",
     "toast-payment-success-body": "ඔබගේ බැංකු රිසිට්පත සමාලෝචනය සඳහා සාර්ථකව යොමු කරන ලදී 💸",
+    "btn-view-slip": "රිසිට්පත බලන්න 📄",
+    "btn-accept-complete": "පිළිගෙන නිම කරන්න",
+    "modal-slip-title": "ගෙවීම් කුවිතාන්සිය (Bank Slip)",
+    "lbl-tx-reference": "ගනුදෙනු විමර්ශන අංකය (TXN ID):",
+    "lbl-payment-date": "ඉදිරිපත් කළ දිනය:",
+    "toast-complete-success-title": "ඇණවුම නිම කරන ලදී!",
+    "toast-complete-success-body": "බෝග ඇණවුම සාර්ථකව නිම කළ බවට සටහන් කරන ලදී 🌾",
 
     // Settings page details
     "settings-lbl-sms": "SMS දැනුම්දීම්",
@@ -1829,6 +1843,13 @@ const TRANSLATIONS = {
     "btn-submit-payment": "கட்டண சான்றைச் சமர்ப்பிக்கவும்",
     "toast-payment-success-title": "கட்டணம் சமர்ப்பிக்கப்பட்டது!",
     "toast-payment-success-body": "மதிப்பாய்வுக்காக உங்கள் கட்டணச் சீட்டு வெற்றிகரமாக பதிவேற்றப்பட்டது 💸",
+    "btn-view-slip": "சீட்டைப் பார்க்கவும் 📄",
+    "btn-accept-complete": "ஏற்றுக்கொண்டு முடிக்கவும்",
+    "modal-slip-title": "கட்டண ரசீது சான்று",
+    "lbl-tx-reference": "பரிவர்த்தனை குறிப்பு / ஐடி:",
+    "lbl-payment-date": "சமர்ப்பிக்கப்பட்ட தேதி:",
+    "toast-complete-success-title": "ஆர்டர் முடிந்தது!",
+    "toast-complete-success-body": "பயிர் ஆர்டர் வெற்றிகரமாக முடிவடைந்ததாகக் குறிக்கப்பட்டது 🌾",
 
     // Settings page details
     "settings-lbl-sms": "SMS அறிவிப்புகள்",
