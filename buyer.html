@@ -2718,6 +2718,13 @@ function loadDashboardAlerts() {
   const alertsContainer = document.getElementById('dashboard-alerts-list');
   if (!alertsSection || !alertsContainer) return;
 
+  const sectionStats = document.getElementById('section-stats');
+  const isDashboardActive = sectionStats && sectionStats.style.display !== 'none';
+  if (!isDashboardActive) {
+    alertsSection.style.display = 'none';
+    return;
+  }
+
   const fetchTransport = fetch(API_URL + '/api/transport/bookings', { headers: getAuthHeaders() })
     .then(r => r.json())
     .catch(() => ({ success: false }));

@@ -2334,6 +2334,13 @@ function loadDashboardAlerts() {
   const alertText = document.getElementById('dashboard-alert-text');
   if (!alertsSection || !alertText) return;
 
+  const sectionStats = document.getElementById('section-stats');
+  const isDashboardActive = sectionStats && sectionStats.style.display !== 'none';
+  if (!isDashboardActive) {
+    alertsSection.style.display = 'none';
+    return;
+  }
+
   fetch(API_URL + '/api/transport/bookings', {
     headers: getAuthHeaders()
   })
