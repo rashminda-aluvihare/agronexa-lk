@@ -342,6 +342,9 @@ const TRANSLATIONS = {
     "lbl-payment-date": "Date Submitted:",
     "toast-complete-success-title": "Order Completed!",
     "toast-complete-success-body": "Crop order has been successfully marked as completed 🌾",
+    "nav-payments": "Order Payments",
+    "js-pending-verification": "pending verification",
+    "js-no-payments": "No payment records found.",
 
     // Settings page details
     "settings-lbl-sms": "SMS Notifications",
@@ -1096,6 +1099,9 @@ const TRANSLATIONS = {
     "lbl-payment-date": "ඉදිරිපත් කළ දිනය:",
     "toast-complete-success-title": "ඇණවුම නිම කරන ලදී!",
     "toast-complete-success-body": "බෝග ඇණවුම සාර්ථකව නිම කළ බවට සටහන් කරන ලදී 🌾",
+    "nav-payments": "ඇණවුම් ගෙවීම්",
+    "js-pending-verification": "සත්‍යාපනය වෙමින් පවතී",
+    "js-no-payments": "ගෙවීම් වාර්තා හමු නොවුණි.",
 
     // Settings page details
     "settings-lbl-sms": "SMS දැනුම්දීම්",
@@ -1850,6 +1856,9 @@ const TRANSLATIONS = {
     "lbl-payment-date": "சமர்ப்பிக்கப்பட்ட தேதி:",
     "toast-complete-success-title": "ஆர்டர் முடிந்தது!",
     "toast-complete-success-body": "பயிர் ஆர்டர் வெற்றிகரமாக முடிவடைந்ததாகக் குறிக்கப்பட்டது 🌾",
+    "nav-payments": "ஆர்டர் கட்டணங்கள்",
+    "js-pending-verification": "சரிபார்ப்பு நிலுவையில் உள்ளது",
+    "js-no-payments": "கட்டணப் பதிவுகள் எதுவும் இல்லை.",
 
     // Settings page details
     "settings-lbl-sms": "SMS அறிவிப்புகள்",
