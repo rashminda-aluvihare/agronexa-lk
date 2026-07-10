@@ -1,18 +1,3 @@
-/**
- * ====================================================================================
- * VIVA EXPLANATION - MULTI-LINGUAL LOCALIZATION ENGINE (translations.js)
- * ====================================================================================
- * Key Examiner Questions & Answers:
- * 
- * 1. How does AgroNexa LK support multi-lingual accessibility (Sinhala, Tamil, English)?
- *    - Uses a unified client-side dictionary object (`TRANSLATIONS`) mapping text key identifiers 
- *      to localized strings in English ('en'), Sinhala ('si'), and Tamil ('ta').
- * 
- * 2. How is user language preference persisted?
- *    - `localStorage.setItem('agro_lang', lang)` saves preference across browser restarts.
- *    - `applyTranslations()` queries DOM elements with `data-i18n` attributes and dynamically swaps text content without requiring a full page refresh.
- * ====================================================================================
- */
 
 // ── AGRONEXA LK MULTI-LINGUAL DICTIONARY ──
 const TRANSLATIONS = {
