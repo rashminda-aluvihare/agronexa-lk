@@ -377,6 +377,20 @@ async function initDatabase() {
       `);
     }
 
+    // 14. Announcements Table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS announcements (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(200) NOT NULL,
+        message TEXT NOT NULL,
+        alert_type VARCHAR(50) DEFAULT 'info',
+        starts_at TIMESTAMPTZ DEFAULT NOW(),
+        expires_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+
     await client.query('COMMIT');
     console.log('✅ Database migration completed successfully.');
   } catch (err) {

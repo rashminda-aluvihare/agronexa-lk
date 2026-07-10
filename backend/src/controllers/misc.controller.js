@@ -81,9 +81,28 @@ async function getWeatherAdvisoryHandler(req, res) {
   }
 }
 
+/**
+ * GET /api/announcements
+ */
+async function getActiveAnnouncements(req, res) {
+  try {
+    const result = await db.query(
+      `SELECT id, title, message, alert_type, starts_at, expires_at, created_at
+       FROM announcements 
+       WHERE starts_at <= NOW() AND (expires_at IS NULL OR expires_at >= NOW()) 
+       ORDER BY starts_at DESC`
+    );
+    return res.json({ success: true, announcements: result.rows });
+  } catch (err) {
+    console.error('Error fetching active announcements:', err.message);
+    return res.status(500).json({ success: false, error: 'Database query failed' });
+  }
+}
+
 module.exports = {
   getMarketPrices,
   getPublicStats,
   getWeatherAdvisoryHandler,
+  getActiveAnnouncements,
 };
 

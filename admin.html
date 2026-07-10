@@ -630,6 +630,9 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
     <button class="tab-btn" id="tab-audit-btn" onclick="switchTab('audit')">
       Audit Logs
     </button>
+    <button class="tab-btn" id="tab-announcements-btn" onclick="switchTab('announcements')">
+      Announcements 📢
+    </button>
   </div>
 
   <div class="content">
@@ -841,6 +844,66 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
         </table>
       </div>
       <div id="audit-pagination" style="display:flex; justify-content:center; align-items:center; gap:12px; margin-top:16px;"></div>
+    </div>
+
+    <!-- ANNOUNCEMENTS TAB -->
+    <div id="tab-announcements" style="display:none;">
+      <div class="section-title">System Announcements Manager</div>
+      
+      <div style="display:grid; grid-template-columns: 1fr 1.5fr; gap:24px;">
+        <!-- Left: Form to Add/Edit Announcement -->
+        <div style="background:#fff; padding:20px; border-radius:14px; border:1px solid var(--border); box-shadow:0 2px 8px rgba(0,0,0,0.01);">
+          <div style="font-weight:700; font-size:14px; color:var(--text); margin-bottom:15px;" id="announcement-form-title">Create Announcement</div>
+          <form id="announcement-form" onsubmit="saveAnnouncement(event)">
+            <input type="hidden" id="announcement-id" value="">
+            
+            <div style="margin-bottom:12px;">
+              <label style="display:block; font-size:11px; font-weight:600; text-transform:uppercase; color:var(--muted); margin-bottom:5px;">Title</label>
+              <input type="text" id="announcement-title" required class="filter-input" style="width:100%; box-sizing:border-box;" placeholder="e.g. Scheduled System Upgrade" />
+            </div>
+            
+            <div style="margin-bottom:12px;">
+              <label style="display:block; font-size:11px; font-weight:600; text-transform:uppercase; color:var(--muted); margin-bottom:5px;">Message / Notice</label>
+              <textarea id="announcement-message" required class="filter-input" style="width:100%; height:120px; font-family:inherit; box-sizing:border-box; padding:10px;" placeholder="Details about maintenance, updates or warnings..."></textarea>
+            </div>
+            
+            <div style="margin-bottom:12px; display:grid; grid-template-columns:1fr; gap:12px;">
+              <div>
+                <label style="display:block; font-size:11px; font-weight:600; text-transform:uppercase; color:var(--muted); margin-bottom:5px;">Alert Type</label>
+                <select id="announcement-alert-type" class="filter-select" style="width:100%; box-sizing:border-box;">
+                  <option value="info">📢 Info (Blue)</option>
+                  <option value="warning">⚠️ Warning (Amber)</option>
+                  <option value="danger">🚨 Danger (Red)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-bottom:16px; display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div>
+                <label style="display:block; font-size:11px; font-weight:600; text-transform:uppercase; color:var(--muted); margin-bottom:5px;">Start Date & Time</label>
+                <input type="datetime-local" id="announcement-starts-at" class="filter-input" style="width:100%; box-sizing:border-box;" />
+              </div>
+              <div>
+                <label style="display:block; font-size:11px; font-weight:600; text-transform:uppercase; color:var(--muted); margin-bottom:5px;">End Date & Time</label>
+                <input type="datetime-local" id="announcement-expires-at" class="filter-input" style="width:100%; box-sizing:border-box;" />
+              </div>
+            </div>
+
+            <div style="display:flex; gap:10px;">
+              <button type="submit" class="tab-btn on" style="flex:1; border:none; padding:10px 0; border-radius:10px; cursor:pointer;" id="announcement-submit-btn">Publish Announcement</button>
+              <button type="button" class="tab-btn" style="display:none; border:none; padding:10px 14px; border-radius:10px; cursor:pointer;" id="announcement-cancel-btn" onclick="clearAnnouncementForm()">Cancel</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Right: Current Announcements List -->
+        <div style="background:#fff; padding:20px; border-radius:14px; border:1px solid var(--border); box-shadow:0 2px 8px rgba(0,0,0,0.01); display:flex; flex-direction:column; gap:12px; max-height: 520px; overflow-y: auto;">
+          <div style="font-weight:700; font-size:14px; color:var(--text); margin-bottom:5px;">Scheduled & Published Notices</div>
+          <div id="admin-announcements-list" style="display:flex; flex-direction:column; gap:12px;">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1145,12 +1208,14 @@ function switchTab(t) {
   document.getElementById('tab-all').style.display       = t==='all'       ? 'block' : 'none';
   document.getElementById('tab-transport').style.display = t==='transport' ? 'block' : 'none';
   document.getElementById('tab-audit').style.display     = t==='audit'     ? 'block' : 'none';
+  document.getElementById('tab-announcements').style.display = t==='announcements' ? 'block' : 'none';
   
   document.getElementById('tab-overview-btn').classList.toggle('on', t==='overview');
   document.getElementById('tab-pending-btn').classList.toggle('on', t==='pending');
   document.getElementById('tab-all-btn').classList.toggle('on', t==='all');
   document.getElementById('tab-transport-btn').classList.toggle('on', t==='transport');
   document.getElementById('tab-audit-btn').classList.toggle('on', t==='audit');
+  document.getElementById('tab-announcements-btn').classList.toggle('on', t==='announcements');
   
   if (t === 'overview') {
     loadDashboardStats();
@@ -1158,6 +1223,8 @@ function switchTab(t) {
     loadTransport();
   } else if (t === 'audit') {
     loadAuditLogs();
+  } else if (t === 'announcements') {
+    loadAnnouncements();
   }
 }
 
@@ -1503,6 +1570,193 @@ async function deactivateTransport(id) {
   } catch(e) {
     showToast('Connection error');
   }
+}
+
+var localAnnouncements = [];
+
+async function loadAnnouncements() {
+  const listEl = document.getElementById('admin-announcements-list');
+  if (!listEl) return;
+  listEl.innerHTML = '<div class="loading">Loading announcements...</div>';
+  
+  try {
+    const url = API_URL + '/api/admin/announcements?admin_email=' + encodeURIComponent(adminEmail) + '&admin_password=' + encodeURIComponent(adminPass);
+    const res = await fetch(url, {
+      headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('agro_token') }
+    });
+    const data = await res.json();
+    if (data.success) {
+      localAnnouncements = data.announcements;
+      renderAnnouncementsList();
+    } else {
+      listEl.innerHTML = '<div class="loading">' + (data.error || 'Failed to load.') + '</div>';
+    }
+  } catch (e) {
+    listEl.innerHTML = '<div class="loading">Connection error.</div>';
+  }
+}
+
+function renderAnnouncementsList() {
+  const listEl = document.getElementById('admin-announcements-list');
+  if (localAnnouncements.length === 0) {
+    listEl.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No announcements found.</div>';
+    return;
+  }
+  
+  let html = '';
+  localAnnouncements.forEach(item => {
+    let typeLabel = '📢 Info';
+    let typeColor = 'rgba(77, 182, 228, 0.05)';
+    let borderStyle = '1px solid rgba(77, 182, 228, 0.15)';
+    if (item.alert_type === 'warning') {
+      typeLabel = '⚠️ Warning';
+      typeColor = 'rgba(217, 119, 6, 0.05)';
+      borderStyle = '1px solid rgba(217, 119, 6, 0.15)';
+    } else if (item.alert_type === 'danger') {
+      typeLabel = '🚨 Danger';
+      typeColor = 'rgba(220, 38, 38, 0.05)';
+      borderStyle = '1px solid rgba(220, 38, 38, 0.15)';
+    }
+    
+    const startStr = item.starts_at ? new Date(item.starts_at).toLocaleString() : 'Immediate';
+    const endStr = item.expires_at ? new Date(item.expires_at).toLocaleString() : 'Never';
+    
+    html += `
+      <div style="background:${typeColor}; border:${borderStyle}; padding:14px; border-radius:10px; font-size:12.5px; line-height:1.4; color:var(--text);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
+          <div style="font-weight:700; font-size:13.5px; color: var(--ink);">${esc(item.title)}</div>
+          <span style="font-size:10px; font-weight:700; padding:2px 8px; border-radius:12px; text-transform:uppercase; background:#fff; border:1px solid rgba(0,0,0,0.06); color: var(--ink);">${typeLabel}</span>
+        </div>
+        <div style="color:var(--text-muted); margin-bottom:8px; white-space:pre-wrap;">${esc(item.message)}</div>
+        <div style="font-size:10px; color:var(--muted); display:flex; gap:12px; flex-wrap:wrap; margin-bottom:8px;">
+          <span>Start: ${startStr}</span>
+          <span>End: ${endStr}</span>
+        </div>
+        <div style="display:flex; gap:8px; justify-content:flex-end;">
+          <button class="meta-pill" style="cursor:pointer; border:1px solid rgba(0,0,0,0.1); background:#fff; padding:3px 10px;" onclick="editAnnouncement(${item.id})">Edit</button>
+          <button class="meta-pill" style="cursor:pointer; border:1px solid rgba(220,38,38,0.1); background:#fff; color:var(--red); padding:3px 10px;" onclick="deleteAnnouncement(${item.id})">Delete</button>
+        </div>
+      </div>
+    `;
+  });
+  listEl.innerHTML = html;
+}
+
+async function saveAnnouncement(e) {
+  e.preventDefault();
+  const id = document.getElementById('announcement-id').value;
+  const title = document.getElementById('announcement-title').value.trim();
+  const message = document.getElementById('announcement-message').value.trim();
+  const alertType = document.getElementById('announcement-alert-type').value;
+  const startsAt = document.getElementById('announcement-starts-at').value;
+  const expiresAt = document.getElementById('announcement-expires-at').value;
+  
+  const payload = {
+    title,
+    message,
+    alert_type: alertType,
+    starts_at: startsAt ? new Date(startsAt).toISOString() : null,
+    expires_at: expiresAt ? new Date(expiresAt).toISOString() : null,
+    admin_email: adminEmail,
+    admin_password: adminPass
+  };
+  
+  const isEdit = !!id;
+  const url = isEdit ? API_URL + '/api/admin/announcements/' + id : API_URL + '/api/admin/announcements';
+  const method = isEdit ? 'PUT' : 'POST';
+  
+  const submitBtn = document.getElementById('announcement-submit-btn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Saving...';
+  
+  try {
+    const res = await fetch(url, {
+      method: method,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('agro_token')
+      },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(isEdit ? 'Announcement updated!' : 'Announcement published!');
+      clearAnnouncementForm();
+      loadAnnouncements();
+    } else {
+      showToast(data.error || 'Failed to save.');
+    }
+  } catch (e) {
+    showToast('Connection error');
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = isEdit ? 'Save Changes' : 'Publish Announcement';
+  }
+}
+
+function editAnnouncement(id) {
+  const item = localAnnouncements.find(a => a.id === id);
+  if (!item) return;
+  
+  document.getElementById('announcement-id').value = item.id;
+  document.getElementById('announcement-title').value = item.title;
+  document.getElementById('announcement-message').value = item.message;
+  document.getElementById('announcement-alert-type').value = item.alert_type;
+  
+  // Format to local date-time strings
+  if (item.starts_at) {
+    const d = new Date(item.starts_at);
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    document.getElementById('announcement-starts-at').value = d.toISOString().slice(0, 16);
+  } else {
+    document.getElementById('announcement-starts-at').value = '';
+  }
+  
+  if (item.expires_at) {
+    const d = new Date(item.expires_at);
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    document.getElementById('announcement-expires-at').value = d.toISOString().slice(0, 16);
+  } else {
+    document.getElementById('announcement-expires-at').value = '';
+  }
+  
+  document.getElementById('announcement-form-title').textContent = 'Edit/Reschedule Announcement';
+  document.getElementById('announcement-submit-btn').textContent = 'Save Changes';
+  document.getElementById('announcement-cancel-btn').style.display = 'block';
+}
+
+async function deleteAnnouncement(id) {
+  if (!confirm('Are you sure you want to delete this announcement?')) return;
+  try {
+    const res = await fetch(API_URL + '/api/admin/announcements/' + id, {
+      method: 'DELETE',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('agro_token') 
+      },
+      body: JSON.stringify({ admin_email: adminEmail, admin_password: adminPass })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Announcement deleted.');
+      if (document.getElementById('announcement-id').value === id.toString()) {
+        clearAnnouncementForm();
+      }
+      loadAnnouncements();
+    } else {
+      showToast(data.error || 'Failed to delete.');
+    }
+  } catch (e) {
+    showToast('Connection error');
+  }
+}
+
+function clearAnnouncementForm() {
+  document.getElementById('announcement-id').value = '';
+  document.getElementById('announcement-form').reset();
+  document.getElementById('announcement-form-title').textContent = 'Create Announcement';
+  document.getElementById('announcement-submit-btn').textContent = 'Publish Announcement';
+  document.getElementById('announcement-cancel-btn').style.display = 'none';
 }
 
 var socket;

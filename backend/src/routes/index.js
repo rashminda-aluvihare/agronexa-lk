@@ -2,6 +2,7 @@ const express = require('express');
 
 const authController = require('../controllers/auth.controller');
 const miscController = require('../controllers/misc.controller');
+const { authRequired } = require('../middlewares/auth.middleware');
 
 const authRoutes = require('./auth.routes');
 const sellerRoutes = require('./seller.routes');
@@ -30,6 +31,7 @@ apiRouter.use('/ledger', ledgerRoutes);
 // Misc routes
 apiRouter.get('/market-prices', miscController.getMarketPrices);
 apiRouter.get('/public-stats', miscController.getPublicStats);
+apiRouter.get('/announcements', authRequired, miscController.getActiveAnnouncements);
 
 module.exports = { apiRouter };
 

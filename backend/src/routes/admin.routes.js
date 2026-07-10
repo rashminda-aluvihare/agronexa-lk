@@ -19,4 +19,10 @@ router.post('/user/:id/status', authRequired, requireRole(['admin']), adminContr
 router.get('/audit-logs', authRequired, requireRole(['admin']), adminController.getAuditLogs);
 router.get('/export/:resource', authRequired, requireRole(['admin']), adminController.exportResource);
 
+// Announcements Management
+router.get('/announcements', authRequired, requireRole(['admin']), adminController.getAllAnnouncements);
+router.post('/announcements', authRequired, requireRole(['admin']), adminController.createAnnouncement);
+router.put('/announcements/:id', authRequired, requireRole(['admin']), adminController.updateAnnouncement);
+router.delete('/announcements/:id', authRequired, requireRole(['admin']), adminController.deleteAnnouncement);
+
 module.exports = router;

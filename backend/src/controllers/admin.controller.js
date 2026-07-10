@@ -475,6 +475,124 @@ async function resetSystemDatabase(req, res, next) {
   }
 }
 
+/**
+ * GET /api/admin/announcements
+ */
+async function getAllAnnouncements(req, res, next) {
+  if (!verifyAdminAccess(req)) {
+    return res.status(401).json({ error: 'Unauthorized admin access.' });
+  }
+
+  try {
+    const result = await db.query('SELECT * FROM announcements ORDER BY created_at DESC');
+    return res.json({ success: true, announcements: result.rows });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * POST /api/admin/announcements
+ */
+async function createAnnouncement(req, res, next) {
+  if (!verifyAdminAccess(req)) {
+    return res.status(401).json({ error: 'Unauthorized admin access.' });
+  }
+
+  const { title, message, alert_type, starts_at, expires_at } = req.body;
+  if (!title || !message) {
+    return res.status(400).json({ error: 'Title and message are required.' });
+  }
+
+  try {
+    const result = await db.query(
+      `INSERT INTO announcements (title, message, alert_type, starts_at, expires_at)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING *`,
+      [
+        title,
+        message,
+        alert_type || 'info',
+        starts_at ? new Date(starts_at) : new Date(),
+        expires_at ? new Date(expires_at) : null
+      ]
+    );
+
+    await auditService.logAction(0, 'ANNOUNCEMENT_CREATE', req.ip, { announcement_id: result.rows[0].id });
+
+    return res.json({ success: true, announcement: result.rows[0] });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * PUT /api/admin/announcements/:id
+ */
+async function updateAnnouncement(req, res, next) {
+  if (!verifyAdminAccess(req)) {
+    return res.status(401).json({ error: 'Unauthorized admin access.' });
+  }
+
+  const { id } = req.params;
+  const { title, message, alert_type, starts_at, expires_at } = req.body;
+
+  if (!title || !message) {
+    return res.status(400).json({ error: 'Title and message are required.' });
+  }
+
+  try {
+    const result = await db.query(
+      `UPDATE announcements 
+       SET title = $1, message = $2, alert_type = $3, starts_at = $4, expires_at = $5, updated_at = NOW()
+       WHERE id = $6
+       RETURNING *`,
+      [
+        title,
+        message,
+        alert_type || 'info',
+        starts_at ? new Date(starts_at) : new Date(),
+        expires_at ? new Date(expires_at) : null,
+        id
+      ]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Announcement not found.' });
+    }
+
+    await auditService.logAction(0, 'ANNOUNCEMENT_UPDATE', req.ip, { announcement_id: id });
+
+    return res.json({ success: true, announcement: result.rows[0] });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * DELETE /api/admin/announcements/:id
+ */
+async function deleteAnnouncement(req, res, next) {
+  if (!verifyAdminAccess(req)) {
+    return res.status(401).json({ error: 'Unauthorized admin access.' });
+  }
+
+  const { id } = req.params;
+
+  try {
+    const result = await db.query('DELETE FROM announcements WHERE id = $1 RETURNING id', [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Announcement not found.' });
+    }
+
+    await auditService.logAction(0, 'ANNOUNCEMENT_DELETE', req.ip, { announcement_id: id });
+
+    return res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getPendingUsers,
   getAllUsers,
@@ -486,4 +604,8 @@ module.exports = {
   changeUserStatus,
   getDashboardStats,
   resetSystemDatabase,
+  getAllAnnouncements,
+  createAnnouncement,
+  updateAnnouncement,
+  deleteAnnouncement,
 };

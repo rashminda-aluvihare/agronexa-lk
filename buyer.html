@@ -797,6 +797,10 @@
       <span data-i18n="nav-notifications">Notifications</span>
       <span class="nav-badge" id="sidebar-notifications-count" style="display:none;background:var(--amber);">0</span>
     </div>
+    <div class="nav-item" onclick="switchTab('announcements')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg>
+      <span data-i18n="nav-announcements">Announcements</span>
+    </div>
     <div class="nav-item" onclick="switchTab('invoices')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
       <span data-i18n="nav-invoices">Invoices</span>
@@ -1159,6 +1163,17 @@
       </div>
       <div class="panel-sub" style="font-size:12px; color:var(--text-muted); margin-bottom:15px;" data-i18n="buyer-payments-tab-desc">Submit bank transfer receipts for confirmed orders and track their verification status.</div>
       <div id="payments-list-container" style="display:flex; flex-direction:column; gap:12px;">
+        <!-- Loaded dynamically -->
+      </div>
+    </div>
+
+    <!-- Announcements Section -->
+    <div class="panel content-section" id="section-announcements" style="display: none; margin-top: 20px;">
+      <div class="panel-head">
+        <div class="panel-title" data-i18n="nav-announcements">Announcements 📢</div>
+      </div>
+      <div class="panel-sub" style="font-size:12px; color:var(--text-muted); margin-bottom:15px;" data-i18n="announcements-tab-desc">View official announcements and important updates from AgroNexa-LK system administration.</div>
+      <div id="announcements-list-container" style="display:flex; flex-direction:column; gap:12px;">
         <!-- Loaded dynamically -->
       </div>
     </div>
@@ -1690,6 +1705,24 @@
       </div>
     </div>
 
+    <!-- WELCOME SYSTEM ANNOUNCEMENT MODAL -->
+    <div id="system-announcement-modal" style="display:none;position:fixed;inset:0;background:rgba(20,29,43,0.7);backdrop-filter:blur(4px);z-index:2100;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:20px;padding:32px;max-width:460px;width:95%;box-shadow:0 20px 60px rgba(20,29,43,0.3);border:1px solid var(--border);position:relative;text-align:center;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+          <h3 style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--text);margin:0;display:flex;align-items:center;gap:8px;" data-i18n="announcement-welcome-title">New Announcement! 📢</h3>
+          <button onclick="closeAnnouncementModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted)">&times;</button>
+        </div>
+        
+        <div id="announcement-modal-icon" style="font-size:48px; margin-bottom:16px;">📢</div>
+        
+        <h4 id="announcement-modal-title" style="font-size:16px; font-weight:700; color:var(--text); margin-bottom:10px;">Title</h4>
+        
+        <div id="announcement-modal-message" style="font-size:13px; color:var(--muted); line-height:1.5; text-align:left; background:rgba(0,0,0,0.01); border:1px solid var(--border); border-radius:12px; padding:16px; max-height:220px; overflow-y:auto; margin-bottom:24px; white-space:pre-wrap;">Message details...</div>
+        
+        <button onclick="closeAnnouncementModal()" class="btn-sm btn-confirm" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;" data-i18n="btn-got-it">Got It 👍</button>
+      </div>
+    </div>
+
     <!-- USER PROFILE MODAL -->
     <div id="user-profile-modal" style="display:none;position:fixed;inset:0;background:rgba(22,34,44,0.6);backdrop-filter:blur(4px);z-index:2001;align-items:center;justify-content:center;">
       <div style="background:var(--card);border-radius:20px;padding:32px;max-width:420px;width:95%;box-shadow:0 12px 32px rgba(22,34,44,0.12);border:1px solid var(--border);position:relative; max-height:90vh; overflow-y:auto;">
@@ -1909,10 +1942,12 @@ var marketMarkers = [];
         };
         sessionStorage.setItem('agro_user', JSON.stringify(_user));
         loadDashboardData();
+        checkForWelcomeAnnouncements();
       })
-      .catch(function(){ loadDashboardData(); });
+      .catch(function(){ loadDashboardData(); checkForWelcomeAnnouncements(); });
   } else {
     loadDashboardData();
+    checkForWelcomeAnnouncements();
   }
   switchTab('dashboard');
 
@@ -2598,6 +2633,7 @@ function switchTab(tab) {
   const sectionUserManual = document.getElementById('section-user-manual');
   const sectionPayments = document.getElementById('section-payments');
   const sectionAppBanner = document.getElementById('section-app-banner');
+  const sectionAnnouncements = document.getElementById('section-announcements');
 
   const panelBroadcastForm = document.getElementById('panel-broadcast-form');
   const panelResponses = document.getElementById('panel-responses');
@@ -2622,6 +2658,7 @@ function switchTab(tab) {
   if (sectionUserManual) sectionUserManual.style.display = 'none';
   if (sectionPayments) sectionPayments.style.display = 'none';
   if (sectionAppBanner) sectionAppBanner.style.display = 'none';
+  if (sectionAnnouncements) sectionAnnouncements.style.display = 'none';
 
   if (tab === 'dashboard') {
     sectionStats.style.display = 'grid';
@@ -2747,6 +2784,11 @@ function switchTab(tab) {
     if (sectionPayments) {
       sectionPayments.style.display = 'block';
       loadBuyerPaymentsTab();
+    }
+  } else if (tab === 'announcements') {
+    if (sectionAnnouncements) {
+      sectionAnnouncements.style.display = 'block';
+      loadUserAnnouncements();
     }
   } else if (tab === 'user-manual') {
     if (sectionUserManual) {
@@ -4732,6 +4774,104 @@ function loadBuyerPaymentsTab() {
       });
       container.innerHTML = html;
     });
+}
+
+var activeAnnouncements = [];
+var currentWelcomeAnnouncement = null;
+
+function loadUserAnnouncements() {
+  const container = document.getElementById('announcements-list-container');
+  if (!container) return;
+  container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Loading announcements...</div>';
+  
+  fetch(API_URL + '/api/announcements', {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success || !data.announcements || !data.announcements.length) {
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">' + getTranslation('js-no-announcements', 'No announcements found.') + '</div>';
+        return;
+      }
+      
+      activeAnnouncements = data.announcements;
+      let html = '';
+      activeAnnouncements.forEach(item => {
+        let alertIcon = '📢';
+        let statusClass = 'confirmed'; // Green background default
+        if (item.alert_type === 'warning') {
+          alertIcon = '⚠️';
+          statusClass = 'pending'; // Amber background
+        } else if (item.alert_type === 'danger') {
+          alertIcon = '🚨';
+          statusClass = 'rejected'; // Red background
+        }
+        
+        const dateStr = new Date(item.starts_at).toLocaleString();
+        
+        html += `
+          <div class="booking-item" style="display:flex; flex-direction:column; align-items:stretch; gap:10px; padding:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
+              <div style="display:flex; gap:12px; align-items:center; width:100%;">
+                <div class="booking-icon" style="background:var(--teal-pale); color:var(--teal); font-size:20px;">${alertIcon}</div>
+                <div class="booking-info" style="flex:1;">
+                  <div class="booking-name" style="font-size:14px; font-weight:700; color:var(--text-main);">${item.title}</div>
+                  <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">
+                    📅 ${dateStr}
+                  </div>
+                  <div style="font-size:12.5px; color:var(--text-muted); margin-top:8px; line-height:1.5; white-space:pre-wrap;">${item.message}</div>
+                </div>
+              </div>
+              <span class="booking-status ${statusClass}" style="font-size:10px; font-weight:700; text-transform:uppercase;">${item.alert_type}</span>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    })
+    .catch(err => {
+      container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Error loading announcements.</div>';
+    });
+}
+
+function checkForWelcomeAnnouncements() {
+  fetch(API_URL + '/api/announcements', {
+    headers: getAuthHeaders()
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success || !data.announcements || !data.announcements.length) return;
+      
+      const latest = data.announcements[0]; // Active announcements are sorted starts_at DESC
+      
+      // Check if this announcement has been dismissed by this user
+      const dismissedIds = JSON.parse(localStorage.getItem('agro_dismissed_announcements') || '[]');
+      if (dismissedIds.includes(latest.id)) return;
+      
+      // Show Welcome Popup Modal
+      currentWelcomeAnnouncement = latest;
+      document.getElementById('announcement-modal-title').textContent = latest.title;
+      document.getElementById('announcement-modal-message').textContent = latest.message;
+      
+      let modalIcon = '📢';
+      if (latest.alert_type === 'warning') modalIcon = '⚠️';
+      else if (latest.alert_type === 'danger') modalIcon = '🚨';
+      document.getElementById('announcement-modal-icon').textContent = modalIcon;
+      
+      document.getElementById('system-announcement-modal').style.display = 'flex';
+    })
+    .catch(err => console.error('Failed to check for announcements:', err));
+}
+
+function closeAnnouncementModal() {
+  document.getElementById('system-announcement-modal').style.display = 'none';
+  if (currentWelcomeAnnouncement) {
+    const dismissedIds = JSON.parse(localStorage.getItem('agro_dismissed_announcements') || '[]');
+    if (!dismissedIds.includes(currentWelcomeAnnouncement.id)) {
+      dismissedIds.push(currentWelcomeAnnouncement.id);
+      localStorage.setItem('agro_dismissed_announcements', JSON.stringify(dismissedIds));
+    }
+  }
 }
 
 // ── MARKETPLACE FUNCTIONS ──
