@@ -9,7 +9,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AgroNexa LK – Seller Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="translations.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -814,6 +815,12 @@
     <div class="nav-item" onclick="switchTab('settings')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
       <span data-i18n="nav-settings">Settings</span>
+    </div>
+    <div class="nav-item" onclick="triggerPWAInstall()" id="pwa-install-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M12 2v14M19 9l-7 7-7-7M5 21h14" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span data-i18n="nav-download-app">📲 Download App</span>
     </div>
   </nav>
 
@@ -8108,6 +8115,71 @@ document.addEventListener('DOMContentLoaded', () => {
   generateManualHTML();
   updateManualLanguageVisibility(localStorage.getItem('agro_lang') || 'si');
 });
+
+// ── PWA SERVICE WORKER REGISTRATION & INSTALLATION ──
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(reg => console.log('✅ PWA Service Worker Registered!'))
+      .catch(err => console.warn('❌ Service Worker registration failed:', err));
+  });
+}
+
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const installBtn = document.getElementById('pwa-install-nav-item');
+  if (installBtn) {
+    installBtn.style.display = 'flex';
+  }
+});
+
+function triggerPWAInstall() {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  if (isIOS) {
+    const iosModal = document.getElementById('ios-install-modal');
+    if (iosModal) iosModal.style.display = 'flex';
+  } else if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the PWA install prompt');
+      }
+      deferredPrompt = null;
+    });
+  } else {
+    alert("AgroNexa LK PWA is already installed or standalone mode is active!");
+  }
+}
+
+function closeIosInstallModal() {
+  const iosModal = document.getElementById('ios-install-modal');
+  if (iosModal) iosModal.style.display = 'none';
+}
+
+window.addEventListener('appinstalled', (evt) => {
+  console.log('AgroNexa LK PWA was installed successfully!');
+});
 </script>
+
+<!-- iOS Install Guide Modal -->
+<div id="ios-install-modal" style="display:none;position:fixed;inset:0;background:rgba(20,29,43,0.7);backdrop-filter:blur(4px);z-index:2200;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:20px;padding:28px;max-width:400px;width:90%;box-shadow:0 12px 36px rgba(0,0,0,0.25);border:1px solid var(--border);position:relative;text-align:center;font-family:system-ui,sans-serif;">
+    <button onclick="closeIosInstallModal()" style="position:absolute;top:15px;right:15px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);line-height:1;">&times;</button>
+    <span style="font-size:42px;">🍏</span>
+    <h3 style="font-size:17px;font-weight:700;color:var(--text);margin-top:10px;margin-bottom:12px;" data-i18n="ios-install-title">Install on iPhone / iPad</h3>
+    <p style="font-size:13px;color:#5e6d7a;line-height:1.6;margin-bottom:20px;text-align:left;white-space:pre-wrap;" data-i18n="ios-install-body">
+To install AgroNexa LK on your iOS device:
+
+1. Open Safari browser.
+2. Tap the Share button 📤 in the navigation bar.
+3. Scroll down and tap 'Add to Home Screen' ➕.
+4. Tap 'Add' to confirm.
+    </p>
+    <button onclick="closeIosInstallModal()" style="width:100%;height:38px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;" data-i18n="btn-close">Close</button>
+  </div>
+</div>
+
 </body>
 </html>

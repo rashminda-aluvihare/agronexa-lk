@@ -1,0 +1,22 @@
+{
+  "short_name": "AgroNexa",
+  "name": "AgroNexa LK Smart B2B Agriculture Platform",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1860/1860882.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/192/1860/1860882.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "start_url": "/index.html",
+  "background_color": "#122212",
+  "theme_color": "#28A060",
+  "display": "standalone",
+  "orientation": "portrait"
+}
