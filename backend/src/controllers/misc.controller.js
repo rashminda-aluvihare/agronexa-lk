@@ -89,7 +89,7 @@ async function getActiveAnnouncements(req, res) {
     const result = await db.query(
       `SELECT id, title, message, alert_type, starts_at, expires_at, created_at
        FROM announcements 
-       WHERE starts_at <= NOW() AND (expires_at IS NULL OR expires_at >= NOW()) 
+       WHERE expires_at IS NULL OR expires_at >= NOW() 
        ORDER BY starts_at DESC`
     );
     return res.json({ success: true, announcements: result.rows });
