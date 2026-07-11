@@ -86,12 +86,37 @@ async function getWeatherAdvisoryHandler(req, res) {
  */
 async function getActiveAnnouncements(req, res) {
   try {
-    const result = await db.query(
-      `SELECT id, title, message, alert_type, starts_at, expires_at, created_at
-       FROM announcements 
-       WHERE expires_at IS NULL OR expires_at >= NOW() 
-       ORDER BY starts_at DESC`
-    );
+    let userRole = 'all';
+    let userDistrict = 'all';
+
+    if (req.auth && req.auth.role !== 'admin') {
+      const userRes = await db.query("SELECT role, district FROM users WHERE id = $1", [req.auth.id]);
+      if (userRes.rows.length > 0) {
+        const rawRole = userRes.rows[0].role;
+        userRole = (rawRole === 'farmer' || rawRole === 'seller') ? 'farmer' : 'buyer';
+        userDistrict = userRes.rows[0].district || 'all';
+      }
+    }
+
+    let query = `
+      SELECT id, title, message, alert_type, starts_at, expires_at, created_at, target_audience, target_district
+      FROM announcements 
+      WHERE (expires_at IS NULL OR expires_at >= NOW())
+    `;
+    const params = [];
+
+    // Admins bypass filter and see all announcements
+    if (!req.auth || req.auth.role !== 'admin') {
+      query += `
+        AND (target_audience = 'all' OR target_audience = $1)
+        AND (target_district = 'all' OR LOWER(target_district) = LOWER($2))
+      `;
+      params.push(userRole, userDistrict);
+    }
+
+    query += ` ORDER BY starts_at DESC`;
+
+    const result = await db.query(query, params);
     return res.json({ success: true, announcements: result.rows });
   } catch (err) {
     console.error('Error fetching active announcements:', err.message);

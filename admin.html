@@ -901,7 +901,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
               <textarea id="announcement-message" required class="filter-input" style="width:100%; height:120px; font-family:inherit; box-sizing:border-box; padding:10px;" placeholder="Details about maintenance, updates or warnings..."></textarea>
             </div>
             
-            <div style="margin-bottom:12px; display:grid; grid-template-columns:1fr; gap:12px;">
+            <div style="margin-bottom:12px; display:grid; grid-template-columns:1fr 1fr; gap:12px;">
               <div>
                 <label style="display:block; font-size:11px; font-weight:600; text-transform:uppercase; color:var(--muted); margin-bottom:5px;">Alert Type</label>
                 <select id="announcement-alert-type" class="filter-select" style="width:100%; box-sizing:border-box;">
@@ -910,6 +910,46 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
                   <option value="danger">🚨 Danger (Red)</option>
                 </select>
               </div>
+              <div>
+                <label style="display:block; font-size:11px; font-weight:600; text-transform:uppercase; color:var(--muted); margin-bottom:5px;">Target Audience</label>
+                <select id="announcement-target-audience" class="filter-select" style="width:100%; box-sizing:border-box;">
+                  <option value="all">👥 All Users</option>
+                  <option value="farmer">👨‍🌾 Farmers Only</option>
+                  <option value="buyer">🛒 Buyers Only</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-bottom:12px;">
+              <label style="display:block; font-size:11px; font-weight:600; text-transform:uppercase; color:var(--muted); margin-bottom:5px;">Target District</label>
+              <select id="announcement-target-district" class="filter-select" style="width:100%; box-sizing:border-box;">
+                <option value="all">🌍 All Districts</option>
+                <option value="Colombo">Colombo</option>
+                <option value="Gampaha">Gampaha</option>
+                <option value="Kalutara">Kalutara</option>
+                <option value="Kandy">Kandy</option>
+                <option value="Matale">Matale</option>
+                <option value="Nuwara Eliya">Nuwara Eliya</option>
+                <option value="Galle">Galle</option>
+                <option value="Matara">Matara</option>
+                <option value="Hambantota">Hambantota</option>
+                <option value="Jaffna">Jaffna</option>
+                <option value="Kilinochchi">Kilinochchi</option>
+                <option value="Mannar">Mannar</option>
+                <option value="Vavuniya">Vavuniya</option>
+                <option value="Mullaitivu">Mullaitivu</option>
+                <option value="Batticaloa">Batticaloa</option>
+                <option value="Ampara">Ampara</option>
+                <option value="Trincomalee">Trincomalee</option>
+                <option value="Kurunegala">Kurunegala</option>
+                <option value="Puttalam">Puttalam</option>
+                <option value="Anuradhapura">Anuradhapura</option>
+                <option value="Polonnaruwa">Polonnaruwa</option>
+                <option value="Badulla">Badulla</option>
+                <option value="Moneragala">Moneragala</option>
+                <option value="Ratnapura">Ratnapura</option>
+                <option value="Kegalle">Kegalle</option>
+              </select>
             </div>
 
             <div style="margin-bottom:16px; display:grid; grid-template-columns:1fr 1fr; gap:12px;">
@@ -1822,6 +1862,12 @@ function renderAnnouncementsList() {
       typeColor = 'rgba(220, 38, 38, 0.05)';
       borderStyle = '1px solid rgba(220, 38, 38, 0.15)';
     }
+
+    let audLabel = 'All Users';
+    if (item.target_audience === 'farmer') audLabel = '👨‍🌾 Farmers Only';
+    else if (item.target_audience === 'buyer') audLabel = '🛒 Buyers Only';
+    
+    let distLabel = !item.target_district || item.target_district === 'all' ? '🌍 All Districts' : `📍 ${item.target_district}`;
     
     const startStr = item.starts_at ? new Date(item.starts_at).toLocaleString() : 'Immediate';
     const endStr = item.expires_at ? new Date(item.expires_at).toLocaleString() : 'Never';
@@ -1833,9 +1879,11 @@ function renderAnnouncementsList() {
           <span style="font-size:10px; font-weight:700; padding:2px 8px; border-radius:12px; text-transform:uppercase; background:#fff; border:1px solid rgba(0,0,0,0.06); color: var(--ink);">${typeLabel}</span>
         </div>
         <div style="color:var(--text-muted); margin-bottom:8px; white-space:pre-wrap;">${esc(item.message)}</div>
-        <div style="font-size:10px; color:var(--muted); display:flex; gap:12px; flex-wrap:wrap; margin-bottom:8px;">
+        <div style="font-size:10px; color:var(--muted); display:flex; gap:12px; flex-wrap:wrap; margin-bottom:8px; align-items:center;">
           <span>Start: ${startStr}</span>
           <span>End: ${endStr}</span>
+          <span class="meta-pill">${audLabel}</span>
+          <span class="meta-pill">${distLabel}</span>
         </div>
         <div style="display:flex; gap:8px; justify-content:flex-end;">
           <button class="meta-pill" style="cursor:pointer; border:1px solid rgba(0,0,0,0.1); background:#fff; padding:3px 10px;" onclick="editAnnouncement(${item.id})">Edit</button>
@@ -1853,6 +1901,8 @@ async function saveAnnouncement(e) {
   const title = document.getElementById('announcement-title').value.trim();
   const message = document.getElementById('announcement-message').value.trim();
   const alertType = document.getElementById('announcement-alert-type').value;
+  const targetAudience = document.getElementById('announcement-target-audience').value;
+  const targetDistrict = document.getElementById('announcement-target-district').value;
   const startsAt = document.getElementById('announcement-starts-at').value;
   const expiresAt = document.getElementById('announcement-expires-at').value;
   
@@ -1860,6 +1910,8 @@ async function saveAnnouncement(e) {
     title,
     message,
     alert_type: alertType,
+    target_audience: targetAudience,
+    target_district: targetDistrict,
     starts_at: startsAt ? new Date(startsAt).toISOString() : null,
     expires_at: expiresAt ? new Date(expiresAt).toISOString() : null,
     admin_email: adminEmail,
@@ -1904,6 +1956,8 @@ function editAnnouncement(id) {
   document.getElementById('announcement-title').value = item.title;
   document.getElementById('announcement-message').value = item.message;
   document.getElementById('announcement-alert-type').value = item.alert_type;
+  document.getElementById('announcement-target-audience').value = item.target_audience || 'all';
+  document.getElementById('announcement-target-district').value = item.target_district || 'all';
   
   // Format to local date-time strings
   if (item.starts_at) {

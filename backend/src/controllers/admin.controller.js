@@ -542,22 +542,24 @@ async function createAnnouncement(req, res, next) {
     return res.status(401).json({ error: 'Unauthorized admin access.' });
   }
 
-  const { title, message, alert_type, starts_at, expires_at } = req.body;
+  const { title, message, alert_type, starts_at, expires_at, target_audience, target_district } = req.body;
   if (!title || !message) {
     return res.status(400).json({ error: 'Title and message are required.' });
   }
 
   try {
     const result = await db.query(
-      `INSERT INTO announcements (title, message, alert_type, starts_at, expires_at)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO announcements (title, message, alert_type, starts_at, expires_at, target_audience, target_district)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING *`,
       [
         title,
         message,
         alert_type || 'info',
         starts_at ? new Date(starts_at) : new Date(),
-        expires_at ? new Date(expires_at) : null
+        expires_at ? new Date(expires_at) : null,
+        target_audience || 'all',
+        target_district || 'all'
       ]
     );
 
@@ -578,7 +580,7 @@ async function updateAnnouncement(req, res, next) {
   }
 
   const { id } = req.params;
-  const { title, message, alert_type, starts_at, expires_at } = req.body;
+  const { title, message, alert_type, starts_at, expires_at, target_audience, target_district } = req.body;
 
   if (!title || !message) {
     return res.status(400).json({ error: 'Title and message are required.' });
@@ -587,8 +589,9 @@ async function updateAnnouncement(req, res, next) {
   try {
     const result = await db.query(
       `UPDATE announcements 
-       SET title = $1, message = $2, alert_type = $3, starts_at = $4, expires_at = $5, updated_at = NOW()
-       WHERE id = $6
+       SET title = $1, message = $2, alert_type = $3, starts_at = $4, expires_at = $5, 
+           target_audience = $6, target_district = $7, updated_at = NOW()
+       WHERE id = $8
        RETURNING *`,
       [
         title,
@@ -596,6 +599,8 @@ async function updateAnnouncement(req, res, next) {
         alert_type || 'info',
         starts_at ? new Date(starts_at) : new Date(),
         expires_at ? new Date(expires_at) : null,
+        target_audience || 'all',
+        target_district || 'all',
         id
       ]
     );

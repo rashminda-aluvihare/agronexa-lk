@@ -391,6 +391,10 @@ async function initDatabase() {
       );
     `);
 
+    // Ensure target fields exist on announcements table
+    await client.query("ALTER TABLE announcements ADD COLUMN IF NOT EXISTS target_audience VARCHAR(50) DEFAULT 'all';");
+    await client.query("ALTER TABLE announcements ADD COLUMN IF NOT EXISTS target_district VARCHAR(60) DEFAULT 'all';");
+
     await client.query('COMMIT');
     console.log('✅ Database migration completed successfully.');
   } catch (err) {
