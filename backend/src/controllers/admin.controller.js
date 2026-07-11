@@ -419,6 +419,34 @@ async function getDashboardStats(req, res, next) {
     const equipmentResult = await db.query("SELECT COUNT(*) FROM equipment_listings WHERE status = 'available'");
     const transactionsResult = await db.query("SELECT COUNT(*), COALESCE(SUM(amount), 0) AS total_val FROM rental_ledger");
 
+    // 1. Crop Distribution by District
+    const cropDistResult = await db.query(
+      `SELECT district, COUNT(*) AS count 
+       FROM crop_listings 
+       WHERE status = 'active' AND district IS NOT NULL AND district <> ''
+       GROUP BY district 
+       ORDER BY count DESC 
+       LIMIT 8`
+    );
+
+    // 2. User Growth Trend (monthly registrations)
+    const userGrowthResult = await db.query(
+      `SELECT TO_CHAR(created_at, 'YYYY-MM') AS month, role, COUNT(*) AS count 
+       FROM users 
+       WHERE role IN ('farmer', 'seller', 'buyer')
+       GROUP BY month, role 
+       ORDER BY month ASC`
+    );
+
+    // 3. Transaction Volume Trend (daily sum for last 30 days)
+    const txTrendResult = await db.query(
+      `SELECT TO_CHAR(created_at, 'YYYY-MM-DD') AS date, COALESCE(SUM(amount), 0) AS total_val 
+       FROM rental_ledger 
+       GROUP BY date 
+       ORDER BY date ASC 
+       LIMIT 30`
+    );
+
     return res.json({
       success: true,
       stats: {
@@ -428,6 +456,21 @@ async function getDashboardStats(req, res, next) {
         active_equipment: parseInt(equipmentResult.rows[0].count, 10),
         total_transactions: parseInt(transactionsResult.rows[0].count, 10),
         total_volume: parseFloat(transactionsResult.rows[0].total_val),
+      },
+      charts: {
+        crop_distribution: cropDistResult.rows.map(r => ({
+          district: r.district,
+          count: parseInt(r.count, 10)
+        })),
+        user_growth: userGrowthResult.rows.map(r => ({
+          month: r.month,
+          role: r.role === 'farmer' || r.role === 'seller' ? 'seller' : r.role,
+          count: parseInt(r.count, 10)
+        })),
+        transaction_trend: txTrendResult.rows.map(r => ({
+          date: r.date,
+          volume: parseFloat(r.total_val)
+        }))
       }
     });
   } catch (err) {
