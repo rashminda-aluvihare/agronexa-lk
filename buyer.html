@@ -1723,7 +1723,7 @@
         }
       </style>
       <div class="modal-animate-pop" style="background:#fff;border-radius:24px;padding:36px;max-width:480px;width:95%;box-shadow:0 24px 70px rgba(20,29,43,0.3);border:1px solid var(--border);position:relative;box-sizing:border-box;">
-        <button onclick="closeAnnouncementModal()" style="position:absolute;top:20px;right:20px;background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted);line-height:1;">&times;</button>
+        <button onclick="closeAnnouncementModal()" id="announcement-modal-close-btn" style="position:absolute;top:20px;right:20px;background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted);line-height:1;">&times;</button>
         
         <!-- Large Centered Header -->
         <h2 id="announcement-modal-header" style="font-family:'DM Serif Display',serif; font-size:2.2rem; font-weight:800; color:#dc2626; letter-spacing:2px; margin-bottom:16px; text-transform:uppercase; text-align:center; margin-top:10px;">NOTICE</h2>
@@ -1747,6 +1747,9 @@
         <div style="font-size:12px; color:#90a1b0; line-height:1.4; margin-bottom:24px; font-style:italic; border-top:1px solid #dbe2e8; padding-top:14px; text-align:center;">
           We regret any inconvenience this may cause and appreciate your understanding.
         </div>
+        
+        <!-- Offline advisory placeholder -->
+        <div id="announcement-modal-offline-advisory" style="font-size:13.5px; font-weight:700; color:#dc2626; text-align:center; display:none; padding:12px; border:2px dashed currentColor; border-radius:12px; background:rgba(220,38,38,0.05); margin-bottom:10px; line-height:1.4; font-family:system-ui,sans-serif;">🛠️ Platform is Offline for Scheduled Maintenance</div>
         
         <button onclick="closeAnnouncementModal()" id="announcement-modal-btn" style="width:100%;height:46px;background:#dc2626;color:#fff;font-size:14px;font-weight:700;border-radius:12px;border:none;cursor:pointer;box-shadow:0 4px 12px rgba(220,38,38,0.2);transition:all 0.2s;" data-i18n="btn-got-it">Got It 👍</button>
       </div>
@@ -4873,9 +4876,15 @@ function checkForWelcomeAnnouncements() {
       
       const latest = data.announcements[0]; // Active announcements are sorted starts_at DESC
       
+      const now = new Date();
+      const starts = latest.starts_at ? new Date(latest.starts_at) : null;
+      const expires = latest.expires_at ? new Date(latest.expires_at) : null;
+      const isMaintenanceActive = starts && expires && (now >= starts && now <= expires) && 
+        (latest.alert_type === 'danger' || latest.title.toLowerCase().includes('maintenance') || latest.title.toLowerCase().includes('maintain'));
+
       // Check if this announcement has been dismissed by this user in the current session
       const dismissedIds = JSON.parse(sessionStorage.getItem('agro_dismissed_announcements') || '[]');
-      if (dismissedIds.includes(latest.id)) return;
+      if (dismissedIds.includes(latest.id) && !isMaintenanceActive) return;
       
       // Show Welcome Popup Modal
       currentWelcomeAnnouncement = latest;
@@ -4888,9 +4897,9 @@ function checkForWelcomeAnnouncements() {
       if (latest.alert_type === 'warning') {
         themeColor = '#d97706';
         headerText = 'WARNING NOTICE';
-      } else if (latest.alert_type === 'danger') {
+      } else if (latest.alert_type === 'danger' || isMaintenanceActive) {
         themeColor = '#dc2626';
-        headerText = 'CRITICAL NOTICE';
+        headerText = isMaintenanceActive ? 'SYSTEM UNDER MAINTENANCE' : 'CRITICAL NOTICE';
       }
 
       const headerEl = document.getElementById('announcement-modal-header');
@@ -4922,6 +4931,26 @@ function checkForWelcomeAnnouncements() {
         } else {
           timeContainerEl.style.display = 'none';
         }
+      }
+
+      // Lockout Mode toggles
+      const closeBtn = document.getElementById('announcement-modal-close-btn');
+      const actionBtn = document.getElementById('announcement-modal-btn');
+      const offlineAdvisory = document.getElementById('announcement-modal-offline-advisory');
+
+      if (isMaintenanceActive) {
+        if (closeBtn) closeBtn.style.display = 'none';
+        if (actionBtn) actionBtn.style.display = 'none';
+        if (offlineAdvisory) {
+          offlineAdvisory.style.display = 'block';
+          offlineAdvisory.style.color = themeColor;
+          offlineAdvisory.style.borderColor = themeColor;
+          offlineAdvisory.innerHTML = `🛠️ Platform is Offline for Scheduled Maintenance<br><span style="font-size:11.5px; font-weight:500; opacity:0.85;">Please wait until the maintenance window concludes.</span>`;
+        }
+      } else {
+        if (closeBtn) closeBtn.style.display = 'block';
+        if (actionBtn) actionBtn.style.display = 'block';
+        if (offlineAdvisory) offlineAdvisory.style.display = 'none';
       }
       
       document.getElementById('system-announcement-modal').style.display = 'flex';
