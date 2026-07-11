@@ -168,6 +168,7 @@ async function login(req, res, next) {
     // 2. Query normal user
     const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
     if (result.rows.length === 0) {
+      await auditService.logAction(0, 'FAILED_LOGIN_ATTEMPT', req.ip, { email: email, reason: 'Email not registered' });
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
@@ -191,6 +192,7 @@ async function login(req, res, next) {
           'UPDATE users SET failed_login_attempts = $1, locked_until = $2 WHERE id = $3',
           [newAttempts, lockUntil, user.id]
         );
+        await auditService.logAction(user.id, 'ACCOUNT_LOCKOUT', req.ip, { email: user.email });
         return res.status(403).json({
           error: 'Invalid email or password. Your account has been temporarily locked for 30 minutes.'
         });
@@ -199,6 +201,7 @@ async function login(req, res, next) {
           'UPDATE users SET failed_login_attempts = $1 WHERE id = $2',
           [newAttempts, user.id]
         );
+        await auditService.logAction(user.id, 'FAILED_LOGIN_ATTEMPT', req.ip, { email: user.email, reason: 'Incorrect password' });
         const remaining = 5 - newAttempts;
         return res.status(401).json({
           error: `Invalid email or password. You have ${remaining} attempt(s) remaining before account lockout.`

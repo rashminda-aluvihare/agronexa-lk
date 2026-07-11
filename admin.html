@@ -925,6 +925,19 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
     <!-- AUDIT LOGS TAB -->
     <div id="tab-audit" style="display:none;">
       <div class="section-title">System Audit Logs (Read-only)</div>
+      
+      <!-- Fraud & Security Alerts Panel -->
+      <div id="security-alerts-panel" style="margin-bottom: 24px; display: none; flex-direction: column; gap: 12px; background: #fff5f5; border: 1.5px solid #feb2b2; border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(220, 38, 38, 0.04);">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 15px; color: #9b2c2c; font-family: system-ui, sans-serif;">
+            🚨 Security & Fraud Alerts
+          </div>
+          <span style="background: #e53e3e; color: #fff; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 12px; text-transform: uppercase;" id="security-alerts-badge">0 Alerts Active</span>
+        </div>
+        <div id="security-alerts-list" style="display: flex; flex-direction: column; gap: 10px; margin-top: 6px;">
+          <!-- Alerts rendered dynamically -->
+        </div>
+      </div>
       <div class="filter-bar" style="margin-bottom:16px;">
         <input class="filter-input" type="text" id="search-audit" oninput="debounceAuditSearch()" placeholder="Search logs by email, action, details..." />
         <select class="filter-select" id="filter-audit-limit" onchange="loadAuditLogs(1)">
@@ -1463,6 +1476,7 @@ async function loadAuditLogs(page) {
       });
       
       renderAuditPagination(data.page, data.pages);
+      runSecurityRiskAssessment(data.logs);
     }
   } catch(e) {
     tbody.innerHTML = '<tr><td colspan="5" style="padding:20px; text-align:center; color:var(--danger);">Error loading audit logs.</td></tr>';
@@ -1493,6 +1507,108 @@ function renderAuditPagination(curr, total) {
   }
   
   pagEl.innerHTML = html;
+}
+
+function runSecurityRiskAssessment(logs) {
+  const alertsEl = document.getElementById('security-alerts-panel');
+  const listEl = document.getElementById('security-alerts-list');
+  const badgeEl = document.getElementById('security-alerts-badge');
+  if (!alertsEl || !listEl) return;
+
+  const alerts = [];
+
+  // 1. Check for failed logins by IP address
+  const failedLoginsByIp = {};
+  logs.forEach(log => {
+    if (log.action === 'FAILED_LOGIN_ATTEMPT' && log.ip_address) {
+      failedLoginsByIp[log.ip_address] = (failedLoginsByIp[log.ip_address] || 0) + 1;
+    }
+  });
+
+  Object.keys(failedLoginsByIp).forEach(ip => {
+    if (failedLoginsByIp[ip] >= 3) {
+      alerts.push({
+        type: 'high',
+        title: 'Brute-Force Login Attempt Detected',
+        description: `IP address <strong>${ip}</strong> registered ${failedLoginsByIp[ip]} failed login attempts in rapid succession.`,
+        actionable: 'Recommend IP block / review IP location.'
+      });
+    }
+  });
+
+  // 2. Check for Ledger integrity failures
+  const tamperedLogs = logs.filter(log => log.action === 'LEDGER_TAMPERED');
+  if (tamperedLogs.length > 0) {
+    alerts.push({
+      type: 'critical',
+      title: 'Cryptographic Ledger Alteration Detected',
+      description: `Cryptographic ledger chain integrity verification failed! Tampering was detected on block hashes.`,
+      actionable: 'IMMEDIATE ACTION REQUIRED: Ledger chain compromised.'
+    });
+  }
+
+  // 3. Check for multiple registrations with the same NIC number (using allUsers)
+  if (window.allUsers && window.allUsers.length > 0) {
+    const usersByNic = {};
+    window.allUsers.forEach(u => {
+      if (u.nic_number && u.status !== 'rejected') {
+        const nicClean = u.nic_number.trim().toUpperCase();
+        if (!usersByNic[nicClean]) usersByNic[nicClean] = [];
+        usersByNic[nicClean].push(u);
+      }
+    });
+
+    Object.keys(usersByNic).forEach(nic => {
+      if (usersByNic[nic].length >= 2) {
+        const names = usersByNic[nic].map(u => `${u.first_name} (${u.email})`).join(', ');
+        alerts.push({
+          type: 'medium',
+          title: 'Duplicate Identity Registration Alert',
+          description: `Multiple active accounts are registered under the same NIC number <strong>${nic}</strong>: [${names}].`,
+          actionable: 'Verify identity documents (KYC review) or suspend accounts.'
+        });
+      }
+    });
+  }
+
+  // Render alerts
+  if (alerts.length > 0) {
+    alertsEl.style.display = 'flex';
+    badgeEl.textContent = `${alerts.length} Alert${alerts.length > 1 ? 's' : ''} Active`;
+    
+    let html = '';
+    alerts.forEach(alt => {
+      let icon = '⚠️';
+      let border = 'rgba(217, 119, 6, 0.2)';
+      let bg = '#fffbeb';
+      let titleColor = '#b45309';
+      
+      if (alt.type === 'high') {
+        icon = '🚨';
+        border = 'rgba(220, 38, 38, 0.2)';
+        bg = '#fef2f2';
+        titleColor = '#b91c1c';
+      } else if (alt.type === 'critical') {
+        icon = '🛑';
+        border = 'rgba(220, 38, 38, 0.3)';
+        bg = '#fee2e2';
+        titleColor = '#991b1b';
+      }
+
+      html += `
+        <div style="background:${bg}; border:1px solid ${border}; padding:14px; border-radius:10px; font-size:12.5px; line-height:1.5;">
+          <div style="display:flex; align-items:center; gap:8px; font-weight:700; color:${titleColor}; margin-bottom:4px;">
+            <span>${icon}</span> ${alt.title}
+          </div>
+          <div style="color:#4a5568; margin-bottom:6px;">${alt.description}</div>
+          <div style="font-size:11px; color:#718096; font-style:italic;"><strong>Action:</strong> ${alt.actionable}</div>
+        </div>
+      `;
+    });
+    listEl.innerHTML = html;
+  } else {
+    alertsEl.style.display = 'none';
+  }
 }
 
 // ── TOAST ──

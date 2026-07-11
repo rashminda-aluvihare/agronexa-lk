@@ -1,5 +1,6 @@
 const db = require('../config/db');
 const ledgerService = require('../services/ledger.service');
+const auditService = require('../services/audit.service');
 
 /**
  * GET /api/ledger
@@ -50,6 +51,14 @@ async function getLedger(req, res, next) {
 async function verifyLedger(req, res, next) {
   try {
     const verification = await ledgerService.verifyLedgerChain();
+    
+    // Log verification status to audit logs
+    if (!verification.valid) {
+      await auditService.logAction(0, 'LEDGER_TAMPERED', req.ip, { broken_at: verification.broken_at });
+    } else {
+      await auditService.logAction(0, 'LEDGER_VERIFIED', req.ip, { total_records: verification.total_records });
+    }
+
     return res.json({
       success: true,
       valid: verification.valid,
