@@ -8136,6 +8136,12 @@ window.addEventListener('beforeinstallprompt', (e) => {
 });
 
 function triggerPWAInstall() {
+  // Close sidebar on mobile
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar && window.innerWidth <= 768) {
+    sidebar.classList.remove('active');
+  }
+
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   if (isIOS) {
     const iosModal = document.getElementById('ios-install-modal');
