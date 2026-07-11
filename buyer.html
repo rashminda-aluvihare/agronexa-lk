@@ -4884,10 +4884,10 @@ function checkForWelcomeAnnouncements() {
       if (durationEl && timeTextEl) {
         if (latest.starts_at || latest.expires_at) {
           const startStr = latest.starts_at ? new Date(latest.starts_at).toLocaleString(undefined, {
-            month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+            month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true
           }) : 'Immediate';
           const endStr = latest.expires_at ? new Date(latest.expires_at).toLocaleString(undefined, {
-            month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+            month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true
           }) : 'Never';
           timeTextEl.innerHTML = `<strong>Duration:</strong> ${startStr} — ${endStr}`;
           durationEl.style.display = 'flex';
