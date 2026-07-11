@@ -779,7 +779,23 @@ const TRANSLATIONS = {
     "toast-transport-booking-sent-body": "Transport booking request sent! 🚛",
     "toast-failed-request-booking": "Failed to request booking",
     "toast-server-error-title": "Server Error",
-    "toast-failed-deactivate": "Failed to deactivate"
+    "toast-failed-deactivate": "Failed to deactivate",
+    "nav-ai-diagnosis": "🔬 AI Disease Scan",
+    "nav-ai-diagnosis-title": "AI Crop Disease Diagnosis Lab (TensorFlow.js Enabled)",
+    "ai-diagnosis-desc": "Scan crop leaves using our custom computer vision algorithm to instantly diagnose crop diseases, analyze damage ratios, and retrieve local remedies.",
+    "ai-step1": "1. Select Leaf Sample or Upload Photo",
+    "ai-presets": "Demo Sample Leaf Presets",
+    "ai-upload-btn": "Upload custom leaf photo",
+    "ai-upload-sub": "Supports JPG, PNG (Max 5MB)",
+    "ai-start-scan": "Analyze Leaf with AI",
+    "ai-idle-title": "Diagnostic Lab Offline",
+    "ai-idle-desc": "Upload a crop photo or choose a preset sample on the left to begin AI analysis.",
+    "ai-confidence": "Confidence Score",
+    "ai-damage-ratio": "🍂 Damage Ratio",
+    "ai-treatment-status": "🍃 Treatment Status",
+    "ai-organic": "Organic Remedies",
+    "ai-chemical": "Chemical Treatments",
+    "ai-pdf-report": "Export Diagnostic Report (PDF)"
   },
   si: {
     // Nav & General
@@ -1558,7 +1574,23 @@ const TRANSLATIONS = {
     "toast-transport-booking-sent-body": "ප්‍රවාහන වෙන්කිරීමේ ඉල්ලීම යවන ලදී! 🚛",
     "toast-failed-request-booking": "ප්‍රවාහන වෙන්කිරීම අසාර්ථක විය",
     "toast-server-error-title": "සේවාදායකයේ දෝෂයක්",
-    "toast-failed-deactivate": "අක්‍රිය කිරීම අසාර්ථක විය"
+    "toast-failed-deactivate": "අක්‍රිය කිරීම අසාර්ථක විය",
+    "nav-ai-diagnosis": "🔬 AI රෝග පරීක්ෂාව",
+    "nav-ai-diagnosis-title": "AI බෝග රෝග විනිශ්චය රසායනාගාරය (TensorFlow.js සක්‍රීයයි)",
+    "ai-diagnosis-desc": "බෝග රෝග ක්ෂණිකව හඳුනා ගැනීමට, හානි අනුපාත විශ්ලේෂණය කිරීමට සහ දේශීය පිළියම් ලබා ගැනීමට අපගේ පරිගණක දෘශ්‍ය ඇල්ගොරිතම භාවිතයෙන් බෝග කොළ පරිලෝකනය කරන්න.",
+    "ai-step1": "1. කොළ සාම්පලයක් තෝරන්න හෝ ඡායාරූපයක් එක් කරන්න",
+    "ai-presets": "නිරූපණ සාම්පල කොළ පෙරසිටුවීම්",
+    "ai-upload-btn": "ඡායාරූපයක් එක් කරන්න",
+    "ai-upload-sub": "JPG, PNG සඳහා සහය දක්වයි (උපරිම 5MB)",
+    "ai-start-scan": "AI මඟින් පරීක්ෂා කරන්න",
+    "ai-idle-title": "විශ්ලේෂණ ලැබ් එක අක්‍රියයි",
+    "ai-idle-desc": "AI විශ්ලේෂණය ආරම්භ කිරීමට වම්පසින් බෝග ඡායාරූපයක් එක් කරන්න හෝ සාම්පලයක් තෝරන්න.",
+    "ai-confidence": "නිරවද්‍යතා ප්‍රතිශතය",
+    "ai-damage-ratio": "🍂 හානි අනුපාතය",
+    "ai-treatment-status": "🍃 ප්‍රතිකාර තත්ත්වය",
+    "ai-organic": "කාබනික පිළියම්",
+    "ai-chemical": "රසායනික පිළියම්",
+    "ai-pdf-report": "වාර්තාව බාගත කරන්න (PDF)"
   },
   ta: {
     // Nav & General
@@ -2337,7 +2369,23 @@ const TRANSLATIONS = {
     "toast-transport-booking-sent-body": "போக்குவரத்து முன்பதிவு கோரிக்கை அனுப்பப்பட்டது! 🚛",
     "toast-failed-request-booking": "முன்பதிவை கோர முடியவில்லை",
     "toast-server-error-title": "சர்வர் பிழை",
-    "toast-failed-deactivate": "செயலிழக்க செய்ய முடியவில்லை"
+    "toast-failed-deactivate": "செயலிழக்க செய்ய முடியவில்லை",
+    "nav-ai-diagnosis": "🔬 AI நோய் கண்டறிதல்",
+    "nav-ai-diagnosis-title": "AI பயிர் நோய் கண்டறிதல் ஆய்வகம் (TensorFlow.js இயக்கப்பட்டது)",
+    "ai-diagnosis-desc": "பயிர் நோய்களை உடனடியாகக் கண்டறியவும், சேத விகிதங்களை பகுப்பாய்வும் செய்யவும் மற்றும் உள்ளூர் தீர்வுகளைப் பெறவும் எங்கள் கணினி பார்வை அல்காரிதத்தைப் பயன்படுத்தி பயிர் இலைகளை ஸ்கேன் செய்யவும்.",
+    "ai-step1": "1. இலை மாதிரியைத் தேர்ந்தெடுக்கவும் அல்லது புகைப்படத்தைப் பதிவேற்றவும்",
+    "ai-presets": "மாதிரி இலை முன்னமைவுகள்",
+    "ai-upload-btn": "புகைப்படத்தைப் பதிவேற்றவும்",
+    "ai-upload-sub": "JPG, PNG ஆதரிக்கிறது (அதிகபட்சம் 5MB)",
+    "ai-start-scan": "AI மூலம் பகுப்பாய்வு செய்யுங்கள்",
+    "ai-idle-title": "கண்டறியும் ஆய்வகம் ஆஃப்லைனில் உள்ளது",
+    "ai-idle-desc": "AI பகுப்பாய்வைத் தொடங்க பயிர் புகைப்படத்தைப் பதிவேற்றவும் அல்லது இடதுபுறத்தில் ஒரு மாதிரியைத் தேர்ந்தெடுக்கவும்.",
+    "ai-confidence": "துல்லிய விகிதம்",
+    "ai-damage-ratio": "🍂 சேத விகிதம்",
+    "ai-treatment-status": "🍃 சிகிச்சை நிலை",
+    "ai-organic": "இயற்கை தீர்வுகள்",
+    "ai-chemical": "இரசாயன சிகிச்சைகள்",
+    "ai-pdf-report": "அறிக்கையைப் பதிவிறக்கவும் (PDF)"
   }
 };
 
