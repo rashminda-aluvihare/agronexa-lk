@@ -1928,24 +1928,33 @@
           animation: modalPopIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
       </style>
-      <div class="modal-animate-pop" style="background:#fff;border-radius:20px;padding:32px;max-width:460px;width:95%;box-shadow:0 20px 60px rgba(20,29,43,0.3);border:1px solid var(--border);position:relative;text-align:center;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
-          <h3 style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--text);margin:0;display:flex;align-items:center;gap:8px;" data-i18n="announcement-welcome-title">New Announcement! 📢</h3>
-          <button onclick="closeAnnouncementModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted)">&times;</button>
+      <div class="modal-animate-pop" style="background:#fff;border-radius:24px;padding:36px;max-width:480px;width:95%;box-shadow:0 24px 70px rgba(20,29,43,0.3);border:1px solid var(--border);position:relative;box-sizing:border-box;">
+        <button onclick="closeAnnouncementModal()" style="position:absolute;top:20px;right:20px;background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted);line-height:1;">&times;</button>
+        
+        <!-- Large Centered Header -->
+        <h2 id="announcement-modal-header" style="font-family:'DM Serif Display',serif; font-size:2.2rem; font-weight:800; color:#dc2626; letter-spacing:2px; margin-bottom:16px; text-transform:uppercase; text-align:center; margin-top:10px;">NOTICE</h2>
+        
+        <!-- Salutation -->
+        <div style="font-size:14px; color:#16222c; font-weight:600; margin-bottom:14px; text-align:center;" id="announcement-modal-salutation">Dear Valued Member,</div>
+        
+        <!-- Notice Title -->
+        <h4 id="announcement-modal-title" style="font-size:16px; font-weight:700; color:var(--text); margin-bottom:12px; text-align:center;">Title</h4>
+        
+        <!-- Notice Message Details -->
+        <div id="announcement-modal-message" style="font-size:13.5px; color:#5e6d7a; line-height:1.6; margin-bottom:18px; text-align:center; white-space:pre-wrap; font-weight:500;">Message details...</div>
+        
+        <!-- Highlighted Time Duration Widget -->
+        <div id="announcement-modal-duration-highlight" style="font-size:13px; color:#dc2626; font-weight:700; margin-bottom:20px; line-height:1.5; text-align:center; display:none;">
+          During the transition period:<br>
+          <span id="announcement-modal-time-highlight" style="border-bottom:1.5px solid currentColor; padding-bottom:1px; display:inline-block; margin-top:4px;"></span>
         </div>
         
-        <div id="announcement-modal-icon" style="font-size:48px; margin-bottom:16px;">📢</div>
-        
-        <h4 id="announcement-modal-title" style="font-size:16px; font-weight:700; color:var(--text); margin-bottom:10px;">Title</h4>
-        
-        <!-- TIME DURATION WIDGET -->
-        <div id="announcement-modal-duration" style="font-size: 11.5px; background: #e3f2fd; color: #1a4f72; padding: 10px 14px; border-radius: 10px; margin-bottom: 16px; font-weight: 500; display: none; align-items: center; justify-content: center; gap: 6px; border: 1px dashed rgba(77, 182, 228, 0.4); text-align: center; line-height: 1.4;">
-          📅 <span id="announcement-modal-time-text"></span>
+        <!-- Apology Subtext -->
+        <div style="font-size:12px; color:#90a1b0; line-height:1.4; margin-bottom:24px; font-style:italic; border-top:1px solid #dbe2e8; padding-top:14px; text-align:center;">
+          We regret any inconvenience this may cause and appreciate your understanding.
         </div>
         
-        <div id="announcement-modal-message" style="font-size:13px; color:var(--muted); line-height:1.5; text-align:left; background:rgba(0,0,0,0.01); border:1px solid var(--border); border-radius:12px; padding:16px; max-height:220px; overflow-y:auto; margin-bottom:24px; white-space:pre-wrap;">Message details...</div>
-        
-        <button onclick="closeAnnouncementModal()" class="btn-sm btn-confirm" style="width:100%;height:44px;font-size:14px;border-radius:12px;border:none;cursor:pointer;" data-i18n="btn-got-it">Got It 👍</button>
+        <button onclick="closeAnnouncementModal()" id="announcement-modal-btn" style="width:100%;height:46px;background:#dc2626;color:#fff;font-size:14px;font-weight:700;border-radius:12px;border:none;cursor:pointer;box-shadow:0 4px 12px rgba(220,38,38,0.2);transition:all 0.2s;" data-i18n="btn-got-it">Got It 👍</button>
       </div>
     </div>
 
@@ -4175,16 +4184,34 @@ function checkForWelcomeAnnouncements() {
       currentWelcomeAnnouncement = latest;
       document.getElementById('announcement-modal-title').textContent = latest.title;
       document.getElementById('announcement-modal-message').textContent = latest.message;
-      
-      let modalIcon = '📢';
-      if (latest.alert_type === 'warning') modalIcon = '⚠️';
-      else if (latest.alert_type === 'danger') modalIcon = '🚨';
-      document.getElementById('announcement-modal-icon').textContent = modalIcon;
 
-      // Update and format duration display
-      const durationEl = document.getElementById('announcement-modal-duration');
-      const timeTextEl = document.getElementById('announcement-modal-time-text');
-      if (durationEl && timeTextEl) {
+      // Dynamic color theme styling based on alert type
+      let themeColor = '#1a4f72'; // default: info
+      let headerText = 'NOTICE';
+      if (latest.alert_type === 'warning') {
+        themeColor = '#d97706';
+        headerText = 'WARNING NOTICE';
+      } else if (latest.alert_type === 'danger') {
+        themeColor = '#dc2626';
+        headerText = 'CRITICAL NOTICE';
+      }
+
+      const headerEl = document.getElementById('announcement-modal-header');
+      if (headerEl) {
+        headerEl.textContent = headerText;
+        headerEl.style.color = themeColor;
+      }
+
+      const btnEl = document.getElementById('announcement-modal-btn');
+      if (btnEl) {
+        btnEl.style.backgroundColor = themeColor;
+        btnEl.style.boxShadow = `0 4px 12px ${themeColor}33`;
+      }
+
+      // Update and format duration highlight widget
+      const timeHighlightEl = document.getElementById('announcement-modal-time-highlight');
+      const timeContainerEl = document.getElementById('announcement-modal-duration-highlight');
+      if (timeHighlightEl && timeContainerEl) {
         if (latest.starts_at || latest.expires_at) {
           const startStr = latest.starts_at ? new Date(latest.starts_at).toLocaleString(undefined, {
             month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true
@@ -4192,10 +4219,11 @@ function checkForWelcomeAnnouncements() {
           const endStr = latest.expires_at ? new Date(latest.expires_at).toLocaleString(undefined, {
             month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true
           }) : 'Never';
-          timeTextEl.innerHTML = `<strong>Duration:</strong> ${startStr} — ${endStr}`;
-          durationEl.style.display = 'flex';
+          timeHighlightEl.innerHTML = `from ${startStr} to ${endStr}`;
+          timeContainerEl.style.color = themeColor;
+          timeContainerEl.style.display = 'block';
         } else {
-          durationEl.style.display = 'none';
+          timeContainerEl.style.display = 'none';
         }
       }
       
