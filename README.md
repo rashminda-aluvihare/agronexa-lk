@@ -94,6 +94,26 @@ agronexa-lk/
 - **Matching Engine**: Located in [transport.controller.js](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/backend/src/controllers/transport.controller.js).
 - **Logistics**: Allows transport providers to list vehicles, districts covered, and rates per kilometer. Sellers can request delivery bookings, match with local drivers, and track cargo transportation parameters.
 
+### 8. Adaptive Notice Modals & Targeted Announcements
+- **Interactive UI**: Modal layouts in [buyer.html](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/buyer.html) and [seller.html](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/seller.html) adapt dynamically to announcement warning types. It uses custom scale-up keyframe animations, explicit 12-hour AM/PM duration text, and professional apologies.
+- **Session Persistency**: Tracks dismissed notices in `sessionStorage` instead of `localStorage` so announcements display on every new login session.
+- **Targeted Broadcasting**: Implemented in [misc.controller.js](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/backend/src/controllers/misc.controller.js) and [admin.html](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/admin.html). Allows administrators to target notices to specific user roles (`All Users`, `Farmers Only`, `Buyers Only`) or specific Sri Lankan districts.
+
+### 9. Interactive Analytics & Admin Charts
+- **Implementation**: Charts are rendered in [admin.html](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/admin.html) using `Chart.js`.
+- **Visual Trends**: Features a district-wise active Crop Distribution Doughnut chart, monthly user registration growth (Farmers vs Buyers) Bar chart, and a daily Transaction Volume Trend Line chart. All data aggregates dynamically via PostgreSQL queries in [admin.controller.js](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/backend/src/controllers/admin.controller.js).
+
+### 10. Visual Cryptographic Ledger Checker
+- **Implementation**: Renders in the Admin Overview tab.
+- **Integrity Walkthrough**: Animates ledger verification as an interactive blockchain sequence. When clicked, a verification wave pulses block-by-block. Safe database states turn the blocks green, whereas compromise details turn tampered and subsequent nodes red.
+
+### 11. Security Alerts & Fraud Detection Panel
+- **Implementation**: Added to the Audit tab in [admin.html](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/admin.html).
+- **Heuristics**: Scans in-memory logs and active registers to detect security risks:
+  1. **Brute-Force Attacks**: Highlights IP addresses with $\ge 3$ failed logins.
+  2. **Duplicate NIC registrations**: Flags multiple active accounts sharing the same NIC identity.
+  3. **Ledger Integrity Warnings**: Displays warnings if transaction chain hashing fails.
+
 ---
 
 ## 🔌 API Endpoints Documentation
