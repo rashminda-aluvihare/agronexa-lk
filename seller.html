@@ -4169,7 +4169,7 @@ function checkForWelcomeAnnouncements() {
       
       const latest = data.announcements[0];
       
-      const dismissedIds = JSON.parse(localStorage.getItem('agro_dismissed_announcements') || '[]');
+      const dismissedIds = JSON.parse(sessionStorage.getItem('agro_dismissed_announcements') || '[]');
       if (dismissedIds.includes(latest.id)) return;
       
       currentWelcomeAnnouncement = latest;
@@ -4207,10 +4207,10 @@ function checkForWelcomeAnnouncements() {
 function closeAnnouncementModal() {
   document.getElementById('system-announcement-modal').style.display = 'none';
   if (currentWelcomeAnnouncement) {
-    const dismissedIds = JSON.parse(localStorage.getItem('agro_dismissed_announcements') || '[]');
+    const dismissedIds = JSON.parse(sessionStorage.getItem('agro_dismissed_announcements') || '[]');
     if (!dismissedIds.includes(currentWelcomeAnnouncement.id)) {
       dismissedIds.push(currentWelcomeAnnouncement.id);
-      localStorage.setItem('agro_dismissed_announcements', JSON.stringify(dismissedIds));
+      sessionStorage.setItem('agro_dismissed_announcements', JSON.stringify(dismissedIds));
     }
   }
 }

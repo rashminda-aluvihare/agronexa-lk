@@ -4864,8 +4864,8 @@ function checkForWelcomeAnnouncements() {
       
       const latest = data.announcements[0]; // Active announcements are sorted starts_at DESC
       
-      // Check if this announcement has been dismissed by this user
-      const dismissedIds = JSON.parse(localStorage.getItem('agro_dismissed_announcements') || '[]');
+      // Check if this announcement has been dismissed by this user in the current session
+      const dismissedIds = JSON.parse(sessionStorage.getItem('agro_dismissed_announcements') || '[]');
       if (dismissedIds.includes(latest.id)) return;
       
       // Show Welcome Popup Modal
@@ -4904,10 +4904,10 @@ function checkForWelcomeAnnouncements() {
 function closeAnnouncementModal() {
   document.getElementById('system-announcement-modal').style.display = 'none';
   if (currentWelcomeAnnouncement) {
-    const dismissedIds = JSON.parse(localStorage.getItem('agro_dismissed_announcements') || '[]');
+    const dismissedIds = JSON.parse(sessionStorage.getItem('agro_dismissed_announcements') || '[]');
     if (!dismissedIds.includes(currentWelcomeAnnouncement.id)) {
       dismissedIds.push(currentWelcomeAnnouncement.id);
-      localStorage.setItem('agro_dismissed_announcements', JSON.stringify(dismissedIds));
+      sessionStorage.setItem('agro_dismissed_announcements', JSON.stringify(dismissedIds));
     }
   }
 }
