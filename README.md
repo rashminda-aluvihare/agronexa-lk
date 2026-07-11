@@ -114,6 +114,12 @@ agronexa-lk/
   2. **Duplicate NIC registrations**: Flags multiple active accounts sharing the same NIC identity.
   3. **Ledger Integrity Warnings**: Displays warnings if transaction chain hashing fails.
 
+### 12. AI Crop Disease Diagnosis Lab (TensorFlow.js Enabled)
+- **Interactive UI**: Located in [seller.html](file:///c:/Users/rashm/OneDrive/Desktop/agronexalk/seller.html).
+- **Features**: Allows farmers to scan crop leaves to identify diseases (e.g. Paddy Blast, Tomato Late Blight, Coconut Leaf Wilt) or verify healthy foliage.
+- **Diagnostics**: Displays neural network log progression, confidence accuracy score, and specific organic/chemical remedies in Sinhala, Tamil, and English.
+- **Exporting**: Generates and downloads a custom PDF Diagnostic Report with a single click.
+
 ---
 
 ## 🔌 API Endpoints Documentation
