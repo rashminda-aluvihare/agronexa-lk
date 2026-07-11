@@ -1,4 +1,4 @@
-const CACHE_NAME = 'agronexa-cache-v1';
+const CACHE_NAME = 'agronexa-cache-v3';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
