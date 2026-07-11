@@ -959,6 +959,9 @@ async function doLogin() {
     var data = await res.json();
     if (data.success) {
       adminEmail = email; adminPass = pass;
+      if (data.token) {
+        sessionStorage.setItem('agro_token', data.token);
+      }
       document.getElementById('auth-screen').style.display = 'none';
       document.getElementById('dashboard').style.display = 'block';
       initSocket();
@@ -974,6 +977,7 @@ function showErr(msg) {
 }
 function logout() {
   adminEmail = ''; adminPass = '';
+  sessionStorage.removeItem('agro_token');
   document.getElementById('auth-screen').style.display = 'flex';
   document.getElementById('dashboard').style.display = 'none';
 }
