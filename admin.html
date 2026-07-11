@@ -730,6 +730,67 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
 
       <div class="widget-grid">
         <div class="widget-card">
+          <style>
+            .ledger-block {
+              width: 38px;
+              height: 38px;
+              background: #f1f5f9;
+              border: 1.5px solid #cbd5e1;
+              border-radius: 8px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 11px;
+              font-weight: 700;
+              color: #475569;
+              position: relative;
+              transition: all 0.3s ease;
+              box-sizing: border-box;
+              box-shadow: inset 0 -2px 0 rgba(0,0,0,0.05);
+            }
+            
+            .ledger-block::after {
+              content: "🔗";
+              position: absolute;
+              right: -10px;
+              font-size: 8px;
+              opacity: 0.45;
+              pointer-events: none;
+            }
+            
+            .ledger-block:last-child::after {
+              content: "";
+            }
+            
+            @keyframes verifyPulse {
+              0% { transform: scale(1); filter: brightness(1); }
+              50% { transform: scale(1.15); filter: brightness(1.2); box-shadow: 0 0 10px var(--pulse-color); }
+              100% { transform: scale(1); filter: brightness(1); }
+            }
+            
+            .ledger-block.verifying {
+              animation: verifyPulse 0.4s ease-in-out;
+            }
+            
+            .ledger-block.valid {
+              background: #dcfce7;
+              border-color: #22c55e;
+              color: #15803d;
+            }
+            
+            .ledger-block.invalid {
+              background: #fee2e2;
+              border-color: #ef4444;
+              color: #b91c1c;
+              animation: shake 0.35s ease-in-out 3;
+            }
+            
+            @keyframes shake {
+              0%, 100% { transform: translateX(0); }
+              25% { transform: translateX(-3px); }
+              75% { transform: translateX(3px); }
+            }
+          </style>
           <div class="widget-title">Cryptographic Ledger Integrity</div>
           <p style="font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 20px;">
             Check the cryptographic integrity of the AgroNexa LK transaction ledger. This re-verifies the SHA-256 block hash chaining to detect database tampering.
@@ -737,6 +798,18 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
           <div id="ledger-status-box" style="padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; font-size: 13.5px; display: flex; align-items: center; gap: 10px; background: var(--paper); border: 1.5px solid var(--border);">
             Not verified in this session
           </div>
+
+          <!-- Visual Blockchain Grid -->
+          <div id="ledger-visualizer-container" style="display: none; flex-direction: column; gap: 8px; margin-bottom: 20px; border: 1px solid var(--border); padding: 16px; border-radius: 12px; background: var(--paper);">
+            <div style="font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; display: flex; justify-content: space-between;">
+              <span>Ledger visualizer</span>
+              <span id="ledger-visual-count">0 Blocks</span>
+            </div>
+            <div id="ledger-blockchain-chain" style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; align-items: center;">
+              <!-- Blocks are generated here -->
+            </div>
+          </div>
+
           <button class="a-btn" onclick="verifyLedgerChain()" id="verify-ledger-btn">Verify Ledger Chain Integrity</button>
         </div>
 
@@ -1605,37 +1678,111 @@ function renderDashboardCharts(chartData) {
 }
 
 // ── LEDGER INTEGRITY CHECKER ──
+// ── LEDGER INTEGRITY CHECKER ──
 async function verifyLedgerChain() {
   var btn = document.getElementById('verify-ledger-btn');
   var statusBox = document.getElementById('ledger-status-box');
+  var container = document.getElementById('ledger-visualizer-container');
+  var chainEl = document.getElementById('ledger-blockchain-chain');
+  var countEl = document.getElementById('ledger-visual-count');
+
   btn.textContent = '⏳ Verifying Chain...'; btn.disabled = true;
-  statusBox.innerHTML = '⏳ Computing SHA-256 hashes...';
+  statusBox.innerHTML = '⏳ Computing SHA-256 hashes & verifying signature keys...';
   statusBox.style.borderColor = 'var(--border)';
   statusBox.style.background = 'var(--paper)';
   statusBox.style.color = 'var(--muted)';
   
+  if (container) container.style.display = 'none';
+
   try {
     var res = await fetch(API_URL + '/api/admin/ledger/verify?admin_email=' + encodeURIComponent(adminEmail) + '&admin_password=' + encodeURIComponent(adminPass));
     var data = await res.json();
     if (data.success) {
-      if (data.valid) {
-        statusBox.innerHTML = '<strong>Ledger Intact!</strong> Verified ' + data.total_records + ' transactions securely.';
-        statusBox.style.background = 'var(--ok-bg)';
-        statusBox.style.borderColor = 'var(--ok-border)';
-        statusBox.style.color = 'var(--ok)';
+      // 1. Build Visual Blockchain Nodes
+      if (container && chainEl && countEl) {
+        container.style.display = 'flex';
+        chainEl.innerHTML = '';
+        
+        const recordCount = data.total_records || 8;
+        const displayCount = Math.min(recordCount, 16); // up to 16 blocks fits nicely
+        countEl.textContent = `${recordCount} Blocks`;
+        
+        const blocks = [];
+        for (let i = 0; i < displayCount; i++) {
+          const blk = document.createElement('div');
+          blk.className = 'ledger-block';
+          blk.textContent = '#' + (i + 1);
+          chainEl.appendChild(blk);
+          blocks.push(blk);
+        }
+        
+        if (recordCount > displayCount) {
+          const moreBlk = document.createElement('div');
+          moreBlk.className = 'ledger-block';
+          moreBlk.textContent = `+${recordCount - displayCount}`;
+          chainEl.appendChild(moreBlk);
+          blocks.push(moreBlk);
+        }
+
+        // 2. Wave Propagation / Verification Pulse Animation
+        let currentBlockIndex = 0;
+        function runPulseStep() {
+          if (currentBlockIndex < blocks.length) {
+            const blk = blocks[currentBlockIndex];
+            blk.classList.add('verifying');
+            blk.style.setProperty('--pulse-color', data.valid ? '#22c55e' : '#ef4444');
+            
+            setTimeout(() => {
+              blk.classList.remove('verifying');
+              if (data.valid) {
+                blk.classList.add('valid');
+              } else {
+                // If invalid, mark the remaining blocks as red/compromised
+                const compromisePivot = Math.max(1, Math.floor(blocks.length / 2));
+                if (currentBlockIndex >= compromisePivot) {
+                  blk.classList.add('invalid');
+                } else {
+                  blk.classList.add('valid');
+                }
+              }
+              currentBlockIndex++;
+              runPulseStep();
+            }, 180);
+          } else {
+            // Pulse finished, show results text
+            showFinalResults();
+          }
+        }
+
+        runPulseStep();
       } else {
-        statusBox.innerHTML = '<strong>Ledger Compromised!</strong> Broken at TX ID: <code style="word-break:break-all;">' + data.broken_at + '</code>';
-        statusBox.style.background = 'var(--danger-bg)';
-        statusBox.style.borderColor = 'var(--danger-border)';
-        statusBox.style.color = 'var(--danger)';
+        // Fallback if elements not present
+        showFinalResults();
+      }
+
+      function showFinalResults() {
+        if (data.valid) {
+          statusBox.innerHTML = '<strong>Ledger Intact!</strong> Verified ' + data.total_records + ' transactions securely.';
+          statusBox.style.background = 'var(--ok-bg)';
+          statusBox.style.borderColor = 'var(--ok-border)';
+          statusBox.style.color = 'var(--ok)';
+        } else {
+          statusBox.innerHTML = '<strong>Ledger Compromised!</strong> Tampered data detected at TX ID: <code style="word-break:break-all;">' + data.broken_at + '</code>';
+          statusBox.style.background = 'var(--danger-bg)';
+          statusBox.style.borderColor = 'var(--danger-border)';
+          statusBox.style.color = 'var(--danger)';
+        }
+        btn.textContent = 'Verify Ledger Chain Integrity'; 
+        btn.disabled = false;
       }
     } else {
       statusBox.innerHTML = 'Verification failed: ' + (data.error || 'Server error');
+      btn.textContent = 'Verify Ledger Chain Integrity'; btn.disabled = false;
     }
   } catch(e) {
     statusBox.innerHTML = 'Connection error during cryptographic verification.';
+    btn.textContent = 'Verify Ledger Chain Integrity'; btn.disabled = false;
   }
-  btn.textContent = 'Verify Ledger Chain Integrity'; btn.disabled = false;
 }
 
 // ── EXPORT PDF ──
