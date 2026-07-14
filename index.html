@@ -897,7 +897,14 @@ async function submitRegister(e) {
     var res  = await fetch(API_URL + '/api/auth/register-with-otp', { method: 'POST', body: pendingFormData });
     var data = await res.json();
     if (data.success) { showSuccess(data.user.first_name); }
-    else { closeConfirm(); alert('❌ ' + (data.error ? getTranslation(data.error, data.error) : 'Registration failed')); }
+    else { 
+      closeConfirm(); 
+      if (data.error === 'MAINTENANCE_LOCKOUT') {
+        alert('❌ ' + (data.message || 'System is under maintenance'));
+      } else {
+        alert('❌ ' + (data.error ? getTranslation(data.error, data.error) : 'Registration failed')); 
+      }
+    }
   } catch (err) {
     closeConfirm();
     alert('❌ ' + getTranslation('err-server-connection', 'Cannot connect to server. Check your Railway URL.'));
@@ -950,7 +957,13 @@ document.getElementById('btn-login').addEventListener('click', async function ()
         alert('✅ ' + getTranslation('js-welcome', 'Welcome back') + ', ' + data.user.name + '!');
       }
     }
-    else { alert('❌ ' + (data.error ? getTranslation(data.error, data.error) : 'Login failed')); }
+    else { 
+      if (data.error === 'MAINTENANCE_LOCKOUT') {
+        alert('❌ ' + (data.message || 'System is under maintenance'));
+      } else {
+        alert('❌ ' + (data.error ? getTranslation(data.error, data.error) : 'Login failed')); 
+      }
+    }
   } catch (err) {
     alert('❌ ' + getTranslation('err-server-connection', 'Cannot connect to server. Check your Railway URL.'));
   } finally {
