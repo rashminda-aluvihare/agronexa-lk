@@ -9,10 +9,14 @@ const { createApp } = require('./app');
 const { attachSocket } = require('./socket');
 const { initDatabase } = require('./config/db');
 const { updateMarketPrices } = require('./services/scraper.service');
+const { initSystemSettings } = require('./services/system.service');
 
 async function start() {
   // Run database migrations on start
   await initDatabase();
+
+  // Load and cache system settings (like maintenance status)
+  await initSystemSettings();
 
   // Run scraper to seed/update prices on startup
   updateMarketPrices().catch((err) => {

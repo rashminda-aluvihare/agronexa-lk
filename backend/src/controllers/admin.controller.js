@@ -2,6 +2,7 @@ const db = require('../config/db');
 const auditService = require('../services/audit.service');
 const notificationService = require('../services/notification.service');
 const emailService = require('../services/email.service');
+const systemService = require('../services/system.service');
 
 // ── ADMIN CREDENTIALS FOR COMPATIBILITY ──
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@agronexa.lk';
@@ -641,6 +642,31 @@ async function deleteAnnouncement(req, res, next) {
   }
 }
 
+/**
+ * POST /api/admin/system/maintenance
+ */
+async function setMaintenanceMode(req, res, next) {
+  if (!verifyAdminAccess(req)) {
+    return res.status(401).json({ error: 'Unauthorized admin access.' });
+  }
+
+  const { active, message } = req.body;
+  if (active === undefined) {
+    return res.status(400).json({ error: 'Field "active" (boolean) is required.' });
+  }
+
+  try {
+    const result = await systemService.setMaintenanceMode(active, message);
+    
+    // Log audit action
+    await auditService.logAction(0, 'ADMIN_SET_MAINTENANCE', req.ip, { active, message });
+
+    return res.json({ success: true, ...result });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getPendingUsers,
   getAllUsers,
@@ -656,4 +682,5 @@ module.exports = {
   createAnnouncement,
   updateAnnouncement,
   deleteAnnouncement,
+  setMaintenanceMode,
 };

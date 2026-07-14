@@ -165,6 +165,15 @@ async function login(req, res, next) {
       });
     }
 
+    // Check system maintenance status (Admins bypass lockout)
+    const systemService = require('../services/system.service');
+    if (systemService.isMaintenanceActive()) {
+      return res.status(503).json({
+        error: 'MAINTENANCE_LOCKOUT',
+        message: systemService.getMaintenanceMessage()
+      });
+    }
+
     // 2. Query normal user
     const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
     if (result.rows.length === 0) {

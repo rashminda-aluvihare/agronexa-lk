@@ -32,6 +32,7 @@ apiRouter.use('/ledger', ledgerRoutes);
 apiRouter.get('/market-prices', miscController.getMarketPrices);
 apiRouter.get('/public-stats', miscController.getPublicStats);
 apiRouter.get('/announcements', authRequired, miscController.getActiveAnnouncements);
+apiRouter.get('/system/maintenance', miscController.getMaintenanceStatus);
 
 module.exports = { apiRouter };
 

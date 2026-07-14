@@ -38,6 +38,16 @@ async function authRequired(req, res, next) {
     if (token) {
       const decoded = jwt.verify(token, JWT_SECRET);
       req.auth = decoded; // Attach user claims to request object
+      
+      // Check if system maintenance mode is active
+      const systemService = require('../services/system.service');
+      if (systemService.isMaintenanceActive() && req.auth.role !== 'admin') {
+        return res.status(503).json({
+          error: 'MAINTENANCE_LOCKOUT',
+          message: systemService.getMaintenanceMessage()
+        });
+      }
+
       return next();     // Proceed to target route handler
     }
 
@@ -85,6 +95,16 @@ async function authRequired(req, res, next) {
           role: user.role,
           name: user.first_name,
         };
+
+        // Check if system maintenance mode is active
+        const systemService = require('../services/system.service');
+        if (systemService.isMaintenanceActive() && req.auth.role !== 'admin') {
+          return res.status(503).json({
+            error: 'MAINTENANCE_LOCKOUT',
+            message: systemService.getMaintenanceMessage()
+          });
+        }
+
         return next();
       }
     }

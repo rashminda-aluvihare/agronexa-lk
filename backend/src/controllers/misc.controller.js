@@ -124,10 +124,23 @@ async function getActiveAnnouncements(req, res) {
   }
 }
 
+/**
+ * GET /api/system/maintenance
+ */
+function getMaintenanceStatus(req, res) {
+  const systemService = require('../services/system.service');
+  return res.json({
+    success: true,
+    active: systemService.isMaintenanceActive(),
+    message: systemService.getMaintenanceMessage()
+  });
+}
+
 module.exports = {
   getMarketPrices,
   getPublicStats,
   getWeatherAdvisoryHandler,
   getActiveAnnouncements,
+  getMaintenanceStatus,
 };
 

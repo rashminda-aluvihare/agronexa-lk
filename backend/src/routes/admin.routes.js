@@ -8,6 +8,7 @@ const { authRequired, requireRole } = require('../middlewares/auth.middleware');
 router.get('/stats', authRequired, requireRole(['admin']), adminController.getDashboardStats);
 router.get('/ledger/verify', authRequired, requireRole(['admin']), ledgerController.verifyLedger);
 router.post('/system/reset', authRequired, requireRole(['admin']), adminController.resetSystemDatabase);
+router.post('/system/maintenance', authRequired, requireRole(['admin']), adminController.setMaintenanceMode);
 router.get('/pending', authRequired, requireRole(['admin']), adminController.getPendingUsers);
 router.get('/users', authRequired, requireRole(['admin']), adminController.getAllUsers);
 router.post('/approve/:id', authRequired, requireRole(['admin']), adminController.approveUser);

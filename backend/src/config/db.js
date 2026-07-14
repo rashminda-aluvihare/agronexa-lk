@@ -395,6 +395,23 @@ async function initDatabase() {
     await client.query("ALTER TABLE announcements ADD COLUMN IF NOT EXISTS target_audience VARCHAR(50) DEFAULT 'all';");
     await client.query("ALTER TABLE announcements ADD COLUMN IF NOT EXISTS target_district VARCHAR(60) DEFAULT 'all';");
 
+    // 15. System Settings Table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS system_settings (
+        key VARCHAR(50) PRIMARY KEY,
+        value TEXT
+      );
+    `);
+
+    // Seed default settings
+    await client.query(`
+      INSERT INTO system_settings (key, value)
+      VALUES 
+        ('maintenance_mode', 'false'),
+        ('maintenance_message', 'AgroNexa LK is undergoing scheduled maintenance. Please check back later.')
+      ON CONFLICT (key) DO NOTHING;
+    `);
+
     await client.query('COMMIT');
     console.log('✅ Database migration completed successfully.');
   } catch (err) {

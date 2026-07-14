@@ -824,6 +824,34 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
             <button class="btn-secondary" onclick="exportPDF('audit-logs')">System Logs</button>
           </div>
         </div>
+
+        <!-- System Maintenance Lockout Widget -->
+        <div class="widget-card" style="border: 1.5px solid var(--danger-border); background: rgba(220, 38, 38, 0.02);">
+          <div class="widget-title" style="color: var(--danger); display: flex; align-items: center; gap: 8px;">
+            🛡️ System Maintenance Mode
+          </div>
+          <p style="font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 16px;">
+            Temporarily disable login and access for all regular users (Farmers & Buyers). Active users will be locked out immediately in real time. Admins can still access all dashboard portals.
+          </p>
+          
+          <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--paper); border: 1px solid var(--border); border-radius: 10px;">
+              <span style="font-size: 13.5px; font-weight: 600; color: var(--ink);">Status:</span>
+              <span id="maintenance-status-badge" style="font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 12px; text-transform: uppercase; background: #e2e8f0; color: #475569;">
+                Checking...
+              </span>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <label style="font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Custom Lockout Message</label>
+              <textarea id="maintenance-msg-input" style="width: 100%; min-height: 60px; padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 12.5px; font-family: inherit; resize: vertical;" placeholder="Enter custom message details..."></textarea>
+            </div>
+          </div>
+          
+          <button class="btn-secondary" id="maintenance-toggle-btn" onclick="toggleMaintenanceMode()" style="width: 100%; border-color: var(--danger-border); color: var(--danger); font-weight: 600;">
+            Activate Maintenance Lockout
+          </button>
+        </div>
       </div>
 
     </div>
@@ -1145,7 +1173,102 @@ function logout() {
 
 // ── DATA ──
 async function loadAll() {
-  await Promise.all([loadDashboardStats(), loadPending(), loadAllUsers(), loadTransport()]);
+  await Promise.all([loadDashboardStats(), loadPending(), loadAllUsers(), loadTransport(), checkMaintenanceModeStatus()]);
+}
+
+var isMaintenanceActiveGlobal = false;
+
+async function checkMaintenanceModeStatus() {
+  try {
+    const res = await fetch(API_URL + '/api/system/maintenance');
+    const data = await res.json();
+    if (data.success) {
+      isMaintenanceActiveGlobal = data.active;
+      updateMaintenanceUI(data.active, data.message);
+    }
+  } catch (err) {
+    console.error('Failed to load maintenance status:', err);
+  }
+}
+
+function updateMaintenanceUI(active, message) {
+  const badge = document.getElementById('maintenance-status-badge');
+  const msgInput = document.getElementById('maintenance-msg-input');
+  const toggleBtn = document.getElementById('maintenance-toggle-btn');
+  
+  if (badge) {
+    if (active) {
+      badge.textContent = '🔒 Active';
+      badge.style.background = 'var(--danger-bg)';
+      badge.style.borderColor = 'var(--danger-border)';
+      badge.style.color = 'var(--danger)';
+    } else {
+      badge.textContent = '🟢 Online';
+      badge.style.background = 'var(--ok-bg)';
+      badge.style.borderColor = 'var(--ok-border)';
+      badge.style.color = 'var(--ok)';
+    }
+  }
+  
+  if (msgInput && message !== undefined) {
+    msgInput.value = message;
+  }
+  
+  if (toggleBtn) {
+    if (active) {
+      toggleBtn.textContent = 'Disable Maintenance Mode';
+      toggleBtn.style.background = 'var(--danger)';
+      toggleBtn.style.color = '#fff';
+      toggleBtn.style.borderColor = 'var(--danger)';
+    } else {
+      toggleBtn.textContent = 'Activate Maintenance Lockout';
+      toggleBtn.style.background = '';
+      toggleBtn.style.color = 'var(--danger)';
+      toggleBtn.style.borderColor = 'var(--danger-border)';
+    }
+  }
+}
+
+async function toggleMaintenanceMode() {
+  const toggleBtn = document.getElementById('maintenance-toggle-btn');
+  const msgInput = document.getElementById('maintenance-msg-input');
+  const message = msgInput ? msgInput.value.trim() : '';
+  const nextState = !isMaintenanceActiveGlobal;
+  
+  if (nextState && !confirm('Are you sure you want to activate System Maintenance Lockout? This will disconnect all regular active users immediately.')) {
+    return;
+  }
+
+  toggleBtn.disabled = true;
+  toggleBtn.textContent = nextState ? 'Activating...' : 'Deactivating...';
+  
+  try {
+    const res = await fetch(API_URL + '/api/admin/system/maintenance', {
+      method: 'POST',
+      headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({
+        active: nextState,
+        message: message || undefined,
+        admin_email: adminEmail,
+        admin_password: adminPass
+      })
+    });
+    
+    const data = await res.json();
+    if (data.success) {
+      isMaintenanceActiveGlobal = data.active;
+      updateMaintenanceUI(data.active, data.message);
+      showToast(nextState ? 'Maintenance lockout activated!' : 'Maintenance lockout disabled. Platform is online.');
+    } else {
+      showToast(data.error || 'Failed to update maintenance settings.');
+      updateMaintenanceUI(isMaintenanceActiveGlobal);
+    }
+  } catch (err) {
+    showToast('Connection error');
+    updateMaintenanceUI(isMaintenanceActiveGlobal);
+  } finally {
+    toggleBtn.disabled = false;
+  }
 }
 async function loadPending() {
   try {
@@ -2289,6 +2412,11 @@ function initSocket() {
       // Auto-reload stats and pending lists
       loadDashboardStats();
       loadPending();
+    });
+
+    socket.on('maintenance_status', function(data) {
+      isMaintenanceActiveGlobal = data.active;
+      updateMaintenanceUI(data.active, data.message);
     });
   }
 }
