@@ -558,6 +558,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
     text-align: center;
   }
 }
+@keyframes popIn{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
 </style>
 </head>
 <body>
@@ -1120,6 +1121,36 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
 <!-- TOAST -->
 <div id="toast"></div>
 
+<!-- CUSTOM ALERT DIALOG -->
+<div id="alert-overlay" style="display:none;position:fixed;inset:0;background:rgba(4,26,13,0.7);backdrop-filter:blur(6px);z-index:2000;align-items:center;justify-content:center;">
+  <div id="alert-box" style="background:#fff;border-radius:24px;padding:32px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(4,26,13,0.35);border:1.5px solid rgba(40,160,96,0.15);animation:popIn .25s ease;text-align:center;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:16px;">
+    <!-- Decorative top gradient -->
+    <div id="alert-border-glow" style="position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#D95050,#ef4444);"></div>
+    
+    <!-- Dynamic Icon Area -->
+    <div id="alert-icon-wrapper" style="width:64px;height:64px;border-radius:50%;background:#FEE2E2;border:2px solid #FCA5A5;display:flex;align-items:center;justify-content:center;margin-top:8px;">
+      <!-- Error SVG (default) -->
+      <svg id="alert-icon-error" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D95050" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+      <!-- Success SVG -->
+      <svg id="alert-icon-success" style="display:none;" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1E7A47" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </div>
+    
+    <!-- Title and Content -->
+    <div style="font-family: inherit;font-size:1.45rem;font-weight:600;color:#050F07;margin-top:4px;" id="alert-title">Alert</div>
+    <div style="font-size:13.5px;color:#5E7569;line-height:1.65;max-width:320px;word-break:break-word;" id="alert-message">This is an alert message.</div>
+    
+    <!-- Confirm button -->
+    <button id="alert-btn" onclick="closeAlert()" style="width:100%;height:46px;background:linear-gradient(135deg,#155C35,#1E7A47);border:none;border-radius:12px;font-family:inherit;font-size:13.5px;font-weight:600;color:#fff;cursor:pointer;margin-top:12px;box-shadow:0 3px 12px rgba(21,92,53,0.22);transition:all 0.2s;">
+      OK
+    </button>
+  </div>
+</div>
+
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
@@ -1128,6 +1159,86 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--paper);c
 var API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:'
   ? 'http://localhost:3000'
   : 'https://agronexa-lk-production.up.railway.app';
+
+// ── CUSTOM ALERT DIALOG FUNCTIONS ──
+function showAlert(message, type = 'error', title = null) {
+  const overlay = document.getElementById('alert-overlay');
+  const alertTitle = document.getElementById('alert-title');
+  const alertMsg = document.getElementById('alert-message');
+  const glow = document.getElementById('alert-border-glow');
+  const wrapper = document.getElementById('alert-icon-wrapper');
+  const iconErr = document.getElementById('alert-icon-error');
+  const iconSuccess = document.getElementById('alert-icon-success');
+  const btn = document.getElementById('alert-btn');
+  
+  if (!overlay || !alertMsg) {
+    console.warn('Alert elements not loaded yet. Falling back to native alert:', message);
+    window._nativeAlert(message);
+    return;
+  }
+  
+  // Set message text
+  alertMsg.textContent = message;
+  
+  // Translate title or set fallback
+  if (title) {
+    alertTitle.textContent = title;
+  } else {
+    alertTitle.textContent = type === 'success' ? 'Success' : 'Alert';
+  }
+  
+  // Apply visual styles based on error or success
+  if (type === 'success') {
+    glow.style.background = 'linear-gradient(90deg,#28A060,#3DC98A)';
+    wrapper.style.background = '#EDF5EF';
+    wrapper.style.borderColor = 'rgba(30,122,71,0.25)';
+    iconErr.style.display = 'none';
+    iconSuccess.style.display = 'block';
+    btn.style.background = 'linear-gradient(135deg,#155C35,#1E7A47)';
+    btn.style.boxShadow = '0 3px 12px rgba(21,92,53,0.22)';
+  } else {
+    // Default: Error / Warn
+    glow.style.background = 'linear-gradient(90deg,#D95050,#ef4444)';
+    wrapper.style.background = '#FEE2E2';
+    wrapper.style.borderColor = '#FCA5A5';
+    iconErr.style.display = 'block';
+    iconSuccess.style.display = 'none';
+    btn.style.background = 'linear-gradient(135deg,var(--g3),var(--g4))';
+    btn.style.boxShadow = '0 3px 12px rgba(21,92,53,0.22)';
+  }
+  
+  // Display overlay
+  overlay.style.display = 'flex';
+}
+
+function closeAlert() {
+  const overlay = document.getElementById('alert-overlay');
+  if (overlay) {
+    overlay.style.display = 'none';
+  }
+}
+
+// Override global window.alert with custom themed overlay alert
+window._nativeAlert = window.alert;
+window.alert = function(message) {
+  if (!message) return;
+  const msgStr = String(message);
+  let type = 'error';
+  let cleanMsg = msgStr;
+  
+  if (msgStr.includes('✅')) {
+    type = 'success';
+    cleanMsg = msgStr.replace(/^[✅\s]*/g, '');
+  } else if (msgStr.includes('❌')) {
+    type = 'error';
+    cleanMsg = msgStr.replace(/^[❌\s]*/g, '');
+  } else if (msgStr.includes('⚠️')) {
+    type = 'error';
+    cleanMsg = msgStr.replace(/^[⚠️\s]*/g, '');
+  }
+  
+  showAlert(cleanMsg, type);
+};
 var adminEmail = '', adminPass = '';
 var allUsers = [], pendingUsers = [];
 var currentTab = 'overview';
