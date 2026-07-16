@@ -1012,8 +1012,14 @@ async function sendOTP() {
     if (data.success) {
       verifiedPhone = fullPhone;
       document.getElementById('otp-input-group').style.display = 'block';
-      document.getElementById('otp-status').innerHTML = 
-        `<span style="color:#10b981;">✅ ${getTranslation('js-otp-sent-to', 'OTP sent to')} +94${formattedPhone}</span>`;
+      let statusHtml = `<span style="color:#10b981;">✅ ${getTranslation('js-otp-sent-to', 'OTP sent to')} +94${formattedPhone}</span>`;
+      if (data.mock) {
+        statusHtml += `<div style="color:#eab308; margin-top: 8px; font-size: 13px; line-height: 1.5; font-weight: 600;">
+          ⚠️ Twilio Sandbox: SMS නොලැබුනේ නම්, Bypass Code එක ලෙස <b>123456</b> ඇතුලත් කරන්න. <br>
+          (If SMS is not received, enter mock code <b>123456</b>)
+        </div>`;
+      }
+      document.getElementById('otp-status').innerHTML = statusHtml;
     } else {
       alert("❌ " + (data.error ? getTranslation(data.error, data.error) : "Failed to send OTP"));
     }
