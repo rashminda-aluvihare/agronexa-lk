@@ -1,4 +1,5 @@
-# 🌾 AgroNexa LK — Smart Farming & B2B Agricultural Platform
+# 🌾 AgroNexa LK - Smart Farming Platform with Blockchain-Inspired
+Technology for Sri Lanka
 
 [![GitHub license](https://img.shields.io/github/license/rashminda-aluvihare/agronexa-lk?style=flat-squared&color=green)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/rashminda-aluvihare/agronexa-lk?style=flat-squared)](https://github.com/rashminda-aluvihare/agronexa-lk/stargazers)
