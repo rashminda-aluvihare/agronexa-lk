@@ -47,7 +47,7 @@ export const buyerDummy = {
   bookings: [
     {
       id: 'b1',
-      icon: '🚜',
+      icon: '',
       equipmentName: 'Kubota Mini Tractor',
       ownerName: 'Nimal Jayasuriya',
       ownerDistrict: 'Kurunegala',
@@ -57,7 +57,7 @@ export const buyerDummy = {
     },
     {
       id: 'b2',
-      icon: '💧',
+      icon: '',
       equipmentName: 'Water Pump (5HP)',
       ownerName: 'Ruwan Silva',
       ownerDistrict: 'Polonnaruwa',
@@ -67,7 +67,7 @@ export const buyerDummy = {
     },
     {
       id: 'b3',
-      icon: '🚛',
+      icon: '',
       equipmentName: 'Lorry Transport (3T)',
       ownerName: 'Lanka Transport Co.',
       ownerDistrict: 'Colombo',
@@ -77,7 +77,7 @@ export const buyerDummy = {
     },
     {
       id: 'b4',
-      icon: '🌿',
+      icon: '',
       equipmentName: 'Sprayer Machine',
       ownerName: 'Agro Tools LK',
       ownerDistrict: 'Gampaha',
@@ -89,7 +89,7 @@ export const buyerDummy = {
   marketplace: [
     {
       id: 'p1',
-      icon: '🥬',
+      icon: '',
       name: 'Gotukola',
       district: 'Kandy',
       availableStock: 60,
@@ -97,7 +97,7 @@ export const buyerDummy = {
     },
     {
       id: 'p2',
-      icon: '🌶️',
+      icon: '',
       name: 'Red Chilies',
       district: 'Kandy',
       availableStock: 35,
@@ -105,7 +105,7 @@ export const buyerDummy = {
     },
     {
       id: 'p3',
-      icon: '🥕',
+      icon: '',
       name: 'Carrots',
       district: 'Nuwara Eliya',
       availableStock: 200,
@@ -113,7 +113,7 @@ export const buyerDummy = {
     },
     {
       id: 'p4',
-      icon: '🍅',
+      icon: '',
       name: 'Tomatoes',
       district: 'Kandy',
       availableStock: 120,

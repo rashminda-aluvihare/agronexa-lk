@@ -825,7 +825,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <path d="M12 2v14M19 9l-7 7-7-7M5 21h14" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      <span data-i18n="nav-download-app">📲 Download App</span>
+      <span data-i18n="nav-download-app"> Download App</span>
     </div>
   </nav>
 
@@ -856,25 +856,7 @@
 
   <div class="content">
 
-    <!-- Mobile App Announcement Banner -->
-    <div id="section-app-banner" class="panel" style="display: none; background: linear-gradient(135deg, #1b5e20 0%, #006064 100%); color: #ffffff; border: none; position: relative; overflow: hidden; align-items: center; justify-content: space-between; gap: 20px; padding: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); margin-bottom: 5px;">
-      <div style="position: absolute; right: -20px; bottom: -30px; opacity: 0.15; font-size: 150px; transform: rotate(-15deg); pointer-events: none;">📱</div>
-      <div style="display: flex; align-items: center; gap: 16px; flex: 1;">
-        <div style="width: 52px; height: 52px; border-radius: 12px; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0;">📲</div>
-        <div>
-          <div style="font-size: 16px; font-weight: 700; margin-bottom: 4px; letter-spacing: 0.5px;" data-i18n="announcement-app-title">AgroNexa-LK Mobile App Coming Soon! 🚀</div>
-          <div style="font-size: 12.5px; opacity: 0.9; line-height: 1.4;" data-i18n="announcement-app-desc">We are excited to announce that our official mobile app is currently in development! Enjoy faster bookings, real-time push alerts, and direct farm-to-buyer connectivity right from your smartphone.</div>
-        </div>
-      </div>
-      <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0; position: relative; z-index: 2;">
-        <button class="btn-sm" onclick="showToast('Stay Tuned!', 'We will notify you as soon as the app goes live on Google Play & App Store! 🔔', 'success')" style="background: #ffffff; color: #006064; border: none; padding: 8px 16px; font-size: 12px; font-weight: 700; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
-          <span data-i18n="btn-notify-me">Notify Me 🔔</span>
-        </button>
-        <button onclick="dismissAppBanner()" style="background: transparent; border: none; color: rgba(255,255,255,0.7); cursor: pointer; font-size: 18px; padding: 4px; display: flex; align-items: center; justify-content: center; transition: color 0.2s;" title="Dismiss">
-          ✕
-        </button>
-      </div>
-    </div>
+
 
     <!-- Stats -->
     <div class="stats-row" id="section-stats">
@@ -929,7 +911,7 @@
     <!-- Weather Section -->
     <div class="panel" id="section-weather" style="display: none; margin-top: 20px; margin-bottom: 20px;">
       <div class="panel-head">
-        <div class="panel-title" data-i18n="weather-title">🌦️ Weather Alert & Farming Advisory</div>
+        <div class="panel-title" data-i18n="weather-title"> Weather Alert & Farming Advisory</div>
         <div id="weather-district-display" style="font-size:12px; font-weight:600; color:var(--teal-mid);">Loading district...</div>
       </div>
       <div style="display:flex; flex-direction:column; gap:12px;">
@@ -945,9 +927,9 @@
     <!-- Price Index Section -->
     <div class="panel" id="section-price-index" style="display: none; margin-top: 20px; margin-bottom: 20px;">
       <div class="panel-head" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-        <div class="panel-title" data-i18n="price-index-title">📊 Daily Crop Market Price Index (Sri Lanka)</div>
+        <div class="panel-title" data-i18n="price-index-title"> Daily Crop Market Price Index (Sri Lanka)</div>
         <button onclick="downloadPriceSummaryPDF()" class="btn-sm btn-accept" style="margin: 0; padding: 6px 12px; font-size: 11px; display: flex; align-items: center; gap: 4px; background: var(--teal-mid); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
-          📥 <span data-i18n="btn-download-summary">Download Summary (PDF)</span>
+           <span data-i18n="btn-download-summary">Download Summary (PDF)</span>
         </button>
       </div>
       <p style="font-size:12px; color:var(--muted); margin-bottom: 12px;" data-i18n="price-index-sub">Average market rates per kg from dedicated economic centres.</p>
@@ -973,10 +955,10 @@
           <h4 id="price-chart-title" style="font-size: 14px; font-weight: 600; margin: 0; color: var(--teal-mid);"></h4>
           <div style="display: flex; gap: 8px;">
             <button onclick="downloadChartAsPNG()" style="font-size: 11px; padding: 4px 8px; background: #fff; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 4px; color: var(--text-color);">
-              📥 <span data-i18n="btn-download-chart-img">Download Image</span>
+               <span data-i18n="btn-download-chart-img">Download Image</span>
             </button>
             <button onclick="downloadChartAsPDF()" style="font-size: 11px; padding: 4px 8px; background: var(--teal-mid); border: none; border-radius: 4px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 4px; color: #fff;">
-              📄 <span data-i18n="btn-download-chart-pdf">Download PDF</span>
+               <span data-i18n="btn-download-chart-pdf">Download PDF</span>
             </button>
           </div>
         </div>
@@ -990,7 +972,7 @@
     <div class="grid-3" id="section-broadcasts-responses" style="display: none;">
       <!-- Broadcast request -->
       <div class="broadcast-panel" id="panel-broadcast-form">
-        <div class="broadcast-title" data-i18n="broadcast-title-head">📡 Broadcast a Buyer Request</div>
+        <div class="broadcast-title" data-i18n="broadcast-title-head"> Broadcast a Buyer Request</div>
         <div class="broadcast-sub" data-i18n="broadcast-sub-head">Your request will be SMS-broadcasted to all matching sellers instantly</div>
         <form id="broadcast-form" onsubmit="submitBroadcast(event)">
           <div class="form-row">
@@ -1024,7 +1006,7 @@
             <span data-i18n="broadcast-btn-send">Broadcast to Sellers</span>
           </button>
         </form>
-        <div class="broadcast-note" data-i18n="broadcast-note-expiry">⚠️ Requests expire after 72 hours if no response is accepted</div>
+        <div class="broadcast-note" data-i18n="broadcast-note-expiry"> Requests expire after 72 hours if no response is accepted</div>
       </div>
 
       <!-- Seller responses -->
@@ -1058,8 +1040,8 @@
           <div class="panel-action" onclick="switchTab('bookings')" style="cursor:pointer" data-i18n="btn-view-all">View all</div>
         </div>
         <div style="display:flex; background:var(--teal-pale); border-radius:10px; padding:4px; gap:4px; margin-bottom:15px;">
-          <button id="bookings-subtab-rentals" onclick="switchBookingSubtab('rentals')" style="flex:1; height:32px; border:none; border-radius:8px; font-size:12.5px; font-weight:500; cursor:pointer; background:#fff; color:var(--teal); transition: all 0.2s;"><span data-i18n="js-sub-booking-rentals">🚜 Tool Rentals</span></button>
-          <button id="bookings-subtab-purchases" onclick="switchBookingSubtab('purchases')" style="flex:1; height:32px; border:none; border-radius:8px; font-size:12.5px; font-weight:500; cursor:pointer; background:transparent; color:var(--muted); transition: all 0.2s;"><span data-i18n="js-sub-booking-purchases">🌾 Crop Orders</span></button>
+          <button id="bookings-subtab-rentals" onclick="switchBookingSubtab('rentals')" style="flex:1; height:32px; border:none; border-radius:8px; font-size:12.5px; font-weight:500; cursor:pointer; background:#fff; color:var(--teal); transition: all 0.2s;"><span data-i18n="js-sub-booking-rentals"> Tool Rentals</span></button>
+          <button id="bookings-subtab-purchases" onclick="switchBookingSubtab('purchases')" style="flex:1; height:32px; border:none; border-radius:8px; font-size:12.5px; font-weight:500; cursor:pointer; background:transparent; color:var(--muted); transition: all 0.2s;"><span data-i18n="js-sub-booking-purchases"> Crop Orders</span></button>
         </div>
         <div id="bookings-list" style="max-height: 400px; overflow-y: auto;">
           <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;" data-i18n="js-no-bookings">Loading bookings...</div>
@@ -1076,7 +1058,7 @@
         </div>
         <div class="search-bar">
           <input class="search-input" id="market-search" type="text" placeholder="Search produce or equipment..." oninput="loadMarketplace()" data-i18n-placeholder="placeholder-search-produce">
-          <button class="filter-btn" id="market-toggle-btn" onclick="toggleMarketType()" style="white-space:nowrap;" data-i18n="btn-view-equipment">🚜 View Equipment</button>
+          <button class="filter-btn" id="market-toggle-btn" onclick="toggleMarketType()" style="white-space:nowrap;" data-i18n="btn-view-equipment"> View Equipment</button>
         </div>
         <div id="market-map" style="height: 350px; border-radius: 12px; margin-bottom: 15px; display: none;"></div>
         <div id="marketplace-grid" class="market-grid" style="max-height: 350px; overflow-y: auto; padding-right: 5px;">
@@ -1177,7 +1159,7 @@
     <!-- Announcements Section -->
     <div class="panel content-section" id="section-announcements" style="display: none; margin-top: 20px;">
       <div class="panel-head">
-        <div class="panel-title" data-i18n="nav-announcements">Announcements 📢</div>
+        <div class="panel-title" data-i18n="nav-announcements">Announcements </div>
       </div>
       <div class="panel-sub" style="font-size:12px; color:var(--text-muted); margin-bottom:15px;" data-i18n="announcements-tab-desc">View official announcements and important updates from AgroNexa-LK system administration.</div>
       <div id="announcements-list-container" style="display:flex; flex-direction:column; gap:12px;">
@@ -1188,8 +1170,8 @@
     <!-- Blockchain Ledger Section -->
     <div class="panel" id="section-ledger" style="display:none;">
       <div class="panel-head">
-        <div class="panel-title">🛡️ AgroNexa Blockchain Ledger — My Chained Agreements</div>
-        <div class="panel-action" onclick="verifyLedger()" style="cursor:pointer; background: var(--teal-pale); color: var(--teal); padding: 6px 12px; border-radius: 8px;">🔗 Verify Chain Integrity</div>
+        <div class="panel-title"> AgroNexa Blockchain Ledger — My Chained Agreements</div>
+        <div class="panel-action" onclick="verifyLedger()" style="cursor:pointer; background: var(--teal-pale); color: var(--teal); padding: 6px 12px; border-radius: 8px;"> Verify Chain Integrity</div>
       </div>
       <p style="font-size:12px; color:var(--muted); margin-bottom: 20px; line-height: 1.5;">
         All confirmed transactions between you and sellers are cryptographically hashed and chained to form an immutable ledger. 
@@ -1225,7 +1207,7 @@
     <!-- Transport Matching Section -->
     <div class="panel" id="section-transport" style="display:none;">
       <div class="panel-head">
-        <div class="panel-title" data-i18n="logistics-title">🚛 Transport & Logistics Registry</div>
+        <div class="panel-title" data-i18n="logistics-title"> Transport & Logistics Registry</div>
       </div>
       <p style="font-size:12px; color:var(--muted); margin-bottom: 20px;" data-i18n="logistics-sub">
         Find and book local lorry owners and transport providers in your district.
@@ -1318,7 +1300,7 @@
     <!-- Invoices Section -->
     <div class="panel" id="section-invoices" style="display:none;">
       <div class="panel-head" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
-        <div class="panel-title" data-i18n="panel-invoices-title">📄 Invoices & Receipts</div>
+        <div class="panel-title" data-i18n="panel-invoices-title"> Invoices & Receipts</div>
         <div style="font-size:12px; color:var(--muted);" id="invoices-summary-info">Showing 0 invoices</div>
       </div>
       
@@ -1347,7 +1329,7 @@
         </div>
         <div style="display:flex; align-items:flex-end;">
           <button onclick="clearInvoiceFilters()" style="padding:9px 16px; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:12.5px; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:4px; height:36px;">
-            🔄 <span data-i18n="btn-clear">Clear</span>
+             <span data-i18n="btn-clear">Clear</span>
           </button>
         </div>
       </div>
@@ -1361,7 +1343,7 @@
     <!-- Profile Section -->
     <div class="panel" id="section-profile" style="display:none;">
       <div class="panel-head">
-        <div class="panel-title" data-i18n="panel-profile-details">👤 My Profile Details</div>
+        <div class="panel-title" data-i18n="panel-profile-details"> My Profile Details</div>
       </div>
       <form id="profile-form" onsubmit="saveProfile(event)">
         <!-- Profile Picture Widget -->
@@ -1372,7 +1354,7 @@
           </div>
           <div>
             <button type="button" class="btn" style="padding:6px 14px; font-size:12.5px; border-radius:6px; display:inline-flex; align-items:center; gap:6px; cursor:pointer;" onclick="document.getElementById('profile-photo-input').click()">
-              📸 <span data-i18n="btn-upload-photo">Upload Photo</span>
+               <span data-i18n="btn-upload-photo">Upload Photo</span>
             </button>
             <input type="file" id="profile-photo-input" accept="image/*" style="display:none;" onchange="previewProfilePhoto(this)" />
             <div style="font-size:11px; color:var(--muted); margin-top:6px;" data-i18n="hint-photo-size">Supported formats: JPG, PNG. Max size: 3MB.</div>
@@ -1478,14 +1460,14 @@
           </div>
         </div>
         <button type="submit" class="broadcast-btn" style="margin-top:16px;" data-i18n="profile-btn-save">
-          💾 Save Changes
+           Save Changes
         </button>
       </form>
     </div>
 
     <div class="panel" id="section-settings" style="display:none; max-width: 600px;">
       <div class="panel-head">
-        <div class="panel-title" data-i18n="panel-app-settings">⚙️ App Settings</div>
+        <div class="panel-title" data-i18n="panel-app-settings"> App Settings</div>
       </div>
       <div style="display:flex; flex-direction:column; gap:20px;">
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px;">
@@ -1537,7 +1519,7 @@
           <!-- Chat Sidebar (Active Conversations) -->
           <div class="chat-sidebar">
             <div class="chat-sidebar-header">
-              💬 Active Chats
+               Active Chats
             </div>
             <div class="chat-list" id="chat-conversations-list">
               <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No active chats.</div>
@@ -1553,7 +1535,7 @@
           <div class="chat-main" id="chat-window-active" style="display:none;">
             <div class="chat-main-header">
               <div style="display:flex; align-items:center; gap:12px;">
-                <button type="button" id="chat-back-btn" onclick="backToChatList()" style="display:none; align-items:center; justify-content:center; background:none; border:none; font-size:16px; color:var(--text); cursor:pointer; padding:4px 8px; border-radius:6px; transition:background 0.2s;"><span data-i18n="btn-chat-back">⬅️ Back</span></button>
+                <button type="button" id="chat-back-btn" onclick="backToChatList()" style="display:none; align-items:center; justify-content:center; background:none; border:none; font-size:16px; color:var(--text); cursor:pointer; padding:4px 8px; border-radius:6px; transition:background 0.2s;"><span data-i18n="btn-chat-back">⬅ Back</span></button>
                 <div>
                   <div class="chat-main-title" id="chat-active-name" style="cursor:pointer; text-decoration:underline;" onclick="showUserProfileModal(activeChatUserId)">Seller Name</div>
                   <div style="font-size:11px; color:var(--muted); margin-top:2px;" id="chat-active-role">Seller</div>
@@ -1566,7 +1548,7 @@
             </div>
             <div id="chat-attachment-preview" style="display:none; padding:12px 20px; background:var(--teal-pale); border-top:1px solid var(--border); border-left:4px solid var(--teal-light); font-size:12.5px; align-items:center; justify-content:space-between; width:100%; gap:12px; transition: all 0.3s ease;">
               <div style="display:flex; align-items:center; gap:8px; color:var(--text); font-weight:500;">
-                <span id="chat-preview-icon" style="font-size:16px;">📎</span>
+                <span id="chat-preview-icon" style="font-size:16px;"></span>
                 <span id="chat-preview-filename" style="font-style:normal; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:300px;">Attachment staged</span>
               </div>
               <button type="button" onclick="clearSelectedAttachment()" style="background:rgba(197,48,48,0.1); border:none; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#c53030; font-weight:bold; transition:all 0.2s;" title="Remove Attachment">&times;</button>
@@ -1577,14 +1559,14 @@
                 <span id="chat-recording-timer">Recording 0:00</span>
               </div>
               <div style="display:flex; align-items:center; gap:12px;">
-                <button type="button" onclick="cancelVoiceRecording()" style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:12px; font-weight:600; color:var(--muted); cursor:pointer; display:flex; align-items:center; gap:4px;" title="Discard Recording">❌ Discard</button>
-                <button type="button" onclick="stopVoiceRecordingAndStage()" style="background:#ef4444; color:#fff; border:none; border-radius:8px; padding:6px 14px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px;" title="Finish and Stage">⏹️ Done</button>
+                <button type="button" onclick="cancelVoiceRecording()" style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:12px; font-weight:600; color:var(--muted); cursor:pointer; display:flex; align-items:center; gap:4px;" title="Discard Recording"> Discard</button>
+                <button type="button" onclick="stopVoiceRecordingAndStage()" style="background:#ef4444; color:#fff; border:none; border-radius:8px; padding:6px 14px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px;" title="Finish and Stage">⏹ Done</button>
               </div>
             </div>
             <form class="chat-input-area" id="chat-input-form" onsubmit="sendChatMessage(event)">
               <input type="file" id="chat-file-input" style="display:none;" onchange="handleChatFileSelected(event)">
-              <button type="button" class="chat-attach-btn" onclick="document.getElementById('chat-file-input').click()" style="background:none; border:none; font-size:18px; cursor:pointer; color:var(--muted); padding:4px;" title="Attach File/Image">📎</button>
-              <button type="button" id="chat-voice-btn" onclick="toggleVoiceRecording()" style="background:none; border:none; font-size:18px; cursor:pointer; color:var(--muted); padding:4px;" title="Record Voice Message">🎤</button>
+              <button type="button" class="chat-attach-btn" onclick="document.getElementById('chat-file-input').click()" style="background:none; border:none; font-size:18px; cursor:pointer; color:var(--muted); padding:4px;" title="Attach File/Image"></button>
+              <button type="button" id="chat-voice-btn" onclick="toggleVoiceRecording()" style="background:none; border:none; font-size:18px; cursor:pointer; color:var(--muted); padding:4px;" title="Record Voice Message"></button>
               <input type="text" class="chat-input" id="chat-message-input" placeholder="Type a message..." autocomplete="off">
               <button type="submit" class="chat-send-btn">Send</button>
             </form>
@@ -1598,7 +1580,7 @@
       <!-- System Notifications -->
       <div class="panel">
         <div class="panel-head">
-          <div class="panel-title" data-i18n="panel-notifications-alerts">🔔 System Notifications & Alerts</div>
+          <div class="panel-title" data-i18n="panel-notifications-alerts"> System Notifications & Alerts</div>
           <div class="panel-action" onclick="markAllNotificationsRead()" style="cursor:pointer" data-i18n="btn-mark-all-read">Mark all as read</div>
         </div>
         <div id="notifications-inbox-list" style="display:flex; flex-direction:column; gap:12px; max-height:400px; overflow-y:auto; padding-right:5px;">
@@ -1756,9 +1738,9 @@
         </div>
         
         <!-- Offline advisory placeholder -->
-        <div id="announcement-modal-offline-advisory" style="font-size:13.5px; font-weight:700; color:#dc2626; text-align:center; display:none; padding:12px; border:2px dashed currentColor; border-radius:12px; background:rgba(220,38,38,0.05); margin-bottom:10px; line-height:1.4; font-family:system-ui,sans-serif;">🛠️ Platform is Offline for Scheduled Maintenance</div>
+        <div id="announcement-modal-offline-advisory" style="font-size:13.5px; font-weight:700; color:#dc2626; text-align:center; display:none; padding:12px; border:2px dashed currentColor; border-radius:12px; background:rgba(220,38,38,0.05); margin-bottom:10px; line-height:1.4; font-family:system-ui,sans-serif;"> Platform is Offline for Scheduled Maintenance</div>
         
-        <button onclick="closeAnnouncementModal()" id="announcement-modal-btn" style="width:100%;height:46px;background:#dc2626;color:#fff;font-size:14px;font-weight:700;border-radius:12px;border:none;cursor:pointer;box-shadow:0 4px 12px rgba(220,38,38,0.2);transition:all 0.2s;" data-i18n="btn-got-it">Got It 👍</button>
+        <button onclick="closeAnnouncementModal()" id="announcement-modal-btn" style="width:100%;height:46px;background:#dc2626;color:#fff;font-size:14px;font-weight:700;border-radius:12px;border:none;cursor:pointer;box-shadow:0 4px 12px rgba(220,38,38,0.2);transition:all 0.2s;" data-i18n="btn-got-it">Got It </button>
       </div>
     </div>
 
@@ -1779,10 +1761,10 @@
           </div>
           
           <div style="border-top:1px solid var(--border);padding-top:16px;display:flex;flex-direction:column;gap:10px;font-size:13.5px;">
-            <div>🛡️ <strong>Verification Status:</strong> <span id="profile-modal-status" style="font-weight:600;">Pending</span></div>
-            <div>📍 <strong>District:</strong> <span id="profile-modal-district">Unknown</span></div>
-            <div>📞 <strong>Phone:</strong> <span id="profile-modal-phone">N/A</span></div>
-            <div>📧 <strong>Email:</strong> <span id="profile-modal-email">N/A</span></div>
+            <div> <strong>Verification Status:</strong> <span id="profile-modal-status" style="font-weight:600;">Pending</span></div>
+            <div> <strong>District:</strong> <span id="profile-modal-district">Unknown</span></div>
+            <div> <strong>Phone:</strong> <span id="profile-modal-phone">N/A</span></div>
+            <div> <strong>Email:</strong> <span id="profile-modal-email">N/A</span></div>
           </div>
 
           <div style="background:var(--teal-pale);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
@@ -1840,7 +1822,7 @@
 
           <div style="display:flex;gap:10px;margin-top:12px;">
             <button id="profile-modal-chat-btn" class="btn-sm btn-confirm" style="flex:1;height:40px;border-radius:10px;border:none;cursor:pointer;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;">
-              💬 Start Chat
+               Start Chat
             </button>
             <button onclick="closeUserProfileModal()" class="btn-sm btn-decline" style="flex:1;height:40px;border-radius:10px;cursor:pointer;">
               Close
@@ -1863,12 +1845,12 @@ var API_URL = (window.location.hostname === 'localhost' || window.location.hostn
 function showToast(title, message, type, duration) {
   type = type || 'info';
   duration = duration || 4000;
-  const icons = { success: '✅', error: '❌', info: '🔔', warning: '⚠️' };
+  const icons = { success: '', error: '', info: '', warning: '' };
   const container = document.getElementById('toast-container');
   const toast = document.createElement('div');
   toast.className = 'toast ' + type;
   toast.innerHTML = `
-    <div class="toast-icon">${icons[type] || '🔔'}</div>
+    <div class="toast-icon">${icons[type] || ''}</div>
     <div class="toast-body">
       <div class="toast-title">${title}</div>
       <div class="toast-msg">${message || ''}</div>
@@ -1933,7 +1915,7 @@ var marketMarkers = [];
   function updateWelcomeGreeting() {
     if (!_user) return;
     var name = _user.name || _user.email;
-    document.getElementById('page-greeting').textContent = getTranslation('js-welcome', 'Welcome back') + ', ' + name.split(' ')[0] + ' 👋';
+    document.getElementById('page-greeting').textContent = getTranslation('js-welcome', 'Welcome back') + ', ' + name.split(' ')[0] + ' ';
   }
   document.addEventListener('languageChanged', updateWelcomeGreeting);
   updateWelcomeGreeting();
@@ -1961,7 +1943,7 @@ var marketMarkers = [];
           document.getElementById('user-avatar').textContent = ini;
         }
         document.getElementById('user-name').textContent = fullName;
-        document.getElementById('page-greeting').textContent = 'Welcome back, ' + p.first_name + ' 👋';
+        document.getElementById('page-greeting').textContent = 'Welcome back, ' + p.first_name + ' ';
 
         if (p.district) {
           document.getElementById('user-district').textContent = p.district + ' District';
@@ -1993,13 +1975,13 @@ var marketMarkers = [];
   // Auto-refresh every 30 seconds
   setInterval(function() {
     loadDashboardData();
-    console.log('🔄 Auto-refreshed buyer dashboard');
+    console.log(' Auto-refreshed buyer dashboard');
   }, 30000);
 })();
 
 function initSocket() {
   if (typeof io === 'undefined') {
-    console.warn('⚠️ Socket.io is not loaded. Real-time updates will be disabled.');
+    console.warn(' Socket.io is not loaded. Real-time updates will be disabled.');
     var el = document.getElementById('socket-status');
     if (el) { el.className = 'socket-status disconnected'; el.innerHTML = '<span class="dot"></span>' + getTranslation('status-offline', 'Offline'); }
     return;
@@ -2008,42 +1990,42 @@ function initSocket() {
   
   if (_user && _user.id) {
     socket.emit('join', _user.id);
-    console.log('📡 Joined room: user_' + _user.id);
+    console.log(' Joined room: user_' + _user.id);
   }
   
   socket.on('dashboard_update', function(data) {
-    console.log('🔄 Real-time update signal:', data);
+    console.log(' Real-time update signal:', data);
     loadDashboardData();
   });
 
   socket.on('new_notification', function(notif) {
-    console.log('🔔 New notification:', notif);
+    console.log(' New notification:', notif);
     showToast(notif.title, notif.body, 'info', 6000);
     loadDashboardData();
     loadNotificationsInbox();
   });
 
   socket.on('requests_update', function() {
-    console.log('🔄 Real-time requests update received');
+    console.log(' Real-time requests update received');
     loadDashboardData();
   });
 
   socket.on('pong_latency', function(data) {
     const lat = Date.now() - pingStart;
-    showToast(getTranslation('toast-latency-title', 'Network Latency'), '⚡ ' + lat + 'ms', 'info', 3000);
+    showToast(getTranslation('toast-latency-title', 'Network Latency'), ' ' + lat + 'ms', 'info', 3000);
   });
 
   socket.on('connect', function() {
     var el = document.getElementById('socket-status');
     if (el) { el.className = 'socket-status'; el.innerHTML = '<span class="dot"></span>' + getTranslation('status-live', 'Live'); }
     if (_user && _user.id) socket.emit('join', _user.id);
-    console.log('✅ Buyer socket connected');
+    console.log(' Buyer socket connected');
   });
 
   socket.on('disconnect', function() {
     var el = document.getElementById('socket-status');
     if (el) { el.className = 'socket-status disconnected'; el.innerHTML = '<span class="dot"></span>' + getTranslation('status-offline', 'Offline'); }
-    console.log('❌ Buyer socket disconnected');
+    console.log(' Buyer socket disconnected');
   });
 
   socket.on('maintenance_status', function(data) {
@@ -2060,7 +2042,7 @@ function initSocket() {
   });
 
   socket.on('receive_message', function(data) {
-    console.log('💬 New real-time message received:', data);
+    console.log(' New real-time message received:', data);
     if (activeChatUserId === data.sender_id) {
       const box = document.getElementById('chat-messages-box');
       const timeStr = new Date(data.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -2273,7 +2255,7 @@ function formatMessageContent(msg) {
               <input type="range" class="voice-slider" id="voice-slider-${msg.id}" value="0" min="0" max="100" oninput="seekVoice(${msg.id}, this.value)">
               <div class="voice-meta">
                 <span class="voice-time" id="voice-time-${msg.id}">0:00</span>
-                <span class="voice-mic-status" id="voice-mic-${msg.id}">🎙️</span>
+                <span class="voice-mic-status" id="voice-mic-${msg.id}"></span>
               </div>
             </div>
           </div>
@@ -2282,7 +2264,7 @@ function formatMessageContent(msg) {
     } else {
       const parts = msg.attachment_url.split('/');
       const filename = parts[parts.length - 1];
-      html += `<div style="margin-top:6px;"><a href="${API_URL}${msg.attachment_url}" target="_blank" style="color:inherit; font-weight:600; display:inline-flex; align-items:center; gap:4px; text-decoration:underline;">📎 Download Attachment</a></div>`;
+      html += `<div style="margin-top:6px;"><a href="${API_URL}${msg.attachment_url}" target="_blank" style="color:inherit; font-weight:600; display:inline-flex; align-items:center; gap:4px; text-decoration:underline;"> Download Attachment</a></div>`;
     }
   }
   return html;
@@ -2329,13 +2311,13 @@ function stageAttachmentForUpload(file, name, defaultType = 'file') {
   if (filenameEl) filenameEl.textContent = name;
   if (iconEl) {
     if (type === 'image') {
-      iconEl.textContent = '🖼️';
+      iconEl.textContent = '';
       if (previewEl) previewEl.style.borderLeftColor = 'var(--teal-light)';
     } else if (type === 'audio') {
-      iconEl.textContent = '🎙️';
+      iconEl.textContent = '';
       if (previewEl) previewEl.style.borderLeftColor = 'var(--green-light)';
     } else {
-      iconEl.textContent = '📎';
+      iconEl.textContent = '';
       if (previewEl) previewEl.style.borderLeftColor = 'var(--hint)';
     }
   }
@@ -2485,7 +2467,7 @@ function openDirectChat(sellerId, sellerName, sellerRole) {
         const isSent = msg.sender_id === _user.id;
         const bubbleClass = isSent ? 'sent' : 'received';
         const timeStr = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const ticks = isSent ? (msg.is_read ? '<span style="font-size:10px; margin-left:4px; color:#cbe3db;">✔️✔️</span>' : '<span style="font-size:10px; margin-left:4px; color:#cbe3db;">✔️</span>') : '';
+        const ticks = isSent ? (msg.is_read ? '<span style="font-size:10px; margin-left:4px; color:#cbe3db;"></span>' : '<span style="font-size:10px; margin-left:4px; color:#cbe3db;"></span>') : '';
         html += `
           <div class="chat-bubble ${bubbleClass}">
             ${formatMessageContent(msg)}
@@ -2619,7 +2601,7 @@ async function sendChatMessage(e) {
         bubble.className = 'chat-bubble sent';
         bubble.innerHTML = `
           ${formatMessageContent(msg)}
-          <div class="chat-bubble-time">${timeStr}<span style="font-size:10px; margin-left:4px; color:#cbe3db;">✔️</span></div>
+          <div class="chat-bubble-time">${timeStr}<span style="font-size:10px; margin-left:4px; color:#cbe3db;"></span></div>
         `;
         box.appendChild(bubble);
         box.scrollTop = box.scrollHeight;
@@ -2719,7 +2701,7 @@ function switchTab(tab) {
     document.getElementById('market-title').setAttribute('data-i18n', 'panel-marketplace-crops');
     const toggleBtn = document.getElementById('market-toggle-btn');
     if (toggleBtn) {
-      toggleBtn.textContent = getTranslation('btn-view-equipment', '🚜 View Equipment');
+      toggleBtn.textContent = getTranslation('btn-view-equipment', ' View Equipment');
       toggleBtn.setAttribute('data-i18n', 'btn-view-equipment');
     }
     const searchInput = document.getElementById('market-search');
@@ -2741,7 +2723,7 @@ function switchTab(tab) {
     document.getElementById('market-title').setAttribute('data-i18n', 'panel-marketplace-equipment');
     const toggleBtn = document.getElementById('market-toggle-btn');
     if (toggleBtn) {
-      toggleBtn.textContent = getTranslation('btn-view-crops', '🌾 View Crops');
+      toggleBtn.textContent = getTranslation('btn-view-crops', ' View Crops');
       toggleBtn.setAttribute('data-i18n', 'btn-view-crops');
     }
     const searchInput = document.getElementById('market-search');
@@ -2892,7 +2874,7 @@ function loadDashboardAlerts() {
           alertCardsHtml += `
             <div style="background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--primary); border-radius: 12px; padding: 16px; box-shadow: 0 4px 10px rgba(22,34,44,0.03); display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
               <div style="font-size: 13.5px; color: var(--text); font-weight: 500; line-height: 1.6;">
-                🚚 ${text}
+                 ${text}
               </div>
             </div>
           `;
@@ -2918,12 +2900,12 @@ function loadDashboardAlerts() {
           alertCardsHtml += `
             <div style="background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--teal); border-radius: 12px; padding: 16px; box-shadow: 0 4px 10px rgba(22,34,44,0.03); display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
               <div style="font-size: 13.5px; color: var(--text); font-weight: 500; line-height: 1.6;">
-                💳 ${text}
+                 ${text}
               </div>
               <button onclick="openPaymentModal(${order.id}, '${escapedCrop}', ${order.total_amount}, '${escapedBankName}', '${escapedBankBranch}', '${escapedAccName}', '${escapedAccNo}')" 
                       class="btn-sm btn-confirm" 
                       style="margin: 0; padding: 8px 16px; font-size: 12px; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-                ${getTranslation('btn-pay-now', 'Pay Now 💳')}
+                ${getTranslation('btn-pay-now', 'Pay Now ')}
               </button>
             </div>
           `;
@@ -3002,7 +2984,7 @@ function submitPaymentProof(e) {
       if (data.success) {
         showToast(
           getTranslation('toast-payment-success-title', 'Payment Submitted!'), 
-          getTranslation('toast-payment-success-body', 'Your payment proof has been successfully uploaded for review 💸'), 
+          getTranslation('toast-payment-success-body', 'Your payment proof has been successfully uploaded for review '), 
           'success'
         );
         closePaymentModal();
@@ -3032,7 +3014,7 @@ function getBankLogoHtml(bankName) {
   const bank = (bankName || '').trim().toLowerCase();
   let bg = 'var(--primary)';
   let fg = '#fff';
-  let text = '🏦';
+  let text = '';
   
   if (bank.includes('ceylon') || bank.includes('boc')) {
     bg = '#ffd200'; fg = '#002f6c'; text = 'BOC';
@@ -3153,7 +3135,7 @@ function saveProfile(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast(getTranslation('toast-profile-saved-title', 'Profile Updated!'), getTranslation('toast-profile-saved-body', 'Your profile has been saved 💾'), 'success');
+        showToast(getTranslation('toast-profile-saved-title', 'Profile Updated!'), getTranslation('toast-profile-saved-body', 'Your profile has been saved '), 'success');
         const p = data.user;
         const fullName = (p.first_name + ' ' + p.last_name).trim();
         const initials = fullName.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
@@ -3184,7 +3166,7 @@ function saveProfile(e) {
 // ── SETTINGS & THEME FUNCTIONS ──
 function loadSettingsDetails() {
   const isDark = document.body.classList.contains('dark');
-  document.getElementById('dark-mode-btn').textContent = isDark ? getTranslation('js-light-mode', '🌞 Light Mode') : getTranslation('js-dark-mode', '🌙 Dark Mode');
+  document.getElementById('dark-mode-btn').textContent = isDark ? getTranslation('js-light-mode', ' Light Mode') : getTranslation('js-dark-mode', ' Dark Mode');
 
   if (_user && _user.id) {
     fetch(API_URL + '/api/profile/' + _user.id, { headers: getAuthHeaders() })
@@ -3248,7 +3230,7 @@ function loadNotificationsInbox() {
               <div style="font-size:11px; color:var(--hint);">${formatTimeAgo(new Date(n.created_at))}</div>
             </div>
             <div style="font-size:12.5px; color:var(--muted); line-height:1.45;">${n.body}</div>
-            <div style="font-size:10px; color:var(--hint); margin-top:6px;">🕒 ${dateStr}</div>
+            <div style="font-size:10px; color:var(--hint); margin-top:6px;"> ${dateStr}</div>
           </div>
         `;
       });
@@ -3377,22 +3359,22 @@ function loadBroadcastsAndResponses() {
               <div style="display:flex; align-items:center; width:100%; justify-content:space-between;">
                 <div class="msg-from" style="display:flex; align-items:center; gap:4px;">
                   <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${res.sellerId})">${res.sellerName || 'Farmer'}</span>
-                  <span class="verified-badge">✓ Verified</span>
+                  <span class="verified-badge"> Verified</span>
                 </div>
                 <div class="msg-time">${timeAgo}</div>
               </div>
               <div style="font-size:11px; color:#f4a261; font-weight:600;">
-                ★ ${repScore} (${res.sellerRep || 0} deals)
+                 ${repScore} (${res.sellerRep || 0} deals)
               </div>
             </div>
             <div class="msg-text" style="margin-top:8px;">
               <strong>${res.crop}</strong> - ${counterText} ${qtyLabel} @ ${priceLabel}.
               <div style="font-style:italic;margin-top:4px;">"${res.message || 'Ready to supply'}"</div>
-              <div style="margin-top:6px;font-size:11px;color:var(--teal)">📞 Phone: ${res.sellerPhone || 'N/A'}</div>
+              <div style="margin-top:6px;font-size:11px;color:var(--teal)"> Phone: ${res.sellerPhone || 'N/A'}</div>
             </div>
             <div class="msg-actions">
               <button class="btn-sm btn-confirm" onclick="acceptSellerResponse(${res.broadcastId}, ${res.responseId})">Confirm & Accept</button>
-              <button class="btn-sm btn-confirm" style="background:var(--teal-pale); color:var(--teal);" onclick="startChatWithUser(${res.sellerId}, '${res.sellerName.replace(/'/g, "\\'")}', 'farmer')">💬 Chat</button>
+              <button class="btn-sm btn-confirm" style="background:var(--teal-pale); color:var(--teal);" onclick="startChatWithUser(${res.sellerId}, '${res.sellerName.replace(/'/g, "\\'")}', 'farmer')"> Chat</button>
             </div>
           </div>
         `;
@@ -3426,7 +3408,7 @@ function submitBroadcast(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast(getTranslation('toast-req-broadcasted-title', 'Request Broadcasted!'), getTranslation('toast-req-broadcasted-body', 'Your request was sent to matching sellers 📡'), 'success');
+        showToast(getTranslation('toast-req-broadcasted-title', 'Request Broadcasted!'), getTranslation('toast-req-broadcasted-body', 'Your request was sent to matching sellers '), 'success');
         document.getElementById('broadcast-form').reset();
         if (_user.district) document.getElementById('broadcast-district').value = _user.district;
         document.getElementById('broadcast-date').value = new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0];
@@ -3452,7 +3434,7 @@ async function acceptSellerResponse(broadcastId, responseId) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast(getTranslation('toast-offer-accepted-title', 'Offer Accepted!'), getTranslation('toast-offer-accepted-body', 'Contact the seller to coordinate delivery 🤝'), 'success');
+        showToast(getTranslation('toast-offer-accepted-title', 'Offer Accepted!'), getTranslation('toast-offer-accepted-body', 'Contact the seller to coordinate delivery '), 'success');
         loadDashboardData();
       } else {
         showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('err-failed-accept-offer', 'Failed to accept offer'), 'error');
@@ -3494,8 +3476,8 @@ function loadMyRequests() {
           const escapedDistrict = b.district.replace(/'/g, "\\'");
           actionsHtml = `
             <div style="display: flex; gap: 8px; margin-top: 8px;">
-              <button onclick="openEditRequestModal(${b.id}, '${escapedCrop}', ${b.quantity}, '${neededDate}', '${escapedDistrict}', ${b.budget || 'null'})" style="background: var(--teal-pale); color: var(--teal); border: none; border-radius: 6px; padding: 6px 12px; font-size: 11px; font-weight: 500; cursor: pointer; font-family:'DM Sans',sans-serif;">✏️ Edit</button>
-              <button onclick="closeRequest(${b.id})" style="background: #fdeaea; color: #c53030; border: none; border-radius: 6px; padding: 6px 12px; font-size: 11px; font-weight: 500; cursor: pointer; font-family:'DM Sans',sans-serif;">🛑 Close</button>
+              <button onclick="openEditRequestModal(${b.id}, '${escapedCrop}', ${b.quantity}, '${neededDate}', '${escapedDistrict}', ${b.budget || 'null'})" style="background: var(--teal-pale); color: var(--teal); border: none; border-radius: 6px; padding: 6px 12px; font-size: 11px; font-weight: 500; cursor: pointer; font-family:'DM Sans',sans-serif;"> Edit</button>
+              <button onclick="closeRequest(${b.id})" style="background: #fdeaea; color: #c53030; border: none; border-radius: 6px; padding: 6px 12px; font-size: 11px; font-weight: 500; cursor: pointer; font-family:'DM Sans',sans-serif;"> Close</button>
             </div>
           `;
         }
@@ -3559,7 +3541,7 @@ function submitEditRequest(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast(getTranslation('toast-req-updated-title', 'Request Updated!'), getTranslation('toast-req-updated-body', 'Broadcast request updated 📡'), 'success');
+        showToast(getTranslation('toast-req-updated-title', 'Request Updated!'), getTranslation('toast-req-updated-body', 'Broadcast request updated '), 'success');
         closeEditRequestModal();
         loadDashboardData();
       } else {
@@ -3588,7 +3570,7 @@ function showUserProfileModal(userId) {
       const roleKey = u.role === 'buyer' ? 'role-buyer' : 'role-farmer';
       document.getElementById('profile-modal-role').textContent = getTranslation(roleKey, u.role.toUpperCase());
       
-      const statusText = u.status === 'approved' ? '🛡️ ' + getTranslation('js-verified-partner', 'Verified Partner') : (u.status === 'rejected' ? '❌ ' + getTranslation('js-status-rejected', 'Verification Rejected') : '⏳ ' + getTranslation('js-verification-pending', 'Pending Verification'));
+      const statusText = u.status === 'approved' ? ' ' + getTranslation('js-verified-partner', 'Verified Partner') : (u.status === 'rejected' ? ' ' + getTranslation('js-status-rejected', 'Verification Rejected') : '⏳ ' + getTranslation('js-verification-pending', 'Pending Verification'));
       const statusColor = u.status === 'approved' ? 'var(--green)' : (u.status === 'rejected' ? '#D95050' : 'var(--amber)');
       
       const statusEl = document.getElementById('profile-modal-status');
@@ -3640,7 +3622,7 @@ function showUserProfileModal(userId) {
                 count++;
                 listingsHtml += `
                   <div style="display:flex; justify-content:space-between; font-size:12px; border-bottom:1px solid var(--surface); padding-bottom:4px; margin-bottom:4px;">
-                    <span style="color:var(--text); font-weight:500;">🥬 ${listing.name}</span>
+                    <span style="color:var(--text); font-weight:500;"> ${listing.name}</span>
                     <span style="color:var(--teal); font-weight:600;">1kg = Rs. ${parseFloat(listing.price_per_kg).toFixed(0)}</span>
                   </div>
                 `;
@@ -3653,7 +3635,7 @@ function showUserProfileModal(userId) {
                 count++;
                 listingsHtml += `
                   <div style="display:flex; justify-content:space-between; font-size:12px; border-bottom:1px solid var(--surface); padding-bottom:4px; margin-bottom:4px;">
-                    <span style="color:var(--text); font-weight:500;">🚜 ${listing.name}</span>
+                    <span style="color:var(--text); font-weight:500;"> ${listing.name}</span>
                     <span style="color:var(--teal); font-weight:600;">Rs. ${parseFloat(listing.rental_rate).toLocaleString()}${getTranslation('js-per-day', '/day')}</span>
                   </div>
                 `;
@@ -3943,7 +3925,7 @@ async function downloadLedgerReceipt(txId, listingName, sellerName, amount, dura
     doc.rect(10, 192, 128, 4, 'F');
 
     doc.save(`AgroNexa_Receipt_${txId.slice(0, 8)}.pdf`);
-    showToast(getTranslation('toast-pdf-generated-title', 'PDF Generated!'), getTranslation('toast-receipt-downloaded-body', 'Receipt downloaded successfully 📄'), 'success');
+    showToast(getTranslation('toast-pdf-generated-title', 'PDF Generated!'), getTranslation('toast-receipt-downloaded-body', 'Receipt downloaded successfully '), 'success');
   } catch (err) {
     console.error(err);
     showToast(getTranslation('toast-pdf-error-title', 'PDF Error'), getTranslation('toast-pdf-receipt-error-body', 'Failed to generate PDF receipt'), 'error');
@@ -4096,7 +4078,7 @@ async function downloadBookingSlip(bookingId, listingName, ownerName, start, end
     doc.rect(10, 180, 128, 6, 'F');
 
     doc.save(`AgroNexa_Booking_${bookingId}.pdf`);
-    showToast(getTranslation('toast-pdf-generated-title', 'PDF Generated!'), getTranslation('toast-slip-downloaded-body', 'Booking slip downloaded successfully 📄'), 'success');
+    showToast(getTranslation('toast-pdf-generated-title', 'PDF Generated!'), getTranslation('toast-slip-downloaded-body', 'Booking slip downloaded successfully '), 'success');
   } catch (err) {
     console.error(err);
     showToast(getTranslation('toast-pdf-error-title', 'PDF Error'), getTranslation('toast-pdf-slip-error-body', 'Failed to generate booking slip PDF'), 'error');
@@ -4144,10 +4126,10 @@ function loadBookings() {
         const start = new Date(item.start_date).toLocaleDateString();
         const end = new Date(item.end_date).toLocaleDateString();
         
-        let icon = '🚜';
-        if (item.listing_name.toLowerCase().includes('pump') || item.listing_name.toLowerCase().includes('water')) icon = '💧';
-        if (item.listing_name.toLowerCase().includes('transport') || item.listing_name.toLowerCase().includes('lorry')) icon = '🚛';
-        if (item.listing_name.toLowerCase().includes('sprayer') || item.listing_name.toLowerCase().includes('machine')) icon = '🌿';
+        let icon = '';
+        if (item.listing_name.toLowerCase().includes('pump') || item.listing_name.toLowerCase().includes('water')) icon = '';
+        if (item.listing_name.toLowerCase().includes('transport') || item.listing_name.toLowerCase().includes('lorry')) icon = '';
+        if (item.listing_name.toLowerCase().includes('sprayer') || item.listing_name.toLowerCase().includes('machine')) icon = '';
 
         const isPending = item.status === 'pending';
         const cancelBtn = isPending ? `<button onclick="cancelBooking(${item.id})" style="background:none;border:none;color:var(--amber);font-size:11.5px;cursor:pointer;margin-top:4px;font-weight:500;">${getTranslation('js-cancel-request', 'Cancel Request')}</button>` : '';
@@ -4155,14 +4137,14 @@ function loadBookings() {
         if (item.status === 'confirmed') {
           actionBtnsHtml = `
             <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-end; margin-top:4px;">
-              <button onclick="printRentalInvoice(${item.id})" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:2px; padding:0;">📄 Invoice</button>
+              <button onclick="printRentalInvoice(${item.id})" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:2px; padding:0;"> Invoice</button>
             </div>
           `;
         } else if (item.status === 'completed') {
           actionBtnsHtml = `
             <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-end; margin-top:4px;">
-              <button onclick="printRentalInvoice(${item.id})" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:2px; padding:0;">📄 Invoice</button>
-              <button onclick="printReturnReceipt(${item.id})" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:2px; padding:0;">🧾 Return Receipt</button>
+              <button onclick="printRentalInvoice(${item.id})" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:2px; padding:0;"> Invoice</button>
+              <button onclick="printReturnReceipt(${item.id})" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:2px; padding:0;"> Return Receipt</button>
             </div>
           `;
         }
@@ -4189,9 +4171,9 @@ function loadBookings() {
                 <div class="booking-icon">${icon}</div>
                 <div class="booking-info">
                   <div class="booking-name">${item.listing_name}</div>
-                  <div class="booking-owner">${getTranslation('js-owner', 'Owner')}: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.owner_id})">${item.owner_name}</span> · 📞 ${item.owner_phone || 'N/A'}</div>
+                  <div class="booking-owner">${getTranslation('js-owner', 'Owner')}: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.owner_id})">${item.owner_name}</span> ·  ${item.owner_phone || 'N/A'}</div>
                   <div class="booking-dates">
-                    <span>📅 ${start} – ${end}</span>
+                    <span> ${start} – ${end}</span>
                     <span>Rs. ${parseFloat(item.total_amount).toLocaleString()}</span>
                   </div>
                 </div>
@@ -4637,7 +4619,7 @@ function submitCropOrder(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast(getTranslation('toast-order-placed-title', 'Order Placed!'), getTranslation('toast-order-placed-body', 'Your crop purchase order has been sent to the farmer 🌾'), 'success');
+        showToast(getTranslation('toast-order-placed-title', 'Order Placed!'), getTranslation('toast-order-placed-body', 'Your crop purchase order has been sent to the farmer '), 'success');
         closeCropOrderModal();
         switchBookingSubtab('purchases');
         loadDashboardData();
@@ -4699,12 +4681,12 @@ function loadCropOrders() {
           <div class="booking-item" style="display:flex; flex-direction:column; align-items:stretch; gap:10px;">
             <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
               <div style="display:flex; gap:12px; align-items:center;">
-                <div class="booking-icon" style="background:var(--green-pale); color:var(--green);">🌾</div>
+                <div class="booking-icon" style="background:var(--green-pale); color:var(--green);"></div>
                 <div class="booking-info">
                   <div class="booking-name">${item.crop_name}</div>
-                  <div class="booking-owner">${getTranslation('js-seller', 'Seller')}: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.seller_id})">${item.seller_name}</span> · 📞 ${item.seller_phone || 'N/A'}</div>
+                  <div class="booking-owner">${getTranslation('js-seller', 'Seller')}: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.seller_id})">${item.seller_name}</span> ·  ${item.seller_phone || 'N/A'}</div>
                   <div class="booking-dates">
-                    <span>📅 ${getTranslation('js-deliv', 'Deliv')}: ${deliveryDate}</span>
+                    <span> ${getTranslation('js-deliv', 'Deliv')}: ${deliveryDate}</span>
                     <span>${getTranslation('js-qty', 'Qty')}: ${item.quantity_kg} kg @ 1kg = Rs. ${parseFloat(item.price_per_kg).toFixed(0)}</span>
                   </div>
                 </div>
@@ -4763,7 +4745,7 @@ function loadBuyerPaymentsTab() {
           statusText = getTranslation('booking-status-confirmed', 'UNPAID');
         } else if (isPaid) {
           statusClass = 'confirmed';
-          statusText = getTranslation('booking-status-paid', 'PAID') + ' 💸';
+          statusText = getTranslation('booking-status-paid', 'PAID') + ' ';
         } else {
           statusClass = 'confirmed';
           statusText = getTranslation('booking-status-completed', 'COMPLETED');
@@ -4778,14 +4760,14 @@ function loadBuyerPaymentsTab() {
           
           actionButtons = `
             <button class="btn-sm btn-accept" onclick="openPaymentModal(${item.id}, '${item.crop_name.replace(/'/g, "\\'")}', ${parseFloat(item.total_amount)}, '${escapedBank}', '${escapedBranch}', '${escapedAccName}', '${escapedAccNo}')" style="background:var(--teal); color:#fff; cursor:pointer; padding:8px 16px; font-size:12px; font-weight:600; border-radius:8px; border:none;">
-              ${getTranslation('btn-pay-now', 'Pay Now 💳')}
+              ${getTranslation('btn-pay-now', 'Pay Now ')}
             </button>
           `;
         } else {
           const slipUrl = item.payment_slip_path ? (item.payment_slip_path.startsWith('http') ? item.payment_slip_path : `${API_URL}/${item.payment_slip_path}`) : '#';
           actionButtons = item.payment_slip_path ? `
             <button class="btn-sm" onclick="window.open('${slipUrl}', '_blank')" style="background:transparent; border:1px solid var(--border); color:var(--text); cursor:pointer; padding:6px 12px; font-size:11px; font-weight:600; border-radius:8px;">
-              ${getTranslation('btn-view-slip', 'View Slip 📄')}
+              ${getTranslation('btn-view-slip', 'View Slip ')}
             </button>
           ` : '';
         }
@@ -4794,11 +4776,11 @@ function loadBuyerPaymentsTab() {
           <div class="booking-item" style="display:flex; flex-direction:column; align-items:stretch; gap:10px;">
             <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
               <div style="display:flex; gap:12px; align-items:center; width: 100%;">
-                <div class="booking-icon" style="background:var(--teal-pale); color:var(--teal);">💳</div>
+                <div class="booking-icon" style="background:var(--teal-pale); color:var(--teal);"></div>
                 <div class="booking-info" style="flex: 1;">
                   <div class="booking-name" style="font-size:14px; font-weight:600; color:var(--text-main);">${item.crop_name}</div>
                   <div class="booking-owner" style="font-size:12px; color:var(--text-muted); margin-top:2px;">
-                    ${getTranslation('js-seller', 'Seller')}: <span style="font-weight:600; color:var(--teal);">${item.seller_name || 'Seller'}</span> · 📞 ${item.seller_phone || 'N/A'}
+                    ${getTranslation('js-seller', 'Seller')}: <span style="font-weight:600; color:var(--teal);">${item.seller_name || 'Seller'}</span> ·  ${item.seller_phone || 'N/A'}
                   </div>
                   ${item.payment_ref ? `
                     <div style="font-size:11px; color:var(--text-muted); margin-top:2px; font-family:monospace;">
@@ -4844,13 +4826,13 @@ function loadUserAnnouncements() {
       activeAnnouncements = data.announcements;
       let html = '';
       activeAnnouncements.forEach(item => {
-        let alertIcon = '📢';
+        let alertIcon = '';
         let statusClass = 'confirmed'; // Green background default
         if (item.alert_type === 'warning') {
-          alertIcon = '⚠️';
+          alertIcon = '';
           statusClass = 'pending'; // Amber background
         } else if (item.alert_type === 'danger') {
-          alertIcon = '🚨';
+          alertIcon = '';
           statusClass = 'rejected'; // Red background
         }
         
@@ -4864,7 +4846,7 @@ function loadUserAnnouncements() {
                 <div class="booking-info" style="flex:1;">
                   <div class="booking-name" style="font-size:14px; font-weight:700; color:var(--text-main);">${item.title}</div>
                   <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">
-                    📅 ${dateStr}
+                     ${dateStr}
                   </div>
                   <div style="font-size:12.5px; color:var(--text-muted); margin-top:8px; line-height:1.5; white-space:pre-wrap;">${item.message}</div>
                 </div>
@@ -4960,7 +4942,7 @@ function checkForWelcomeAnnouncements() {
           offlineAdvisory.style.display = 'block';
           offlineAdvisory.style.color = themeColor;
           offlineAdvisory.style.borderColor = themeColor;
-          offlineAdvisory.innerHTML = `🛠️ Platform is Offline for Scheduled Maintenance<br><span style="font-size:11.5px; font-weight:500; opacity:0.85;">Please wait until the maintenance window concludes.</span>`;
+          offlineAdvisory.innerHTML = ` Platform is Offline for Scheduled Maintenance<br><span style="font-size:11.5px; font-weight:500; opacity:0.85;">Please wait until the maintenance window concludes.</span>`;
         }
       } else {
         if (closeBtn) closeBtn.style.display = 'block';
@@ -5011,13 +4993,13 @@ function loadMarketplace() {
 
         let html = '';
         data.listings.forEach(item => {
-          let defaultEmoji = '🥬';
-          if (item.name.toLowerCase().includes('tomato')) defaultEmoji = '🍅';
-          if (item.name.toLowerCase().includes('carrot')) defaultEmoji = '🥕';
-          if (item.name.toLowerCase().includes('chili')) defaultEmoji = '🌶️';
-          if (item.name.toLowerCase().includes('potato')) defaultEmoji = '🥔';
-          if (item.name.toLowerCase().includes('onion')) defaultEmoji = '🧅';
-          if (item.name.toLowerCase().includes('banana')) defaultEmoji = '🍌';
+          let defaultEmoji = '';
+          if (item.name.toLowerCase().includes('tomato')) defaultEmoji = '';
+          if (item.name.toLowerCase().includes('carrot')) defaultEmoji = '';
+          if (item.name.toLowerCase().includes('chili')) defaultEmoji = '';
+          if (item.name.toLowerCase().includes('potato')) defaultEmoji = '';
+          if (item.name.toLowerCase().includes('onion')) defaultEmoji = '';
+          if (item.name.toLowerCase().includes('banana')) defaultEmoji = '';
 
           let symbol = defaultEmoji;
           if (item.photos && item.photos.length > 0 && item.photos[0]) {
@@ -5035,15 +5017,15 @@ function loadMarketplace() {
               <div class="market-card-meta">${item.district || 'Kandy'} · ${item.quantity_kg} kg</div>
               <div style="font-size:11.5px; color:var(--text); font-weight:500; display:flex; align-items:center; gap:4px; margin-top:4px;">
                 <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.seller_id})">${item.seller_name}</span>
-                <span class="verified-badge">✓ Verified</span>
+                <span class="verified-badge"> Verified</span>
               </div>
               <div style="font-size:11px; color:#f4a261; font-weight:600; display:flex; align-items:center; gap:2px; margin-top:2px; margin-bottom:6px;">
-                ★ ${repScore} (${item.seller_rep || 0} deals)
+                 ${repScore} (${item.seller_rep || 0} deals)
               </div>
               <div class="market-card-price">1kg = Rs. ${parseFloat(item.price_per_kg).toFixed(0)}</div>
               <div style="display:flex; gap:6px; margin-top:8px;">
-                <button class="interest-btn" style="margin-top:0;" onclick="openCropOrderModal(${item.id}, ${item.price_per_kg}, '${item.name.replace(/'/g, "\\'")}', ${item.quantity_kg})">🛒 Order Now</button>
-                <button class="interest-btn" style="margin-top:0; background:var(--teal); color:#fff;" onclick="startChatWithUser(${item.seller_id}, '${item.seller_name.replace(/'/g, "\\'")}', 'farmer')">💬 Chat</button>
+                <button class="interest-btn" style="margin-top:0;" onclick="openCropOrderModal(${item.id}, ${item.price_per_kg}, '${item.name.replace(/'/g, "\\'")}', ${item.quantity_kg})"> Order Now</button>
+                <button class="interest-btn" style="margin-top:0; background:var(--teal); color:#fff;" onclick="startChatWithUser(${item.seller_id}, '${item.seller_name.replace(/'/g, "\\'")}', 'farmer')"> Chat</button>
               </div>
             </div>
           `;
@@ -5066,10 +5048,10 @@ function loadMarketplace() {
 
         let html = '';
         data.listings.forEach(item => {
-          let defaultEmoji = '🚜';
-          if (item.name.toLowerCase().includes('pump') || item.name.toLowerCase().includes('water')) defaultEmoji = '💧';
-          if (item.name.toLowerCase().includes('transport') || item.name.toLowerCase().includes('lorry')) defaultEmoji = '🚛';
-          if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) defaultEmoji = '🌿';
+          let defaultEmoji = '';
+          if (item.name.toLowerCase().includes('pump') || item.name.toLowerCase().includes('water')) defaultEmoji = '';
+          if (item.name.toLowerCase().includes('transport') || item.name.toLowerCase().includes('lorry')) defaultEmoji = '';
+          if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) defaultEmoji = '';
 
           let symbol = defaultEmoji;
           if (item.photos && item.photos.length > 0 && item.photos[0]) {
@@ -5087,15 +5069,15 @@ function loadMarketplace() {
               <div class="market-card-meta">${item.district || 'Kurunegala'} · ${item.condition || 'Good'} condition</div>
               <div style="font-size:11.5px; color:var(--text); font-weight:500; display:flex; align-items:center; gap:4px; margin-top:4px;">
                 <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.owner_id})">${item.owner_name}</span>
-                <span class="verified-badge">✓ Verified</span>
+                <span class="verified-badge"> Verified</span>
               </div>
               <div style="font-size:11px; color:#f4a261; font-weight:600; display:flex; align-items:center; gap:2px; margin-top:2px; margin-bottom:6px;">
-                ★ ${repScore} (${item.owner_rep || 0} deals)
+                 ${repScore} (${item.owner_rep || 0} deals)
               </div>
               <div class="market-card-price">Rs. ${parseFloat(item.rental_rate).toLocaleString()} / day</div>
               <div style="display:flex; gap:6px; margin-top:8px;">
                 <button class="interest-btn" style="margin-top:0;" onclick="openBookingModal(${item.id}, ${item.rental_rate}, '${item.name}')">Rent Now</button>
-                <button class="interest-btn" style="margin-top:0; background:var(--teal); color:#fff;" onclick="startChatWithUser(${item.owner_id}, '${item.owner_name.replace(/'/g, "\\'")}', 'farmer')">💬 Chat</button>
+                <button class="interest-btn" style="margin-top:0; background:var(--teal); color:#fff;" onclick="startChatWithUser(${item.owner_id}, '${item.owner_name.replace(/'/g, "\\'")}', 'farmer')"> Chat</button>
               </div>
             </div>
           `;
@@ -5115,7 +5097,7 @@ function expressInterest(cropId) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast(getTranslation('toast-interest-registered-title', 'Interest Registered!'), getTranslation('toast-interest-registered-body', 'The seller has been notified and will contact you 🥬'), 'success');
+        showToast(getTranslation('toast-interest-registered-title', 'Interest Registered!'), getTranslation('toast-interest-registered-body', 'The seller has been notified and will contact you '), 'success');
         loadDashboardData();
       } else {
         showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('err-failed-register-interest', 'Failed to register interest'), 'error');
@@ -5180,8 +5162,8 @@ function renderAvailabilityCalendar(confirmedBookings = []) {
   
   // Create table grid
   let html = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-weight:600; color:var(--text);">
-    <span>📅 ${monthNames[month]} ${year}</span>
-    <span style="font-size:10px; color:var(--muted);">🔴 Booked | 🟢 Available</span>
+    <span> ${monthNames[month]} ${year}</span>
+    <span style="font-size:10px; color:var(--muted);"> Booked |  Available</span>
   </div>`;
   
   html += `<table style="width:100%; border-collapse:collapse; text-align:center; font-size:11px;">
@@ -5261,7 +5243,7 @@ function submitEquipmentBooking(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast(getTranslation('toast-booking-requested-title', 'Booking Requested!'), getTranslation('toast-booking-requested-body', 'Your equipment rental request was sent to the owner 🚜'), 'success');
+        showToast(getTranslation('toast-booking-requested-title', 'Booking Requested!'), getTranslation('toast-booking-requested-body', 'Your equipment rental request was sent to the owner '), 'success');
         closeBookingModal();
         loadDashboardData();
       } else {
@@ -5290,8 +5272,8 @@ function loadLedger() {
         const dateStr = new Date(item.created_at).toLocaleDateString();
         const shortHash = item.block_hash ? `${item.block_hash.slice(0, 16)}...` : 'N/A';
         const typeLabel = item.listing_type === 'equipment' 
-          ? '🚜 ' + getTranslation('ledger-type-equipment', 'Equipment Rental') 
-          : '🥬 ' + getTranslation('ledger-type-crop', 'Crop Purchase');
+          ? ' ' + getTranslation('ledger-type-equipment', 'Equipment Rental') 
+          : ' ' + getTranslation('ledger-type-crop', 'Crop Purchase');
 
         html += `
           <div class="booking-item" style="display:block; padding:16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; margin-bottom: 2px;">
@@ -5299,8 +5281,8 @@ function loadLedger() {
               <span style="font-weight:600; font-size:13.5px; color:var(--text);">${item.listing_name || 'Agro Deal'}</span>
               <div style="text-align:right;">
                 <span style="font-weight:600; font-size:14px; color:var(--teal); display:block;">Rs. ${parseFloat(item.amount).toLocaleString()}</span>
-                <button onclick="verifyAgreementDirectly('${item.tx_id}')" style="background:none; border:none; color:var(--teal); font-size:11.5px; cursor:pointer; font-weight:600; margin-top:4px; margin-right:8px;">🔗 Verify</button>
-                <button onclick="downloadLedgerReceipt('${item.tx_id}', '${(item.listing_name || 'Equipment').replace(/'/g, "\\'")}', '${(item.owner_name || 'Seller').replace(/'/g, "\\'")}', ${item.amount}, ${item.duration_days || 1}, '${item.block_hash}', '${item.prev_hash}')" style="background:none; border:none; color:var(--teal-light); font-size:11.5px; cursor:pointer; font-weight:600; margin-top:4px;">📥 PDF</button>
+                <button onclick="verifyAgreementDirectly('${item.tx_id}')" style="background:none; border:none; color:var(--teal); font-size:11.5px; cursor:pointer; font-weight:600; margin-top:4px; margin-right:8px;"> Verify</button>
+                <button onclick="downloadLedgerReceipt('${item.tx_id}', '${(item.listing_name || 'Equipment').replace(/'/g, "\\'")}', '${(item.owner_name || 'Seller').replace(/'/g, "\\'")}', ${item.amount}, ${item.duration_days || 1}, '${item.block_hash}', '${item.prev_hash}')" style="background:none; border:none; color:var(--teal-light); font-size:11.5px; cursor:pointer; font-weight:600; margin-top:4px;"> PDF</button>
               </div>
             </div>
             <div style="font-size:12px; color:var(--muted); display:flex; flex-direction:column; gap:4px;">
@@ -5323,7 +5305,7 @@ async function verifyLedger() {
   const statusDot = document.getElementById('ledger-status-dot');
   if (!statusText || !statusDot) return;
   
-  statusText.textContent = getTranslation('ledger-status-calculating', '🔒 Recalculating SHA-256 block hashes...');
+  statusText.textContent = getTranslation('ledger-status-calculating', ' Recalculating SHA-256 block hashes...');
   statusDot.style.background = '#7BA090';
   
   try {
@@ -5332,7 +5314,7 @@ async function verifyLedger() {
     });
     const data = await res.json();
     if (!data.success || !data.ledger) {
-      statusText.textContent = '❌ Failed to load chain data.';
+      statusText.textContent = ' Failed to load chain data.';
       statusDot.style.background = '#d95050';
       return;
     }
@@ -5370,15 +5352,15 @@ async function verifyLedger() {
     }
 
     if (isValid) {
-      statusText.textContent = '✅ ' + getTranslation('ledger-status-verified', 'Ledger is fully verified and tamper-free') + ` (${data.ledger.length})`;
+      statusText.textContent = ' ' + getTranslation('ledger-status-verified', 'Ledger is fully verified and tamper-free') + ` (${data.ledger.length})`;
       statusDot.style.background = '#28A060';
     } else {
-      statusText.textContent = getTranslation('ledger-status-failed-at', '⚠️ Chain integrity compromised at block: ') + ` ${brokenAtTx.slice(0, 8)}`;
+      statusText.textContent = getTranslation('ledger-status-failed-at', ' Chain integrity compromised at block: ') + ` ${brokenAtTx.slice(0, 8)}`;
       statusDot.style.background = '#d95050';
     }
   } catch (err) {
     console.error('Ledger verification error:', err);
-    statusText.textContent = '❌ Failed to verify ledger integrity.';
+    statusText.textContent = ' Failed to verify ledger integrity.';
     statusDot.style.background = '#d95050';
   }
 }
@@ -5420,7 +5402,7 @@ async function verifyOfflineReceipt() {
     if (!record) {
       resultDiv.style.background = '#fde8e8';
       resultDiv.style.color = '#c81e1e';
-      resultDiv.textContent = '❌ ' + getTranslation('js-receipt-not-found', 'Transaction ID not found in the blockchain database.');
+      resultDiv.textContent = ' ' + getTranslation('js-receipt-not-found', 'Transaction ID not found in the blockchain database.');
       return;
     }
 
@@ -5446,17 +5428,17 @@ async function verifyOfflineReceipt() {
     if (computedHash === record.block_hash) {
       resultDiv.style.background = '#def7ec';
       resultDiv.style.color = '#03543f';
-      resultDiv.innerHTML = `<strong>✅ Verification Successful!</strong><br>Receipt hash matched exactly with blockchain block hash:<br><code style="font-family:monospace;font-size:10px;word-break:break-all;">${computedHash}</code>`;
+      resultDiv.innerHTML = `<strong> Verification Successful!</strong><br>Receipt hash matched exactly with blockchain block hash:<br><code style="font-family:monospace;font-size:10px;word-break:break-all;">${computedHash}</code>`;
     } else {
       resultDiv.style.background = '#fde8e8';
       resultDiv.style.color = '#c81e1e';
-      resultDiv.innerHTML = `<strong>⚠️ Verification Failed!</strong><br>The computed hash does not match. The printed receipt details have been altered/tampered!`;
+      resultDiv.innerHTML = `<strong> Verification Failed!</strong><br>The computed hash does not match. The printed receipt details have been altered/tampered!`;
     }
   } catch (err) {
     console.error('Receipt verification error:', err);
     resultDiv.style.background = '#fde8e8';
     resultDiv.style.color = '#c81e1e';
-    resultDiv.textContent = '❌ Verification error occurred.';
+    resultDiv.textContent = ' Verification error occurred.';
   }
 }
 
@@ -5642,11 +5624,11 @@ function renderInvoices(list) {
         <div style="margin-top:8px; font-size:11.5px; display:flex; flex-direction:column; gap:4px; border-left:3px solid var(--teal-light); padding-left:10px; background:rgba(0,0,0,0.02); padding:6px 10px; border-radius:4px;">
           <span><strong>Block Hash:</strong> <span style="font-family:monospace;">${inv.blockHash}</span></span>
           <span><strong>Prev Hash:</strong> <span style="font-family:monospace;">${inv.prevHash}</span></span>
-          <span><strong>Ledger Status:</strong> <span style="color:var(--teal); font-weight:600;">🔒 Secured On-Chain</span></span>
+          <span><strong>Ledger Status:</strong> <span style="color:var(--teal); font-weight:600;"> Secured On-Chain</span></span>
         </div>
       `;
       actionButtons = `
-        <button onclick="downloadLedgerReceipt('${inv.id}', '${inv.title.replace(/'/g, "\\'")}', '${inv.partner.replace(/'/g, "\\'")}', ${inv.amount}, ${inv.duration || 1}, '${inv.blockHash}', '${inv.prevHash}')" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:inline-flex; align-items:center; gap:4px;">📥 PDF Receipt</button>
+        <button onclick="downloadLedgerReceipt('${inv.id}', '${inv.title.replace(/'/g, "\\'")}', '${inv.partner.replace(/'/g, "\\'")}', ${inv.amount}, ${inv.duration || 1}, '${inv.blockHash}', '${inv.prevHash}')" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:inline-flex; align-items:center; gap:4px;"> PDF Receipt</button>
       `;
     } else if (inv.type === 'rental') {
       activityDetails = `
@@ -5658,7 +5640,7 @@ function renderInvoices(list) {
       `;
       if (inv.status === 'confirmed' || inv.status === 'completed') {
         actionButtons = `
-          <button onclick="printRentalInvoice(${inv.bookingId})" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:inline-flex; align-items:center; gap:4px;">📄 Print Invoice</button>
+          <button onclick="printRentalInvoice(${inv.bookingId})" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:inline-flex; align-items:center; gap:4px;"> Print Invoice</button>
         `;
       } else {
         actionButtons = `<span style="font-size:11.5px; color:var(--muted);">Pending Confirmation</span>`;
@@ -5667,13 +5649,13 @@ function renderInvoices(list) {
       activityDetails = `
         <div style="margin-top:8px; font-size:11.5px; display:flex; flex-direction:column; gap:4px; border-left:3px solid var(--primary); padding-left:10px; background:rgba(0,0,0,0.02); padding:6px 10px; border-radius:4px;">
           <span><strong>Booking ID:</strong> ${inv.bookingId}</span>
-          <span><strong>Route:</strong> ${inv.raw.pickup_address} ➔ ${inv.raw.delivery_address}</span>
+          <span><strong>Route:</strong> ${inv.raw.pickup_address}  ${inv.raw.delivery_address}</span>
           <span><strong>Booking Status:</strong> <span class="booking-status ${inv.status}" style="padding:1px 6px; font-size:10px; display:inline-block; border-radius:4px;">${inv.status.toUpperCase()}</span></span>
         </div>
       `;
       if (inv.status === 'confirmed' || inv.status === 'in-transit' || inv.status === 'delivered') {
         actionButtons = `
-          <button onclick="printTransportInvoice(${inv.bookingId})" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:inline-flex; align-items:center; gap:4px;">📄 Print Invoice</button>
+          <button onclick="printTransportInvoice(${inv.bookingId})" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:inline-flex; align-items:center; gap:4px;"> Print Invoice</button>
         `;
       } else {
         actionButtons = `<span style="font-size:11.5px; color:var(--muted);">Pending Confirmation</span>`;
@@ -5690,7 +5672,7 @@ function renderInvoices(list) {
               <span>Partner: <strong>${inv.partner}</strong></span> · 
               <span>ID: <strong style="font-family:monospace;">${inv.id}</strong></span>
             </div>
-            <div style="font-size:11px; color:var(--hint); margin-top:4px;">🕒 ${formattedDate}</div>
+            <div style="font-size:11px; color:var(--hint); margin-top:4px;"> ${formattedDate}</div>
           </div>
           <div style="text-align:right;">
             <div style="font-weight:700; font-size:16px; color:var(--text);">${formattedAmount}</div>
@@ -5793,19 +5775,19 @@ function updateMapMarkers(listings, type) {
     }
 
     let color = type === 'crops' ? '#2d6a4f' : '#e76f51';
-    let symbol = '🥬';
+    let symbol = '';
     if (type === 'crops') {
-      if (item.name.toLowerCase().includes('tomato')) symbol = '🍅';
-      if (item.name.toLowerCase().includes('carrot')) symbol = '🥕';
-      if (item.name.toLowerCase().includes('chili')) symbol = '🌶️';
-      if (item.name.toLowerCase().includes('potato')) symbol = '🥔';
-      if (item.name.toLowerCase().includes('onion')) symbol = '🧅';
-      if (item.name.toLowerCase().includes('banana')) symbol = '🍌';
+      if (item.name.toLowerCase().includes('tomato')) symbol = '';
+      if (item.name.toLowerCase().includes('carrot')) symbol = '';
+      if (item.name.toLowerCase().includes('chili')) symbol = '';
+      if (item.name.toLowerCase().includes('potato')) symbol = '';
+      if (item.name.toLowerCase().includes('onion')) symbol = '';
+      if (item.name.toLowerCase().includes('banana')) symbol = '';
     } else {
-      symbol = '🚜';
-      if (item.name.toLowerCase().includes('pump') || item.name.toLowerCase().includes('water')) symbol = '💧';
-      if (item.name.toLowerCase().includes('transport') || item.name.toLowerCase().includes('lorry')) symbol = '🚛';
-      if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) symbol = '🌿';
+      symbol = '';
+      if (item.name.toLowerCase().includes('pump') || item.name.toLowerCase().includes('water')) symbol = '';
+      if (item.name.toLowerCase().includes('transport') || item.name.toLowerCase().includes('lorry')) symbol = '';
+      if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) symbol = '';
     }
 
     const markerIcon = L.divIcon({
@@ -5823,15 +5805,15 @@ function updateMapMarkers(listings, type) {
       popupHtml = `
         <div style="font-family:'DM Sans',sans-serif; min-width: 180px; padding: 2px; color: #16222c;">
           <h4 style="margin: 0 0 4px; font-size: 14px; font-weight: 600; color: #16222c;">${item.name}</h4>
-          <div style="font-size: 11.5px; color: #5e6d7a; margin-bottom: 6px;">📍 ${item.district || 'Unknown'} · ${item.quantity_kg} kg</div>
+          <div style="font-size: 11.5px; color: #5e6d7a; margin-bottom: 6px;"> ${item.district || 'Unknown'} · ${item.quantity_kg} kg</div>
           <div style="font-size: 13px; font-weight: 600; color: #1a4f72; margin-bottom: 6px;">1kg = Rs. ${parseFloat(item.price_per_kg).toFixed(0)}</div>
           <div style="border-top: 1px solid #dbe2e8; padding-top: 6px; font-size: 11px; display: flex; align-items: center; justify-content: space-between;">
             <span>Farmer: <strong>${item.seller_name}</strong></span>
-            <span style="color: #2d6a4f; font-weight: 600;">★ ${repScore}</span>
+            <span style="color: #2d6a4f; font-weight: 600;"> ${repScore}</span>
           </div>
           <div style="margin-top: 8px; display: flex; gap: 4px;">
             <button onclick="expressInterest(${item.id})" style="flex: 1; font-size: 10.5px; padding: 4px 0; background: #e3f2fd; color: #1a4f72; border: none; border-radius: 4px; font-weight: 600; cursor: pointer;">Express Interest</button>
-            <button onclick="startChatWithUser(${item.seller_id}, '${item.seller_name.replace(/'/g, "\\'")}', 'farmer')" style="font-size: 10.5px; padding: 4px 8px; background: #1a4f72; color: white; border: none; border-radius: 4px; cursor: pointer;">💬</button>
+            <button onclick="startChatWithUser(${item.seller_id}, '${item.seller_name.replace(/'/g, "\\'")}', 'farmer')" style="font-size: 10.5px; padding: 4px 8px; background: #1a4f72; color: white; border: none; border-radius: 4px; cursor: pointer;"></button>
           </div>
         </div>
       `;
@@ -5840,15 +5822,15 @@ function updateMapMarkers(listings, type) {
       popupHtml = `
         <div style="font-family:'DM Sans',sans-serif; min-width: 180px; padding: 2px; color: #16222c;">
           <h4 style="margin: 0 0 4px; font-size: 14px; font-weight: 600; color: #16222c;">${item.name}</h4>
-          <div style="font-size: 11.5px; color: #5e6d7a; margin-bottom: 6px;">📍 ${item.district || 'Unknown'} · ${item.condition || 'Good'} Cond.</div>
+          <div style="font-size: 11.5px; color: #5e6d7a; margin-bottom: 6px;"> ${item.district || 'Unknown'} · ${item.condition || 'Good'} Cond.</div>
           <div style="font-size: 13px; font-weight: 600; color: #1a4f72; margin-bottom: 6px;">Rs. ${parseFloat(item.rental_rate).toLocaleString()} / day</div>
           <div style="border-top: 1px solid #dbe2e8; padding-top: 6px; font-size: 11px; display: flex; align-items: center; justify-content: space-between;">
             <span>Owner: <strong>${item.owner_name}</strong></span>
-            <span style="color: #2d6a4f; font-weight: 600;">★ ${repScore}</span>
+            <span style="color: #2d6a4f; font-weight: 600;"> ${repScore}</span>
           </div>
           <div style="margin-top: 8px; display: flex; gap: 4px;">
             <button onclick="openBookingModal(${item.id}, ${item.rental_rate}, '${item.name.replace(/'/g, "\\'")}')" style="flex: 1; font-size: 10.5px; padding: 4px 0; background: #e3f2fd; color: #1a4f72; border: none; border-radius: 4px; font-weight: 600; cursor: pointer;">Rent Now</button>
-            <button onclick="startChatWithUser(${item.owner_id}, '${item.owner_name.replace(/'/g, "\\'")}', 'farmer')" style="font-size: 10.5px; padding: 4px 8px; background: #1a4f72; color: white; border: none; border-radius: 4px; cursor: pointer;">💬</button>
+            <button onclick="startChatWithUser(${item.owner_id}, '${item.owner_name.replace(/'/g, "\\'")}', 'farmer')" style="font-size: 10.5px; padding: 4px 8px; background: #1a4f72; color: white; border: none; border-radius: 4px; cursor: pointer;"></button>
           </div>
         </div>
       `;
@@ -5910,28 +5892,28 @@ function loadWeather(district) {
       const code = data.current.weather_code;
       
       let statusText = getTranslation('js-weather-status-normal', 'Normal');
-      let icon = '☀️';
+      let icon = '';
       let advice = getTranslation('js-weather-advice-farming', 'Good weather conditions for farming activities.');
       
       if (code === 0) {
         statusText = getTranslation('js-weather-status-clear', 'Clear Sky');
-        icon = '☀️';
+        icon = '';
         advice = getTranslation('js-weather-advice-harvesting', 'Optimal weather for harvesting and drying crops. Good time to broadcast requests.');
       } else if (code >= 1 && code <= 3) {
         statusText = getTranslation('js-weather-status-partly-cloudy', 'Partly Cloudy');
-        icon = '⛅';
+        icon = '';
         advice = getTranslation('js-weather-advice-transport', 'Favorable conditions for transport and outdoor storage.');
       } else if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) {
         statusText = getTranslation('js-weather-status-rainy', 'Rainy / Showers');
-        icon = '🌧️';
+        icon = '';
         advice = getTranslation('js-weather-advice-rain', 'Rain forecast. Ensure stored crops are well-covered. Avoid wet-field harvest.');
       } else if (code >= 95) {
         statusText = getTranslation('js-weather-status-thunderstorm', 'Thunderstorm');
-        icon = '⛈️';
-        advice = getTranslation('js-weather-advice-thunderstorm', '⚠️ Thunderstorms detected. Keep transport vehicles sheltered and secure outdoor produce immediately.');
+        icon = '';
+        advice = getTranslation('js-weather-advice-thunderstorm', ' Thunderstorms detected. Keep transport vehicles sheltered and secure outdoor produce immediately.');
       } else {
         statusText = getTranslation('js-weather-status-cloudy', 'Cloudy');
-        icon = '☁️';
+        icon = '';
         advice = getTranslation('js-weather-advice-cloudy', 'Favorable agricultural conditions. Keep crops protected from damp air.');
       }
       
@@ -6314,10 +6296,10 @@ function loadTransportDrivers() {
           <div>
             <div style="font-weight:600; font-size:14.5px; color:var(--text);">${vehicleTypeTranslated} — ${p.vehicle_no}</div>
             <div style="font-size:12px; color:var(--muted); margin-top:2px;">${getTranslation('js-owner', 'Owner')}: ${p.owner_name} | ${getTranslation('js-capacity', 'Capacity')}: ${p.capacity_kg} kg | Rate: Rs. ${parseFloat(p.rate_per_km || 150.00).toFixed(2)}/km</div>
-            <div style="font-size:11px; background:var(--teal-pale); color:var(--teal-mid); display:inline-block; padding:2px 8px; border-radius:4px; margin-top:6px;">📍 ${districtTranslated}</div>
+            <div style="font-size:11px; background:var(--teal-pale); color:var(--teal-mid); display:inline-block; padding:2px 8px; border-radius:4px; margin-top:6px;"> ${districtTranslated}</div>
           </div>
           <div style="display:flex; align-items:center; gap:8px;">
-            <a href="tel:${p.phone}" class="broadcast-btn" style="text-decoration:none; padding:6px 12px; font-size:11px; height:auto; margin:0;" data-i18n="logistics-driver-call">📞 Call</a>
+            <a href="tel:${p.phone}" class="broadcast-btn" style="text-decoration:none; padding:6px 12px; font-size:11px; height:auto; margin:0;" data-i18n="logistics-driver-call"> Call</a>
             ${bookBtnHtml}
           </div>
         `;
@@ -6356,7 +6338,7 @@ function submitTransportRegistration(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast(getTranslation('toast-trans-published-title', 'Success'), getTranslation('toast-trans-published-body', 'Transport listing published successfully! 🚛'), 'success');
+        showToast(getTranslation('toast-trans-published-title', 'Success'), getTranslation('toast-trans-published-body', 'Transport listing published successfully! '), 'success');
         document.getElementById('transport-register-form').reset();
         toggleTransportTab('browse');
       } else {
@@ -6676,7 +6658,7 @@ function submitTransportBooking(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast(getTranslation('toast-trans-booked-title', 'Success'), getTranslation('toast-trans-booked-body', 'Transport booking request sent! 🚛'), 'success');
+        showToast(getTranslation('toast-trans-booked-title', 'Success'), getTranslation('toast-trans-booked-body', 'Transport booking request sent! '), 'success');
         closeTransportBookingModal();
         toggleTransportTab('bookings');
       } else {
@@ -6776,11 +6758,11 @@ function loadTransportBookings() {
 
         let invoiceBtnHtml = '';
         if (b.status === 'confirmed' || b.status === 'in-transit' || b.status === 'delivered') {
-          invoiceBtnHtml = `<button onclick="printTransportInvoice(${b.id})" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:flex; align-items:center; gap:2px; margin-top:4px;">📄 Invoice</button>`;
+          invoiceBtnHtml = `<button onclick="printTransportInvoice(${b.id})" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:flex; align-items:center; gap:2px; margin-top:4px;"> Invoice</button>`;
         }
         let receiptBtnHtml = '';
         if (b.status === 'delivered') {
-          receiptBtnHtml = `<button onclick="printTransportReceipt(${b.id})" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:flex; align-items:center; gap:2px; margin-top:4px;">🧾 Receipt</button>`;
+          receiptBtnHtml = `<button onclick="printTransportReceipt(${b.id})" style="background:none; border:none; color:var(--teal-mid); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:flex; align-items:center; gap:2px; margin-top:4px;"> Receipt</button>`;
         }
 
         item.innerHTML = `
@@ -6788,7 +6770,7 @@ function loadTransportBookings() {
             <div>
               <div style="font-weight:600; font-size:15px; color:var(--text);">${b.commodity_name} — ${b.quantity_kg} kg</div>
               ${contactInfoHtml}
-              <div style="font-size:12px; color:var(--muted); margin-top:4px;"><b>${getTranslation('js-route', 'Route')}:</b> ${b.pickup_address} ➔ ${b.delivery_address}</div>
+              <div style="font-size:12px; color:var(--muted); margin-top:4px;"><b>${getTranslation('js-route', 'Route')}:</b> ${b.pickup_address}  ${b.delivery_address}</div>
               <div style="font-size:12px; font-weight:600; color:var(--teal-mid); margin-top:4px;">Rs. ${b.price ? parseFloat(b.price).toLocaleString() : getTranslation('js-negotiable', 'Negotiable')}</div>
             </div>
             <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
@@ -6819,7 +6801,7 @@ function updateTransportBookingStatus(bookingId, status) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast(getTranslation('toast-booking-updated-title', 'Success'), getTranslation('toast-booking-updated-body-prefix', 'Booking updated to') + ` ${status}! 🚛`, 'success');
+        showToast(getTranslation('toast-booking-updated-title', 'Success'), getTranslation('toast-booking-updated-body-prefix', 'Booking updated to') + ` ${status}! `, 'success');
         loadTransportBookings();
       } else {
         showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('err-failed-update-booking-status', 'Failed to update booking status'), 'error');
@@ -7774,8 +7756,8 @@ function hideOverlay() {
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('service-worker.js')
-      .then(reg => console.log('✅ PWA Service Worker Registered!'))
-      .catch(err => console.warn('❌ Service Worker registration failed:', err));
+      .then(reg => console.log(' PWA Service Worker Registered!'))
+      .catch(err => console.warn(' Service Worker registration failed:', err));
   });
 }
 
@@ -7827,14 +7809,14 @@ window.addEventListener('appinstalled', (evt) => {
 <div id="ios-install-modal" style="display:none;position:fixed;inset:0;background:rgba(20,29,43,0.7);backdrop-filter:blur(4px);z-index:999999;align-items:center;justify-content:center;">
   <div style="background:#fff;border-radius:20px;padding:28px;max-width:400px;width:90%;box-shadow:0 12px 36px rgba(0,0,0,0.25);border:1px solid var(--border);position:relative;text-align:center;font-family:system-ui,sans-serif;">
     <button onclick="closeIosInstallModal()" style="position:absolute;top:15px;right:15px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);line-height:1;">&times;</button>
-    <span style="font-size:42px;">🍏</span>
+    <span style="font-size:42px;"></span>
     <h3 style="font-size:17px;font-weight:700;color:var(--text);margin-top:10px;margin-bottom:12px;" data-i18n="ios-install-title">Install on iPhone / iPad</h3>
     <p style="font-size:13px;color:#5e6d7a;line-height:1.6;margin-bottom:20px;text-align:left;white-space:pre-wrap;" data-i18n="ios-install-body">
 To install AgroNexa LK on your iOS device:
 
 1. Open Safari browser.
-2. Tap the Share button 📤 in the navigation bar.
-3. Scroll down and tap 'Add to Home Screen' ➕.
+2. Tap the Share button  in the navigation bar.
+3. Scroll down and tap 'Add to Home Screen' .
 4. Tap 'Add' to confirm.
     </p>
     <button onclick="closeIosInstallModal()" style="width:100%;height:38px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;" data-i18n="btn-close">Close</button>

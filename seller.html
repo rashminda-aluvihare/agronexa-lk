@@ -767,7 +767,7 @@
         <path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10S2 17.523 2 12a10 10 0 0 1 10-10z"/>
         <circle cx="12" cy="12" r="3"/>
       </svg>
-      <span data-i18n="nav-ai-diagnosis">🔬 AI Disease Scan</span>
+      <span data-i18n="nav-ai-diagnosis"> AI Disease Scan</span>
     </div>
     <div class="nav-item" onclick="switchTab('prices')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
@@ -820,7 +820,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <path d="M12 2v14M19 9l-7 7-7-7M5 21h14" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      <span data-i18n="nav-download-app">📲 Download App</span>
+      <span data-i18n="nav-download-app"> Download App</span>
     </div>
   </nav>
 
@@ -851,25 +851,7 @@
 
   <div class="content">
 
-    <!-- Mobile App Announcement Banner -->
-    <div id="section-app-banner" class="panel" style="display: none; background: linear-gradient(135deg, #1b5e20 0%, #006064 100%); color: #ffffff; border: none; position: relative; overflow: hidden; align-items: center; justify-content: space-between; gap: 20px; padding: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); margin-bottom: 5px;">
-      <div style="position: absolute; right: -20px; bottom: -30px; opacity: 0.15; font-size: 150px; transform: rotate(-15deg); pointer-events: none;">📱</div>
-      <div style="display: flex; align-items: center; gap: 16px; flex: 1;">
-        <div style="width: 52px; height: 52px; border-radius: 12px; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0;">📲</div>
-        <div>
-          <div style="font-size: 16px; font-weight: 700; margin-bottom: 4px; letter-spacing: 0.5px;" data-i18n="announcement-app-title">AgroNexa-LK Mobile App Coming Soon! 🚀</div>
-          <div style="font-size: 12.5px; opacity: 0.9; line-height: 1.4;" data-i18n="announcement-app-desc">We are excited to announce that our official mobile app is currently in development! Enjoy faster bookings, real-time push alerts, and direct farm-to-buyer connectivity right from your smartphone.</div>
-        </div>
-      </div>
-      <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0; position: relative; z-index: 2;">
-        <button class="btn-sm" onclick="showToast('Stay Tuned!', 'We will notify you as soon as the app goes live on Google Play & App Store! 🔔', 'success')" style="background: #ffffff; color: #006064; border: none; padding: 8px 16px; font-size: 12px; font-weight: 700; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
-          <span data-i18n="btn-notify-me">Notify Me 🔔</span>
-        </button>
-        <button onclick="dismissAppBanner()" style="background: transparent; border: none; color: rgba(255,255,255,0.7); cursor: pointer; font-size: 18px; padding: 4px; display: flex; align-items: center; justify-content: center; transition: color 0.2s;" title="Dismiss">
-          ✕
-        </button>
-      </div>
-    </div>
+
 
     <!-- Stats -->
     <div class="stats-row content-section" id="section-stats">
@@ -926,7 +908,7 @@
     <!-- Weather Section -->
     <div class="panel content-section" id="section-weather" style="display: none; margin-top: 20px; margin-bottom: 20px;">
       <div class="panel-head">
-        <div class="panel-title" data-i18n="weather-title">🌦️ Weather Alert & Farming Advisory</div>
+        <div class="panel-title" data-i18n="weather-title"> Weather Alert & Farming Advisory</div>
         <div id="weather-district-display" style="font-size:12px; font-weight:600; color:var(--primary);">Loading district...</div>
       </div>
       <div style="display:flex; flex-direction:column; gap:12px;">
@@ -942,9 +924,9 @@
     <!-- Price Index Section -->
     <div class="panel content-section" id="section-price-index" style="display: none; margin-top: 20px; margin-bottom: 20px;">
       <div class="panel-head" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-        <div class="panel-title" data-i18n="price-index-title">📊 Daily Crop Market Price Index (Sri Lanka)</div>
+        <div class="panel-title" data-i18n="price-index-title"> Daily Crop Market Price Index (Sri Lanka)</div>
         <button onclick="downloadPriceSummaryPDF()" class="btn-sm btn-accept" style="margin: 0; padding: 6px 12px; font-size: 11px; display: flex; align-items: center; gap: 4px; background: var(--primary); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
-          📥 <span data-i18n="btn-download-summary">Download Summary (PDF)</span>
+           <span data-i18n="btn-download-summary">Download Summary (PDF)</span>
         </button>
       </div>
       <p style="font-size:12px; color:var(--text-muted); margin-bottom: 12px;" data-i18n="price-index-sub">Average market rates per kg from dedicated economic centres.</p>
@@ -970,10 +952,10 @@
           <h4 id="price-chart-title" style="font-size: 14px; font-weight: 600; margin: 0; color: var(--primary);"></h4>
           <div style="display: flex; gap: 8px;">
             <button onclick="downloadChartAsPNG()" style="font-size: 11px; padding: 4px 8px; background: #fff; border: 1px solid var(--border-color); border-radius: 4px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 4px; color: var(--text-color);">
-              📥 <span data-i18n="btn-download-chart-img">Download Image</span>
+               <span data-i18n="btn-download-chart-img">Download Image</span>
             </button>
             <button onclick="downloadChartAsPDF()" style="font-size: 11px; padding: 4px 8px; background: var(--primary); border: none; border-radius: 4px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 4px; color: #fff;">
-              📄 <span data-i18n="btn-download-chart-pdf">Download PDF</span>
+               <span data-i18n="btn-download-chart-pdf">Download PDF</span>
             </button>
           </div>
         </div>
@@ -993,10 +975,10 @@
         <!-- Prominent Add Crop Listing CTA Banner -->
         <div style="background: linear-gradient(135deg, rgba(82, 183, 136, 0.12) 0%, rgba(45, 106, 79, 0.05) 100%); border: 1px dashed var(--primary-light); border-radius: 12px; padding: 18px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px;">
           <div>
-            <h4 style="font-size: 13.5px; font-weight: 600; color: var(--primary); margin-bottom: 3px;" data-i18n="seller-cta-crop-title">🥬 Ready to Sell Your Harvest?</h4>
+            <h4 style="font-size: 13.5px; font-weight: 600; color: var(--primary); margin-bottom: 3px;" data-i18n="seller-cta-crop-title"> Ready to Sell Your Harvest?</h4>
             <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4; margin: 0;" data-i18n="seller-cta-crop-desc">Publish a new crop listing with photos. AgroNexa will SMS-broadcast it to buyers in your district instantly!</p>
           </div>
-          <button class="btn-sm btn-accept" onclick="openAddCropModal()" style="margin: 0; padding: 10px 18px; font-size: 12.5px; font-weight: 600; background: var(--primary); color: #fff; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap;"><span data-i18n="btn-list-new-produce">➕ List New Produce</span></button>
+          <button class="btn-sm btn-accept" onclick="openAddCropModal()" style="margin: 0; padding: 10px 18px; font-size: 12.5px; font-weight: 600; background: var(--primary); color: #fff; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap;"><span data-i18n="btn-list-new-produce"> List New Produce</span></button>
         </div>
 
         <div id="crop-listings-list">
@@ -1069,7 +1051,7 @@
     <!-- Announcements Section -->
     <div class="panel content-section" id="section-announcements" style="display: none; margin-top: 20px;">
       <div class="panel-head">
-        <div class="panel-title" data-i18n="nav-announcements">Announcements 📢</div>
+        <div class="panel-title" data-i18n="nav-announcements">Announcements </div>
       </div>
       <div class="panel-sub" style="font-size:12px; color:var(--text-muted); margin-bottom:15px;" data-i18n="announcements-tab-desc">View official announcements and important updates from AgroNexa-LK system administration.</div>
       <div id="announcements-list-container" style="display:flex; flex-direction:column; gap:12px;">
@@ -1080,7 +1062,7 @@
     <!-- AI Crop Disease Diagnostic Lab -->
     <div class="panel content-section" id="section-ai-diagnosis" style="display: none; margin-top: 20px;">
       <div class="panel-head">
-        <div class="panel-title" style="font-size: 15px; font-weight: 700; color: var(--primary);">🔬 <span data-i18n="nav-ai-diagnosis-title">AI Crop Disease Diagnosis Lab (TensorFlow.js Enabled)</span></div>
+        <div class="panel-title" style="font-size: 15px; font-weight: 700; color: var(--primary);"> <span data-i18n="nav-ai-diagnosis-title">AI Crop Disease Diagnosis Lab (TensorFlow.js Enabled)</span></div>
       </div>
       <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:20px; line-height: 1.5;" data-i18n="ai-diagnosis-desc">
         Scan crop leaves using our custom computer vision algorithm to instantly diagnose crop diseases, analyze damage ratios, and retrieve local remedies.
@@ -1095,17 +1077,17 @@
           <div style="display:flex; flex-direction:column; gap:8px;">
             <span style="font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase;" data-i18n="ai-presets">Demo Sample Leaf Presets</span>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-              <button class="btn-sm" style="background:#fff; border:1px solid var(--border-color); display:flex; align-items:center; gap:6px; font-size:11.5px; padding:8px 6px; cursor:pointer;" onclick="selectDemoLeaf('paddy-blast')">🌾 Paddy Blast</button>
-              <button class="btn-sm" style="background:#fff; border:1px solid var(--border-color); display:flex; align-items:center; gap:6px; font-size:11.5px; padding:8px 6px; cursor:pointer;" onclick="selectDemoLeaf('tomato-blight')">🍅 Tomato Blight</button>
-              <button class="btn-sm" style="background:#fff; border:1px solid var(--border-color); display:flex; align-items:center; gap:6px; font-size:11.5px; padding:8px 6px; cursor:pointer;" onclick="selectDemoLeaf('coconut-wilt')">🌴 Coconut Wilt</button>
-              <button class="btn-sm" style="background:#fff; border:1px solid var(--border-color); display:flex; align-items:center; gap:6px; font-size:11.5px; padding:8px 6px; cursor:pointer;" onclick="selectDemoLeaf('healthy-tea')">🍃 Healthy Tea</button>
+              <button class="btn-sm" style="background:#fff; border:1px solid var(--border-color); display:flex; align-items:center; gap:6px; font-size:11.5px; padding:8px 6px; cursor:pointer;" onclick="selectDemoLeaf('paddy-blast')"> Paddy Blast</button>
+              <button class="btn-sm" style="background:#fff; border:1px solid var(--border-color); display:flex; align-items:center; gap:6px; font-size:11.5px; padding:8px 6px; cursor:pointer;" onclick="selectDemoLeaf('tomato-blight')"> Tomato Blight</button>
+              <button class="btn-sm" style="background:#fff; border:1px solid var(--border-color); display:flex; align-items:center; gap:6px; font-size:11.5px; padding:8px 6px; cursor:pointer;" onclick="selectDemoLeaf('coconut-wilt')"> Coconut Wilt</button>
+              <button class="btn-sm" style="background:#fff; border:1px solid var(--border-color); display:flex; align-items:center; gap:6px; font-size:11.5px; padding:8px 6px; cursor:pointer;" onclick="selectDemoLeaf('healthy-tea')"> Healthy Tea</button>
             </div>
           </div>
 
           <div style="text-align:center; padding:24px 15px; border:2px dashed var(--border-color); border-radius:12px; background:#fff; cursor:pointer; position:relative; min-height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center;" onclick="triggerLeafUpload()">
             <input type="file" id="leaf-file-input" style="display:none;" onchange="previewUploadedLeaf(event)" accept="image/*" />
             <div id="leaf-upload-placeholder">
-              <span style="font-size:32px;">📷</span>
+              <span style="font-size:32px;"></span>
               <div style="font-size:12.5px; font-weight:600; margin-top:8px; color:var(--primary-light);" data-i18n="ai-upload-btn">Upload custom leaf photo</div>
               <div style="font-size:11px; color:var(--text-muted); margin-top:2px;" data-i18n="ai-upload-sub">Supports JPG, PNG (Max 5MB)</div>
             </div>
@@ -1119,7 +1101,7 @@
         <div style="background:#fff; border:1px solid var(--border-color); border-radius:14px; padding:24px; display:flex; flex-direction:column; gap:16px; min-height:360px; justify-content:center;">
           <!-- Waiting state -->
           <div id="ai-diagnostic-idle" style="text-align:center; color:var(--text-muted);">
-            <span style="font-size:42px;">🔬</span>
+            <span style="font-size:42px;"></span>
             <div style="font-size:13.5px; font-weight:600; margin-top:12px; color: var(--text-main);" data-i18n="ai-idle-title">Diagnostic Lab Offline</div>
             <div style="font-size:12px; margin-top:6px; max-width:240px; margin:6px auto 0;" data-i18n="ai-idle-desc">Upload a crop photo or choose a preset sample on the left to begin AI analysis.</div>
           </div>
@@ -1127,7 +1109,7 @@
           <!-- Scanning state -->
           <div id="ai-diagnostic-scanning" style="display:none; flex-direction:column; gap:16px; align-items:center; text-align:center;">
             <div style="position:relative; width:80px; height:80px; border-radius:50%; border:3px solid var(--primary-pale); border-top-color:var(--primary-light); animation:spin 1s linear infinite;">
-              <span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:24px;">🧬</span>
+              <span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:24px;"></span>
             </div>
             <div>
               <div style="font-size:14px; font-weight:700; color:var(--primary-light);" id="ai-scan-status-text">AI Scanning...</div>
@@ -1154,11 +1136,11 @@
 
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
               <div style="background:#fef2f2; border:1px solid #fee2e2; border-radius:10px; padding:12px;">
-                <div style="font-weight:700; font-size:12px; color:#b91c1c; margin-bottom:4px;" data-i18n="ai-damage-ratio">🍂 Damage Ratio</div>
+                <div style="font-weight:700; font-size:12px; color:#b91c1c; margin-bottom:4px;" data-i18n="ai-damage-ratio"> Damage Ratio</div>
                 <div style="font-size:14px; font-weight:800; color:#991b1b;" id="ai-result-damage">34.2% (Moderate)</div>
               </div>
               <div style="background:var(--primary-pale); border:1px solid var(--border-color); border-radius:10px; padding:12px;">
-                <div style="font-weight:700; font-size:12px; color:var(--primary); margin-bottom:4px;" data-i18n="ai-treatment-status">🍃 Treatment Status</div>
+                <div style="font-weight:700; font-size:12px; color:var(--primary); margin-bottom:4px;" data-i18n="ai-treatment-status"> Treatment Status</div>
                 <div style="font-size:14px; font-weight:800; color:var(--primary-dark);" id="ai-result-remedy-type">Organic Recommended</div>
               </div>
             </div>
@@ -1167,20 +1149,20 @@
             <div style="display:flex; flex-direction:column; gap:12px;">
               <div>
                 <div style="font-size:12px; font-weight:700; color:var(--text-main); display:flex; align-items:center; gap:6px; margin-bottom:4px;">
-                  <span>🟢</span> <span data-i18n="ai-organic">Organic Remedies (කාබනික පිළියම්)</span>
+                  <span></span> <span data-i18n="ai-organic">Organic Remedies (කාබනික පිළියම්)</span>
                 </div>
                 <div id="ai-result-organic-treatment" style="font-size:12.5px; color:var(--text-muted); line-height:1.5; padding-left:16px;">Organic remedy details...</div>
               </div>
               <div style="border-top:1px solid var(--border-color); padding-top:10px;">
                 <div style="font-size:12px; font-weight:700; color:var(--text-main); display:flex; align-items:center; gap:6px; margin-bottom:4px;">
-                  <span>🔴</span> <span data-i18n="ai-chemical">Chemical Treatments (රසායනික පිළියම්)</span>
+                  <span></span> <span data-i18n="ai-chemical">Chemical Treatments (රසායනික පිළියම්)</span>
                 </div>
                 <div id="ai-result-chemical-treatment" style="font-size:12.5px; color:var(--text-muted); line-height:1.5; padding-left:16px;">Chemical treatment details...</div>
               </div>
             </div>
             
             <button class="btn-sm" style="background:#fff; border:1px solid var(--border-color); width:100%; display:flex; align-items:center; justify-content:center; gap:6px; height:38px; font-size:12.5px; font-weight:600; cursor:pointer;" onclick="downloadDiagnosisReport()" data-i18n="ai-pdf-report">
-              📄 Export Diagnostic Report (PDF)
+               Export Diagnostic Report (PDF)
             </button>
           </div>
         </div>
@@ -1228,7 +1210,7 @@
             </div>
           </div>
           <div style="margin-top: 16px; font-size:11px; color:var(--muted); background:var(--green-pale); border-radius:8px; padding:8px 12px; border:1px solid rgba(82,183,136,0.2); line-height:1.4;" data-i18n="seller-rep-disclaimer">
-            🛡️ <strong>Trust Score:</strong> Your reputation is automatically computed from completed rentals on the AgroNexa blockchain ledger. Verified reviews maintain buyer confidence!
+             <strong>Trust Score:</strong> Your reputation is automatically computed from completed rentals on the AgroNexa blockchain ledger. Verified reviews maintain buyer confidence!
           </div>
         </div>
         <!-- Earnings mini chart -->
@@ -1269,7 +1251,7 @@
     <!-- Equipment Rentals Section -->
     <div class="panel content-section" id="section-equipment" style="display:none;">
       <div class="panel-head" style="margin-bottom: 20px;">
-        <div class="panel-title">🚜 <span data-i18n="tab-equipment-rentals">Equipment Rentals & Marketplace</span></div>
+        <div class="panel-title"> <span data-i18n="tab-equipment-rentals">Equipment Rentals & Marketplace</span></div>
       </div>
 
       <!-- Equipment Tab Bar -->
@@ -1284,8 +1266,8 @@
         <!-- Equipment Listings -->
         <div class="panel" id="panel-equipment-listings" style="border:none; box-shadow:none; padding:0;">
           <div class="panel-head">
-            <div class="panel-title">🚜 <span data-i18n="tab-my-equipment-listings">My Equipment Listings</span></div>
-            <div class="panel-action" onclick="openAddEquipmentModal()" style="cursor:pointer" data-i18n="btn-add-new">➕ Add New</div>
+            <div class="panel-title"> <span data-i18n="tab-my-equipment-listings">My Equipment Listings</span></div>
+            <div class="panel-action" onclick="openAddEquipmentModal()" style="cursor:pointer" data-i18n="btn-add-new"> Add New</div>
           </div>
           <div id="equipment-listings-list" style="max-height: 400px; overflow-y: auto;">
             <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;" data-i18n="js-loading">Loading equipment...</div>
@@ -1295,7 +1277,7 @@
         <!-- Equipment Booking Requests -->
         <div class="panel" id="panel-equipment-bookings" style="border:none; box-shadow:none; padding:0;">
           <div class="panel-head">
-            <div class="panel-title">📥 <span data-i18n="tab-tool-rental-bookings">Tool Rental Bookings</span></div>
+            <div class="panel-title"> <span data-i18n="tab-tool-rental-bookings">Tool Rental Bookings</span></div>
             <span style="font-size:11px;color:var(--accent);font-weight:500" id="equipment-bookings-count">0 pending</span>
           </div>
           <div id="equipment-bookings-list" style="max-height: 400px; overflow-y: auto;">
@@ -1308,7 +1290,7 @@
       <div id="equipment-marketplace-panel" style="display:none;">
         <div style="display:flex; gap:12px; margin-bottom:16px;">
           <input type="text" class="form-input" id="equipment-market-search" placeholder="Search equipment..." style="flex:1;" oninput="loadEquipmentMarketplace()" data-i18n-placeholder="placeholder-search-equipment">
-          <button class="btn" onclick="loadEquipmentMarketplace()" data-i18n="btn-search">🔍 Search</button>
+          <button class="btn" onclick="loadEquipmentMarketplace()" data-i18n="btn-search"> Search</button>
         </div>
         <div id="equipment-marketplace-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:16px; max-height: 500px; overflow-y: auto; padding: 4px;">
           <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;grid-column: 1/-1;" data-i18n="js-loading">Loading equipment listings...</div>
@@ -1326,7 +1308,7 @@
     <!-- Transport Matching Section -->
     <div class="panel content-section" id="section-transport" style="display:none;">
       <div class="panel-head">
-        <div class="panel-title" data-i18n="logistics-title">🚛 Transport & Logistics Registry</div>
+        <div class="panel-title" data-i18n="logistics-title"> Transport & Logistics Registry</div>
       </div>
       <p style="font-size:12px; color:var(--text-muted); margin-bottom: 20px;" data-i18n="logistics-sub">
         Find and book local lorry owners and transport providers in your district.
@@ -1427,7 +1409,7 @@
     <!-- Invoices Section -->
     <div class="panel content-section" id="section-invoices" style="display:none;">
       <div class="panel-head" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
-        <div class="panel-title">📄 <span data-i18n="panel-invoices-title">Invoices & Receipts</span></div>
+        <div class="panel-title"> <span data-i18n="panel-invoices-title">Invoices & Receipts</span></div>
         <div style="font-size:12px; color:var(--text-muted);" id="invoices-summary-info">Showing 0 invoices</div>
       </div>
       
@@ -1456,7 +1438,7 @@
         </div>
         <div style="display:flex; align-items:flex-end;">
           <button onclick="clearInvoiceFilters()" style="padding:9px 16px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card); color:var(--text-main); font-size:12.5px; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:4px; height:36px;">
-            🔄 <span data-i18n="btn-clear">Clear</span>
+             <span data-i18n="btn-clear">Clear</span>
           </button>
         </div>
       </div>
@@ -1470,7 +1452,7 @@
     <!-- Profile Section -->
     <div class="panel content-section" id="section-profile" style="display:none;">
       <div class="panel-head">
-        <div class="panel-title">👤 <span data-i18n="panel-profile-details">My Profile Details</span></div>
+        <div class="panel-title"> <span data-i18n="panel-profile-details">My Profile Details</span></div>
       </div>
       <form id="profile-form" onsubmit="saveProfile(event)">
         <!-- Profile Picture Widget -->
@@ -1481,7 +1463,7 @@
           </div>
           <div>
             <button type="button" class="btn" style="padding:6px 14px; font-size:12.5px; border-radius:6px; display:inline-flex; align-items:center; gap:6px; cursor:pointer;" onclick="document.getElementById('profile-photo-input').click()">
-              📸 <span data-i18n="btn-upload-photo">Upload Photo</span>
+               <span data-i18n="btn-upload-photo">Upload Photo</span>
             </button>
             <input type="file" id="profile-photo-input" accept="image/*" style="display:none;" onchange="previewProfilePhoto(this)" />
             <div style="font-size:11px; color:var(--muted); margin-top:6px;" data-i18n="hint-photo-size">Supported formats: JPG, PNG. Max size: 3MB.</div>
@@ -1587,7 +1569,7 @@
           </div>
         </div>
         <button type="submit" class="btn-sm btn-accept" style="margin-top:16px;">
-          <span data-i18n="profile-btn-save">💾 Save Changes</span>
+          <span data-i18n="profile-btn-save"> Save Changes</span>
         </button>
       </form>
     </div>
@@ -1595,7 +1577,7 @@
     <!-- Settings Section -->
     <div class="panel content-section" id="section-settings" style="display:none; max-width: 600px;">
       <div class="panel-head">
-        <div class="panel-title">⚙️ <span data-i18n="panel-app-settings">App Settings</span></div>
+        <div class="panel-title"> <span data-i18n="panel-app-settings">App Settings</span></div>
       </div>
       <div style="display:flex; flex-direction:column; gap:20px;">
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:15px;">
@@ -1647,7 +1629,7 @@
           <!-- Chat Sidebar (Active Conversations) -->
           <div class="chat-sidebar">
             <div class="chat-sidebar-header" data-i18n="panel-active-chats">
-              💬 Active Chats
+               Active Chats
             </div>
             <div class="chat-list" id="chat-conversations-list">
               <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;" data-i18n="js-no-chats">No active chats.</div>
@@ -1663,7 +1645,7 @@
           <div class="chat-main" id="chat-window-active" style="display:none;">
             <div class="chat-main-header">
               <div style="display:flex; align-items:center; gap:12px;">
-                <button type="button" id="chat-back-btn" onclick="backToChatList()" style="display:none; align-items:center; justify-content:center; background:none; border:none; font-size:16px; color:var(--text-main); cursor:pointer; padding:4px 8px; border-radius:6px; transition:background 0.2s;"><span data-i18n="btn-chat-back">⬅️ Back</span></button>
+                <button type="button" id="chat-back-btn" onclick="backToChatList()" style="display:none; align-items:center; justify-content:center; background:none; border:none; font-size:16px; color:var(--text-main); cursor:pointer; padding:4px 8px; border-radius:6px; transition:background 0.2s;"><span data-i18n="btn-chat-back">⬅ Back</span></button>
                 <div>
                   <div class="chat-main-title" id="chat-active-name" style="cursor:pointer; text-decoration:underline;" onclick="showUserProfileModal(activeChatUserId)">Buyer Name</div>
                   <div style="font-size:11px; color:var(--text-muted); margin-top:2px;" id="chat-active-role" data-i18n="js-buyer-role">Buyer</div>
@@ -1676,7 +1658,7 @@
             </div>
             <div id="chat-attachment-preview" style="display:none; padding:12px 20px; background:var(--primary-pale); border-top:1px solid var(--border-color); border-left:4px solid var(--primary-light); font-size:12.5px; align-items:center; justify-content:space-between; width:100%; gap:12px; transition: all 0.3s ease;">
               <div style="display:flex; align-items:center; gap:8px; color:var(--text-main); font-weight:500;">
-                <span id="chat-preview-icon" style="font-size:16px;">📎</span>
+                <span id="chat-preview-icon" style="font-size:16px;"></span>
                 <span id="chat-preview-filename" style="font-style:normal; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:300px;">Attachment staged</span>
               </div>
               <button type="button" onclick="clearSelectedAttachment()" style="background:rgba(197,48,48,0.1); border:none; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#c53030; font-weight:bold; transition:all 0.2s;" title="Remove Attachment">&times;</button>
@@ -1687,14 +1669,14 @@
                 <span id="chat-recording-timer">Recording 0:00</span>
               </div>
               <div style="display:flex; align-items:center; gap:12px;">
-                <button type="button" onclick="cancelVoiceRecording()" style="background:var(--bg-app); border:1px solid var(--border-color); border-radius:8px; padding:6px 12px; font-size:12px; font-weight:600; color:var(--text-muted); cursor:pointer; display:flex; align-items:center; gap:4px;" title="Discard Recording">❌ Discard</button>
-                <button type="button" onclick="stopVoiceRecordingAndStage()" style="background:#ef4444; color:#fff; border:none; border-radius:8px; padding:6px 14px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px;" title="Finish and Stage">⏹️ Done</button>
+                <button type="button" onclick="cancelVoiceRecording()" style="background:var(--bg-app); border:1px solid var(--border-color); border-radius:8px; padding:6px 12px; font-size:12px; font-weight:600; color:var(--text-muted); cursor:pointer; display:flex; align-items:center; gap:4px;" title="Discard Recording"> Discard</button>
+                <button type="button" onclick="stopVoiceRecordingAndStage()" style="background:#ef4444; color:#fff; border:none; border-radius:8px; padding:6px 14px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px;" title="Finish and Stage">⏹ Done</button>
               </div>
             </div>
             <form class="chat-input-area" id="chat-input-form" onsubmit="sendChatMessage(event)">
               <input type="file" id="chat-file-input" style="display:none;" onchange="handleChatFileSelected(event)">
-              <button type="button" class="chat-attach-btn" onclick="document.getElementById('chat-file-input').click()" style="background:none; border:none; font-size:18px; cursor:pointer; color:var(--text-muted); padding:4px;" title="Attach File/Image">📎</button>
-              <button type="button" id="chat-voice-btn" onclick="toggleVoiceRecording()" style="background:none; border:none; font-size:18px; cursor:pointer; color:var(--text-muted); padding:4px;" title="Record Voice Message">🎤</button>
+              <button type="button" class="chat-attach-btn" onclick="document.getElementById('chat-file-input').click()" style="background:none; border:none; font-size:18px; cursor:pointer; color:var(--text-muted); padding:4px;" title="Attach File/Image"></button>
+              <button type="button" id="chat-voice-btn" onclick="toggleVoiceRecording()" style="background:none; border:none; font-size:18px; cursor:pointer; color:var(--text-muted); padding:4px;" title="Record Voice Message"></button>
               <input type="text" class="chat-input" id="chat-message-input" data-i18n-placeholder="placeholder-chat-type" placeholder="Type a message..." autocomplete="off">
               <button type="submit" class="chat-send-btn" data-i18n="btn-chat-send">Send</button>
             </form>
@@ -1708,7 +1690,7 @@
       <!-- System Notifications -->
       <div class="panel">
         <div class="panel-head">
-          <div class="panel-title" data-i18n="panel-notifications-alerts">🔔 System Notifications & Alerts</div>
+          <div class="panel-title" data-i18n="panel-notifications-alerts"> System Notifications & Alerts</div>
           <div class="panel-action" onclick="markAllNotificationsRead()" style="cursor:pointer" data-i18n="btn-mark-all-read">Mark all as read</div>
         </div>
         <div id="notifications-inbox-list" style="display:flex; flex-direction:column; gap:12px; max-height:400px; overflow-y:auto; padding-right:5px;">
@@ -1880,7 +1862,7 @@
         <!-- QR SCANNING TRIGGERS -->
         <div style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; background: var(--primary-pale); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px dashed var(--primary-light);">
           <span style="font-size:12px; color:var(--text-muted); font-weight:500;">Quick Registration via QR Code</span>
-          <button type="button" onclick="startQrScanner()" style="background:var(--primary-light); color:#fff; border:none; padding:6px 12px; border-radius:var(--radius-sm); font-size:11px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px;"><span id="qr-scan-btn-txt">🔍 Scan QR Code</span></button>
+          <button type="button" onclick="startQrScanner()" style="background:var(--primary-light); color:#fff; border:none; padding:6px 12px; border-radius:var(--radius-sm); font-size:11px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px;"><span id="qr-scan-btn-txt"> Scan QR Code</span></button>
         </div>
         
         <div id="qr-reader-wrapper" style="display:none; margin-bottom:16px; border:1px solid var(--border-color); border-radius:var(--radius-md); overflow:hidden; background:#000; position:relative; min-height: 250px;">
@@ -2079,9 +2061,9 @@
         </div>
         
         <!-- Offline advisory placeholder -->
-        <div id="announcement-modal-offline-advisory" style="font-size:13.5px; font-weight:700; color:#dc2626; text-align:center; display:none; padding:12px; border:2px dashed currentColor; border-radius:12px; background:rgba(220,38,38,0.05); margin-bottom:10px; line-height:1.4; font-family:system-ui,sans-serif;">🛠️ Platform is Offline for Scheduled Maintenance</div>
+        <div id="announcement-modal-offline-advisory" style="font-size:13.5px; font-weight:700; color:#dc2626; text-align:center; display:none; padding:12px; border:2px dashed currentColor; border-radius:12px; background:rgba(220,38,38,0.05); margin-bottom:10px; line-height:1.4; font-family:system-ui,sans-serif;"> Platform is Offline for Scheduled Maintenance</div>
         
-        <button onclick="closeAnnouncementModal()" id="announcement-modal-btn" style="width:100%;height:46px;background:#dc2626;color:#fff;font-size:14px;font-weight:700;border-radius:12px;border:none;cursor:pointer;box-shadow:0 4px 12px rgba(220,38,38,0.2);transition:all 0.2s;" data-i18n="btn-got-it">Got It 👍</button>
+        <button onclick="closeAnnouncementModal()" id="announcement-modal-btn" style="width:100%;height:46px;background:#dc2626;color:#fff;font-size:14px;font-weight:700;border-radius:12px;border:none;cursor:pointer;box-shadow:0 4px 12px rgba(220,38,38,0.2);transition:all 0.2s;" data-i18n="btn-got-it">Got It </button>
       </div>
     </div>
 
@@ -2102,10 +2084,10 @@
           </div>
           
           <div style="border-top:1px solid var(--border-color);padding-top:16px;display:flex;flex-direction:column;gap:10px;font-size:13.5px;">
-            <div>🛡️ <strong data-i18n="profile-lbl-status">Verification Status:</strong> <span id="profile-modal-status" style="font-weight:600;">Pending</span></div>
-            <div>📍 <strong data-i18n="profile-lbl-district">District:</strong> <span id="profile-modal-district">Unknown</span></div>
-            <div>📞 <strong data-i18n="profile-lbl-phone">Phone:</strong> <span id="profile-modal-phone">N/A</span></div>
-            <div>📧 <strong data-i18n="profile-lbl-email">Email:</strong> <span id="profile-modal-email">N/A</span></div>
+            <div> <strong data-i18n="profile-lbl-status">Verification Status:</strong> <span id="profile-modal-status" style="font-weight:600;">Pending</span></div>
+            <div> <strong data-i18n="profile-lbl-district">District:</strong> <span id="profile-modal-district">Unknown</span></div>
+            <div> <strong data-i18n="profile-lbl-phone">Phone:</strong> <span id="profile-modal-phone">N/A</span></div>
+            <div> <strong data-i18n="profile-lbl-email">Email:</strong> <span id="profile-modal-email">N/A</span></div>
           </div>
 
           <div style="background:var(--primary-pale);border:1px solid var(--border-color);border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
@@ -2121,7 +2103,7 @@
 
           <div style="display:flex;gap:10px;margin-top:12px;">
             <button id="profile-modal-chat-btn" class="btn-sm btn-accept" style="flex:1;height:40px;border-radius:10px;border:none;cursor:pointer;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;">
-              <span data-i18n="js-start-chat">💬 Start Chat</span>
+              <span data-i18n="js-start-chat"> Start Chat</span>
             </button>
             <button onclick="closeUserProfileModal()" class="btn-sm" style="flex:1;height:40px;border-radius:10px;border:1px solid var(--border-color);background:transparent;color:var(--text-muted);cursor:pointer;" data-i18n="btn-close">
               Close
@@ -2144,12 +2126,12 @@ var API_URL = (window.location.hostname === 'localhost' || window.location.hostn
 function showToast(title, message, type, duration) {
   type = type || 'info';
   duration = duration || 4000;
-  const icons = { success: '✅', error: '❌', info: '🔔', warning: '⚠️' };
+  const icons = { success: '', error: '', info: '', warning: '' };
   const container = document.getElementById('toast-container');
   const toast = document.createElement('div');
   toast.className = 'toast ' + type;
   toast.innerHTML = `
-    <div class="toast-icon">${icons[type] || '🔔'}</div>
+    <div class="toast-icon">${icons[type] || ''}</div>
     <div class="toast-body">
       <div class="toast-title">${title}</div>
       <div class="toast-msg">${message || ''}</div>
@@ -2212,7 +2194,7 @@ var pingStart = 0;
   function updateProfileDisplay() {
     const name = _user.name || _user.email;
     const firstName = currentFirstName || name.split(' ')[0];
-    document.getElementById('page-greeting').textContent = getTranslation('js-welcome', 'Welcome back') + ', ' + firstName + ' 👋';
+    document.getElementById('page-greeting').textContent = getTranslation('js-welcome', 'Welcome back') + ', ' + firstName + ' ';
     
     if (currentDistrict) {
       const distKey = 'district-' + currentDistrict.toLowerCase().replace(/[^a-z]/g, '');
@@ -2244,7 +2226,7 @@ var pingStart = 0;
       } else {
         statusBadgeEl.innerHTML = `
           <span class="status-pill rejected" style="font-size:9.5px; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 3px; background: var(--amber-pale); color: var(--amber); border: 1px solid var(--amber); font-weight:600;">
-            ❌ ${getTranslation('js-verification-rejected', 'Verification Rejected')}
+             ${getTranslation('js-verification-rejected', 'Verification Rejected')}
           </span>
         `;
       }
@@ -2315,13 +2297,13 @@ var pingStart = 0;
   // Auto-refresh every 30 seconds for realtime-like experience
   setInterval(function() {
     loadDashboardData();
-    console.log('🔄 Auto-refreshed dashboard');
+    console.log(' Auto-refreshed dashboard');
   }, 30000);
 })();
 
 function initSocket() {
   if (typeof io === 'undefined') {
-    console.warn('⚠️ Socket.io is not loaded. Real-time updates will be disabled.');
+    console.warn(' Socket.io is not loaded. Real-time updates will be disabled.');
     var el = document.getElementById('socket-status');
     if (el) { el.className = 'socket-status disconnected'; el.innerHTML = '<span class="dot"></span>Offline'; }
     return;
@@ -2330,24 +2312,24 @@ function initSocket() {
   
   if (_user && _user.id) {
     socket.emit('join', _user.id);
-    console.log('📡 Joined room: user_' + _user.id);
+    console.log(' Joined room: user_' + _user.id);
   }
 
   socket.on('pong_latency', function(data) {
     const lat = Date.now() - pingStart;
-    showToast(getTranslation('toast-latency-title', 'Network Latency'), '⚡ ' + lat + 'ms', 'info', 3000);
+    showToast(getTranslation('toast-latency-title', 'Network Latency'), ' ' + lat + 'ms', 'info', 3000);
   });
 
   socket.on('connect', function() {
     var el = document.getElementById('socket-status');
     if (el) { el.className = 'socket-status'; el.innerHTML = '<span class="dot"></span>Live'; }
-    console.log('✅ Socket connected');
+    console.log(' Socket connected');
   });
 
   socket.on('disconnect', function() {
     var el = document.getElementById('socket-status');
     if (el) { el.className = 'socket-status disconnected'; el.innerHTML = '<span class="dot"></span>Offline'; }
-    console.log('❌ Socket disconnected');
+    console.log(' Socket disconnected');
   });
 
   socket.on('connect_error', function() {
@@ -2356,12 +2338,12 @@ function initSocket() {
   });
   
   socket.on('dashboard_update', function(data) {
-    console.log('🔄 Real-time update signal:', data);
+    console.log(' Real-time update signal:', data);
     loadDashboardData();
   });
 
   socket.on('new_notification', function(notif) {
-    console.log('🔔 New notification:', notif);
+    console.log(' New notification:', notif);
     showToast(notif.title, notif.body, 'info', 6000);
     loadDashboardData();
     loadNotificationsInbox();
@@ -2376,12 +2358,12 @@ function initSocket() {
   });
 
   socket.on('requests_update', function() {
-    console.log('🔄 Real-time requests update received');
+    console.log(' Real-time requests update received');
     loadBuyerRequests();
   });
 
   socket.on('receive_message', function(data) {
-    console.log('💬 New real-time message received:', data);
+    console.log(' New real-time message received:', data);
     if (activeChatUserId === data.sender_id) {
       const box = document.getElementById('chat-messages-box');
       const timeStr = new Date(data.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -2615,7 +2597,7 @@ function getBankLogoHtml(bankName) {
   const bank = (bankName || '').trim().toLowerCase();
   let bg = 'var(--primary)';
   let fg = '#fff';
-  let text = '🏦';
+  let text = '';
   
   if (bank.includes('ceylon') || bank.includes('boc')) {
     bg = '#ffd200'; fg = '#002f6c'; text = 'BOC';
@@ -2736,7 +2718,7 @@ function saveProfile(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast(getTranslation('toast-profile-saved-title', 'Profile Updated!'), getTranslation('toast-profile-saved-body', 'Your profile has been saved 💾'), 'success');
+        showToast(getTranslation('toast-profile-saved-title', 'Profile Updated!'), getTranslation('toast-profile-saved-body', 'Your profile has been saved '), 'success');
         const p = data.user;
         const fullName = (p.first_name + ' ' + p.last_name).trim();
         const initials = fullName.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
@@ -2770,7 +2752,7 @@ function saveProfile(e) {
 // ── SETTINGS & THEME FUNCTIONS ──
 function loadSettingsDetails() {
   const isDark = document.body.classList.contains('dark');
-  document.getElementById('dark-mode-btn').textContent = isDark ? '🌞 Light Mode' : '🌙 Dark Mode';
+  document.getElementById('dark-mode-btn').textContent = isDark ? ' Light Mode' : ' Dark Mode';
 
   if (_user && _user.id) {
     fetch(API_URL + '/api/profile/' + _user.id, { headers: getAuthHeaders() })
@@ -2834,7 +2816,7 @@ function loadNotificationsInbox() {
               <div style="font-size:11px; color:var(--hint);">${formatTimeAgo(new Date(n.created_at))}</div>
             </div>
             <div style="font-size:12.5px; color:var(--muted); line-height:1.45;">${n.body}</div>
-            <div style="font-size:10px; color:var(--hint); margin-top:6px;">🕒 ${dateStr}</div>
+            <div style="font-size:10px; color:var(--hint); margin-top:6px;"> ${dateStr}</div>
           </div>
         `;
       });
@@ -2885,10 +2867,10 @@ function loadEquipmentData() {
       let html = '';
       data.listings.forEach(item => {
         if (item.status === 'deactivated') return;
-        let icon = '🚜';
-        if (item.name.toLowerCase().includes('pump') || item.name.toLowerCase().includes('water')) icon = '💧';
-        if (item.name.toLowerCase().includes('transport') || item.name.toLowerCase().includes('lorry')) icon = '🚛';
-        if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) icon = '🌿';
+        let icon = '';
+        if (item.name.toLowerCase().includes('pump') || item.name.toLowerCase().includes('water')) icon = '';
+        if (item.name.toLowerCase().includes('transport') || item.name.toLowerCase().includes('lorry')) icon = '';
+        if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) icon = '';
 
         const isBooked = item.status === 'booked';
         const statusLabel = isBooked ? '● ' + getTranslation('js-rented', 'Rented') : '● ' + getTranslation('js-available', 'Available');
@@ -2957,15 +2939,15 @@ function loadEquipmentData() {
           if (item.status === 'confirmed') {
             actionBtnsHtml = `
               <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-end; margin-top:4px;">
-                <button class="btn-sm btn-accept" onclick="openCompleteBookingModal(${item.id}, '${item.listing_name.replace(/'/g, "\\'")}', ${item.total_amount})" style="background:var(--primary-light); color:#fff; cursor:pointer; font-size:11px; padding:3px 8px; border-radius:4px; border:none; display:flex; align-items:center; gap:4px;">🚜 Mark Returned</button>
-                <button onclick="printRentalInvoice(${item.id})" style="background:none; border:none; color:var(--primary-light); font-size:11px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:2px; padding:0;">📄 Invoice</button>
+                <button class="btn-sm btn-accept" onclick="openCompleteBookingModal(${item.id}, '${item.listing_name.replace(/'/g, "\\'")}', ${item.total_amount})" style="background:var(--primary-light); color:#fff; cursor:pointer; font-size:11px; padding:3px 8px; border-radius:4px; border:none; display:flex; align-items:center; gap:4px;"> Mark Returned</button>
+                <button onclick="printRentalInvoice(${item.id})" style="background:none; border:none; color:var(--primary-light); font-size:11px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:2px; padding:0;"> Invoice</button>
               </div>
             `;
           } else if (item.status === 'completed') {
             actionBtnsHtml = `
               <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-end; margin-top:4px;">
-                <button onclick="printRentalInvoice(${item.id})" style="background:none; border:none; color:var(--primary-light); font-size:11px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:2px; padding:0;">📄 Invoice</button>
-                <button onclick="printReturnReceipt(${item.id})" style="background:none; border:none; color:var(--primary-light); font-size:11px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:2px; padding:0;">🧾 Return Receipt</button>
+                <button onclick="printRentalInvoice(${item.id})" style="background:none; border:none; color:var(--primary-light); font-size:11px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:2px; padding:0;"> Invoice</button>
+                <button onclick="printReturnReceipt(${item.id})" style="background:none; border:none; color:var(--primary-light); font-size:11px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:2px; padding:0;"> Return Receipt</button>
               </div>
             `;
           }
@@ -2979,8 +2961,8 @@ function loadEquipmentData() {
           <div class="booking-item" style="display:flex; justify-content:space-between; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--border);">
             <div>
               <div style="font-size:13.5px; font-weight:500; color:var(--text);">${item.listing_name}</div>
-              <div style="font-size:12px; color:var(--muted); margin-top:2px;">${getTranslation('js-renter', 'Renter')}: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--primary);" onclick="showUserProfileModal(${item.renter_id})">${item.renter_name}</span> · 📞 ${item.renter_phone || 'N/A'}</div>
-              <div style="font-size:11.5px; color:var(--muted); margin-top:4px;">📅 ${start} – ${end}</div>
+              <div style="font-size:12px; color:var(--muted); margin-top:2px;">${getTranslation('js-renter', 'Renter')}: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--primary);" onclick="showUserProfileModal(${item.renter_id})">${item.renter_name}</span> ·  ${item.renter_phone || 'N/A'}</div>
+              <div style="font-size:11.5px; color:var(--muted); margin-top:4px;"> ${start} – ${end}</div>
             </div>
             <div style="display:flex; flex-direction:column; align-items:flex-end;">
               <div style="font-size:13.5px; font-weight:600; color:var(--green);">Rs. ${parseFloat(item.total_amount).toLocaleString()}</div>
@@ -3400,10 +3382,10 @@ function loadEquipmentMarketplace() {
         // Don't show our own equipment
         if (item.owner_id === _user.id) return;
 
-        let defaultEmoji = '🚜';
-        if (item.name.toLowerCase().includes('pump') || item.name.toLowerCase().includes('water')) defaultEmoji = '💧';
-        if (item.name.toLowerCase().includes('transport') || item.name.toLowerCase().includes('lorry')) defaultEmoji = '🚛';
-        if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) defaultEmoji = '🌿';
+        let defaultEmoji = '';
+        if (item.name.toLowerCase().includes('pump') || item.name.toLowerCase().includes('water')) defaultEmoji = '';
+        if (item.name.toLowerCase().includes('transport') || item.name.toLowerCase().includes('lorry')) defaultEmoji = '';
+        if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) defaultEmoji = '';
 
         let icon = defaultEmoji;
         if (item.photos && item.photos.length > 0 && item.photos[0]) {
@@ -3429,7 +3411,7 @@ function loadEquipmentMarketplace() {
             <div class="market-card-price" style="font-size:13.5px; font-weight:600; color:#155C35;">Rs. ${parseFloat(item.rental_rate).toLocaleString()}/day</div>
             <button class="interest-btn" style="margin-top:8px; width:100%; background:#EDF5EF; color:#155C35; border:none; border-radius:8px; padding:8px 0; font-size:12px; font-weight:600; cursor:pointer;" 
               onclick="openEquipmentBookingModal(${item.id}, ${item.rental_rate}, '${item.name.replace(/'/g, "\\'")}')">
-              🚜 Rent Now
+               Rent Now
             </button>
           </div>
         `;
@@ -3458,7 +3440,7 @@ function loadSellerRenterBookings() {
 
       let html = '';
       data.bookings.forEach(b => {
-        let icon = '🚜';
+        let icon = '';
         const statusLabel = getTranslation('booking-status-' + b.status.toLowerCase(), b.status);
         const statusClass = b.status === 'confirmed' ? 'active' : (b.status === 'pending' ? 'pending' : 'deactivated');
         
@@ -3555,7 +3537,7 @@ function submitEquipmentBooking(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast(getTranslation('toast-booking-requested-title', 'Booking Requested!'), getTranslation('toast-booking-requested-body', 'Your equipment rental request was sent to the owner 🚜'), 'success');
+        showToast(getTranslation('toast-booking-requested-title', 'Booking Requested!'), getTranslation('toast-booking-requested-body', 'Your equipment rental request was sent to the owner '), 'success');
         closeBookingModal();
         toggleEquipmentTab('my-bookings');
       } else {
@@ -3617,7 +3599,7 @@ function submitNewEquipment(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast(getTranslation('toast-equip-listed-title', 'Equipment Listed!'), getTranslation('toast-equip-listed-body', 'Equipment listing published successfully 🚜'), 'success');
+        showToast(getTranslation('toast-equip-listed-title', 'Equipment Listed!'), getTranslation('toast-equip-listed-body', 'Equipment listing published successfully '), 'success');
         closeAddEquipmentModal();
         loadEquipmentData();
         loadDashboardData();
@@ -3683,7 +3665,7 @@ function rejectBooking(id) {
         loadEquipmentData();
         loadDashboardData();
       } else {
-        alert('❌ ' + getTranslation('toast-error-title', 'Error') + ': ' + (data.error ? getTranslation(data.error, data.error) : ''));
+        alert(' ' + getTranslation('toast-error-title', 'Error') + ': ' + (data.error ? getTranslation(data.error, data.error) : ''));
       }
     });
 }
@@ -3800,11 +3782,11 @@ function loadCropListings() {
       let html = '';
       data.listings.forEach(item => {
         if (item.status === 'deactivated') return;
-        let defaultEmoji = '🌾';
-        if (item.name.toLowerCase().includes('tomato')) defaultEmoji = '🍅';
-        if (item.name.toLowerCase().includes('carrot')) defaultEmoji = '🥕';
-        if (item.name.toLowerCase().includes('chili')) defaultEmoji = '🌶️';
-        if (item.name.toLowerCase().includes('potato')) defaultEmoji = '🥔';
+        let defaultEmoji = '';
+        if (item.name.toLowerCase().includes('tomato')) defaultEmoji = '';
+        if (item.name.toLowerCase().includes('carrot')) defaultEmoji = '';
+        if (item.name.toLowerCase().includes('chili')) defaultEmoji = '';
+        if (item.name.toLowerCase().includes('potato')) defaultEmoji = '';
 
         let img = defaultEmoji;
         if (item.photos && item.photos.length > 0 && item.photos[0]) {
@@ -3948,7 +3930,7 @@ function submitNewCrop(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast(getTranslation('toast-crop-published-title', 'Listing Published!'), getTranslation('toast-crop-published-body', 'Your crop listing is now live 🌱'), 'success');
+        showToast(getTranslation('toast-crop-published-title', 'Listing Published!'), getTranslation('toast-crop-published-body', 'Your crop listing is now live '), 'success');
         closeAddCropModal();
         loadDashboardData();
       } else {
@@ -4021,9 +4003,9 @@ function loadCropOrders() {
           const formattedDate = item.paid_at ? new Date(item.paid_at).toLocaleString() : 'N/A';
           actionButtons = `
             <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px; margin-top:4px;">
-              <span style="font-size:12px; font-weight:700; color:var(--primary);">${getTranslation('booking-status-paid', 'PAID').toUpperCase()} 💸</span>
+              <span style="font-size:12px; font-weight:700; color:var(--primary);">${getTranslation('booking-status-paid', 'PAID').toUpperCase()} </span>
               <div style="display:flex; gap:6px;">
-                <button class="btn-sm btn-accept" onclick="openSlipModal('${item.payment_slip_path}', '${escapedRef}', '${formattedDate}')" style="background:var(--primary); color:#fff; cursor:pointer; padding:6px 12px; font-size:11px; font-weight:600;">${getTranslation('btn-view-slip', 'View Slip 📄')}</button>
+                <button class="btn-sm btn-accept" onclick="openSlipModal('${item.payment_slip_path}', '${escapedRef}', '${formattedDate}')" style="background:var(--primary); color:#fff; cursor:pointer; padding:6px 12px; font-size:11px; font-weight:600;">${getTranslation('btn-view-slip', 'View Slip ')}</button>
                 <button class="btn-sm btn-accept" onclick="completeCropOrder(${item.id})" style="background:var(--green); color:#fff; cursor:pointer; padding:6px 12px; font-size:11px; font-weight:600;">${getTranslation('btn-accept-complete', 'Accept & Complete')}</button>
               </div>
             </div>
@@ -4039,7 +4021,7 @@ function loadCropOrders() {
           <div class="booking-item" style="display:flex; justify-content:space-between; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--border-color);">
             <div>
               <div style="font-size:13.5px; font-weight:500; color:var(--text-main);">${item.crop_name}</div>
-              <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">${getTranslation('js-buyer-role', 'Buyer')}: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--primary);" onclick="showUserProfileModal(${item.buyer_id})">${item.buyer_name || 'Buyer'}</span> · 📞 ${item.buyer_phone || 'N/A'}</div>
+              <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">${getTranslation('js-buyer-role', 'Buyer')}: <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--primary);" onclick="showUserProfileModal(${item.buyer_id})">${item.buyer_name || 'Buyer'}</span> ·  ${item.buyer_phone || 'N/A'}</div>
               <div style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">${getTranslation('js-qty', 'Qty')}: <strong>${item.quantity_kg} kg</strong> · ${getTranslation('js-deliv', 'Deliv')}: ${item.delivery_date ? new Date(item.delivery_date).toLocaleDateString() : 'N/A'}</div>
             </div>
             <div style="display:flex; flex-direction:column; align-items:flex-end;">
@@ -4108,7 +4090,7 @@ async function completeCropOrder(id) {
       if (data.success) {
         showToast(
           getTranslation('toast-complete-success-title', 'Order Completed!'), 
-          getTranslation('toast-complete-success-body', 'Crop order has been successfully marked as completed 🌾'), 
+          getTranslation('toast-complete-success-body', 'Crop order has been successfully marked as completed '), 
           'success'
         );
         loadCropOrders();
@@ -4130,7 +4112,7 @@ function openSlipModal(slipPath, txRef, paidAt) {
     if (slipPath.toLowerCase().endsWith('.pdf')) {
       modalImageContainer.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:30px; gap:10px; color:var(--text-main);">
-          <span style="font-size:48px;">📄</span>
+          <span style="font-size:48px;"></span>
           <span style="font-weight:600; font-size:14px;">PDF Payment Slip</span>
           <a href="${fullUrl}" target="_blank" style="color:var(--primary); font-weight:600; text-decoration:underline;">Click to Open PDF</a>
         </div>
@@ -4200,14 +4182,14 @@ function loadOrderPaymentsTab() {
         if (isPaid) {
           actionButtons = `
             <div style="display:flex; gap:6px; margin-top:8px;">
-              <button class="btn-sm btn-accept" onclick="openSlipModal('${item.payment_slip_path}', '${escapedRef}', '${formattedDate}')" style="background:var(--primary); color:#fff; cursor:pointer; padding:6px 12px; font-size:11px; font-weight:600;">${getTranslation('btn-view-slip', 'View Slip 📄')}</button>
+              <button class="btn-sm btn-accept" onclick="openSlipModal('${item.payment_slip_path}', '${escapedRef}', '${formattedDate}')" style="background:var(--primary); color:#fff; cursor:pointer; padding:6px 12px; font-size:11px; font-weight:600;">${getTranslation('btn-view-slip', 'View Slip ')}</button>
               <button class="btn-sm btn-accept" onclick="completeCropOrderAndRefreshPayments(${item.id})" style="background:var(--green); color:#fff; cursor:pointer; padding:6px 12px; font-size:11px; font-weight:600;">${getTranslation('btn-accept-complete', 'Accept & Complete')}</button>
             </div>
           `;
         } else {
           actionButtons = `
             <div style="display:flex; gap:6px; margin-top:8px;">
-              <button class="btn-sm btn-accept" onclick="openSlipModal('${item.payment_slip_path}', '${escapedRef}', '${formattedDate}')" style="background:transparent; border:1px solid var(--border-color); color:var(--text-main); cursor:pointer; padding:6px 12px; font-size:11px; font-weight:600;">${getTranslation('btn-view-slip', 'View Slip 📄')}</button>
+              <button class="btn-sm btn-accept" onclick="openSlipModal('${item.payment_slip_path}', '${escapedRef}', '${formattedDate}')" style="background:transparent; border:1px solid var(--border-color); color:var(--text-main); cursor:pointer; padding:6px 12px; font-size:11px; font-weight:600;">${getTranslation('btn-view-slip', 'View Slip ')}</button>
             </div>
           `;
         }
@@ -4215,10 +4197,10 @@ function loadOrderPaymentsTab() {
         let statusText = '';
         let statusColor = 'var(--text-muted)';
         if (item.status === 'paid') {
-          statusText = getTranslation('booking-status-paid', 'PAID') + ' 💸';
+          statusText = getTranslation('booking-status-paid', 'PAID') + ' ';
           statusColor = 'var(--primary)';
         } else {
-          statusText = getTranslation('booking-status-completed', 'COMPLETED') + ' ✅';
+          statusText = getTranslation('booking-status-completed', 'COMPLETED') + ' ';
           statusColor = 'var(--green)';
         }
 
@@ -4227,7 +4209,7 @@ function loadOrderPaymentsTab() {
             <div>
               <div style="font-size:14.5px; font-weight:600; color:var(--text-main);">${item.crop_name}</div>
               <div style="font-size:12px; color:var(--text-muted); margin-top:3px;">
-                ${getTranslation('js-buyer-role', 'Buyer')}: <span style="font-weight:600; color:var(--primary);">${item.buyer_name || 'Buyer'}</span> · 📞 ${item.buyer_phone || 'N/A'}
+                ${getTranslation('js-buyer-role', 'Buyer')}: <span style="font-weight:600; color:var(--primary);">${item.buyer_name || 'Buyer'}</span> ·  ${item.buyer_phone || 'N/A'}
               </div>
               <div style="font-size:12px; color:var(--text-muted); margin-top:3px;">
                 Reference: <span style="font-family:monospace; font-weight:600;">${item.payment_ref || 'N/A'}</span>
@@ -4272,13 +4254,13 @@ function loadUserAnnouncements() {
       activeAnnouncements = data.announcements;
       let html = '';
       activeAnnouncements.forEach(item => {
-        let alertIcon = '📢';
+        let alertIcon = '';
         let statusClass = 'confirmed'; // Green background default
         if (item.alert_type === 'warning') {
-          alertIcon = '⚠️';
+          alertIcon = '';
           statusClass = 'pending'; // Amber background
         } else if (item.alert_type === 'danger') {
-          alertIcon = '🚨';
+          alertIcon = '';
           statusClass = 'rejected'; // Red background
         }
         
@@ -4292,7 +4274,7 @@ function loadUserAnnouncements() {
                 <div class="booking-info" style="flex:1;">
                   <div class="booking-name" style="font-size:14px; font-weight:700; color:var(--text-main);">${item.title}</div>
                   <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">
-                    📅 ${dateStr}
+                     ${dateStr}
                   </div>
                   <div style="font-size:12.5px; color:var(--text-muted); margin-top:8px; line-height:1.5; white-space:pre-wrap;">${item.message}</div>
                 </div>
@@ -4387,7 +4369,7 @@ function checkForWelcomeAnnouncements() {
           offlineAdvisory.style.display = 'block';
           offlineAdvisory.style.color = themeColor;
           offlineAdvisory.style.borderColor = themeColor;
-          offlineAdvisory.innerHTML = `🛠️ Platform is Offline for Scheduled Maintenance<br><span style="font-size:11.5px; font-weight:500; opacity:0.85;">Please wait until the maintenance window concludes.</span>`;
+          offlineAdvisory.innerHTML = ` Platform is Offline for Scheduled Maintenance<br><span style="font-size:11.5px; font-weight:500; opacity:0.85;">Please wait until the maintenance window concludes.</span>`;
         }
       } else {
         if (closeBtn) closeBtn.style.display = 'block';
@@ -4465,10 +4447,10 @@ function loadBuyerRequests() {
         
         let actionsHtml = '';
         if (hasFinalResponded) {
-          actionsHtml = `<span style="font-size:12px;color:var(--green);font-weight:500;margin-right:8px;">✔ ${getTranslation('js-responded', 'Responded')} (${myFinalResponse.type})</span>`;
+          actionsHtml = `<span style="font-size:12px;color:var(--green);font-weight:500;margin-right:8px;"> ${getTranslation('js-responded', 'Responded')} (${myFinalResponse.type})</span>`;
         } else {
           if (hasCountered) {
-            actionsHtml = `<span style="font-size:12px;color:var(--gold);font-weight:500;margin-right:8px;">✔ ${getTranslation('js-responded', 'Responded')} (counter)</span>`;
+            actionsHtml = `<span style="font-size:12px;color:var(--gold);font-weight:500;margin-right:8px;"> ${getTranslation('js-responded', 'Responded')} (counter)</span>`;
           }
           actionsHtml += `
             <button class="btn-sm btn-accept" onclick="acceptRequest(${item.id}, ${parseFloat(item.budget || 0)})">${getTranslation('js-accept-offer', 'Accept Offer')}</button>
@@ -4476,7 +4458,7 @@ function loadBuyerRequests() {
             <button class="btn-sm btn-reject" onclick="declineRequest(${item.id})">${getTranslation('js-decline', 'Decline')}</button>
           `;
         }
-        actionsHtml += `<button class="btn-sm btn-reject" style="background:var(--primary-pale); color:var(--primary-light); border-color:var(--primary-light);" onclick="startChatWithUser(${item.buyer_id}, '${item.buyer_name.replace(/'/g, "\\'")}', 'buyer')">💬 ${getTranslation('js-chat', 'Chat')}</button>`;
+        actionsHtml += `<button class="btn-sm btn-reject" style="background:var(--primary-pale); color:var(--primary-light); border-color:var(--primary-light);" onclick="startChatWithUser(${item.buyer_id}, '${item.buyer_name.replace(/'/g, "\\'")}', 'buyer')"> ${getTranslation('js-chat', 'Chat')}</button>`;
 
         const urgencyLabel = getTranslation('urgency-' + (item.urgency || 'Normal').toLowerCase(), item.urgency || 'Normal');
 
@@ -4490,8 +4472,8 @@ function loadBuyerRequests() {
               <span class="status-pill pending">${urgencyLabel}</span>
             </div>
             <div class="request-details">
-              <span>📅 ${getTranslation('js-needed', 'Needed')}: ${dateStr}</span>
-              <span>💰 ${getTranslation('js-budget', 'Budget')}: ${item.budget ? 'Rs. ' + item.budget : getTranslation('js-budget-open', 'Open')}</span>
+              <span> ${getTranslation('js-needed', 'Needed')}: ${dateStr}</span>
+              <span> ${getTranslation('js-budget', 'Budget')}: ${item.budget ? 'Rs. ' + item.budget : getTranslation('js-budget-open', 'Open')}</span>
             </div>
             <div class="request-actions">
               ${actionsHtml}
@@ -4552,7 +4534,7 @@ function respondToRequest(requestId, type, price, qty, message) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast(getTranslation('toast-response-sent-title', 'Response Sent!'), getTranslation('toast-response-sent-body', 'Your response was submitted successfully 🤝'), 'success');
+        showToast(getTranslation('toast-response-sent-title', 'Response Sent!'), getTranslation('toast-response-sent-body', 'Your response was submitted successfully '), 'success');
         loadDashboardData();
       } else {
         showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('toast-failed-send-response', 'Failed to send response'), 'error');
@@ -4595,8 +4577,8 @@ function loadLedger() {
             <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
               <div class="ledger-amt">Rs. ${parseFloat(item.amount).toLocaleString()}</div>
               <div style="display:flex; gap:10px;">
-                <button onclick="verifyAgreementDirectly('${item.tx_id}')" style="background:none; border:none; color:var(--primary); font-size:11px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:2px;">🔗 Verify</button>
-                <button onclick="downloadLedgerReceipt('${item.tx_id}', '${listingNameTranslated.replace(/'/g, "\\'")}', '${renterNameTranslated.replace(/'/g, "\\'")}', ${item.amount}, ${item.duration_days}, '${item.block_hash}', '${item.prev_hash}')" style="background:none; border:none; color:var(--primary-light); font-size:11px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:2px;">📥 PDF</button>
+                <button onclick="verifyAgreementDirectly('${item.tx_id}')" style="background:none; border:none; color:var(--primary); font-size:11px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:2px;"> Verify</button>
+                <button onclick="downloadLedgerReceipt('${item.tx_id}', '${listingNameTranslated.replace(/'/g, "\\'")}', '${renterNameTranslated.replace(/'/g, "\\'")}', ${item.amount}, ${item.duration_days}, '${item.block_hash}', '${item.prev_hash}')" style="background:none; border:none; color:var(--primary-light); font-size:11px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:2px;"> PDF</button>
               </div>
             </div>
           </div>
@@ -4663,7 +4645,7 @@ async function verifyLedger() {
       statusBox.style.borderColor = 'var(--green-light)';
       statusText.style.color = 'var(--green)';
     } else {
-      statusText.textContent = '⚠️ ' + getTranslation('ledger-status-failed', 'WARNING: Chain tampering detected!') + ` (Broken at: ${brokenAtTx.slice(0, 8)})`;
+      statusText.textContent = ' ' + getTranslation('ledger-status-failed', 'WARNING: Chain tampering detected!') + ` (Broken at: ${brokenAtTx.slice(0, 8)})`;
       statusBox.style.background = 'var(--amber-pale)';
       statusBox.style.borderColor = 'var(--amber)';
       statusText.style.color = 'var(--amber)';
@@ -4711,7 +4693,7 @@ async function verifyOfflineReceipt() {
     if (!record) {
       resultDiv.style.background = '#fde8e8';
       resultDiv.style.color = '#c81e1e';
-      resultDiv.textContent = '❌ ' + getTranslation('js-receipt-not-found', 'Transaction ID not found in the blockchain database.');
+      resultDiv.textContent = ' ' + getTranslation('js-receipt-not-found', 'Transaction ID not found in the blockchain database.');
       return;
     }
 
@@ -4737,17 +4719,17 @@ async function verifyOfflineReceipt() {
     if (computedHash === record.block_hash) {
       resultDiv.style.background = '#def7ec';
       resultDiv.style.color = '#03543f';
-      resultDiv.innerHTML = `<strong>✅ Verification Successful!</strong><br>Receipt hash matched exactly with blockchain block hash:<br><code style="font-family:monospace;font-size:10px;word-break:break-all;">${computedHash}</code>`;
+      resultDiv.innerHTML = `<strong> Verification Successful!</strong><br>Receipt hash matched exactly with blockchain block hash:<br><code style="font-family:monospace;font-size:10px;word-break:break-all;">${computedHash}</code>`;
     } else {
       resultDiv.style.background = '#fde8e8';
       resultDiv.style.color = '#c81e1e';
-      resultDiv.innerHTML = `<strong>⚠️ Verification Failed!</strong><br>The computed hash does not match. The printed receipt details have been altered/tampered!`;
+      resultDiv.innerHTML = `<strong> Verification Failed!</strong><br>The computed hash does not match. The printed receipt details have been altered/tampered!`;
     }
   } catch (err) {
     console.error('Receipt verification error:', err);
     resultDiv.style.background = '#fde8e8';
     resultDiv.style.color = '#c81e1e';
-    resultDiv.textContent = '❌ Verification error occurred.';
+    resultDiv.textContent = ' Verification error occurred.';
   }
 }
 
@@ -4933,11 +4915,11 @@ function renderInvoices(list) {
         <div style="margin-top:8px; font-size:11.5px; display:flex; flex-direction:column; gap:4px; border-left:3px solid var(--accent); padding-left:10px; background:rgba(0,0,0,0.02); padding:6px 10px; border-radius:4px;">
           <span><strong>Block Hash:</strong> <span style="font-family:monospace;">${inv.blockHash}</span></span>
           <span><strong>Prev Hash:</strong> <span style="font-family:monospace;">${inv.prevHash}</span></span>
-          <span><strong>Ledger Status:</strong> <span style="color:var(--accent); font-weight:600;">🔒 Secured On-Chain</span></span>
+          <span><strong>Ledger Status:</strong> <span style="color:var(--accent); font-weight:600;"> Secured On-Chain</span></span>
         </div>
       `;
       actionButtons = `
-        <button onclick="downloadLedgerReceipt('${inv.id}', '${inv.title.replace(/'/g, "\\'")}', '${inv.partner.replace(/'/g, "\\'")}', ${inv.amount}, ${inv.duration || 1}, '${inv.blockHash}', '${inv.prevHash}')" style="background:none; border:none; color:var(--primary-light); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:inline-flex; align-items:center; gap:4px;">📥 PDF Receipt</button>
+        <button onclick="downloadLedgerReceipt('${inv.id}', '${inv.title.replace(/'/g, "\\'")}', '${inv.partner.replace(/'/g, "\\'")}', ${inv.amount}, ${inv.duration || 1}, '${inv.blockHash}', '${inv.prevHash}')" style="background:none; border:none; color:var(--primary-light); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:inline-flex; align-items:center; gap:4px;"> PDF Receipt</button>
       `;
     } else if (inv.type === 'rental') {
       activityDetails = `
@@ -4949,7 +4931,7 @@ function renderInvoices(list) {
       `;
       if (inv.status === 'confirmed' || inv.status === 'completed') {
         actionButtons = `
-          <button onclick="printRentalInvoice(${inv.bookingId})" style="background:none; border:none; color:var(--primary-light); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:inline-flex; align-items:center; gap:4px;">📄 Print Invoice</button>
+          <button onclick="printRentalInvoice(${inv.bookingId})" style="background:none; border:none; color:var(--primary-light); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:inline-flex; align-items:center; gap:4px;"> Print Invoice</button>
         `;
       } else {
         actionButtons = `<span style="font-size:11.5px; color:var(--text-muted);">Pending Confirmation</span>`;
@@ -4958,13 +4940,13 @@ function renderInvoices(list) {
       activityDetails = `
         <div style="margin-top:8px; font-size:11.5px; display:flex; flex-direction:column; gap:4px; border-left:3px solid var(--primary); padding-left:10px; background:rgba(0,0,0,0.02); padding:6px 10px; border-radius:4px;">
           <span><strong>Booking ID:</strong> ${inv.bookingId}</span>
-          <span><strong>Route:</strong> ${inv.raw.pickup_address} ➔ ${inv.raw.delivery_address}</span>
+          <span><strong>Route:</strong> ${inv.raw.pickup_address}  ${inv.raw.delivery_address}</span>
           <span><strong>Booking Status:</strong> <span class="booking-status ${inv.status}" style="padding:1px 6px; font-size:10px; display:inline-block; border-radius:4px;">${inv.status.toUpperCase()}</span></span>
         </div>
       `;
       if (inv.status === 'confirmed' || inv.status === 'in-transit' || inv.status === 'delivered') {
         actionButtons = `
-          <button onclick="printTransportInvoice(${inv.bookingId})" style="background:none; border:none; color:var(--primary-light); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:inline-flex; align-items:center; gap:4px;">📄 Print Invoice</button>
+          <button onclick="printTransportInvoice(${inv.bookingId})" style="background:none; border:none; color:var(--primary-light); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:inline-flex; align-items:center; gap:4px;"> Print Invoice</button>
         `;
       } else {
         actionButtons = `<span style="font-size:11.5px; color:var(--text-muted);">Pending Confirmation</span>`;
@@ -4981,7 +4963,7 @@ function renderInvoices(list) {
               <span>Partner: <strong>${inv.partner}</strong></span> · 
               <span>ID: <strong style="font-family:monospace;">${inv.id}</strong></span>
             </div>
-            <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">🕒 ${formattedDate}</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:4px;"> ${formattedDate}</div>
           </div>
           <div style="text-align:right;">
             <div style="font-weight:700; font-size:16px; color:var(--text-main);">${formattedAmount}</div>
@@ -5071,7 +5053,7 @@ function submitEditCrop(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast(getTranslation('toast-stock-updated-title', 'Stock Updated!'), getTranslation('toast-stock-updated-body', 'Crop listing updated 🥬'), 'success');
+        showToast(getTranslation('toast-stock-updated-title', 'Stock Updated!'), getTranslation('toast-stock-updated-body', 'Crop listing updated '), 'success');
         closeEditCropModal();
         loadDashboardData();
       } else {
@@ -5114,7 +5096,7 @@ function submitEditEquipment(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast(getTranslation('toast-equip-updated-title', 'Listing Updated!'), getTranslation('toast-equip-updated-body', 'Equipment changes saved 🚜'), 'success');
+        showToast(getTranslation('toast-equip-updated-title', 'Listing Updated!'), getTranslation('toast-equip-updated-body', 'Equipment changes saved '), 'success');
         closeEditEquipmentModal();
         loadDashboardData();
       } else {
@@ -5145,9 +5127,9 @@ function showUserProfileModal(userId) {
       document.getElementById('profile-modal-role').textContent = u.role.toUpperCase();
       
       const statusText = u.status === 'approved' 
-        ? '🛡️ ' + getTranslation('js-verified-partner', 'Verified Partner') 
+        ? ' ' + getTranslation('js-verified-partner', 'Verified Partner') 
         : (u.status === 'rejected' 
-            ? '❌ ' + getTranslation('js-verification-rejected', 'Verification Rejected') 
+            ? ' ' + getTranslation('js-verification-rejected', 'Verification Rejected') 
             : '⏳ ' + getTranslation('js-verification-pending', 'Pending Verification'));
       const statusColor = u.status === 'approved' ? 'var(--primary-light)' : (u.status === 'rejected' ? '#D95050' : 'var(--accent)');
       
@@ -5434,7 +5416,7 @@ async function downloadLedgerReceipt(txId, listingName, buyerName, amount, durat
     doc.rect(10, 192, 128, 4, 'F');
 
     doc.save(`AgroNexa_Receipt_${txId.slice(0, 8)}.pdf`);
-    showToast(getTranslation('toast-pdf-generated-title', 'PDF Generated!'), getTranslation('toast-receipt-downloaded-body', 'Receipt downloaded successfully 📄'), 'success');
+    showToast(getTranslation('toast-pdf-generated-title', 'PDF Generated!'), getTranslation('toast-receipt-downloaded-body', 'Receipt downloaded successfully '), 'success');
   } catch (err) {
     console.error(err);
     showToast(getTranslation('toast-pdf-error-title', 'PDF Error'), getTranslation('toast-failed-generate-receipt', 'Failed to generate PDF receipt'), 'error');
@@ -5587,7 +5569,7 @@ async function downloadBookingSlip(bookingId, listingName, renterName, start, en
     doc.rect(10, 180, 128, 6, 'F');
 
     doc.save(`AgroNexa_Booking_${bookingId}.pdf`);
-    showToast(getTranslation('toast-pdf-generated-title', 'PDF Generated!'), getTranslation('toast-booking-downloaded-body', 'Booking slip downloaded successfully 📄'), 'success');
+    showToast(getTranslation('toast-pdf-generated-title', 'PDF Generated!'), getTranslation('toast-booking-downloaded-body', 'Booking slip downloaded successfully '), 'success');
   } catch (err) {
     console.error(err);
     showToast(getTranslation('toast-pdf-error-title', 'PDF Error'), getTranslation('toast-failed-generate-booking', 'Failed to generate booking slip PDF'), 'error');
@@ -5678,7 +5660,7 @@ function formatMessageContent(msg) {
               <input type="range" class="voice-slider" id="voice-slider-${msg.id}" value="0" min="0" max="100" oninput="seekVoice(${msg.id}, this.value)">
               <div class="voice-meta">
                 <span class="voice-time" id="voice-time-${msg.id}">0:00</span>
-                <span class="voice-mic-status" id="voice-mic-${msg.id}">🎙️</span>
+                <span class="voice-mic-status" id="voice-mic-${msg.id}"></span>
               </div>
             </div>
           </div>
@@ -5687,7 +5669,7 @@ function formatMessageContent(msg) {
     } else {
       const parts = msg.attachment_url.split('/');
       const filename = parts[parts.length - 1];
-      html += `<div style="margin-top:6px;"><a href="${API_URL}${msg.attachment_url}" target="_blank" style="color:inherit; font-weight:600; display:inline-flex; align-items:center; gap:4px; text-decoration:underline;">📎 Download Attachment</a></div>`;
+      html += `<div style="margin-top:6px;"><a href="${API_URL}${msg.attachment_url}" target="_blank" style="color:inherit; font-weight:600; display:inline-flex; align-items:center; gap:4px; text-decoration:underline;"> Download Attachment</a></div>`;
     }
   }
   return html;
@@ -5734,13 +5716,13 @@ function stageAttachmentForUpload(file, name, defaultType = 'file') {
   if (filenameEl) filenameEl.textContent = name;
   if (iconEl) {
     if (type === 'image') {
-      iconEl.textContent = '🖼️';
+      iconEl.textContent = '';
       if (previewEl) previewEl.style.borderLeftColor = 'var(--primary-light)';
     } else if (type === 'audio') {
-      iconEl.textContent = '🎙️';
+      iconEl.textContent = '';
       if (previewEl) previewEl.style.borderLeftColor = '#10b981';
     } else {
-      iconEl.textContent = '📎';
+      iconEl.textContent = '';
       if (previewEl) previewEl.style.borderLeftColor = 'var(--text-hint)';
     }
   }
@@ -5891,7 +5873,7 @@ function openDirectChat(buyerId, buyerName, buyerRole) {
         const isSent = msg.sender_id === _user.id;
         const bubbleClass = isSent ? 'sent' : 'received';
         const timeStr = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const ticks = isSent ? (msg.is_read ? '<span style="font-size:10px; margin-left:4px; color:#cbe3db;">✔️✔️</span>' : '<span style="font-size:10px; margin-left:4px; color:#cbe3db;">✔️</span>') : '';
+        const ticks = isSent ? (msg.is_read ? '<span style="font-size:10px; margin-left:4px; color:#cbe3db;"></span>' : '<span style="font-size:10px; margin-left:4px; color:#cbe3db;"></span>') : '';
         html += `
           <div class="chat-bubble ${bubbleClass}">
             ${formatMessageContent(msg)}
@@ -6024,7 +6006,7 @@ async function sendChatMessage(e) {
         bubble.className = 'chat-bubble sent';
         bubble.innerHTML = `
           ${formatMessageContent(msg)}
-          <div class="chat-bubble-time">${timeStr}<span style="font-size:10px; margin-left:4px; color:#cbe3db;">✔️</span></div>
+          <div class="chat-bubble-time">${timeStr}<span style="font-size:10px; margin-left:4px; color:#cbe3db;"></span></div>
         `;
         box.appendChild(bubble);
         box.scrollTop = box.scrollHeight;
@@ -6205,28 +6187,28 @@ function loadWeather(district) {
       const code = data.current.weather_code;
       
       let statusText = getTranslation('js-weather-status-normal', 'Normal');
-      let icon = '☀️';
+      let icon = '';
       let advice = getTranslation('js-weather-advice-farming', 'Good weather conditions for farming activities.');
       
       if (code === 0) {
         statusText = getTranslation('js-weather-status-clear', 'Clear Sky');
-        icon = '☀️';
+        icon = '';
         advice = getTranslation('js-weather-advice-harvesting', 'Optimal weather for harvesting and drying crops. Good time to broadcast requests.');
       } else if (code >= 1 && code <= 3) {
         statusText = getTranslation('js-weather-status-partly-cloudy', 'Partly Cloudy');
-        icon = '⛅';
+        icon = '';
         advice = getTranslation('js-weather-advice-transport', 'Favorable conditions for transport and outdoor storage.');
       } else if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) {
         statusText = getTranslation('js-weather-status-rainy', 'Rainy / Showers');
-        icon = '🌧️';
+        icon = '';
         advice = getTranslation('js-weather-advice-rain', 'Rain forecast. Ensure stored crops are well-covered. Avoid wet-field harvest.');
       } else if (code >= 95) {
         statusText = getTranslation('js-weather-status-thunderstorm', 'Thunderstorm');
-        icon = '⛈️';
-        advice = getTranslation('js-weather-advice-thunderstorm', '⚠️ Thunderstorms detected. Keep transport vehicles sheltered and secure outdoor produce immediately.');
+        icon = '';
+        advice = getTranslation('js-weather-advice-thunderstorm', ' Thunderstorms detected. Keep transport vehicles sheltered and secure outdoor produce immediately.');
       } else {
         statusText = getTranslation('js-weather-status-cloudy', 'Cloudy');
-        icon = '☁️';
+        icon = '';
         advice = getTranslation('js-weather-advice-cloudy', 'Favorable agricultural conditions. Keep crops protected from damp air.');
       }
       
@@ -6614,10 +6596,10 @@ function loadTransportDrivers() {
           <div>
             <div style="font-weight:600; font-size:14.5px; color:var(--text-main);">${vehicleTypeTranslated} — ${p.vehicle_no}</div>
             <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">${getTranslation('js-owner', 'Owner')}: ${p.owner_name} | ${getTranslation('js-capacity', 'Capacity')}: ${p.capacity_kg} kg | Rate: Rs. ${parseFloat(p.rate_per_km || 150.00).toFixed(2)}/km</div>
-            <div style="font-size:11px; background:var(--primary-pale); color:var(--primary); display:inline-block; padding:2px 8px; border-radius:4px; margin-top:6px;">📍 ${districtTranslated}</div>
+            <div style="font-size:11px; background:var(--primary-pale); color:var(--primary); display:inline-block; padding:2px 8px; border-radius:4px; margin-top:6px;"> ${districtTranslated}</div>
           </div>
           <div style="display:flex; align-items:center; gap:8px;">
-            <a href="tel:${p.phone}" class="btn-sm btn-accept" style="text-decoration:none; padding:6px 12px; font-size:11px; height:auto; margin:0; display:inline-flex; align-items:center;" data-i18n="logistics-driver-call">📞 Call</a>
+            <a href="tel:${p.phone}" class="btn-sm btn-accept" style="text-decoration:none; padding:6px 12px; font-size:11px; height:auto; margin:0; display:inline-flex; align-items:center;" data-i18n="logistics-driver-call"> Call</a>
             ${bookBtnHtml}
           </div>
         `;
@@ -6656,7 +6638,7 @@ function submitTransportRegistration(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast(getTranslation('toast-success-title', 'Success'), getTranslation('toast-transport-registered-body', 'Transport listing published successfully! 🚛'), 'success');
+        showToast(getTranslation('toast-success-title', 'Success'), getTranslation('toast-transport-registered-body', 'Transport listing published successfully! '), 'success');
         document.getElementById('transport-register-form').reset();
         toggleTransportTab('browse');
       } else {
@@ -6715,7 +6697,7 @@ function submitTransportBooking(e) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast(getTranslation('toast-success-title', 'Success'), getTranslation('toast-transport-booking-sent-body', 'Transport booking request sent! 🚛'), 'success');
+        showToast(getTranslation('toast-success-title', 'Success'), getTranslation('toast-transport-booking-sent-body', 'Transport booking request sent! '), 'success');
         closeTransportBookingModal();
         toggleTransportTab('bookings');
       } else {
@@ -7076,11 +7058,11 @@ function loadTransportBookings() {
 
         let invoiceBtnHtml = '';
         if (b.status === 'confirmed' || b.status === 'in-transit' || b.status === 'delivered') {
-          invoiceBtnHtml = `<button onclick="printTransportInvoice(${b.id})" style="background:none; border:none; color:var(--primary); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:flex; align-items:center; gap:2px; margin-top:4px;">📄 Invoice</button>`;
+          invoiceBtnHtml = `<button onclick="printTransportInvoice(${b.id})" style="background:none; border:none; color:var(--primary); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:flex; align-items:center; gap:2px; margin-top:4px;"> Invoice</button>`;
         }
         let receiptBtnHtml = '';
         if (b.status === 'delivered') {
-          receiptBtnHtml = `<button onclick="printTransportReceipt(${b.id})" style="background:none; border:none; color:var(--primary); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:flex; align-items:center; gap:2px; margin-top:4px;">🧾 Receipt</button>`;
+          receiptBtnHtml = `<button onclick="printTransportReceipt(${b.id})" style="background:none; border:none; color:var(--primary); font-size:11.5px; cursor:pointer; font-weight:600; padding:0; display:flex; align-items:center; gap:2px; margin-top:4px;"> Receipt</button>`;
         }
 
         item.innerHTML = `
@@ -7088,7 +7070,7 @@ function loadTransportBookings() {
             <div>
               <div style="font-weight:600; font-size:15px; color:var(--text-main);">${b.commodity_name} — ${b.quantity_kg} kg</div>
               ${contactInfoHtml}
-              <div style="font-size:12px; color:var(--text-muted); margin-top:4px;"><b>${getTranslation('js-route', 'Route')}:</b> ${b.pickup_address} ➔ ${b.delivery_address}</div>
+              <div style="font-size:12px; color:var(--text-muted); margin-top:4px;"><b>${getTranslation('js-route', 'Route')}:</b> ${b.pickup_address}  ${b.delivery_address}</div>
               <div style="font-size:12px; font-weight:600; color:var(--primary); margin-top:4px;">Rs. ${b.price ? parseFloat(b.price).toLocaleString() : getTranslation('js-negotiable', 'Negotiable')}</div>
             </div>
             <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
@@ -7119,7 +7101,7 @@ function updateTransportBookingStatus(bookingId, status) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        showToast(getTranslation('toast-success-title', 'Success'), getTranslation('toast-booking-updated-prefix', 'Booking updated to') + ' ' + getTranslation('booking-status-' + status, status) + '! 🚛', 'success');
+        showToast(getTranslation('toast-success-title', 'Success'), getTranslation('toast-booking-updated-prefix', 'Booking updated to') + ' ' + getTranslation('booking-status-' + status, status) + '! ', 'success');
         loadTransportBookings();
       } else {
         showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('toast-failed-update-booking-status', 'Failed to update booking status'), 'error');
@@ -8305,8 +8287,8 @@ function hideOverlay() {
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('service-worker.js')
-      .then(reg => console.log('✅ PWA Service Worker Registered!'))
-      .catch(err => console.warn('❌ Service Worker registration failed:', err));
+      .then(reg => console.log(' PWA Service Worker Registered!'))
+      .catch(err => console.warn(' Service Worker registration failed:', err));
   });
 }
 
@@ -8358,14 +8340,14 @@ window.addEventListener('appinstalled', (evt) => {
 <div id="ios-install-modal" style="display:none;position:fixed;inset:0;background:rgba(20,29,43,0.7);backdrop-filter:blur(4px);z-index:999999;align-items:center;justify-content:center;">
   <div style="background:#fff;border-radius:20px;padding:28px;max-width:400px;width:90%;box-shadow:0 12px 36px rgba(0,0,0,0.25);border:1px solid var(--border);position:relative;text-align:center;font-family:system-ui,sans-serif;">
     <button onclick="closeIosInstallModal()" style="position:absolute;top:15px;right:15px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);line-height:1;">&times;</button>
-    <span style="font-size:42px;">🍏</span>
+    <span style="font-size:42px;"></span>
     <h3 style="font-size:17px;font-weight:700;color:var(--text);margin-top:10px;margin-bottom:12px;" data-i18n="ios-install-title">Install on iPhone / iPad</h3>
     <p style="font-size:13px;color:#5e6d7a;line-height:1.6;margin-bottom:20px;text-align:left;white-space:pre-wrap;" data-i18n="ios-install-body">
 To install AgroNexa LK on your iOS device:
 
 1. Open Safari browser.
-2. Tap the Share button 📤 in the navigation bar.
-3. Scroll down and tap 'Add to Home Screen' ➕.
+2. Tap the Share button  in the navigation bar.
+3. Scroll down and tap 'Add to Home Screen' .
 4. Tap 'Add' to confirm.
     </p>
     <button onclick="closeIosInstallModal()" style="width:100%;height:38px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;" data-i18n="btn-close">Close</button>

@@ -217,9 +217,9 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
 
     <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
       <select id="language-selector" class="form-input" style="width:110px;padding:4px 8px;font-size:12px;height:32px;background:#fff;color:var(--ink);border:1px solid #DDE9E2;border-radius:8px;outline:none;cursor:pointer;">
-        <option value="en">🇬🇧 English</option>
-        <option value="si">🇱🇰 සිංහල</option>
-        <option value="ta">🇱🇰 தமிழ்</option>
+        <option value="en"> English</option>
+        <option value="si"> සිංහල</option>
+        <option value="ta"> தமிழ்</option>
       </select>
     </div>
 
@@ -326,7 +326,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
       <!-- OTP VERIFICATION -->
       <div class="field" id="otp-section">
         <button id="send-otp-btn" onclick="sendOTP()" style="width:100%;height:42px;background:#155C35;color:white;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;" data-i18n="btn-send-otp">
-          📱 Send OTP to verify phone
+           Send OTP to verify phone
         </button>
         <div id="otp-input-group" style="display:none;margin-top:12px;">
           <div class="fl-row"><span class="fl-label" data-i18n="label-enter-otp">Enter OTP</span></div>
@@ -556,8 +556,8 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#0B3D22;}
       <span id="confirm-nic-msg" style="font-size:12px;color:#155C35;font-weight:500;"></span>
     </div>
     <div style="display:flex;gap:10px;">
-      <button onclick="closeConfirm()" style="flex:1;height:44px;background:#fff;border:1.5px solid #DDE9E2;border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:#6B9B7A;cursor:pointer;" data-i18n="btn-edit-details">✏️ Edit Details</button>
-      <button id="btn-confirm" onclick="submitRegister(event)" style="flex:1;height:44px;background:linear-gradient(135deg,#155C35,#1E7A47);border:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#fff;cursor:pointer;box-shadow:0 2px 12px rgba(21,92,53,0.25);" data-i18n="btn-confirm-join">✅ Confirm & Join</button>
+      <button onclick="closeConfirm()" style="flex:1;height:44px;background:#fff;border:1.5px solid #DDE9E2;border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:#6B9B7A;cursor:pointer;" data-i18n="btn-edit-details"> Edit Details</button>
+      <button id="btn-confirm" onclick="submitRegister(event)" style="flex:1;height:44px;background:linear-gradient(135deg,#155C35,#1E7A47);border:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#fff;cursor:pointer;box-shadow:0 2px 12px rgba(21,92,53,0.25);" data-i18n="btn-confirm-join"> Confirm & Join</button>
     </div>
   </div>
 </div>
@@ -663,15 +663,15 @@ window.alert = function(message) {
   let type = 'error';
   let cleanMsg = msgStr;
   
-  if (msgStr.includes('✅')) {
+  if (msgStr.includes('')) {
     type = 'success';
-    cleanMsg = msgStr.replace(/^[✅\s]*/g, '');
-  } else if (msgStr.includes('❌')) {
+    cleanMsg = msgStr.replace(/^[\s]*/g, '');
+  } else if (msgStr.includes('')) {
     type = 'error';
-    cleanMsg = msgStr.replace(/^[❌\s]*/g, '');
-  } else if (msgStr.includes('⚠️')) {
+    cleanMsg = msgStr.replace(/^[\s]*/g, '');
+  } else if (msgStr.includes('')) {
     type = 'error';
-    cleanMsg = msgStr.replace(/^[⚠️\s]*/g, '');
+    cleanMsg = msgStr.replace(/^[\s]*/g, '');
   }
   
   showAlert(cleanMsg, type);
@@ -839,7 +839,7 @@ document.getElementById('btn-register').addEventListener('click', function () {
   var body = document.getElementById('confirm-body');
   body.innerHTML = '';
   var rows = [
-    [getTranslation('confirm-role', 'Role'), role === 'farmer' ? '🌾 ' + getTranslation('role-farmer', 'Farmer / Seller') : '🛒 ' + getTranslation('role-buyer', 'Buyer')],
+    [getTranslation('confirm-role', 'Role'), role === 'farmer' ? ' ' + getTranslation('role-farmer', 'Farmer / Seller') : ' ' + getTranslation('role-buyer', 'Buyer')],
     [getTranslation('confirm-name', 'Name'), firstName + ' ' + lastName],
     [getTranslation('profile-lbl-email', 'Email'), email],
     [getTranslation('profile-lbl-phone', 'Phone'), phone || '—'],
@@ -858,13 +858,13 @@ document.getElementById('btn-register').addEventListener('click', function () {
   if (role === 'farmer') {
     nicBox.style.display = 'flex';
     if (frontFile && backFile) {
-      nicMsg.textContent = '✅ ' + getTranslation('msg-nic-both-done', 'Both NIC sides uploaded');
+      nicMsg.textContent = ' ' + getTranslation('msg-nic-both-done', 'Both NIC sides uploaded');
       nicBox.style.background = '#EDF5EF'; nicBox.style.borderColor = 'rgba(30,122,71,0.18)';
     } else if (frontFile || backFile) {
-      nicMsg.textContent = '⚠️ ' + (frontFile ? getTranslation('msg-nic-upload-back', 'Only one NIC side uploaded') : getTranslation('msg-nic-upload-front', 'Only one NIC side uploaded'));
+      nicMsg.textContent = ' ' + (frontFile ? getTranslation('msg-nic-upload-back', 'Only one NIC side uploaded') : getTranslation('msg-nic-upload-front', 'Only one NIC side uploaded'));
       nicBox.style.background = '#FEF8EE'; nicBox.style.borderColor = 'rgba(200,140,0,0.2)';
     } else {
-      nicMsg.textContent = '⚠️ ' + getTranslation('msg-nic-verify', 'No NIC uploaded yet');
+      nicMsg.textContent = ' ' + getTranslation('msg-nic-verify', 'No NIC uploaded yet');
       nicBox.style.background = '#FEF8EE'; nicBox.style.borderColor = 'rgba(200,140,0,0.2)';
     }
   } else {
@@ -877,7 +877,7 @@ document.getElementById('btn-register').addEventListener('click', function () {
 function closeConfirm() {
   document.getElementById('confirm-overlay').style.display = 'none';
   var btn = document.getElementById('btn-confirm');
-  btn.innerHTML = getTranslation('btn-confirm-join', '✅ Confirm & Join');
+  btn.innerHTML = getTranslation('btn-confirm-join', ' Confirm & Join');
   btn.disabled = false;
 }
 
@@ -900,14 +900,14 @@ async function submitRegister(e) {
     else { 
       closeConfirm(); 
       if (data.error === 'MAINTENANCE_LOCKOUT') {
-        alert('❌ ' + (data.message || 'System is under maintenance'));
+        alert(' ' + (data.message || 'System is under maintenance'));
       } else {
-        alert('❌ ' + (data.error ? getTranslation(data.error, data.error) : 'Registration failed')); 
+        alert(' ' + (data.error ? getTranslation(data.error, data.error) : 'Registration failed')); 
       }
     }
   } catch (err) {
     closeConfirm();
-    alert('❌ ' + getTranslation('err-server-connection', 'Cannot connect to server. Check your Railway URL.'));
+    alert(' ' + getTranslation('err-server-connection', 'Cannot connect to server. Check your Railway URL.'));
   }
 }
 
@@ -917,7 +917,7 @@ function showSuccess(name) {
       <div style="width:64px;height:64px;border-radius:50%;background:#EDF5EF;border:2px solid rgba(30,122,71,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
         <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1E7A47" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
-      <div style="font-family:'Playfair Display',serif;font-size:1.4rem;color:#050F07;margin-bottom:8px;">${getTranslation('js-welcome', 'Welcome')}, ${name}! 🌱</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.4rem;color:#050F07;margin-bottom:8px;">${getTranslation('js-welcome', 'Welcome')}, ${name}! </div>
       <div style="font-size:13px;color:#7BA090;line-height:1.7;margin-bottom:24px;">${getTranslation('js-account-created-success', 'Your AgroNexa LK account has been created successfully!')}</div>
       <button onclick="document.getElementById('confirm-overlay').style.display='none'; sw('login');"
         style="width:100%;height:44px;background:linear-gradient(135deg,#155C35,#1E7A47);border:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#fff;cursor:pointer;">
@@ -954,18 +954,18 @@ document.getElementById('btn-login').addEventListener('click', async function ()
       } else if (role === 'buyer') {
         window.location.href = 'buyer.html';
       } else {
-        alert('✅ ' + getTranslation('js-welcome', 'Welcome back') + ', ' + data.user.name + '!');
+        alert(' ' + getTranslation('js-welcome', 'Welcome back') + ', ' + data.user.name + '!');
       }
     }
     else { 
       if (data.error === 'MAINTENANCE_LOCKOUT') {
-        alert('❌ ' + (data.message || 'System is under maintenance'));
+        alert(' ' + (data.message || 'System is under maintenance'));
       } else {
-        alert('❌ ' + (data.error ? getTranslation(data.error, data.error) : 'Login failed')); 
+        alert(' ' + (data.error ? getTranslation(data.error, data.error) : 'Login failed')); 
       }
     }
   } catch (err) {
-    alert('❌ ' + getTranslation('err-server-connection', 'Cannot connect to server. Check your Railway URL.'));
+    alert(' ' + getTranslation('err-server-connection', 'Cannot connect to server. Check your Railway URL.'));
   } finally {
     btn.innerHTML = '<span data-i18n="landing-btn-login">' + getTranslation('landing-btn-login', 'Sign in to AgroNexa') + '</span> <svg class="arr" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>';
     btn.disabled = false;
@@ -1012,16 +1012,16 @@ async function sendOTP() {
     if (data.success) {
       verifiedPhone = fullPhone;
       document.getElementById('otp-input-group').style.display = 'block';
-      let statusHtml = `<span style="color:#10b981;">✅ ${getTranslation('js-otp-sent-to', 'OTP sent to')} +94${formattedPhone}</span>`;
+      let statusHtml = `<span style="color:#10b981;"> ${getTranslation('js-otp-sent-to', 'OTP sent to')} +94${formattedPhone}</span>`;
       if (data.mock) {
         statusHtml += `<div style="color:#eab308; margin-top: 8px; font-size: 13px; line-height: 1.5; font-weight: 600;">
-          ⚠️ Twilio Sandbox: SMS නොලැබුනේ නම්, Bypass Code එක ලෙස <b>123456</b> ඇතුලත් කරන්න. <br>
+           Twilio Sandbox: SMS නොලැබුනේ නම්, Bypass Code එක ලෙස <b>123456</b> ඇතුලත් කරන්න. <br>
           (If SMS is not received, enter mock code <b>123456</b>)
         </div>`;
       }
       document.getElementById('otp-status').innerHTML = statusHtml;
     } else {
-      alert("❌ " + (data.error ? getTranslation(data.error, data.error) : "Failed to send OTP"));
+      alert(" " + (data.error ? getTranslation(data.error, data.error) : "Failed to send OTP"));
     }
   } catch (e) {
     alert(getTranslation('err-server-connection', "Cannot connect to server"));
@@ -1052,9 +1052,9 @@ async function verifyOTP() {
     const data = await res.json();
 
     if (data.success) {
-      statusEl.innerHTML = `<span style="color:#10b981;">✅ ${getTranslation('js-phone-verified-success', 'Phone Verified Successfully!')}</span>`;
+      statusEl.innerHTML = `<span style="color:#10b981;"> ${getTranslation('js-phone-verified-success', 'Phone Verified Successfully!')}</span>`;
     } else {
-      statusEl.innerHTML = `<span style="color:#ef4444;">❌ ${getTranslation('js-invalid-otp', 'Invalid or Expired OTP')}</span>`;
+      statusEl.innerHTML = `<span style="color:#ef4444;"> ${getTranslation('js-invalid-otp', 'Invalid or Expired OTP')}</span>`;
     }
   } catch (e) {
     statusEl.innerHTML = `<span style="color:#ef4444;">${getTranslation('err-connection-failed', 'Connection Error')}</span>`;
@@ -1087,7 +1087,7 @@ async function sendResetLink() {
     });
     const data = await res.json();
     if (data.success) {
-      alert("✅ " + getTranslation('js-link-sent', "Link simulated/sent! Please check your console for the simulated email containing the reset link."));
+      alert(" " + getTranslation('js-link-sent', "Link simulated/sent! Please check your console for the simulated email containing the reset link."));
       if (data.resetLinkSimulated) {
         console.log("Simulated Reset Link:", data.resetLinkSimulated);
         let existingHint = document.getElementById('demo-hint');
@@ -1106,10 +1106,10 @@ async function sendResetLink() {
         document.getElementById('panel-forgot').appendChild(hintDiv);
       }
     } else {
-      alert("❌ " + (data.error ? getTranslation(data.error, data.error) : "Failed to send reset link"));
+      alert(" " + (data.error ? getTranslation(data.error, data.error) : "Failed to send reset link"));
     }
   } catch(e) {
-    alert("❌ " + getTranslation('err-connection-failed', "Connection failed"));
+    alert(" " + getTranslation('err-connection-failed', "Connection failed"));
   } finally {
     btn.textContent = getTranslation('btn-send-reset', "Send Reset Link");
     btn.disabled = false;
@@ -1142,14 +1142,14 @@ async function submitResetPassword() {
     });
     const data = await res.json();
     if (data.success) {
-      alert("✅ " + getTranslation('js-pwd-reset-success', "Password reset successfully! You can now log in with your new password."));
+      alert(" " + getTranslation('js-pwd-reset-success', "Password reset successfully! You can now log in with your new password."));
       window.history.replaceState({}, document.title, window.location.pathname); // clear query parameters
       sw('login');
     } else {
-      alert("❌ " + (data.error ? getTranslation(data.error, data.error) : "Reset failed"));
+      alert(" " + (data.error ? getTranslation(data.error, data.error) : "Reset failed"));
     }
   } catch(e) {
-    alert("❌ " + getTranslation('err-connection-failed', "Connection failed"));
+    alert(" " + getTranslation('err-connection-failed', "Connection failed"));
   } finally {
     btn.textContent = getTranslation('btn-reset-password', "Reset Password");
     btn.disabled = false;
@@ -1183,7 +1183,7 @@ async function sendForgotEmail() {
     });
     const data = await res.json();
     if (data.success) {
-      alert("✅ " + getTranslation('js-recovery-email-sent', "Recovery email simulated/sent! Please check the box displayed below for your simulated email containing the login details and reset link."));
+      alert(" " + getTranslation('js-recovery-email-sent', "Recovery email simulated/sent! Please check the box displayed below for your simulated email containing the login details and reset link."));
       
       // Clean up any existing demo hint box
       let existingHint = document.getElementById('demo-email-hint');
@@ -1202,7 +1202,7 @@ async function sendForgotEmail() {
       hintDiv.style.wordBreak = 'break-all';
       
       hintDiv.innerHTML = `
-        <strong>📧 ${getTranslation('js-simulated-email-sent-lbl', 'Simulated Email Sent to')} ${data.email}</strong><br>
+        <strong> ${getTranslation('js-simulated-email-sent-lbl', 'Simulated Email Sent to')} ${data.email}</strong><br>
         <span style="font-size:11px;color:#0c4a6e;">${getTranslation('js-simulated-recovery-msg', 'Hello, you requested account recovery.')}</span><br>
         <strong>${getTranslation('js-registered-email-lbl', 'Registered Email:')}</strong> <span style="font-weight:600;color:#0284c7;">${data.email}</span><br><br>
         <strong>${getTranslation('js-recovery-reset-link-lbl', 'Recovery Reset Link:')}</strong><br>
@@ -1210,10 +1210,10 @@ async function sendForgotEmail() {
       `;
       document.getElementById('panel-forgot-email').appendChild(hintDiv);
     } else {
-      alert("❌ " + (data.error ? getTranslation(data.error, data.error) : "Failed to recover email"));
+      alert(" " + (data.error ? getTranslation(data.error, data.error) : "Failed to recover email"));
     }
   } catch(e) {
-    alert("❌ " + getTranslation('err-connection-failed', "Connection failed"));
+    alert(" " + getTranslation('err-connection-failed', "Connection failed"));
   } finally {
     btn.textContent = getTranslation('btn-send-recovery-email', "Send Recovery Email");
     btn.disabled = false;
@@ -1245,8 +1245,8 @@ window.addEventListener('DOMContentLoaded', () => {
   // Register PWA Service Worker
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('service-worker.js')
-      .then(reg => console.log('✅ PWA Service Worker Registered!'))
-      .catch(err => console.warn('❌ Service Worker registration failed:', err));
+      .then(reg => console.log(' PWA Service Worker Registered!'))
+      .catch(err => console.warn(' Service Worker registration failed:', err));
   }
 });
 

@@ -7,7 +7,7 @@ export function Topbar({ topbar }: { topbar: { liveText: string; dateText: strin
       <div className="flex items-center gap-3">
         <div className="h-10 w-10 rounded-2xl bg-brand-green-50/80 dark:bg-white/5 border border-brand-green-100/60 flex items-center justify-center">
           <span className="text-lg" aria-hidden>
-            🌾
+            
           </span>
         </div>
         <div>

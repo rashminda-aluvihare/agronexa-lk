@@ -14,7 +14,7 @@ export const sellerDummy = {
   cropListings: [
     {
       id: 'c1',
-      icon: '🍅',
+      icon: '',
       name: 'Tomatoes – Cherry Variety',
       district: 'Kandy',
       availableQty: 120,
@@ -24,7 +24,7 @@ export const sellerDummy = {
     },
     {
       id: 'c2',
-      icon: '🥬',
+      icon: '',
       name: 'Gotukola (Centella)',
       district: 'Kandy',
       availableQty: 60,
@@ -34,7 +34,7 @@ export const sellerDummy = {
     },
     {
       id: 'c3',
-      icon: '🥕',
+      icon: '',
       name: 'Carrots – Nantes Type',
       district: 'Nuwara Eliya',
       availableQty: 200,
@@ -44,7 +44,7 @@ export const sellerDummy = {
     },
     {
       id: 'c4',
-      icon: '🌶️',
+      icon: '',
       name: 'Red Chilies – Dried',
       district: 'Kandy',
       availableQty: 35,

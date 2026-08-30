@@ -91,7 +91,7 @@ export function SidebarNav({ role, user, activeNav, onSwitchRole }: { role: 'sel
             onClick={onSwitchRole}
           >
             <span className="text-lg" aria-hidden>
-              {role === 'seller' ? '🛒' : '🌾'}
+              {role === 'seller' ? '' : ''}
             </span>
             Switch to {role === 'seller' ? 'Buyer' : 'Seller'}
           </button>
