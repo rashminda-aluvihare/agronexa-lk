@@ -4647,9 +4647,31 @@ async function verifyOfflineReceipt() {
 }
 
 async function verifyAgreementDirectly(txId) {
-  if (!window.ledgerEntries) return;
-  const entry = window.ledgerEntries.find(e => e.tx_id === txId);
-  if (!entry) return;
+  let entry = (window.ledgerEntries || []).find(e => e.tx_id === txId);
+
+  if (!entry && window.sellerInvoices) {
+    const inv = window.sellerInvoices.find(i => i.id === txId && i.type === 'ledger');
+    if (inv && inv.raw) entry = inv.raw;
+  }
+
+  if (!entry) {
+    try {
+      const res = await fetch(API_URL + '/api/seller/ledger', { headers: getAuthHeaders() }).then(r => r.json());
+      if (res.success && res.ledger) {
+        window.ledgerEntries = res.ledger;
+        entry = res.ledger.find(e => e.tx_id === txId);
+      }
+    } catch (err) {}
+  }
+
+  if (!entry) {
+    showToast(
+      getTranslation('toast-agreement-failed-title', 'Cryptographic Mismatch!'),
+      getTranslation('js-receipt-not-found', 'Transaction ID not found in the blockchain database.'),
+      'error'
+    );
+    return;
+  }
 
   const sha256 = async (message) => {
     const msgBuffer = new TextEncoder().encode(message);
@@ -4696,6 +4718,7 @@ function loadInvoices() {
 
       // Process ledger entries
       if (ledgerRes.success && ledgerRes.ledger) {
+        window.ledgerEntries = ledgerRes.ledger;
         ledgerRes.ledger.forEach(item => {
           sellerInvoices.push({
             id: item.tx_id,
