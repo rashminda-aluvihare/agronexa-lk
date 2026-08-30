@@ -3372,21 +3372,58 @@ function loadEquipmentMarketplace() {
         return;
       }
 
+function getCropCardPlaceholder(name = '', category = '') {
+  const cropLower = (name + ' ' + category).toLowerCase();
+  
+  let bgGradient = 'linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)';
+  let strokeColor = '#2e7d32';
+  let iconSvg = `<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>`;
+
+  if (cropLower.includes('carrot') || cropLower.includes('pumpkin') || cropLower.includes('papaya') || cropLower.includes('orange')) {
+    bgGradient = 'linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%)';
+    strokeColor = '#e65100';
+  } else if (cropLower.includes('tomato') || cropLower.includes('chili') || cropLower.includes('beet') || cropLower.includes('apple')) {
+    bgGradient = 'linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%)';
+    strokeColor = '#c62828';
+  } else if (cropLower.includes('paddy') || cropLower.includes('rice') || cropLower.includes('grain') || cropLower.includes('corn')) {
+    bgGradient = 'linear-gradient(135deg, #fffde7 0%, #fff9c4 100%)';
+    strokeColor = '#f57f17';
+    iconSvg = `<path d="M12 2v20M17 5l-5 5M7 5l5 5M17 11l-5 5M7 11l5 5"/>`;
+  }
+
+  return `
+    <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:${bgGradient}; border-radius:8px;">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="${strokeColor}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        ${iconSvg}
+      </svg>
+    </div>
+  `;
+}
+
+function getEquipmentCardPlaceholder(name = '', type = '') {
+  return `
+    <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%); border-radius:8px;">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00695c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 17h18"/>
+        <path d="M5 17V8a2 2 0 0 1 2-2h6l3 4h3a2 2 0 0 1 2 2v5"/>
+        <circle cx="7.5" cy="17.5" r="2.5"/>
+        <circle cx="16.5" cy="17.5" r="2.5"/>
+      </svg>
+    </div>
+  `;
+}
+
       let html = '';
       data.listings.forEach(item => {
         // Don't show our own equipment
         if (item.owner_id === _user.id) return;
 
-        let defaultEmoji = '';
-        if (item.name.toLowerCase().includes('pump') || item.name.toLowerCase().includes('water')) defaultEmoji = '';
-        if (item.name.toLowerCase().includes('transport') || item.name.toLowerCase().includes('lorry')) defaultEmoji = '';
-        if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) defaultEmoji = '';
-
-        let icon = defaultEmoji;
+        let defaultPlaceholder = getEquipmentCardPlaceholder(item.name, item.type);
+        let icon = defaultPlaceholder;
         if (item.photos && item.photos.length > 0 && item.photos[0]) {
           let photoPath = item.photos[0].replace(/\\/g, '/').replace(/^\/+/, '');
           let photoUrl = photoPath.startsWith('http') ? photoPath : `${API_URL}/${photoPath}`;
-          icon = `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;" onerror="this.onerror=null; this.parentNode.innerHTML='${defaultEmoji}';">`;
+          icon = `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;" onerror="this.onerror=null; this.parentNode.innerHTML=\`${defaultPlaceholder.replace(/'/g, "\\'")}\`;">`;
         }
 
         const distKey = 'district-' + (item.district || _user.district || 'kurunegala').toLowerCase().replace(/[^a-z]/g, '');
@@ -3395,7 +3432,7 @@ function loadEquipmentMarketplace() {
 
         html += `
           <div class="market-card" style="margin-bottom:0; box-sizing:border-box; width:100%;">
-            <div class="market-card-img" style="height:80px; font-size:32px;">${icon}</div>
+            <div class="market-card-img" style="height:80px;">${icon}</div>
             <div class="market-card-name" style="font-size:13px; font-weight:600;">${item.name}</div>
             <div class="market-card-meta" style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">
               ${districtTranslated} · ${condTranslated}
@@ -3404,8 +3441,9 @@ function loadEquipmentMarketplace() {
               Owner: <span style="font-weight:600; color:var(--primary);">${item.owner_name}</span>
             </div>
             <div class="market-card-price" style="font-size:13.5px; font-weight:600; color:#155C35;">Rs. ${parseFloat(item.rental_rate).toLocaleString()}/day</div>
-            <button class="interest-btn" style="margin-top:8px; width:100%; background:#EDF5EF; color:#155C35; border:none; border-radius:8px; padding:8px 0; font-size:12px; font-weight:600; cursor:pointer;" 
+            <button class="interest-btn" style="margin-top:8px; width:100%; background:#EDF5EF; color:#155C35; border:none; border-radius:8px; padding:8px 0; font-size:12px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:5px;" 
               onclick="openEquipmentBookingModal(${item.id}, ${item.rental_rate}, '${item.name.replace(/'/g, "\\'")}')">
+               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                Rent Now
             </button>
           </div>
@@ -3776,22 +3814,16 @@ function loadCropListings() {
 
       let html = '';
       data.listings.forEach(item => {
-        if (item.status === 'deactivated') return;
-        let defaultEmoji = '';
-        if (item.name.toLowerCase().includes('tomato')) defaultEmoji = '';
-        if (item.name.toLowerCase().includes('carrot')) defaultEmoji = '';
-        if (item.name.toLowerCase().includes('chili')) defaultEmoji = '';
-        if (item.name.toLowerCase().includes('potato')) defaultEmoji = '';
-
-        let img = defaultEmoji;
+        let defaultPlaceholder = getCropCardPlaceholder(item.name, item.category);
+        let img = defaultPlaceholder;
         if (item.photos && item.photos.length > 0 && item.photos[0]) {
           let photoPath = item.photos[0].replace(/\\/g, '/').replace(/^\/+/, '');
           let photoUrl = photoPath.startsWith('http') ? photoPath : `${API_URL}/${photoPath}`;
-          img = `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:10px;" onerror="this.onerror=null; this.parentNode.innerHTML='${defaultEmoji}';">`;
+          img = `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:10px;" onerror="this.onerror=null; this.parentNode.innerHTML=\`${defaultPlaceholder.replace(/'/g, "\\'")}\`;">`;
         }
         const dateStr = item.available_date ? new Date(item.available_date).toLocaleDateString() : 'N/A';
         const isPending = item.status === 'pending';
-        const statusLabel = isPending ? '⏳ ' + getTranslation('booking-status-pending', 'Pending') : '● ' + getTranslation('booking-status-active', 'Active');
+        const statusLabel = isPending ? getTranslation('booking-status-pending', 'Pending') : getTranslation('booking-status-active', 'Active');
         const statusClass = isPending ? 'pending' : 'active';
 
         const distKey = 'district-' + (item.district || _user.district || 'kandy').toLowerCase().replace(/[^a-z]/g, '');

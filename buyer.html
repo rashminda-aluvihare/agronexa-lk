@@ -4972,6 +4972,47 @@ function toggleMarketType() {
 
 function loadMarketplace() {
   const query = document.getElementById('market-search').value.trim();
+function getCropCardPlaceholder(name = '', category = '') {
+  const cropLower = (name + ' ' + category).toLowerCase();
+  
+  let bgGradient = 'linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)';
+  let strokeColor = '#2e7d32';
+  let iconSvg = `<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>`;
+
+  if (cropLower.includes('carrot') || cropLower.includes('pumpkin') || cropLower.includes('papaya') || cropLower.includes('orange')) {
+    bgGradient = 'linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%)';
+    strokeColor = '#e65100';
+  } else if (cropLower.includes('tomato') || cropLower.includes('chili') || cropLower.includes('beet') || cropLower.includes('apple')) {
+    bgGradient = 'linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%)';
+    strokeColor = '#c62828';
+  } else if (cropLower.includes('paddy') || cropLower.includes('rice') || cropLower.includes('grain') || cropLower.includes('corn')) {
+    bgGradient = 'linear-gradient(135deg, #fffde7 0%, #fff9c4 100%)';
+    strokeColor = '#f57f17';
+    iconSvg = `<path d="M12 2v20M17 5l-5 5M7 5l5 5M17 11l-5 5M7 11l5 5"/>`;
+  }
+
+  return `
+    <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:${bgGradient}; border-radius:8px;">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="${strokeColor}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        ${iconSvg}
+      </svg>
+    </div>
+  `;
+}
+
+function getEquipmentCardPlaceholder(name = '', type = '') {
+  return `
+    <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%); border-radius:8px;">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00695c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 17h18"/>
+        <path d="M5 17V8a2 2 0 0 1 2-2h6l3 4h3a2 2 0 0 1 2 2v5"/>
+        <circle cx="7.5" cy="17.5" r="2.5"/>
+        <circle cx="16.5" cy="17.5" r="2.5"/>
+      </svg>
+    </div>
+  `;
+}
+
   const container = document.getElementById('marketplace-grid');
 
   if (marketType === 'crops') {
@@ -4988,19 +5029,12 @@ function loadMarketplace() {
 
         let html = '';
         data.listings.forEach(item => {
-          let defaultEmoji = '';
-          if (item.name.toLowerCase().includes('tomato')) defaultEmoji = '';
-          if (item.name.toLowerCase().includes('carrot')) defaultEmoji = '';
-          if (item.name.toLowerCase().includes('chili')) defaultEmoji = '';
-          if (item.name.toLowerCase().includes('potato')) defaultEmoji = '';
-          if (item.name.toLowerCase().includes('onion')) defaultEmoji = '';
-          if (item.name.toLowerCase().includes('banana')) defaultEmoji = '';
-
-          let symbol = defaultEmoji;
+          let defaultPlaceholder = getCropCardPlaceholder(item.name, item.category);
+          let symbol = defaultPlaceholder;
           if (item.photos && item.photos.length > 0 && item.photos[0]) {
             let photoPath = item.photos[0].replace(/\\/g, '/').replace(/^\/+/, '');
             let photoUrl = photoPath.startsWith('http') ? photoPath : `${API_URL}/${photoPath}`;
-            symbol = `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;" onerror="this.onerror=null; this.parentNode.innerHTML='${defaultEmoji}';">`;
+            symbol = `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;" onerror="this.onerror=null; this.parentNode.innerHTML=\`${defaultPlaceholder.replace(/'/g, "\\'")}\`;">`;
           }
 
           const repScore = Math.min(5, (parseInt(item.seller_rep || 0) / 10) * 5).toFixed(1);
@@ -5012,15 +5046,24 @@ function loadMarketplace() {
               <div class="market-card-meta">${item.district || 'Kandy'} · ${item.quantity_kg} kg</div>
               <div style="font-size:11.5px; color:var(--text); font-weight:500; display:flex; align-items:center; gap:4px; margin-top:4px;">
                 <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.seller_id})">${item.seller_name}</span>
-                <span class="verified-badge"> Verified</span>
+                <span class="verified-badge" style="display:inline-flex; align-items:center; gap:3px;">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Verified
+                </span>
               </div>
-              <div style="font-size:11px; color:#f4a261; font-weight:600; display:flex; align-items:center; gap:2px; margin-top:2px; margin-bottom:6px;">
-                 ${repScore} (${item.seller_rep || 0} deals)
+              <div style="font-size:11px; color:#f4a261; font-weight:600; display:flex; align-items:center; gap:3px; margin-top:2px; margin-bottom:6px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="#f4a261" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                ${repScore} (${item.seller_rep || 0} deals)
               </div>
               <div class="market-card-price">1kg = Rs. ${parseFloat(item.price_per_kg).toFixed(0)}</div>
               <div style="display:flex; gap:6px; margin-top:8px;">
-                <button class="interest-btn" style="margin-top:0;" onclick="openCropOrderModal(${item.id}, ${item.price_per_kg}, '${item.name.replace(/'/g, "\\'")}', ${item.quantity_kg})"> Order Now</button>
-                <button class="interest-btn" style="margin-top:0; background:var(--teal); color:#fff;" onclick="startChatWithUser(${item.seller_id}, '${item.seller_name.replace(/'/g, "\\'")}', 'farmer')"> Chat</button>
+                <button class="interest-btn" style="margin-top:0; display:inline-flex; align-items:center; justify-content:center; gap:5px;" onclick="openCropOrderModal(${item.id}, ${item.price_per_kg}, '${item.name.replace(/'/g, "\\'")}', ${item.quantity_kg})">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                  Order Now
+                </button>
+                <button class="interest-btn" style="margin-top:0; background:var(--teal); color:#fff; display:inline-flex; align-items:center; justify-content:center; gap:5px;" onclick="startChatWithUser(${item.seller_id}, '${item.seller_name.replace(/'/g, "\\'")}', 'farmer')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  Chat
+                </button>
               </div>
             </div>
           `;
@@ -5043,16 +5086,12 @@ function loadMarketplace() {
 
         let html = '';
         data.listings.forEach(item => {
-          let defaultEmoji = '';
-          if (item.name.toLowerCase().includes('pump') || item.name.toLowerCase().includes('water')) defaultEmoji = '';
-          if (item.name.toLowerCase().includes('transport') || item.name.toLowerCase().includes('lorry')) defaultEmoji = '';
-          if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) defaultEmoji = '';
-
-          let symbol = defaultEmoji;
+          let defaultPlaceholder = getEquipmentCardPlaceholder(item.name, item.type);
+          let symbol = defaultPlaceholder;
           if (item.photos && item.photos.length > 0 && item.photos[0]) {
             let photoPath = item.photos[0].replace(/\\/g, '/').replace(/^\/+/, '');
             let photoUrl = photoPath.startsWith('http') ? photoPath : `${API_URL}/${photoPath}`;
-            symbol = `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;" onerror="this.onerror=null; this.parentNode.innerHTML='${defaultEmoji}';">`;
+            symbol = `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;" onerror="this.onerror=null; this.parentNode.innerHTML=\`${defaultPlaceholder.replace(/'/g, "\\'")}\`;">`;
           }
 
           const repScore = Math.min(5, (parseInt(item.owner_rep || 0) / 10) * 5).toFixed(1);
@@ -5064,15 +5103,27 @@ function loadMarketplace() {
               <div class="market-card-meta">${item.district || 'Kurunegala'} · ${item.condition || 'Good'} condition</div>
               <div style="font-size:11.5px; color:var(--text); font-weight:500; display:flex; align-items:center; gap:4px; margin-top:4px;">
                 <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.owner_id})">${item.owner_name}</span>
-                <span class="verified-badge"> Verified</span>
+                <span class="verified-badge" style="display:inline-flex; align-items:center; gap:3px;">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Verified
+                </span>
               </div>
-              <div style="font-size:11px; color:#f4a261; font-weight:600; display:flex; align-items:center; gap:2px; margin-top:2px; margin-bottom:6px;">
-                 ${repScore} (${item.owner_rep || 0} deals)
+              <div style="font-size:11px; color:#f4a261; font-weight:600; display:flex; align-items:center; gap:3px; margin-top:2px; margin-bottom:6px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="#f4a261" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                ${repScore} (${item.owner_rep || 0} deals)
               </div>
               <div class="market-card-price">Rs. ${parseFloat(item.rental_rate).toLocaleString()} / day</div>
               <div style="display:flex; gap:6px; margin-top:8px;">
-                <button class="interest-btn" style="margin-top:0;" onclick="openBookingModal(${item.id}, ${item.rental_rate}, '${item.name}')">Rent Now</button>
-                <button class="interest-btn" style="margin-top:0; background:var(--teal); color:#fff;" onclick="startChatWithUser(${item.owner_id}, '${item.owner_name.replace(/'/g, "\\'")}', 'farmer')"> Chat</button>
+                <button class="interest-btn" style="margin-top:0; display:inline-flex; align-items:center; justify-content:center; gap:5px;" onclick="openBookingModal(${item.id}, ${item.rental_rate}, '${item.name.replace(/'/g, "\\'")}')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  Rent Now
+                </button>
+                <button class="interest-btn" style="margin-top:0; background:var(--teal); color:#fff; display:inline-flex; align-items:center; justify-content:center; gap:5px;" onclick="startChatWithUser(${item.owner_id}, '${item.owner_name.replace(/'/g, "\\'")}', 'farmer')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  Chat
+                </button>
+              </div>
+            </div>
+          `;
               </div>
             </div>
           `;
