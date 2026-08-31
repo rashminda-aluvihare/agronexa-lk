@@ -121,15 +121,146 @@
     border-color:var(--teal-light);box-shadow: 0 4px 12px rgba(22,34,44,0.04);transform: translateX(2px);
   }
 
-  /* Marketplace Cards */
-  .market-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .market-card{margin-bottom:0}
-  .market-card-img{width:100%;height:130px;border-radius:8px;background:var(--teal-pale);display:flex;align-items:center;justify-content:center;margin-bottom:10px;overflow:hidden;}
-  .market-card-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
-  .market-card-meta{font-size:11.5px;color:var(--muted);margin-bottom:8px}
-  .market-card-price{font-size:14px;font-weight:600;color:var(--teal)}
-  .interest-btn{margin-top:8px;width:100%;background:var(--teal-pale);color:var(--teal);border:none;border-radius:8px;padding:8px 0;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s}
-  .interest-btn:hover{background:var(--teal-light);color:#fff;transform:translateY(-1px)}
+  /* Category Pills */
+  .cat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .cat-pill:hover {
+    border-color: var(--teal-light);
+    background: var(--teal-pale);
+    color: var(--teal);
+    transform: translateY(-1px);
+  }
+  .cat-pill.active {
+    background: var(--teal);
+    color: #ffffff;
+    border-color: var(--teal);
+    font-weight: 600;
+    box-shadow: 0 3px 10px rgba(26,79,114,0.25);
+  }
+
+  /* Ultra-Modern Marketplace Cards */
+  .market-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .market-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(22,34,44,0.03);
+    position: relative;
+    margin-bottom: 0;
+  }
+  .market-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(22,34,44,0.08);
+    border-color: var(--teal-light);
+  }
+  .market-card-img {
+    width: 100%;
+    height: 160px;
+    border-radius: 10px;
+    background: #eef2f5;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .market-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+  }
+  .market-card:hover .market-card-img img {
+    transform: scale(1.05);
+  }
+  .market-card-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(15, 30, 20, 0.8);
+    backdrop-filter: blur(6px);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.3px;
+    z-index: 2;
+  }
+  .market-card-district {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(6px);
+    color: #1a4f72;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    z-index: 2;
+  }
+  .market-card-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+    line-height: 1.25;
+  }
+  .market-card-price {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--teal);
+  }
+  .interest-btn {
+    width: 100%;
+    background: var(--teal-pale);
+    color: var(--teal);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 0;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans',sans-serif;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  .interest-btn:hover {
+    background: var(--teal-light);
+    color: #fff;
+    transform: translateY(-1px);
+  }
 
   /* Bookings */
   .booking-item{align-items:center;gap:12px;margin-bottom:12px}
@@ -1046,18 +1177,180 @@
         </div>
       </div>
 
-      <div class="panel" id="panel-marketplace">
-        <div class="panel-head">
-          <div class="panel-title" id="market-title" data-i18n="panel-marketplace-crops">Marketplace Crops</div>
-          <div class="panel-action" onclick="switchTab('marketplace')" style="cursor:pointer" data-i18n="btn-view-all-listings">View all listings</div>
+      <div class="panel" id="panel-marketplace" style="transition: all 0.3s ease;">
+        <div class="panel-head" style="margin-bottom: 12px;">
+          <div>
+            <div class="panel-title" id="market-title" style="font-size: 1.15rem; display: flex; align-items: center; gap: 8px;" data-i18n="panel-marketplace-crops">
+              <span>🌾 Direct Farm Marketplace</span>
+            </div>
+            <div id="market-subtitle" style="font-size: 12px; color: var(--muted); margin-top: 2px;">
+              Live verified stock direct from growers & machinery owners
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button class="filter-btn" id="market-map-toggle-btn" onclick="toggleMarketMapVisibility()" style="padding: 6px 12px; font-size: 12px; display: inline-flex; align-items: center; gap: 5px; background: var(--teal-pale); color: var(--teal); border: 1px solid var(--border);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+              <span id="market-map-btn-txt">Show Map View</span>
+            </button>
+            <button class="filter-btn" id="market-toggle-btn" onclick="toggleMarketType()" style="white-space:nowrap; padding: 6px 12px; font-size: 12px; background: var(--teal); color: #fff;" data-i18n="btn-view-equipment">
+              🚜 Switch to Equipment
+            </button>
+          </div>
         </div>
-        <div class="search-bar">
-          <input class="search-input" id="market-search" type="text" placeholder="Search produce or equipment..." oninput="loadMarketplace()" data-i18n-placeholder="placeholder-search-produce">
-          <button class="filter-btn" id="market-toggle-btn" onclick="toggleMarketType()" style="white-space:nowrap;" data-i18n="btn-view-equipment"> View Equipment</button>
+
+        <!-- Interactive Category Pills -->
+        <div id="marketplace-category-pills" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; scrollbar-width: none;">
+          <button class="cat-pill active" onclick="filterMarketByCategory('all')" data-cat="all">
+            <span>✨</span> All Items (<span id="cat-count-all">0</span>)
+          </button>
+          <button class="cat-pill" onclick="filterMarketByCategory('Vegetables')" data-cat="Vegetables">
+            <span>🥬</span> Vegetables (<span id="cat-count-veg">0</span>)
+          </button>
+          <button class="cat-pill" onclick="filterMarketByCategory('Fruits')" data-cat="Fruits">
+            <span>🥭</span> Fruits (<span id="cat-count-fruit">0</span>)
+          </button>
+          <button class="cat-pill" onclick="filterMarketByCategory('Grains')" data-cat="Grains">
+            <span>🌾</span> Grains & Tubers (<span id="cat-count-grains">0</span>)
+          </button>
+          <button class="cat-pill" onclick="filterMarketByCategory('Spices')" data-cat="Spices">
+            <span>🌶️</span> Spices (<span id="cat-count-spices">0</span>)
+          </button>
+          <button class="cat-pill" onclick="filterMarketByCategory('Other')" data-cat="Other">
+            <span>📦</span> Other (<span id="cat-count-other">0</span>)
+          </button>
         </div>
-        <div id="market-map" style="height: 350px; border-radius: 12px; margin-bottom: 15px; display: none;"></div>
-        <div id="marketplace-grid" class="market-grid" style="max-height: 350px; overflow-y: auto; padding-right: 5px;">
+
+        <!-- Advanced Filter & Sort Toolbar -->
+        <div class="market-toolbar" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; background: #f8faf9; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border);">
+          <div style="flex: 2; min-width: 200px; position: relative;">
+            <input class="search-input" id="market-search" type="text" placeholder="Search crop name, farmer, or keywords..." oninput="handleMarketFiltersChange()" data-i18n-placeholder="placeholder-search-produce" style="width: 100%; height: 38px; padding-left: 36px;">
+            <svg style="position: absolute; left: 11px; top: 11px; color: var(--muted);" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          
+          <div style="flex: 1; min-width: 140px;">
+            <select id="market-district-filter" onchange="handleMarketFiltersChange()" class="form-input" style="width: 100%; height: 38px; padding: 0 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 12.5px; background: #fff; color: var(--text);">
+              <option value="all">📍 All Districts</option>
+              <option value="Nuwara Eliya">Nuwara Eliya</option>
+              <option value="Kandy">Kandy</option>
+              <option value="Matale">Matale</option>
+              <option value="Jaffna">Jaffna</option>
+              <option value="Galle">Galle</option>
+              <option value="Matara">Matara</option>
+              <option value="Hambantota">Hambantota</option>
+              <option value="Kurunegala">Kurunegala</option>
+              <option value="Anuradhapura">Anuradhapura</option>
+              <option value="Polonnaruwa">Polonnaruwa</option>
+              <option value="Badulla">Badulla</option>
+              <option value="Moneragala">Moneragala</option>
+              <option value="Ratnapura">Ratnapura</option>
+              <option value="Kegalle">Kegalle</option>
+              <option value="Colombo">Colombo</option>
+              <option value="Gampaha">Gampaha</option>
+              <option value="Kalutara">Kalutara</option>
+              <option value="Puttalam">Puttalam</option>
+              <option value="Batticaloa">Batticaloa</option>
+              <option value="Ampara">Ampara</option>
+              <option value="Trincomalee">Trincomalee</option>
+            </select>
+          </div>
+
+          <div style="flex: 1; min-width: 140px;">
+            <select id="market-sort-by" onchange="handleMarketFiltersChange()" class="form-input" style="width: 100%; height: 38px; padding: 0 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 12.5px; background: #fff; color: var(--text);">
+              <option value="default">✨ Best Matches</option>
+              <option value="price-asc">💵 Price: Low to High</option>
+              <option value="price-desc">💎 Price: High to Low</option>
+              <option value="qty-desc">📦 Highest Quantity</option>
+              <option value="rep-desc">⭐ Top Rated Farmers</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Interactive Map Container -->
+        <div id="market-map" style="height: 320px; border-radius: 12px; margin-bottom: 16px; display: none; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05);"></div>
+        
+        <!-- Marketplace Product Grid -->
+        <div id="marketplace-grid" class="market-grid" style="padding-right: 2px;">
           <div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;" data-i18n="js-loading-marketplace">Loading marketplace...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCT QUICK VIEW MODAL -->
+    <div id="product-quick-view-modal" style="display:none;position:fixed;inset:0;background:rgba(20,29,43,0.75);backdrop-filter:blur(5px);z-index:2000;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:20px;padding:26px;max-width:520px;width:95%;box-shadow:0 24px 80px rgba(20,29,43,0.35);border:1px solid var(--border);position:relative;max-height:90vh;overflow-y:auto;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">
+          <div>
+            <span id="qv-category-badge" style="font-size:11px; font-weight:700; background:var(--teal-pale); color:var(--teal); padding:3px 10px; border-radius:12px; text-transform:uppercase;">Vegetables</span>
+            <h3 style="font-family:'DM Serif Display',serif;font-size:1.45rem;color:var(--text);margin-top:4px;" id="qv-title">Crop Name</h3>
+          </div>
+          <button onclick="closeProductQuickViewModal()" style="background:none;border:none;font-size:26px;cursor:pointer;color:var(--muted);">&times;</button>
+        </div>
+
+        <div style="width:100%;height:200px;border-radius:12px;overflow:hidden;margin-bottom:14px;background:#f0f4f8;border:1px solid var(--border);position:relative;">
+          <img id="qv-image" src="" style="width:100%;height:100%;object-fit:cover;">
+          <span id="qv-status-badge" style="position:absolute;bottom:10px;left:10px;background:rgba(21,92,53,0.85);backdrop-filter:blur(4px);color:#fff;font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;">✨ Ready for Delivery</span>
+        </div>
+
+        <!-- Details Grid -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:#f8faf9;padding:12px;border-radius:12px;border:1px solid var(--border);margin-bottom:14px;">
+          <div>
+            <div style="font-size:10.5px;color:var(--muted);text-transform:uppercase;font-weight:600;">Price per kg</div>
+            <div style="font-size:17px;font-weight:700;color:var(--teal);" id="qv-price">Rs. 0</div>
+          </div>
+          <div>
+            <div style="font-size:10.5px;color:var(--muted);text-transform:uppercase;font-weight:600;">Available Stock</div>
+            <div style="font-size:15px;font-weight:600;color:var(--text);" id="qv-qty">0 kg</div>
+          </div>
+          <div>
+            <div style="font-size:10.5px;color:var(--muted);text-transform:uppercase;font-weight:600;">District Origin</div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);" id="qv-district">Nuwara Eliya</div>
+          </div>
+          <div>
+            <div style="font-size:10.5px;color:var(--muted);text-transform:uppercase;font-weight:600;">Harvest Date</div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);" id="qv-date">2026-08-31</div>
+          </div>
+        </div>
+
+        <!-- Farmer Trust Card -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:12px;background:#fff;border:1px solid var(--border);margin-bottom:14px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;" id="qv-farmer-avatar">F</div>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--text);" id="qv-farmer-name">Farmer Name</div>
+              <div style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px;">
+                <span style="color:#f4a261;font-weight:700;" id="qv-farmer-rating">★ 5.0</span> · <span id="qv-farmer-verified" style="color:var(--green);font-weight:600;">Verified Grower</span>
+              </div>
+            </div>
+          </div>
+          <button id="qv-chat-btn" style="background:var(--teal-pale);color:var(--teal);border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Chat
+          </button>
+        </div>
+
+        <!-- Description -->
+        <div style="margin-bottom:14px;" id="qv-desc-wrap">
+          <div style="font-size:10.5px;color:var(--muted);text-transform:uppercase;font-weight:600;margin-bottom:4px;">Description</div>
+          <div style="font-size:12.5px;color:var(--text);line-height:1.45;background:#fafafa;padding:8px 10px;border-radius:8px;border:1px solid #f0f0f0;" id="qv-desc">No additional description.</div>
+        </div>
+
+        <!-- Interactive Bulk Calculator -->
+        <div style="background:var(--teal-pale);padding:12px;border-radius:12px;margin-bottom:16px;border:1px solid rgba(26,79,114,0.12);">
+          <div style="font-size:11.5px;font-weight:700;color:var(--teal);margin-bottom:6px;display:flex;align-items:center;gap:5px;">
+            <span>🧮 Bulk Order Estimator</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <input type="number" id="qv-calc-qty" value="50" min="1" oninput="updateQuickViewCalculator()" style="width:90px;height:34px;padding:0 8px;border:1.5px solid var(--teal);border-radius:8px;font-weight:700;font-size:13px;color:var(--text);outline:none;">
+            <span style="font-size:12.5px;font-weight:600;color:var(--text);">kg &times; <span id="qv-calc-rate">Rs. 0</span></span>
+            <span style="font-size:13.5px;font-weight:700;color:var(--teal);margin-left:auto;" id="qv-calc-total">= Rs. 0</span>
+          </div>
+        </div>
+
+        <!-- Action button -->
+        <div>
+          <button id="qv-order-btn" class="btn-sm btn-confirm" style="width:100%;height:42px;font-size:13.5px;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:6px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+            Proceed to Order
+          </button>
         </div>
       </div>
     </div>
@@ -5032,120 +5325,343 @@ function getEquipmentCardPlaceholder(name = '', type = '') {
   `;
 }
 
-function loadMarketplace() {
-  const query = document.getElementById('market-search').value.trim();
-  const container = document.getElementById('marketplace-grid');
+let rawMarketplaceListings = [];
+let activeMarketCategory = 'all';
+let currentQuickViewItem = null;
 
+function filterMarketByCategory(cat) {
+  activeMarketCategory = cat;
+  document.querySelectorAll('#marketplace-category-pills .cat-pill').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-cat') === cat);
+  });
+  renderFilteredMarketplace();
+}
+
+function handleMarketFiltersChange() {
+  renderFilteredMarketplace();
+}
+
+function toggleMarketMapVisibility() {
+  const mapEl = document.getElementById('market-map');
+  const txtEl = document.getElementById('market-map-btn-txt');
+  if (!mapEl) return;
+  if (mapEl.style.display === 'none' || !mapEl.style.display) {
+    mapEl.style.display = 'block';
+    if (txtEl) txtEl.textContent = 'Hide Map View';
+    if (!marketMap) {
+      initMarketMap();
+    } else {
+      setTimeout(() => { if (marketMap) marketMap.invalidateSize(); }, 200);
+    }
+  } else {
+    mapEl.style.display = 'none';
+    if (txtEl) txtEl.textContent = 'Show Map View';
+  }
+}
+
+function loadMarketplace() {
+  const container = document.getElementById('marketplace-grid');
   if (marketType === 'crops') {
-    fetch(API_URL + `/api/buyer/marketplace/crops?search=${encodeURIComponent(query)}`, {
+    fetch(API_URL + `/api/buyer/marketplace/crops`, {
       headers: getAuthHeaders()
     })
       .then(r => r.json())
       .then(data => {
         if (!data.success || !data.listings || !data.listings.length) {
-          container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;grid-column: span 2;">No crops available matching your search.</div>';
+          rawMarketplaceListings = [];
+          updateCategoryPillCounters([]);
+          container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:30px 0;grid-column: 1/-1;">No crops available at the moment.</div>';
           updateMapMarkers([], 'crops');
           return;
         }
-
-        let html = '';
-        data.listings.forEach(item => {
-          let defaultPlaceholder = getCropCardPlaceholder(item.name, item.category);
-          let photoUrl = getListingPhotoUrl(item);
-          let symbol = photoUrl 
-            ? `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;" onerror="this.onerror=null; this.parentNode.innerHTML=\`${defaultPlaceholder.replace(/'/g, "\\'")}\`;">`
-            : defaultPlaceholder;
-
-          const repScore = Math.min(5, (parseInt(item.seller_rep || 0) / 10) * 5).toFixed(1);
-
-          html += `
-            <div class="market-card">
-              <div class="market-card-img">${symbol}</div>
-              <div class="market-card-name">${item.name}</div>
-              <div class="market-card-meta">${item.district || 'Kandy'} · ${item.quantity_kg} kg</div>
-              <div style="font-size:11.5px; color:var(--text); font-weight:500; display:flex; align-items:center; gap:4px; margin-top:4px;">
-                <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.seller_id})">${item.seller_name}</span>
-                <span class="verified-badge" style="display:inline-flex; align-items:center; gap:3px;">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Verified
-                </span>
-              </div>
-              <div style="font-size:11px; color:#f4a261; font-weight:600; display:flex; align-items:center; gap:3px; margin-top:2px; margin-bottom:6px;">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="#f4a261" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                ${repScore} (${item.seller_rep || 0} deals)
-              </div>
-              <div class="market-card-price">1kg = Rs. ${parseFloat(item.price_per_kg).toFixed(0)}</div>
-              <div style="display:flex; gap:6px; margin-top:8px;">
-                <button class="interest-btn" style="margin-top:0; display:inline-flex; align-items:center; justify-content:center; gap:5px;" onclick="openCropOrderModal(${item.id}, ${item.price_per_kg}, '${item.name.replace(/'/g, "\\'")}', ${item.quantity_kg})">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
-                  Order Now
-                </button>
-                <button class="interest-btn" style="margin-top:0; background:var(--teal); color:#fff; display:inline-flex; align-items:center; justify-content:center; gap:5px;" onclick="startChatWithUser(${item.seller_id}, '${item.seller_name.replace(/'/g, "\\'")}', 'farmer')">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                  Chat
-                </button>
-              </div>
-            </div>
-          `;
-        });
-        container.innerHTML = html;
-        updateMapMarkers(data.listings, 'crops');
+        rawMarketplaceListings = data.listings;
+        updateCategoryPillCounters(rawMarketplaceListings);
+        renderFilteredMarketplace();
+      })
+      .catch(err => {
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:30px 0;grid-column: 1/-1;">Failed to load marketplace listings.</div>';
       });
   } else {
     // Equipment
-    fetch(API_URL + `/api/buyer/marketplace/equipment?search=${encodeURIComponent(query)}`, {
+    fetch(API_URL + `/api/buyer/marketplace/equipment`, {
       headers: getAuthHeaders()
     })
       .then(r => r.json())
       .then(data => {
         if (!data.success || !data.listings || !data.listings.length) {
-          container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;grid-column: span 2;">No equipment available matching your search.</div>';
+          rawMarketplaceListings = [];
+          updateCategoryPillCounters([]);
+          container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:30px 0;grid-column: 1/-1;">No equipment available matching your search.</div>';
           updateMapMarkers([], 'equipment');
           return;
         }
-
-        let html = '';
-        data.listings.forEach(item => {
-          let defaultPlaceholder = getEquipmentCardPlaceholder(item.name, item.type);
-          let photoUrl = getListingPhotoUrl(item);
-          let symbol = photoUrl 
-            ? `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;" onerror="this.onerror=null; this.parentNode.innerHTML=\`${defaultPlaceholder.replace(/'/g, "\\'")}\`;">`
-            : defaultPlaceholder;
-
-          const repScore = Math.min(5, (parseInt(item.owner_rep || 0) / 10) * 5).toFixed(1);
-
-          html += `
-            <div class="market-card">
-              <div class="market-card-img">${symbol}</div>
-              <div class="market-card-name">${item.name}</div>
-              <div class="market-card-meta">${item.district || 'Kurunegala'} · ${item.condition || 'Good'} condition</div>
-              <div style="font-size:11.5px; color:var(--text); font-weight:500; display:flex; align-items:center; gap:4px; margin-top:4px;">
-                <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${item.owner_id})">${item.owner_name}</span>
-                <span class="verified-badge" style="display:inline-flex; align-items:center; gap:3px;">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Verified
-                </span>
-              </div>
-              <div style="font-size:11px; color:#f4a261; font-weight:600; display:flex; align-items:center; gap:3px; margin-top:2px; margin-bottom:6px;">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="#f4a261" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                ${repScore} (${item.owner_rep || 0} deals)
-              </div>
-              <div class="market-card-price">Rs. ${parseFloat(item.rental_rate).toLocaleString()} / day</div>
-              <div style="display:flex; gap:6px; margin-top:8px;">
-                <button class="interest-btn" style="margin-top:0; display:inline-flex; align-items:center; justify-content:center; gap:5px;" onclick="openBookingModal(${item.id}, ${item.rental_rate}, '${item.name.replace(/'/g, "\\'")}')">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                  Rent Now
-                </button>
-                <button class="interest-btn" style="margin-top:0; background:var(--teal); color:#fff; display:inline-flex; align-items:center; justify-content:center; gap:5px;" onclick="startChatWithUser(${item.owner_id}, '${item.owner_name.replace(/'/g, "\\'")}', 'farmer')">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                  Chat
-                </button>
-              </div>
-            </div>
-          `;
-        });
-        container.innerHTML = html;
-        updateMapMarkers(data.listings, 'equipment');
+        rawMarketplaceListings = data.listings;
+        updateCategoryPillCounters(rawMarketplaceListings);
+        renderFilteredMarketplace();
+      })
+      .catch(err => {
+        container.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:30px 0;grid-column: 1/-1;">Failed to load equipment listings.</div>';
       });
   }
+}
+
+function updateCategoryPillCounters(listings) {
+  let counts = { all: listings.length, veg: 0, fruit: 0, grains: 0, spices: 0, other: 0 };
+  listings.forEach(item => {
+    const cat = (item.category || item.type || '').toLowerCase();
+    const name = (item.name || '').toLowerCase();
+    if (cat.includes('veg') || name.includes('carrot') || name.includes('tomato') || name.includes('potato') || name.includes('cabbage') || name.includes('leek') || name.includes('beet') || name.includes('bean') || name.includes('pumpkin') || name.includes('brinjal')) {
+      counts.veg++;
+    } else if (cat.includes('fruit') || name.includes('banana') || name.includes('mango') || name.includes('papaya') || name.includes('pineapple') || name.includes('watermelon') || name.includes('orange') || name.includes('apple')) {
+      counts.fruit++;
+    } else if (cat.includes('grain') || cat.includes('paddy') || name.includes('rice') || name.includes('paddy') || name.includes('corn') || name.includes('tuber') || name.includes('manioc')) {
+      counts.grains++;
+    } else if (cat.includes('spice') || name.includes('chili') || name.includes('pepper') || name.includes('cinnamon') || name.includes('cardamom') || name.includes('clove') || name.includes('ginger') || name.includes('turmeric')) {
+      counts.spices++;
+    } else {
+      counts.other++;
+    }
+  });
+
+  const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  setEl('cat-count-all', counts.all);
+  setEl('cat-count-veg', counts.veg);
+  setEl('cat-count-fruit', counts.fruit);
+  setEl('cat-count-grains', counts.grains);
+  setEl('cat-count-spices', counts.spices);
+  setEl('cat-count-other', counts.other);
+}
+
+function renderFilteredMarketplace() {
+  const container = document.getElementById('marketplace-grid');
+  if (!container) return;
+
+  const searchQuery = (document.getElementById('market-search')?.value || '').toLowerCase().trim();
+  const districtFilter = document.getElementById('market-district-filter')?.value || 'all';
+  const sortBy = document.getElementById('market-sort-by')?.value || 'default';
+
+  let filtered = rawMarketplaceListings.filter(item => {
+    // Search query filter
+    if (searchQuery) {
+      const matchName = (item.name || '').toLowerCase().includes(searchQuery);
+      const matchSeller = (item.seller_name || item.owner_name || '').toLowerCase().includes(searchQuery);
+      const matchDist = (item.district || '').toLowerCase().includes(searchQuery);
+      const matchCat = (item.category || item.type || '').toLowerCase().includes(searchQuery);
+      if (!matchName && !matchSeller && !matchDist && !matchCat) return false;
+    }
+
+    // District filter
+    if (districtFilter !== 'all') {
+      if ((item.district || '').toLowerCase() !== districtFilter.toLowerCase()) return false;
+    }
+
+    // Category filter
+    if (activeMarketCategory !== 'all') {
+      const cat = (item.category || item.type || '').toLowerCase();
+      const name = (item.name || '').toLowerCase();
+      if (activeMarketCategory === 'Vegetables') {
+        if (!cat.includes('veg') && !name.includes('carrot') && !name.includes('tomato') && !name.includes('potato') && !name.includes('cabbage') && !name.includes('leek') && !name.includes('beet') && !name.includes('bean') && !name.includes('pumpkin') && !name.includes('brinjal')) return false;
+      } else if (activeMarketCategory === 'Fruits') {
+        if (!cat.includes('fruit') && !name.includes('banana') && !name.includes('mango') && !name.includes('papaya') && !name.includes('pineapple') && !name.includes('watermelon') && !name.includes('orange') && !name.includes('apple')) return false;
+      } else if (activeMarketCategory === 'Grains') {
+        if (!cat.includes('grain') && !cat.includes('paddy') && !name.includes('rice') && !name.includes('paddy') && !name.includes('corn') && !name.includes('tuber') && !name.includes('manioc')) return false;
+      } else if (activeMarketCategory === 'Spices') {
+        if (!cat.includes('spice') && !name.includes('chili') && !name.includes('pepper') && !name.includes('cinnamon') && !name.includes('cardamom') && !name.includes('clove') && !name.includes('ginger') && !name.includes('turmeric')) return false;
+      } else if (activeMarketCategory === 'Other') {
+        const isStandard = cat.includes('veg') || cat.includes('fruit') || cat.includes('grain') || cat.includes('spice') || name.includes('carrot') || name.includes('banana') || name.includes('paddy') || name.includes('chili');
+        if (isStandard) return false;
+      }
+    }
+
+    return true;
+  });
+
+  // Sorting
+  if (sortBy === 'price-asc') {
+    filtered.sort((a, b) => (parseFloat(a.price_per_kg || a.rental_rate || 0)) - (parseFloat(b.price_per_kg || b.rental_rate || 0)));
+  } else if (sortBy === 'price-desc') {
+    filtered.sort((a, b) => (parseFloat(b.price_per_kg || b.rental_rate || 0)) - (parseFloat(a.price_per_kg || a.rental_rate || 0)));
+  } else if (sortBy === 'qty-desc') {
+    filtered.sort((a, b) => (parseFloat(b.quantity_kg || 0)) - (parseFloat(a.quantity_kg || 0)));
+  } else if (sortBy === 'rep-desc') {
+    filtered.sort((a, b) => (parseFloat(b.seller_rep || b.owner_rep || 0)) - (parseFloat(a.seller_rep || a.owner_rep || 0)));
+  }
+
+  if (!filtered.length) {
+    container.innerHTML = '<div style="font-size:13px;color:var(--muted);text-align:center;padding:36px 0;grid-column: 1/-1;">No produce found matching the selected filters. Try adjusting your search!</div>';
+    updateMapMarkers([], marketType);
+    return;
+  }
+
+  let html = '';
+  filtered.forEach(item => {
+    const photoUrl = getListingPhotoUrl(item);
+    const sellerName = item.seller_name || item.owner_name || 'Farmer';
+    const sellerId = item.seller_id || item.owner_id;
+    const repScore = Math.min(5, (parseInt(item.seller_rep || item.owner_rep || 0) / 10) * 5).toFixed(1);
+    const categoryName = item.category || item.type || (marketType === 'crops' ? 'Harvest' : 'Equipment');
+    const district = item.district || 'Sri Lanka';
+
+    if (marketType === 'crops') {
+      const defaultPlaceholder = getCropCardPlaceholder(item.name, item.category);
+      const symbol = photoUrl 
+        ? `<img src="${photoUrl}" alt="${item.name}" onerror="this.onerror=null; this.parentNode.innerHTML=\`${defaultPlaceholder.replace(/'/g, "\\'")}\`;">`
+        : defaultPlaceholder;
+
+      html += `
+        <div class="market-card">
+          <div>
+            <div class="market-card-img">
+              <span class="market-card-badge">${categoryName}</span>
+              <span class="market-card-district">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+                ${district}
+              </span>
+              ${symbol}
+            </div>
+            <div class="market-card-name">${item.name}</div>
+            
+            <div style="font-size:11.5px; color:var(--text); font-weight:500; display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+              <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${sellerId})">
+                ${sellerName}
+              </span>
+              <span style="font-size:11px; color:#f4a261; font-weight:700; display:flex; align-items:center; gap:2px;">
+                ★ ${repScore} (${item.seller_rep || 0})
+              </span>
+            </div>
+
+            <div style="background:var(--teal-pale); padding:6px 10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11.5px;">
+              <span style="color:var(--text); font-weight:600;">📦 ${item.quantity_kg} kg</span>
+              <span style="color:var(--teal); font-weight:700;">Rs. ${parseFloat(item.price_per_kg).toFixed(0)} / kg</span>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:6px; margin-top:8px;">
+            <button class="interest-btn" style="flex:2; margin-top:0; background:var(--teal); color:#fff;" onclick="openCropOrderModal(${item.id}, ${item.price_per_kg}, '${item.name.replace(/'/g, "\\'")}', ${item.quantity_kg})">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+              Order Now
+            </button>
+            <button class="interest-btn" style="flex:1; margin-top:0; background:var(--teal-pale); color:var(--teal);" onclick="openProductQuickViewModal(${item.id})">
+              👁️ View
+            </button>
+            <button class="interest-btn" style="flex:1; margin-top:0; background:var(--teal-pale); color:var(--teal);" onclick="startChatWithUser(${sellerId}, '${sellerName.replace(/'/g, "\\'")}', 'farmer')">
+              💬
+            </button>
+          </div>
+        </div>
+      `;
+    } else {
+      // Equipment
+      const defaultPlaceholder = getEquipmentCardPlaceholder(item.name, item.type);
+      const symbol = photoUrl 
+        ? `<img src="${photoUrl}" alt="${item.name}" onerror="this.onerror=null; this.parentNode.innerHTML=\`${defaultPlaceholder.replace(/'/g, "\\'")}\`;">`
+        : defaultPlaceholder;
+
+      html += `
+        <div class="market-card">
+          <div>
+            <div class="market-card-img">
+              <span class="market-card-badge">${categoryName}</span>
+              <span class="market-card-district">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+                ${district}
+              </span>
+              ${symbol}
+            </div>
+            <div class="market-card-name">${item.name}</div>
+            
+            <div style="font-size:11.5px; color:var(--text); font-weight:500; display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+              <span style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--teal);" onclick="showUserProfileModal(${sellerId})">
+                ${sellerName}
+              </span>
+              <span style="font-size:11px; color:#f4a261; font-weight:700; display:flex; align-items:center; gap:2px;">
+                ★ ${repScore} (${item.owner_rep || 0})
+              </span>
+            </div>
+
+            <div style="background:#fff3e0; padding:6px 10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11.5px;">
+              <span style="color:#e65100; font-weight:600;">🛠️ ${item.condition || 'Good'} Cond.</span>
+              <span style="color:#e65100; font-weight:700;">Rs. ${parseFloat(item.rental_rate).toLocaleString()} / day</span>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:6px; margin-top:8px;">
+            <button class="interest-btn" style="flex:2; margin-top:0; background:#e76f51; color:#fff;" onclick="openBookingModal(${item.id}, ${item.rental_rate}, '${item.name.replace(/'/g, "\\'")}')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Rent Now
+            </button>
+            <button class="interest-btn" style="flex:1; margin-top:0; background:var(--teal-pale); color:var(--teal);" onclick="startChatWithUser(${sellerId}, '${sellerName.replace(/'/g, "\\'")}', 'farmer')">
+              💬
+            </button>
+          </div>
+        </div>
+      `;
+    }
+  });
+
+  container.innerHTML = html;
+  updateMapMarkers(filtered, marketType);
+}
+
+function openProductQuickViewModal(itemId) {
+  const item = rawMarketplaceListings.find(x => x.id === itemId);
+  if (!item) return;
+
+  currentQuickViewItem = item;
+  const photoUrl = getListingPhotoUrl(item);
+  const sellerName = item.seller_name || item.owner_name || 'Farmer';
+  const sellerId = item.seller_id || item.owner_id;
+  const repScore = Math.min(5, (parseInt(item.seller_rep || item.owner_rep || 0) / 10) * 5).toFixed(1);
+  const rate = parseFloat(item.price_per_kg || item.rental_rate || 0);
+
+  document.getElementById('qv-title').textContent = item.name;
+  document.getElementById('qv-category-badge').textContent = item.category || item.type || 'Produce';
+  document.getElementById('qv-price').textContent = `Rs. ${rate.toLocaleString()} / kg`;
+  document.getElementById('qv-qty').textContent = `${item.quantity_kg || 0} kg in stock`;
+  document.getElementById('qv-district').textContent = item.district || 'Sri Lanka';
+  document.getElementById('qv-date').textContent = item.available_date ? new Date(item.available_date).toLocaleDateString() : 'Ready now';
+  document.getElementById('qv-farmer-name').textContent = sellerName;
+  document.getElementById('qv-farmer-avatar').textContent = sellerName.charAt(0).toUpperCase();
+  document.getElementById('qv-farmer-rating').textContent = `★ ${repScore} (${item.seller_rep || 0} deals)`;
+  document.getElementById('qv-desc').textContent = item.description || `Fresh high-grade harvest direct from verified farm in ${item.district || 'Sri Lanka'}.`;
+
+  const imgEl = document.getElementById('qv-image');
+  if (photoUrl) {
+    imgEl.src = photoUrl;
+    imgEl.style.display = 'block';
+  } else {
+    imgEl.src = 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80';
+    imgEl.style.display = 'block';
+  }
+
+  document.getElementById('qv-calc-qty').value = Math.min(50, item.quantity_kg || 50);
+  document.getElementById('qv-calc-rate').textContent = `Rs. ${rate.toFixed(0)}`;
+  updateQuickViewCalculator();
+
+  document.getElementById('qv-chat-btn').onclick = () => {
+    closeProductQuickViewModal();
+    startChatWithUser(sellerId, sellerName, 'farmer');
+  };
+
+  document.getElementById('qv-order-btn').onclick = () => {
+    closeProductQuickViewModal();
+    openCropOrderModal(item.id, item.price_per_kg, item.name, item.quantity_kg);
+  };
+
+  document.getElementById('product-quick-view-modal').style.display = 'flex';
+}
+
+function closeProductQuickViewModal() {
+  document.getElementById('product-quick-view-modal').style.display = 'none';
+  currentQuickViewItem = null;
+}
+
+function updateQuickViewCalculator() {
+  if (!currentQuickViewItem) return;
+  const qty = parseFloat(document.getElementById('qv-calc-qty').value) || 0;
+  const rate = parseFloat(currentQuickViewItem.price_per_kg || currentQuickViewItem.rental_rate || 0);
+  const total = qty * rate;
+  document.getElementById('qv-calc-total').textContent = `= Rs. ${total.toLocaleString()}`;
 }
 
 function expressInterest(cropId) {
