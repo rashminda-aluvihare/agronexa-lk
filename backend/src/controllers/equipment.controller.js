@@ -48,7 +48,11 @@ async function createEquipmentListing(req, res, next) {
       return res.status(400).json({ error: 'owner_id and name are required' });
     }
 
-    const photos = (req.files || []).map((f) => 'uploads/listings/' + f.filename);
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: 'Equipment photo is required. Please upload at least one photo.' });
+    }
+
+    const photos = req.files.map((f) => 'uploads/listings/' + f.filename);
 
     const result = await db.query(
       `INSERT INTO equipment_listings 

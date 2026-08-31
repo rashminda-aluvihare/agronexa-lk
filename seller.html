@@ -1693,6 +1693,13 @@
               <input class="form-input" id="equip-district" required data-i18n-placeholder="placeholder-district-eg" placeholder="e.g. Kurunegala" style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
             </div>
           </div>
+          <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
+            <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="form-lbl-photos-req">Equipment Photo (Required) *</label>
+            <input type="file" id="equip-photos" accept="image/*" required style="width:100%;font-size:12px;padding:8px;border:1.5px dashed var(--primary-light);border-radius:8px;background:var(--primary-pale);cursor:pointer;" onchange="previewListingImage(event, 'equip-preview-wrap', 'equip-preview-img')">
+            <div id="equip-preview-wrap" style="display:none;margin-top:6px;width:100%;height:130px;border-radius:8px;overflow:hidden;border:1px solid var(--border);position:relative;">
+              <img id="equip-preview-img" src="" style="width:100%;height:100%;object-fit:cover;">
+            </div>
+          </div>
           <div style="margin-bottom:20px;display:flex;flex-direction:column;gap:5px;">
             <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="form-lbl-desc">Description</label>
             <textarea id="equip-desc" rows="3" data-i18n-placeholder="form-ph-desc" placeholder="Specify terms, driver availability..." style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;font-family:inherit;font-size:13px;outline:none;"></textarea>
@@ -1788,9 +1795,12 @@
               <input class="form-input" type="date" id="crop-date" required style="width:100%;border:1px solid var(--border);padding:10px;border-radius:10px;outline:none;">
             </div>
             <div style="display:flex;flex-direction:column;gap:5px;">
-              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="form-lbl-photos">Photos (optional)</label>
-              <input type="file" id="crop-photos" accept="image/*" capture="environment" style="width:100%;font-size:12px;padding:8px;">
+              <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="form-lbl-photos-req">Crop Photo (Required) *</label>
+              <input type="file" id="crop-photos" accept="image/*" required capture="environment" style="width:100%;font-size:12px;padding:8px;border:1.5px dashed var(--primary-light);border-radius:8px;background:var(--primary-pale);cursor:pointer;" onchange="previewListingImage(event, 'crop-preview-wrap', 'crop-preview-img')">
             </div>
+          </div>
+          <div id="crop-preview-wrap" style="display:none;margin-bottom:12px;width:100%;height:130px;border-radius:8px;overflow:hidden;border:1px solid var(--border);position:relative;">
+            <img id="crop-preview-img" src="" style="width:100%;height:100%;object-fit:cover;">
           </div>
           <div style="margin-bottom:20px;display:flex;flex-direction:column;gap:5px;">
             <label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;" data-i18n="form-lbl-desc">Description</label>
@@ -2748,10 +2758,13 @@ function loadEquipmentData() {
       let html = '';
       data.listings.forEach(item => {
         if (item.status === 'deactivated') return;
-        let icon = '';
-        if (item.name.toLowerCase().includes('pump') || item.name.toLowerCase().includes('water')) icon = '';
-        if (item.name.toLowerCase().includes('transport') || item.name.toLowerCase().includes('lorry')) icon = '';
-        if (item.name.toLowerCase().includes('sprayer') || item.name.toLowerCase().includes('machine')) icon = '';
+        let defaultPlaceholder = getEquipmentCardPlaceholder(item.name, item.type);
+        let img = defaultPlaceholder;
+        if (item.photos && item.photos.length > 0 && item.photos[0]) {
+          let photoPath = item.photos[0].replace(/\\/g, '/').replace(/^\/+/, '');
+          let photoUrl = photoPath.startsWith('http') ? photoPath : `${API_URL}/${photoPath}`;
+          img = `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:10px;" onerror="this.onerror=null; this.parentNode.innerHTML=\`${defaultPlaceholder.replace(/'/g, "\\'")}\`;">`;
+        }
 
         const isBooked = item.status === 'booked';
         const statusLabel = isBooked ? '● ' + getTranslation('js-rented', 'Rented') : '● ' + getTranslation('js-available', 'Available');
@@ -2764,7 +2777,7 @@ function loadEquipmentData() {
 
         html += `
           <div class="listing-item">
-            <div class="listing-img">${icon}</div>
+            <div class="listing-img">${img}</div>
             <div class="listing-info">
               <div class="listing-name">${item.name}</div>
               <div class="listing-meta">${districtTranslated} · ${condTranslated} ${conditionLabel}</div>
@@ -3318,7 +3331,7 @@ function getEquipmentCardPlaceholder(name = '', type = '') {
 
         html += `
           <div class="market-card" style="margin-bottom:0; box-sizing:border-box; width:100%;">
-            <div class="market-card-img" style="height:80px;">${icon}</div>
+            <div class="market-card-img" style="height:120px; overflow:hidden; border-radius:8px;">${icon}</div>
             <div class="market-card-name" style="font-size:13px; font-weight:600;">${item.name}</div>
             <div class="market-card-meta" style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">
               ${districtTranslated} · ${condTranslated}
@@ -3501,19 +3514,33 @@ function submitNewEquipment(e) {
   const rate = document.getElementById('equip-rate').value;
   const district = document.getElementById('equip-district').value.trim();
   const desc = document.getElementById('equip-desc').value.trim();
+  const photosInput = document.getElementById('equip-photos');
 
+  if (!photosInput || !photosInput.files || !photosInput.files.length) {
+    showToast(getTranslation('toast-error-title', 'Error'), getTranslation('toast-photo-required', 'Please select at least one photo for your equipment.'), 'error');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('owner_id', _user.id);
+  formData.append('name', name);
+  formData.append('type', type);
+  formData.append('condition', condition);
+  formData.append('rental_rate', rate);
+  formData.append('district', district);
+  formData.append('description', desc);
+
+  for (let i = 0; i < photosInput.files.length; i++) {
+    formData.append('photos', photosInput.files[i]);
+  }
+
+  const token = sessionStorage.getItem('agro_token');
   fetch(API_URL + '/api/seller/equipment', {
     method: 'POST',
-    headers: getAuthHeaders(),
-    body: JSON.stringify({
-      owner_id: _user.id,
-      name: name,
-      type: type,
-      condition: condition,
-      rental_rate: rate,
-      district: district,
-      description: desc
-    })
+    headers: {
+      'Authorization': 'Bearer ' + token
+    },
+    body: formData
   })
     .then(r => r.json())
     .then(data => {
@@ -3525,6 +3552,9 @@ function submitNewEquipment(e) {
       } else {
         showToast(getTranslation('toast-error-title', 'Error'), data.error || getTranslation('toast-failed-list-equip', 'Failed to list equipment'), 'error');
       }
+    })
+    .catch(() => {
+      showToast(getTranslation('toast-server-error-title', 'Server Error'), getTranslation('toast-failed-publish-connection', 'Could not publish listing. Check your connection.'), 'error');
     });
 }
 
@@ -3804,6 +3834,22 @@ function stopQrScanner() {
   }
 }
 
+function previewListingImage(event, wrapperId, imgId) {
+  const file = event.target.files && event.target.files[0];
+  const wrapper = document.getElementById(wrapperId);
+  const img = document.getElementById(imgId);
+  if (file && wrapper && img) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      img.src = e.target.result;
+      wrapper.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  } else if (wrapper) {
+    wrapper.style.display = 'none';
+  }
+}
+
 function submitNewCrop(e) {
   e.preventDefault();
   const name = document.getElementById('crop-name').value.trim();
@@ -3815,6 +3861,11 @@ function submitNewCrop(e) {
   const desc = document.getElementById('crop-desc').value.trim();
   const photosInput = document.getElementById('crop-photos');
 
+  if (!photosInput || !photosInput.files || !photosInput.files.length) {
+    showToast(getTranslation('toast-error-title', 'Error'), getTranslation('toast-photo-required', 'Please select at least one photo for your crop.'), 'error');
+    return;
+  }
+
   const formData = new FormData();
   formData.append('seller_id', _user.id);
   formData.append('name', name);
@@ -3825,10 +3876,8 @@ function submitNewCrop(e) {
   formData.append('available_date', date);
   formData.append('description', desc);
 
-  if (photosInput.files.length) {
-    for (let i = 0; i < photosInput.files.length; i++) {
-      formData.append('photos', photosInput.files[i]);
-    }
+  for (let i = 0; i < photosInput.files.length; i++) {
+    formData.append('photos', photosInput.files[i]);
   }
 
   // File upload requires multipart/form-data

@@ -798,7 +798,9 @@ const TRANSLATIONS = {
     "ai-pdf-report": "Export Diagnostic Report (PDF)",
     "nav-download-app": " Download App",
     "ios-install-title": "Install on iPhone / iPad",
-    "ios-install-body": "To install AgroNexa LK on your iOS device:\n\n1. Open Safari browser.\n2. Tap the Share button  in the navigation bar.\n3. Scroll down and tap 'Add to Home Screen' .\n4. Tap 'Add' to confirm."
+    "ios-install-body": "To install AgroNexa LK on your iOS device:\n\n1. Open Safari browser.\n2. Tap the Share button  in the navigation bar.\n3. Scroll down and tap 'Add to Home Screen' .\n4. Tap 'Add' to confirm.",
+    "form-lbl-photos-req": "Photos (Required) *",
+    "toast-photo-required": "Please select at least one photo."
   },
   si: {
     // Nav & General
@@ -1596,7 +1598,9 @@ const TRANSLATIONS = {
     "ai-pdf-report": "වාර්තාව බාගත කරන්න (PDF)",
     "nav-download-app": " ඇප් එක බාගන්න",
     "ios-install-title": "iPhone / iPad මත ස්ථාපනය කරන්න",
-    "ios-install-body": "AgroNexa LK ඇප් එක ඔබගේ iOS (iPhone) දුරකථනයට ස්ථාපනය කිරීමට:\n\n1. Safari බ්‍රවුසරය විවෘත කරන්න.\n2. එහි ඇති Share බොත්තම  ක්ලික් කරන්න.\n3. පහළට ගොස් 'Add to Home Screen'  තෝරන්න.\n4. තහවුරු කිරීමට 'Add' ක්ලික් කරන්න."
+    "ios-install-body": "AgroNexa LK ඇප් එක ඔබගේ iOS (iPhone) දුරකථනයට ස්ථාපනය කිරීමට:\n\n1. Safari බ්‍රවුසරය විවෘත කරන්න.\n2. එහි ඇති Share බොත්තම  ක්ලික් කරන්න.\n3. පහළට ගොස් 'Add to Home Screen'  තෝරන්න.\n4. තහවුරු කිරීමට 'Add' ක්ලික් කරන්න.",
+    "form-lbl-photos-req": "ඡායාරූපය (අනිවාර්යයි) *",
+    "toast-photo-required": "කරුණාකර අවම වශයෙන් එක් ඡායාරූපයක් හෝ තෝරන්න."
   },
   ta: {
     // Nav & General
@@ -2394,7 +2398,9 @@ const TRANSLATIONS = {
     "ai-pdf-report": "அறிக்கையைப் பதிவிறக்கவும் (PDF)",
     "nav-download-app": " செயலியைப் பதிவிறக்குக",
     "ios-install-title": "iPhone / iPad இல் நிறுவவும்",
-    "ios-install-body": "AgroNexa LK ஐ உங்கள் iOS சாதனத்தில் நிறுவ:\n\n1. Safari உலாவியைத் திறக்கவும்.\n2. வழிசெலுத்தல் பட்டியில் உள்ள பகிர் பொத்தானை  தட்டவும்.\n3. கீழே உருட்டி 'முகப்புத் திரையில் சேர்'  என்பதைத் தட்டவும்.\n4. உறுதிப்படுத்த 'சேர்' என்பதைத் தட்டவும்."
+    "ios-install-body": "AgroNexa LK ஐ உங்கள் iOS சாதனத்தில் நிறுவ:\n\n1. Safari உலாவியைத் திறக்கவும்.\n2. வழிசெலுத்தல் பட்டியில் உள்ள பகிர் பொத்தானை  தட்டவும்.\n3. கீழே உருட்டி 'முகப்புத் திரையில் சேர்'  என்பதைத் தட்டவும்.\n4. உறுதிப்படுத்த 'சேர்' என்பதைத் தட்டவும்.",
+    "form-lbl-photos-req": "புகைப்படம் (கட்டாயமானது) *",
+    "toast-photo-required": "தயவுசெய்து குறைந்தது ஒரு புகைப்படத்தையாவது தேர்ந்தெடுக்கவும்."
   }
 };
 
