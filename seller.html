@@ -3271,8 +3271,46 @@ function loadEquipmentMarketplace() {
         return;
       }
 
+function getCropFallbackPhoto(name = '', category = '') {
+  const n = (String(name) + ' ' + String(category)).toLowerCase();
+  if (n.includes('අර්තාපල්') || n.includes('potato') || n.includes('ala') || n.includes('අල')) {
+    return 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=600&q=80';
+  } else if (n.includes('mango') || n.includes('අඹ')) {
+    return 'https://images.unsplash.com/photo-1553279768-865429fa0078?auto=format&fit=crop&w=600&q=80';
+  } else if (n.includes('tomato') || n.includes('තක්කාලි')) {
+    return 'https://images.unsplash.com/photo-1546470427-0d4db154ceb7?auto=format&fit=crop&w=600&q=80';
+  } else if (n.includes('carrot') || n.includes('කැරට්')) {
+    return 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?auto=format&fit=crop&w=600&q=80';
+  } else if (n.includes('banana') || n.includes('කෙසෙල්')) {
+    return 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=600&q=80';
+  } else if (n.includes('paddy') || n.includes('rice') || n.includes('වී') || n.includes('සහල්')) {
+    return 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80';
+  } else if (n.includes('chili') || n.includes('miris') || n.includes('මිරිස්')) {
+    return 'https://images.unsplash.com/photo-1588252303782-cb80119abd6d?auto=format&fit=crop&w=600&q=80';
+  } else if (n.includes('papaya') || n.includes('පැපොල්')) {
+    return 'https://images.unsplash.com/photo-1617112848923-cc2234396a8d?auto=format&fit=crop&w=600&q=80';
+  } else if (n.includes('pumpkin') || n.includes('වට්ටක්කා')) {
+    return 'https://images.unsplash.com/photo-1570586437263-ab629fccc818?auto=format&fit=crop&w=600&q=80';
+  } else if (n.includes('onion') || n.includes('ලූනු') || n.includes('ලූණු')) {
+    return 'https://images.unsplash.com/photo-1518977822534-7049a61ee0c2?auto=format&fit=crop&w=600&q=80';
+  } else if (n.includes('cabbage') || n.includes('ගෝවා')) {
+    return 'https://images.unsplash.com/photo-1594282486552-05b4d80fbb9f?auto=format&fit=crop&w=600&q=80';
+  } else if (n.includes('leek') || n.includes('ලීක්ස්')) {
+    return 'https://images.unsplash.com/photo-1584270354949-c26b0d5b4a0c?auto=format&fit=crop&w=600&q=80';
+  } else if (n.includes('tea') || n.includes('තේ')) {
+    return 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=600&q=80';
+  } else if (n.includes('coconut') || n.includes('පොල්')) {
+    return 'https://images.unsplash.com/photo-1544376798-89aa6b82c6cd?auto=format&fit=crop&w=600&q=80';
+  } else if (n.includes('tractor') || n.includes('ට්‍රැක්ටර්')) {
+    return 'https://images.unsplash.com/photo-1592878904946-b3cd8ae243d0?auto=format&fit=crop&w=600&q=80';
+  } else if (n.includes('pump') || n.includes('පොම්ප')) {
+    return 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80';
+  }
+  return 'https://images.unsplash.com/photo-1610348725531-843dff563e2c?auto=format&fit=crop&w=600&q=80';
+}
+
 function getListingPhotoUrl(item) {
-  if (!item || !item.photos) return '';
+  if (!item) return '';
   let photos = item.photos;
   if (typeof photos === 'string') {
     if (photos.startsWith('{') && photos.endsWith('}')) {
@@ -3289,7 +3327,7 @@ function getListingPhotoUrl(item) {
     let p = String(photos[0]).replace(/\\/g, '/').replace(/^\/+/, '');
     return p.startsWith('http') ? p : `${API_URL}/${p}`;
   }
-  return '';
+  return getCropFallbackPhoto(item.name, item.category || item.type);
 }
 
 function getCropCardPlaceholder(name = '', category = '') {
