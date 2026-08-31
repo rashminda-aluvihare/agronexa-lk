@@ -4970,8 +4970,27 @@ function toggleMarketType() {
   }
 }
 
-function loadMarketplace() {
-  const query = document.getElementById('market-search').value.trim();
+function getListingPhotoUrl(item) {
+  if (!item || !item.photos) return '';
+  let photos = item.photos;
+  if (typeof photos === 'string') {
+    if (photos.startsWith('{') && photos.endsWith('}')) {
+      photos = photos.slice(1, -1).split(',').map(s => s.trim().replace(/^"|"$/g, ''));
+    } else if (photos.startsWith('[')) {
+      try { photos = JSON.parse(photos); } catch(e) { photos = [photos]; }
+    } else if (photos.trim()) {
+      photos = [photos.trim()];
+    } else {
+      photos = [];
+    }
+  }
+  if (Array.isArray(photos) && photos.length > 0 && photos[0]) {
+    let p = String(photos[0]).replace(/\\/g, '/').replace(/^\/+/, '');
+    return p.startsWith('http') ? p : `${API_URL}/${p}`;
+  }
+  return '';
+}
+
 function getCropCardPlaceholder(name = '', category = '') {
   const cropLower = (name + ' ' + category).toLowerCase();
   
@@ -5013,6 +5032,8 @@ function getEquipmentCardPlaceholder(name = '', type = '') {
   `;
 }
 
+function loadMarketplace() {
+  const query = document.getElementById('market-search').value.trim();
   const container = document.getElementById('marketplace-grid');
 
   if (marketType === 'crops') {
@@ -5030,12 +5051,10 @@ function getEquipmentCardPlaceholder(name = '', type = '') {
         let html = '';
         data.listings.forEach(item => {
           let defaultPlaceholder = getCropCardPlaceholder(item.name, item.category);
-          let symbol = defaultPlaceholder;
-          if (item.photos && item.photos.length > 0 && item.photos[0]) {
-            let photoPath = item.photos[0].replace(/\\/g, '/').replace(/^\/+/, '');
-            let photoUrl = photoPath.startsWith('http') ? photoPath : `${API_URL}/${photoPath}`;
-            symbol = `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;" onerror="this.onerror=null; this.parentNode.innerHTML=\`${defaultPlaceholder.replace(/'/g, "\\'")}\`;">`;
-          }
+          let photoUrl = getListingPhotoUrl(item);
+          let symbol = photoUrl 
+            ? `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;" onerror="this.onerror=null; this.parentNode.innerHTML=\`${defaultPlaceholder.replace(/'/g, "\\'")}\`;">`
+            : defaultPlaceholder;
 
           const repScore = Math.min(5, (parseInt(item.seller_rep || 0) / 10) * 5).toFixed(1);
 
@@ -5087,12 +5106,10 @@ function getEquipmentCardPlaceholder(name = '', type = '') {
         let html = '';
         data.listings.forEach(item => {
           let defaultPlaceholder = getEquipmentCardPlaceholder(item.name, item.type);
-          let symbol = defaultPlaceholder;
-          if (item.photos && item.photos.length > 0 && item.photos[0]) {
-            let photoPath = item.photos[0].replace(/\\/g, '/').replace(/^\/+/, '');
-            let photoUrl = photoPath.startsWith('http') ? photoPath : `${API_URL}/${photoPath}`;
-            symbol = `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;" onerror="this.onerror=null; this.parentNode.innerHTML=\`${defaultPlaceholder.replace(/'/g, "\\'")}\`;">`;
-          }
+          let photoUrl = getListingPhotoUrl(item);
+          let symbol = photoUrl 
+            ? `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;" onerror="this.onerror=null; this.parentNode.innerHTML=\`${defaultPlaceholder.replace(/'/g, "\\'")}\`;">`
+            : defaultPlaceholder;
 
           const repScore = Math.min(5, (parseInt(item.owner_rep || 0) / 10) * 5).toFixed(1);
 
@@ -5841,8 +5858,7 @@ function updateMapMarkers(listings, type) {
     }
 
     let color = type === 'crops' ? '#2d6a4f' : '#e76f51';
-    let photoPath = (item.photos && item.photos.length > 0 && item.photos[0]) ? item.photos[0].replace(/\\/g, '/').replace(/^\/+/, '') : '';
-    let photoUrl = photoPath ? (photoPath.startsWith('http') ? photoPath : `${API_URL}/${photoPath}`) : '';
+    let photoUrl = getListingPhotoUrl(item);
 
     const markerContent = photoUrl 
       ? `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover;" onerror="this.parentElement.innerHTML='<svg width=\\'16\\' height=\\'16\\' viewBox=\\'0 0 24 24\\' fill=\\'none\\' stroke=\\'#fff\\' stroke-width=\\'2.5\\'><path d=\\'M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z\\'/></svg>';">`

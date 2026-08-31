@@ -3271,6 +3271,27 @@ function loadEquipmentMarketplace() {
         return;
       }
 
+function getListingPhotoUrl(item) {
+  if (!item || !item.photos) return '';
+  let photos = item.photos;
+  if (typeof photos === 'string') {
+    if (photos.startsWith('{') && photos.endsWith('}')) {
+      photos = photos.slice(1, -1).split(',').map(s => s.trim().replace(/^"|"$/g, ''));
+    } else if (photos.startsWith('[')) {
+      try { photos = JSON.parse(photos); } catch(e) { photos = [photos]; }
+    } else if (photos.trim()) {
+      photos = [photos.trim()];
+    } else {
+      photos = [];
+    }
+  }
+  if (Array.isArray(photos) && photos.length > 0 && photos[0]) {
+    let p = String(photos[0]).replace(/\\/g, '/').replace(/^\/+/, '');
+    return p.startsWith('http') ? p : `${API_URL}/${p}`;
+  }
+  return '';
+}
+
 function getCropCardPlaceholder(name = '', category = '') {
   const cropLower = (name + ' ' + category).toLowerCase();
   
@@ -3318,12 +3339,10 @@ function getEquipmentCardPlaceholder(name = '', type = '') {
         if (item.owner_id === _user.id) return;
 
         let defaultPlaceholder = getEquipmentCardPlaceholder(item.name, item.type);
-        let icon = defaultPlaceholder;
-        if (item.photos && item.photos.length > 0 && item.photos[0]) {
-          let photoPath = item.photos[0].replace(/\\/g, '/').replace(/^\/+/, '');
-          let photoUrl = photoPath.startsWith('http') ? photoPath : `${API_URL}/${photoPath}`;
-          icon = `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;" onerror="this.onerror=null; this.parentNode.innerHTML=\`${defaultPlaceholder.replace(/'/g, "\\'")}\`;">`;
-        }
+        let photoUrl = getListingPhotoUrl(item);
+        let icon = photoUrl 
+          ? `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;" onerror="this.onerror=null; this.parentNode.innerHTML=\`${defaultPlaceholder.replace(/'/g, "\\'")}\`;">`
+          : defaultPlaceholder;
 
         const distKey = 'district-' + (item.district || _user.district || 'kurunegala').toLowerCase().replace(/[^a-z]/g, '');
         const districtTranslated = getTranslation(distKey, item.district || 'Kurunegala');
@@ -3731,12 +3750,10 @@ function loadCropListings() {
       let html = '';
       data.listings.forEach(item => {
         let defaultPlaceholder = getCropCardPlaceholder(item.name, item.category);
-        let img = defaultPlaceholder;
-        if (item.photos && item.photos.length > 0 && item.photos[0]) {
-          let photoPath = item.photos[0].replace(/\\/g, '/').replace(/^\/+/, '');
-          let photoUrl = photoPath.startsWith('http') ? photoPath : `${API_URL}/${photoPath}`;
-          img = `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:10px;" onerror="this.onerror=null; this.parentNode.innerHTML=\`${defaultPlaceholder.replace(/'/g, "\\'")}\`;">`;
-        }
+        let photoUrl = getListingPhotoUrl(item);
+        let img = photoUrl 
+          ? `<img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:10px;" onerror="this.onerror=null; this.parentNode.innerHTML=\`${defaultPlaceholder.replace(/'/g, "\\'")}\`;">`
+          : defaultPlaceholder;
         const dateStr = item.available_date ? new Date(item.available_date).toLocaleDateString() : 'N/A';
         const isPending = item.status === 'pending';
         const statusLabel = isPending ? getTranslation('booking-status-pending', 'Pending') : getTranslation('booking-status-active', 'Active');
